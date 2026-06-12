@@ -59,7 +59,7 @@
   @media(max-width:500px){.gallery-grid{grid-template-columns:1fr;}}
   .gallery-card { background:var(--bg2); border:0.5px solid var(--border); border-radius:10px; overflow:hidden; transition:border-color .2s,transform .2s; }
   .gallery-card:hover { border-color:var(--purple); transform:translateY(-2px); }
-  .gallery-thumb { position:relative; aspect-ratio:4/3; background:var(--bg3); display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  .gallery-thumb { position:relative; aspect-ratio:1/1; background:var(--bg3); display:flex; align-items:center; justify-content:center; overflow:hidden; }
   .gallery-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
   .gallery-placeholder { font-size:40px; opacity:.2; }
   .gallery-overlay { position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,0.72) 0%, transparent 50%); display:flex; flex-direction:column; justify-content:flex-end; padding:12px; }
@@ -69,7 +69,7 @@
   .gallery-comment { padding:12px 14px; border-top:0.5px solid var(--border); }
   .hikari-label { font-size:9px; color:var(--purple-light); letter-spacing:1.5px; margin-bottom:5px; }
   .hikari-text { font-size:12px; color:var(--purple-pale); line-height:1.6; }
-  .upload-tile { aspect-ratio:4/3; border-radius:10px; border:0.5px dashed var(--border2); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; color:var(--text-dim); font-size:11px; letter-spacing:1px; cursor:pointer; transition:border-color .2s,color .2s; }
+  .upload-tile { aspect-ratio:1/1; border-radius:10px; border:0.5px dashed var(--border2); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; color:var(--text-dim); font-size:11px; letter-spacing:1px; cursor:pointer; transition:border-color .2s,color .2s; }
   .upload-tile:hover { border-color:var(--purple); color:var(--purple-pale); }
   .upload-tile svg { width:24px; height:24px; }
 
@@ -294,10 +294,31 @@
 
 <!-- MODALS -->
 <div class="modal-backdrop" id="uploadModal">
-  <div class="modal">
-    <h3>作品を投稿する</h3>
-    <p>チャットページでメッセージを送ってね！HIKARIがギャラリーに追加して、コメントを書くよ 💜</p>
-    <button class="modal-close" onclick="closeModal('uploadModal')">とじる</button>
+  <div class="modal" style="max-width:420px; text-align:left;">
+    <h3 style="text-align:center; margin-bottom:16px;">作品を投稿してみよう！</h3>
+    <p style="margin-bottom:12px; text-align:center; font-size:13px; color:var(--text-muted);">HIKARIのInstagramのDMに絵を送ってね！<br>採用された作品はギャラリーに掲載されるよ。</p>
+    <div style="background:var(--bg2); border-radius:8px; padding:14px; margin-bottom:14px;">
+      <div style="font-size:9px; letter-spacing:2px; color:var(--purple); margin-bottom:10px;">— 送るときのルール</div>
+      <ul style="list-style:none; display:flex; flex-direction:column; gap:7px;">
+        <li style="font-size:12px; color:var(--text-muted); line-height:1.5;">🎨 オリジナルの絵であること（デジタルでも、手書きを写真に撮ったものでもOK！）</li>
+        <li style="font-size:12px; color:var(--text-muted); line-height:1.5;">❌ 他の人の絵のコピーや、AIで作った絵はNG</li>
+        <li style="font-size:12px; color:var(--text-muted); line-height:1.5;">✏️ お名前（ニックネームOK）を一緒に教えてね</li>
+        <li style="font-size:12px; color:var(--text-muted); line-height:1.5;">⬜ 画像は<strong style="color:var(--purple-pale);">正方形（1:1）</strong>で送ると、きれいに表示されるよ！（正方形じゃなくてもOK、トリミングされることがあるよ）</li>
+        <li style="font-size:12px; color:var(--text-muted); line-height:1.5;">📁 画像は<strong style="color:var(--purple-pale);">25MB以下</strong>で送ってね（スマホの写真やお絵描きアプリの絵はだいたいOK！）</li>
+        <li style="font-size:12px; color:var(--purple-pale); font-weight:500; line-height:1.5;">👨‍👩‍👧 送る前に、お父さんかお母さんに送っていいか確認してね！</li>
+      </ul>
+    </div>
+    <div style="background:var(--bg3); border:0.5px solid var(--border2); border-radius:8px; padding:14px; margin-bottom:16px; text-align:center;">
+      <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px; line-height:1.7;">まず <strong style="color:var(--purple-pale);">@hikari.and.pero をフォロー</strong> してから、DMで絵を送ってね！<br>フォローしていないとメッセージが届かないよ。</div>
+      <a href="https://www.instagram.com/hikari.and.pero/" target="_blank" rel="noopener"
+        style="display:inline-block; padding:9px 22px; background:var(--purple); color:#fff; border-radius:6px; font-size:11px; letter-spacing:1.5px; text-decoration:none;">
+        Instagramを開く →
+      </a>
+    </div>
+    <p style="font-size:11px; color:var(--text-dim); text-align:center; line-height:1.7;">掲載できる作品の数には限りがあるので、すべての作品が掲載されるわけではありません。HIKARIが一枚一枚確認して選びます。掲載された場合はDMでお知らせするね！</p>
+    <div style="text-align:center; margin-top:16px;">
+      <button class="modal-close" onclick="closeModal('uploadModal')">とじる</button>
+    </div>
   </div>
 </div>
 <div class="modal-backdrop" id="shopModal">
