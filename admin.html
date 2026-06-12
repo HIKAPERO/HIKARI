@@ -425,7 +425,7 @@
     const title   = document.getElementById("galleryTitle").value.trim();
     const author  = document.getElementById("galleryAuthor").value.trim();
     const fileName = document.getElementById("galleryUrl").value.trim();
-    const imageUrl = fileName ? "https://hikapero.github.io/HIKARI/gallery/" + fileName : "";
+    const imageUrl = fileName ? "https://hikapero.github.io/HIKARI/gallery/" + fileName + ".png" : "";
     const comment = document.getElementById("galleryComment").value.trim();
     if (!title || !author) { alert("タイトルと投稿者名は必須です"); return; }
     await window._addDoc(window._collection(window._db,"gallery"), { title, author, imageUrl, comment, createdAt:serverTimestamp() });
