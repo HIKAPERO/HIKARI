@@ -483,15 +483,9 @@
             <div class="gallery-row-sub">by ${esc(data.author)}</div>
           </div>
           <div class="btn-row">
-            <button class="btn-edit">編集</button>
-            <button class="btn-del">削除</button>
+            <button class="btn-edit" onclick="window._editGallery('${d.id}', ${JSON.stringify(esc(data.title))}, ${JSON.stringify(esc(data.author))}, ${JSON.stringify(esc(data.imageUrl||''))}, ${JSON.stringify(esc(data.comment||''))})">編集</button>
+            <button class="btn-del" onclick="window._delDoc('gallery','${d.id}')">削除</button>
           </div>`;
-        div.querySelector(".btn-edit").addEventListener("click", () => {
-          window._editGallery(d.id, data.title||"", data.author||"", data.imageUrl||"", data.comment||"");
-        });
-        div.querySelector(".btn-del").addEventListener("click", () => {
-          window._delDoc("gallery", d.id);
-        });
         list.appendChild(div);
       });
     });
@@ -513,15 +507,9 @@
             <div class="shop-row-price">¥${Number(data.price).toLocaleString()}</div>
           </div>
           <div class="btn-row">
-            <button class="btn-edit">編集</button>
-            <button class="btn-del">削除</button>
+            <button class="btn-edit" onclick="window._editShop('${d.id}', ${JSON.stringify(esc(data.name))}, ${data.price||0}, ${JSON.stringify(esc(data.emoji||''))}, ${JSON.stringify(esc(data.desc||''))})">編集</button>
+            <button class="btn-del" onclick="window._delDoc('shop','${d.id}')">削除</button>
           </div>`;
-        div.querySelector(".btn-edit").addEventListener("click", () => {
-          window._editShop(d.id, data.name||"", data.price||0, data.emoji||"", data.desc||"");
-        });
-        div.querySelector(".btn-del").addEventListener("click", () => {
-          window._delDoc("shop", d.id);
-        });
         list.appendChild(div);
       });
     });
@@ -862,7 +850,7 @@
   };
 
   // ── EDIT MODAL ──
-  let _editAction = null;
+  window._editAction = null;
 
   window._editGallery = (id, title, author, imageUrl, comment) => {
     document.getElementById("editModalTitle").textContent = "作品を編集";
@@ -875,7 +863,7 @@
         <div style="font-size:11px; color:var(--text-dim); margin-top:6px;" id="e_url_preview">https://hikapero.github.io/HIKARI/gallery/${imageUrl.replace('https://hikapero.github.io/HIKARI/gallery/', '')}</div>
       </div>
       <div class="field"><label>HIKARIのコメント</label><textarea id="e_comment">${comment}</textarea></div>`;
-    _editAction = async () => {
+    window._editAction = async () => {
       await window._updateDoc(window._doc(window._db,"gallery",id), {
         title: document.getElementById("e_title").value.trim(),
         author: document.getElementById("e_author").value.trim(),
@@ -894,7 +882,7 @@
       <div class="field"><label>価格</label><input id="e_price" type="number" value="${price}"></div>
       <div class="field"><label>絵文字</label><input id="e_emoji" value="${emoji}" maxlength="2"></div>
       <div class="field"><label>説明</label><textarea id="e_desc">${desc}</textarea></div>`;
-    _editAction = async () => {
+    window._editAction = async () => {
       await window._updateDoc(window._doc(window._db,"shop",id), {
         name: document.getElementById("e_name").value.trim(),
         price: Number(document.getElementById("e_price").value),
@@ -913,7 +901,7 @@
       <div class="field"><label>レベル</label><input id="e_level" value="${level}"></div>
       <div class="field"><label>フレンド数</label><input id="e_friends" value="${friends}"></div>
       <div class="field"><label>日誌</label><textarea id="e_diary">${diary}</textarea></div>`;
-    _editAction = async () => {
+    window._editAction = async () => {
       await window._updateDoc(window._doc(window._db,"roblox",id), {
         playTime: document.getElementById("e_time").value.trim(),
         level: document.getElementById("e_level").value.trim(),
@@ -926,7 +914,7 @@
   };
 
   document.getElementById("editSaveBtn").addEventListener("click", async () => {
-    if (_editAction) { await _editAction(); closeEdit(); }
+    if (window._editAction) { await window._editAction(); closeEdit(); }
   });
 
   window._editMember = (id, name, bio, tags, imageUrl, emoji, facts, order) => {
@@ -939,7 +927,7 @@
       <div class="field"><label>絵文字アイコン</label><input id="e_memoji" value="${emoji}" maxlength="2"></div>
       <div class="field"><label>プロフィール詳細</label><textarea id="e_mfacts">${facts}</textarea></div>
       <div class="field"><label>表示順</label><input id="e_morder" type="number" value="${order}"></div>`;
-    _editAction = async () => {
+    window._editAction = async () => {
       const imgFile = document.getElementById("e_mimage").value.trim();
       await window._updateDoc(window._doc(window._db,"members",id), {
         name:     document.getElementById("e_mname").value.trim(),
@@ -983,7 +971,7 @@
         </div>
       </div>
       <div class="field"><label>一言感想</label><textarea id="e_gcomment" placeholder="例：ねこがかわいくて最高！" style="min-height:60px;">${comment||""}</textarea></div>`;
-    _editAction = async () => {
+    window._editAction = async () => {
       const ratingVal = document.querySelector('input[name="grating"]:checked');
       await window._updateDoc(window._doc(window._db,"games",id), {
         name:     document.getElementById("e_gname").value.trim(),
@@ -1015,7 +1003,7 @@
       <div class="field"><label>URL</label><input id="e_lurl" value="${url}"></div>
       <div class="field"><label>カスタムアイコンURL</label><input id="e_licon" value="${iconUrl}"></div>
       <div class="field"><label>表示順</label><input id="e_lorder" type="number" value="${order}"></div>`;
-    _editAction = async () => {
+    window._editAction = async () => {
       await window._updateDoc(window._doc(window._db,"links",id), {
         name:    document.getElementById("e_lname").value.trim(),
         type:    document.getElementById("e_ltype").value,
@@ -1030,7 +1018,7 @@
 
   window.closeEdit = () => {
     document.getElementById("editModal").classList.remove("open");
-    _editAction = null;
+    window._editAction = null;
   };
   document.getElementById("editModal").addEventListener("click", e => {
     if (e.target === document.getElementById("editModal")) closeEdit();
@@ -1075,9 +1063,6 @@
       btn.textContent = '✅ コピー済';
       setTimeout(() => btn.textContent = '📋 コピー', 2000);
     });
-  }
-  function toggleMenu() {
-    document.getElementById('mobileMenu') && document.getElementById('mobileMenu').classList.toggle('open');
   }
   function switchATab(name) {
     const names = ["chat","gallery","shop","diary","game","members","links"];
