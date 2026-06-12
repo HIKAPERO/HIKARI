@@ -134,7 +134,6 @@
   .about-card { background:var(--bg2); border:0.5px solid var(--border); border-radius:12px; padding:24px; display:flex; gap:18px; align-items:center; margin-bottom:16px; }
   @media(max-width:480px){.about-card{flex-direction:column;text-align:center;}}
   .about-avatar { width:72px; height:72px; border-radius:50%; background:var(--bg3); border:2px solid var(--purple); display:flex; align-items:center; justify-content:center; font-size:32px; flex-shrink:0; }
-  .about-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
   .about-name { font-size:20px; font-weight:700; color:var(--purple-pale); letter-spacing:3px; margin-bottom:6px; }
   .about-bio { font-size:13px; color:#888; line-height:1.7; margin-bottom:12px; }
   .about-tags { display:flex; gap:8px; flex-wrap:wrap; }
@@ -189,7 +188,7 @@
 </section>
 
 <div class="tabs-wrap">
-  <div class="tabs" id="tabsBar">
+  <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('gallery')">GALLERY</button>
     <button class="tab-btn" onclick="switchTab('shop')">SHOP</button>
     <button class="tab-btn" onclick="switchTab('roblox')">ROBLOX</button>
@@ -198,12 +197,13 @@
   </div>
 </div>
 
+<!-- GALLERY -->
 <div class="panel active" id="panel-gallery">
   <div class="section">
     <div class="sec-label">— COMMUNITY ART</div>
     <div class="sec-title">みんなの作品</div>
     <div class="gallery-grid" id="galleryGrid">
-      <div class="upload-tile" id="defaultUploadTile" onclick="openModal('uploadModal')">
+      <div class="upload-tile" onclick="openModal('uploadModal')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 16V8m0 0l-3 3m3-3l3 3M20 21H4a2 2 0 01-2-2V5a2 2 0 012-2h16a2 2 0 012 2v14a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round"/></svg>
         作品を投稿
       </div>
@@ -211,6 +211,7 @@
   </div>
 </div>
 
+<!-- SHOP -->
 <div class="panel" id="panel-shop">
   <div class="section">
     <div class="sec-label">— HIKARI SHOP</div>
@@ -221,6 +222,7 @@
   </div>
 </div>
 
+<!-- ROBLOX -->
 <div class="panel" id="panel-roblox">
   <div class="section">
     <div class="sec-label">— ROBLOX STATS</div>
@@ -241,6 +243,7 @@
   </div>
 </div>
 
+<!-- CHAT -->
 <div class="panel" id="panel-chat">
   <div class="chat-status">
     <div class="dot-maybe"></div>
@@ -256,19 +259,17 @@
       <textarea class="form-input" id="chatMsg" placeholder="HIKARIへのメッセージ..." maxlength="300"></textarea>
       <button class="form-submit" id="chatSubmit" onclick="sendMsg()">送信する</button>
     </div>
-    <div class="sent-msg" id="sentMsg">
-      💜 メッセージを受け取ったよ！HIKARIが確認して返事するね。しばらく待ってね。<br>
-      <button class="btn btn-outline" style="margin-top:10px; padding:6px 16px;" onclick="resetChatForm()">もう一度送る</button>
-    </div>
-    <p class="form-hint" style="margin-top:12px;">※ HIKARIが確認してから返事するよ！すこし待ってね。</p>
+    <div class="sent-msg" id="sentMsg">💜 メッセージを受け取ったよ！HIKARIが確認して返事するね。しばらく待ってね。</div>
+    <p class="form-hint">※ HIKARIが確認してから返事するよ！すこし待ってね。</p>
   </div>
 </div>
 
+<!-- ABOUT -->
 <div class="panel" id="panel-about">
   <div class="section">
     <div class="sec-label">— ABOUT HIKARI</div>
     <div class="about-card">
-      <div class="about-avatar"><img src="./hikari05.png" alt="HIKARI"></div>
+      <div class="about-avatar"><img src="./gallery/HIKARI04.png" alt="HIKARI"></div>
       <div>
         <div class="about-name">HIKARI</div>
         <div class="about-bio">お絵描き大好き。デジタルアートとロブロックスが生きがい。みんなの絵にコメントするよ！いっしょに楽しいサイトを作ろう。</div>
@@ -291,6 +292,7 @@
 
 <footer><p>© 2025 HIKARI — All artworks by HIKARI</p></footer>
 
+<!-- MODALS -->
 <div class="modal-backdrop" id="uploadModal">
   <div class="modal" style="max-width:420px; text-align:left;">
     <h3 style="text-align:center; margin-bottom:16px;">作品を投稿してみよう！</h3>
@@ -327,6 +329,7 @@
   </div>
 </div>
 
+<!-- Firebase SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, serverTimestamp }
@@ -344,11 +347,6 @@
   const app = initializeApp(firebaseConfig);
   const db  = getFirestore(app);
   const col = collection(db, "messages");
-
-  // エスケープ関数を先に定義
-  function esc(s) {
-    return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-  }
 
   // リアルタイムでメッセージを取得
   const q = query(col, orderBy("createdAt", "asc"));
@@ -377,7 +375,7 @@
     thread.scrollTop = thread.scrollHeight;
   });
 
-  // 送信関数をグローバルに展開
+  // 送信
   window.sendMsg = async function() {
     const nick = document.getElementById("chatNick").value.trim();
     const text = document.getElementById("chatMsg").value.trim();
@@ -403,16 +401,18 @@
     }
   };
 
-  // ── ギャラリー ──
-  // あらかじめ静的なDOMテンプレートを退避させておく
-  const uploadTileTemplate = document.getElementById("defaultUploadTile").cloneNode(true);
+  function esc(s) {
+    return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
 
+  // ── ギャラリー ──
   onSnapshot(query(collection(db,"gallery"), orderBy("createdAt","desc")), snap => {
     const grid = document.getElementById("galleryGrid");
+    const uploadTile = grid.querySelector(".upload-tile");
     grid.innerHTML = "";
 
     if (snap.empty) {
-      grid.appendChild(uploadTileTemplate.cloneNode(true));
+      grid.appendChild(uploadTile);
       return;
     }
 
@@ -453,8 +453,7 @@
       isFirst = false;
     });
 
-    // 最後にアップロード用カードを再追加
-    grid.appendChild(uploadTileTemplate.cloneNode(true));
+    grid.appendChild(uploadTile);
   });
 
   // ── ショップ ──
@@ -507,36 +506,18 @@
 <script>
   const TABS = ['gallery','shop','roblox','chat','about'];
   function switchTab(name) {
-    const tabButtons = document.getElementById('tabsBar').querySelectorAll('.tab-btn');
-    TABS.forEach((t, i) => {
-      if(tabButtons[i]) {
-        tabButtons[i].classList.toggle('active', t === name);
-      }
-      const panel = document.getElementById('panel-' + t);
-      if(panel) {
-        panel.classList.toggle('active', t === name);
-      }
+    TABS.forEach((t,i) => {
+      document.querySelectorAll('.tab-btn')[i].classList.toggle('active', t===name);
+      document.getElementById('panel-'+t).classList.toggle('active', t===name);
     });
     window.scrollTo({top:0,behavior:'smooth'});
   }
-  
-  function resetChatForm() {
-    document.getElementById("chatMsg").value = "";
-    document.getElementById("chatForm").style.display = "flex";
-    document.getElementById("sentMsg").style.display  = "none";
-    const btn = document.getElementById("chatSubmit");
-    btn.disabled = false;
-    btn.textContent = "送信する";
-  }
-
   function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }
   function openModal(id)  { document.getElementById(id).classList.add('open'); }
   function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-  
   document.querySelectorAll('.modal-backdrop').forEach(m => {
     m.addEventListener('click', e => { if(e.target===m) m.classList.remove('open'); });
   });
-  
   function checkWidth() {
     const links = document.getElementById('navLinks');
     const ham   = document.querySelector('.hamburger');
