@@ -92,10 +92,15 @@
   .rblx-val { font-size:18px; font-weight:600; color:var(--text); margin-top:4px; }
   .rblx-diary { background:var(--bg2); border:0.5px solid var(--border); border-radius:8px; padding:16px; }
   .rblx-diary-label { font-size:9px; letter-spacing:2px; color:var(--text-dim); margin-bottom:10px; }
-  .diary-entry { padding:10px 0; border-bottom:0.5px solid var(--border); }
+  .diary-entry { padding:12px 0; border-bottom:0.5px solid var(--border); }
   .diary-entry:last-child { border-bottom:none; }
-  .diary-date { font-size:9px; color:var(--text-dim); letter-spacing:1px; margin-bottom:4px; }
-  .diary-text { font-size:13px; color:#aaa; line-height:1.6; }
+  .diary-date { font-size:9px; color:var(--text-dim); letter-spacing:1px; margin-bottom:6px; }
+  .diary-text { font-size:13px; color:#aaa; line-height:1.6; margin-bottom:8px; }
+  .diary-games { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+  .diary-game-icon { display:flex; flex-direction:column; align-items:center; gap:3px; text-decoration:none; }
+  .diary-game-icon img { width:48px; height:48px; border-radius:10px; border:1.5px solid var(--border); object-fit:cover; transition:border-color .2s; }
+  .diary-game-icon:hover img { border-color:var(--purple); }
+  .diary-game-icon span { font-size:9px; color:var(--text-dim); max-width:52px; text-align:center; line-height:1.3; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
 
   /* CHAT */
   .chat-status { display:flex; align-items:center; gap:8px; padding:12px 28px; background:var(--bg0); border-bottom:0.5px solid var(--border); }
@@ -553,7 +558,16 @@
       const data = d.data();
       const div  = document.createElement("div");
       div.className = "diary-entry";
-      div.innerHTML = `<div class="diary-date">${esc(data.date||"")}</div><div class="diary-text">${esc(data.diary)}</div>`;
+      const games = data.games || [];
+      const gamesHtml = games.length ? `
+        <div class="diary-games">
+          ${games.map(g => `
+            <a class="diary-game-icon" href="${esc(g.url||'#')}" target="_blank" rel="noopener">
+              <img src="${esc(g.icon)}" alt="${esc(g.name)}">
+              <span>${esc(g.name)}</span>
+            </a>`).join("")}
+        </div>` : "";
+      div.innerHTML = `<div class="diary-date">${esc(data.date||"")}</div><div class="diary-text">${esc(data.diary)}</div>${gamesHtml}`;
       entries.appendChild(div);
     });
   });
