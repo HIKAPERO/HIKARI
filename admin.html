@@ -115,6 +115,20 @@
   .game-icon-img { width:72px; height:72px; border-radius:12px; object-fit:cover; border:2px solid var(--border); transition:border-color .2s; display:block; margin:0 auto 4px; }
   .game-icon-card:hover .game-icon-img { border-color:var(--purple); }
   .game-icon-name { font-size:10px; color:var(--text-muted); letter-spacing:0.5px; line-height:1.3; word-break:break-all; }
+  /* DIARY LAYOUT */
+  .diary-layout { display:flex; gap:14px; align-items:flex-start; }
+  .game-sidebar { width:120px; flex-shrink:0; background:var(--bg2); border:0.5px solid var(--border2); border-radius:10px; padding:10px; }
+  .game-sidebar-label { font-size:9px; letter-spacing:2px; color:var(--purple); margin-bottom:10px; }
+  .game-sidebar-scroll { height:320px; overflow-y:auto; display:flex; flex-direction:column; gap:6px; }
+  .game-sidebar-scroll::-webkit-scrollbar { width:4px; }
+  .game-sidebar-scroll::-webkit-scrollbar-track { background:transparent; }
+  .game-sidebar-scroll::-webkit-scrollbar-thumb { background:var(--border2); border-radius:2px; }
+  .sidebar-game-item { display:flex; flex-direction:column; align-items:center; gap:3px; padding:6px 4px; border-radius:8px; cursor:grab; transition:background .15s; }
+  .sidebar-game-item:hover { background:var(--bg3); }
+  .sidebar-game-item:active { cursor:grabbing; }
+  .sidebar-game-item img { width:52px; height:52px; border-radius:8px; object-fit:cover; border:1px solid var(--border); }
+  .sidebar-game-item span { font-size:9px; color:var(--text-muted); text-align:center; line-height:1.3; word-break:break-all; }
+  .diary-form-area { flex:1; min-width:0; }
   .drop-zone { border:2px dashed var(--border2); border-radius:10px; padding:14px; min-height:90px; display:flex; flex-wrap:wrap; gap:8px; align-items:center; transition:border-color .2s, background .2s; }
   .drop-zone.dragover { border-color:var(--purple); background:rgba(108,92,231,0.08); }
   .drop-zone-hint { font-size:12px; color:var(--text-dim); letter-spacing:1px; }
@@ -235,26 +249,34 @@
     <div class="sec-label">— DIARY</div>
     <div class="sec-title">日記を投稿</div>
     <div class="card" style="margin-bottom:14px;">
-      <div class="field">
-        <label>誰の日記？</label>
-        <select id="diaryOwner" style="background:var(--bg2);border:0.5px solid var(--border);border-radius:7px;padding:10px 14px;font-size:13px;color:var(--text);outline:none;width:100%;font-family:inherit;">
-          <option value="hikari">⭐ HIKARI</option>
-          <option value="pero">🐱 ぺろちゃん</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>今日やったゲーム（下のアイコンをドラッグ＆ドロップ）</label>
-        <div style="font-size:10px;letter-spacing:2px;color:var(--purple);margin-bottom:8px;">— 登録済みゲーム</div>
-        <div class="game-master-grid" id="gameMasterGrid" style="margin-bottom:10px;">
-          <div class="empty-note">読み込み中...</div>
+      <div class="diary-layout">
+        <!-- 左：ゲーム一覧 -->
+        <div class="game-sidebar">
+          <div class="game-sidebar-label">— GAMES</div>
+          <div class="game-sidebar-scroll" id="gameMasterGrid">
+            <div style="font-size:10px;color:var(--text-dim);text-align:center;padding:8px;">読み込み中...</div>
+          </div>
         </div>
-        <div class="drop-zone" id="dropZone" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="dropGame(event)">
-          <span class="drop-zone-hint">ここにゲームをドロップ ↑</span>
+        <!-- 右：日記フォーム -->
+        <div class="diary-form-area">
+          <div class="field">
+            <label>誰の日記？</label>
+            <select id="diaryOwner" style="background:var(--bg2);border:0.5px solid var(--border);border-radius:7px;padding:10px 14px;font-size:13px;color:var(--text);outline:none;width:100%;font-family:inherit;">
+              <option value="hikari">⭐ HIKARI</option>
+              <option value="pero">🐱 ぺろちゃん</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>今日やったゲーム（左からドラッグ＆ドロップ）</label>
+            <div class="drop-zone" id="dropZone" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="dropGame(event)">
+              <span class="drop-zone-hint">← ゲームをここにドロップ</span>
+            </div>
+            <input type="hidden" id="droppedGames" value="[]">
+          </div>
+          <div class="field"><label>今日のできごと（ゲーム・お絵描きなど自由に）</label><textarea id="rblxDiary" placeholder="今日は○○をやったよ！絵も描いたよ〜"></textarea></div>
+          <button class="btn-add" onclick="addRblx()">投稿する</button>
         </div>
-        <input type="hidden" id="droppedGames" value="[]">
       </div>
-      <div class="field"><label>今日のできごと（ゲーム・お絵描きなど自由に）</label><textarea id="rblxDiary" placeholder="今日は○○をやったよ！絵も描いたよ〜"></textarea></div>
-      <button class="btn-add" onclick="addRblx()">投稿する</button>
     </div>
     <div class="diary-list" id="diaryList">
       <div class="empty-note">読み込み中...</div>
@@ -560,15 +582,11 @@
         const g = d.data();
         // ドラッグ用グリッド
         const card = document.createElement("div");
-        card.className = "game-icon-card";
+        card.className = "sidebar-game-item";
         card.draggable = true;
-        card.dataset.id   = d.id;
-        card.dataset.name = g.name;
-        card.dataset.icon = g.iconUrl;
-        card.dataset.url  = g.gameUrl||"";
         card.innerHTML = `
-          <img class="game-icon-img" src="${esc(g.iconUrl)}" alt="${esc(g.name)}">
-          <div class="game-icon-name">${esc(g.name)}</div>`;
+          <img src="${esc(g.iconUrl)}" alt="${esc(g.name)}">
+          <span>${esc(g.name)}</span>`;
         card.addEventListener("dragstart", e => {
           e.dataTransfer.setData("gameId",   d.id);
           e.dataTransfer.setData("gameName", g.name);
