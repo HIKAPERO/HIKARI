@@ -593,14 +593,17 @@
         const row = document.createElement("div");
         row.className = "card";
         row.style.cssText = "display:flex;align-items:center;gap:12px;margin-bottom:10px;";
-        const ownerLabel = g.owner === "pero" ? "🐱 ぺろ" : "⭐ HIKARI";
         row.innerHTML = `
           <img src="${esc(g.iconUrl)}" style="width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0;">
           <div style="flex:1;">
             <div style="font-size:13px;color:var(--text);">${esc(g.name)}</div>
-            <div style="font-size:10px;color:var(--text-dim);">${ownerLabel} ｜ ${esc(g.platform||"")}</div>
+            <div style="font-size:10px;color:var(--text-dim);">${esc(g.platform||"")}</div>
           </div>
-          <button class="btn-del">削除</button>`;
+          <div class="btn-row">
+            <button class="btn-edit">編集</button>
+            <button class="btn-del">削除</button>
+          </div>`;
+        row.querySelector(".btn-edit").addEventListener("click", () => window._editGame(d.id, g.name||"", g.platform||"Roblox", g.iconUrl||"", g.gameUrl||""));
         row.querySelector(".btn-del").addEventListener("click", () => window._delDoc("games", d.id));
         adminList.appendChild(row);
       });
@@ -914,6 +917,33 @@
         emoji:    document.getElementById("e_memoji").value.trim(),
         facts:    document.getElementById("e_mfacts").value.trim(),
         order:    Number(document.getElementById("e_morder").value) || 1,
+      });
+      showToast("更新しました！");
+    };
+    document.getElementById("editModal").classList.add("open");
+  };
+
+  window._editGame = (id, name, platform, iconUrl, gameUrl) => {
+    document.getElementById("editModalTitle").textContent = "ゲームを編集";
+    document.getElementById("editModalBody").innerHTML = `
+      <div class="field"><label>ゲーム名</label><input id="e_gname" value="${name}"></div>
+      <div class="field">
+        <label>プラットフォーム</label>
+        <select id="e_gplatform" style="background:var(--bg2);border:0.5px solid var(--border);border-radius:7px;padding:10px 14px;font-size:13px;color:var(--text);outline:none;width:100%;font-family:inherit;">
+          <option value="Roblox" ${platform==="Roblox"?"selected":""}>Roblox</option>
+          <option value="Minecraft" ${platform==="Minecraft"?"selected":""}>Minecraft</option>
+          <option value="Meta Quest" ${platform==="Meta Quest"?"selected":""}>Meta Quest</option>
+          <option value="その他" ${platform==="その他"?"selected":""}>その他</option>
+        </select>
+      </div>
+      <div class="field"><label>アイコン画像URL</label><input id="e_gicon" value="${iconUrl}"></div>
+      <div class="field"><label>ゲームURL（任意）</label><input id="e_gurl" value="${gameUrl}"></div>`;
+    _editAction = async () => {
+      await window._updateDoc(window._doc(window._db,"games",id), {
+        name:     document.getElementById("e_gname").value.trim(),
+        platform: document.getElementById("e_gplatform").value,
+        iconUrl:  document.getElementById("e_gicon").value.trim(),
+        gameUrl:  document.getElementById("e_gurl").value.trim(),
       });
       showToast("更新しました！");
     };
