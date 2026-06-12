@@ -206,22 +206,22 @@
 <nav>
   <a href="#" class="nav-logo">HIKARI</a>
   <div class="nav-links" id="navLinks">
+    <a href="#" onclick="switchTab('about');return false;">ABOUT</a>
+    <a href="#" onclick="switchTab('chat');return false;">CHAT</a>
+    <a href="#" onclick="switchTab('roblox');return false;">ROBLOX</a>
+    <a href="#" onclick="switchTab('links');return false;">LINKS</a>
     <a href="#" onclick="switchTab('gallery');return false;">GALLERY</a>
     <a href="#" onclick="switchTab('shop');return false;">SHOP</a>
-    <a href="#" onclick="switchTab('roblox');return false;">ROBLOX</a>
-    <a href="#" onclick="switchTab('chat');return false;">CHAT</a>
-    <a href="#" onclick="switchTab('about');return false;">ABOUT</a>
-    <a href="#" onclick="switchTab('links');return false;">LINKS</a>
   </div>
   <button class="hamburger" onclick="toggleMenu()" aria-label="メニュー">☰</button>
 </nav>
 <div class="mobile-menu" id="mobileMenu">
+  <a href="#" onclick="switchTab('about');toggleMenu();return false;">ABOUT</a>
+  <a href="#" onclick="switchTab('chat');toggleMenu();return false;">CHAT</a>
+  <a href="#" onclick="switchTab('roblox');toggleMenu();return false;">ROBLOX</a>
+  <a href="#" onclick="switchTab('links');toggleMenu();return false;">LINKS</a>
   <a href="#" onclick="switchTab('gallery');toggleMenu();return false;">GALLERY</a>
   <a href="#" onclick="switchTab('shop');toggleMenu();return false;">SHOP</a>
-  <a href="#" onclick="switchTab('roblox');toggleMenu();return false;">ROBLOX</a>
-  <a href="#" onclick="switchTab('chat');toggleMenu();return false;">CHAT</a>
-  <a href="#" onclick="switchTab('about');toggleMenu();return false;">ABOUT</a>
-  <a href="#" onclick="switchTab('links');toggleMenu();return false;">LINKS</a>
 </div>
 
 <section class="hero">
@@ -236,17 +236,17 @@
 
 <div class="tabs-wrap">
   <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('gallery')">GALLERY</button>
-    <button class="tab-btn" onclick="switchTab('shop')">SHOP</button>
-    <button class="tab-btn" onclick="switchTab('roblox')">ROBLOX</button>
+    <button class="tab-btn active" onclick="switchTab('about')">ABOUT</button>
     <button class="tab-btn" onclick="switchTab('chat')">CHAT</button>
-    <button class="tab-btn" onclick="switchTab('about')">ABOUT</button>
+    <button class="tab-btn" onclick="switchTab('roblox')">ROBLOX</button>
     <button class="tab-btn" onclick="switchTab('links')">LINKS</button>
+    <button class="tab-btn" onclick="switchTab('gallery')">GALLERY</button>
+    <button class="tab-btn" onclick="switchTab('shop')">SHOP</button>
   </div>
 </div>
 
 <!-- GALLERY -->
-<div class="panel active" id="panel-gallery">
+<div class="panel" id="panel-gallery">
   <div class="section">
     <div class="sec-label">— COMMUNITY ART</div>
     <div class="sec-title">みんなの作品</div>
@@ -322,7 +322,7 @@
 </div>
 
 <!-- ABOUT -->
-<div class="panel" id="panel-about">
+<div class="panel active" id="panel-about">
   <div class="section">
     <div class="sec-label">— ABOUT</div>
     <div id="memberList"><div style="color:var(--text-dim);font-size:12px;text-align:center;padding:24px;">読み込み中...</div></div>
@@ -655,7 +655,7 @@
 </script>
 
 <script>
-  const TABS = ['gallery','shop','roblox','chat','about','links'];
+  const TABS = ['about','chat','roblox','links','gallery','shop'];
   function switchTab(name) {
     TABS.forEach((t,i) => {
       document.querySelectorAll('.tab-btn')[i].classList.toggle('active', t===name);
