@@ -165,6 +165,7 @@
     <button class="atab" onclick="switchATab('shop')">🛍 ショップ</button>
     <button class="atab" onclick="switchATab('roblox')">🎮 ロブロックス</button>
     <button class="atab" onclick="switchATab('members')">👤 メンバー</button>
+    <button class="atab" onclick="switchATab('links')">🔗 リンク</button>
   </div>
 
   <!-- CHAT -->
@@ -295,6 +296,31 @@
     <div id="memberAdminList">
       <div class="empty-note">読み込み中...</div>
     </div>
+  </div>
+
+  <!-- LINKS -->
+  <div class="apanel" id="apanel-links">
+    <div class="sec-label">— LINK MANAGEMENT</div>
+    <div class="sec-title">リンク管理</div>
+    <div class="card">
+      <div style="font-size:10px;letter-spacing:2px;color:var(--purple);margin-bottom:14px;">— リンクを追加</div>
+      <div class="field"><label>名前</label><input type="text" id="linkName" placeholder="例：Instagram"></div>
+      <div class="field">
+        <label>種類（アイコン自動選択）</label>
+        <select id="linkType" style="background:var(--bg2);border:0.5px solid var(--border);border-radius:7px;padding:10px 14px;font-size:13px;color:var(--text);outline:none;width:100%;font-family:inherit;">
+          <option value="web">🌐 ウェブサイト</option>
+          <option value="x">✕ X (Twitter)</option>
+          <option value="instagram">📷 Instagram</option>
+          <option value="roblox">🎮 ROBLOX</option>
+          <option value="twitch">🟣 Twitch</option>
+        </select>
+      </div>
+      <div class="field"><label>URL</label><input type="text" id="linkUrl" placeholder="例：https://instagram.com/..."></div>
+      <div class="field"><label>カスタムアイコン画像URL（任意）</label><input type="text" id="linkIconUrl" placeholder="空欄なら種類のアイコンを使用"></div>
+      <div class="field"><label>表示順</label><input type="number" id="linkOrder" value="1" placeholder="例：1"></div>
+      <button class="btn-add" onclick="addLink()">追加する</button>
+    </div>
+    <div id="linkAdminList"><div class="empty-note">読み込み中...</div></div>
   </div>
 
 <!-- EDIT MODAL -->
@@ -496,6 +522,30 @@
         list.appendChild(div);
       });
     });
+    // リンク
+    onSnapshot(query(collection(db,"links"), orderBy("order","asc")), snap => {
+      const list = document.getElementById("linkAdminList");
+      list.innerHTML = "";
+      if (snap.empty) { list.innerHTML = '<div class="empty-note">まだリンクがありません</div>'; return; }
+      snap.forEach(d => {
+        const lk = d.data();
+        const div = document.createElement("div");
+        div.className = "card";
+        div.style.cssText = "display:flex;align-items:center;gap:12px;margin-bottom:10px;";
+        div.innerHTML = `
+          <div style="font-size:22px;flex-shrink:0;">${lk.type==="x"?"✕":lk.type==="instagram"?"📷":lk.type==="roblox"?"🎮":lk.type==="twitch"?"🟣":"🌐"}</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:13px;color:var(--text);margin-bottom:2px;">${esc(lk.name)}</div>
+            <div style="font-size:11px;color:var(--text-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(lk.url||"")}</div>
+          </div>
+          <div class="btn-row">
+            <button class="btn-edit" onclick="window._editLink('${d.id}', ${JSON.stringify(esc(lk.name))}, ${JSON.stringify(lk.type||'web')}, ${JSON.stringify(esc(lk.url||''))}, ${JSON.stringify(esc(lk.iconUrl||''))}, ${lk.order||1})">編集</button>
+            <button class="btn-del" onclick="window._delDoc('links','${d.id}')">削除</button>
+          </div>`;
+        list.appendChild(div);
+      });
+    });
+
     // メンバー
     const memberQ = query(collection(db,"members"), orderBy("order","asc"));
     onSnapshot(memberQ, snap => {
@@ -556,6 +606,19 @@
     await window._addDoc(window._collection(window._db,"games"), { name, iconUrl, gameUrl, createdAt:serverTimestamp() });
     ["gameName","gameIconUrl","gameUrl"].forEach(id => document.getElementById(id).value="");
     showToast("🎮 ゲームを登録しました！");
+  };
+
+  window.addLink = async () => {
+    const name    = document.getElementById("linkName").value.trim();
+    const type    = document.getElementById("linkType").value;
+    const url     = document.getElementById("linkUrl").value.trim();
+    const iconUrl = document.getElementById("linkIconUrl").value.trim();
+    const order   = Number(document.getElementById("linkOrder").value)||1;
+    if (!name || !url) { alert("名前とURLは必須です"); return; }
+    await window._addDoc(window._collection(window._db,"links"), { name, type, url, iconUrl, order, createdAt:serverTimestamp() });
+    ["linkName","linkUrl","linkIconUrl"].forEach(id => document.getElementById(id).value="");
+    document.getElementById("linkOrder").value = "1";
+    showToast("🔗 リンクを追加しました！");
   };
 
   window.addMember = async () => {
@@ -767,6 +830,36 @@
     document.getElementById("editModal").classList.add("open");
   };
 
+  window._editLink = (id, name, type, url, iconUrl, order) => {
+    document.getElementById("editModalTitle").textContent = "リンクを編集";
+    document.getElementById("editModalBody").innerHTML = `
+      <div class="field"><label>名前</label><input id="e_lname" value="${name}"></div>
+      <div class="field">
+        <label>種類</label>
+        <select id="e_ltype" style="background:var(--bg2);border:0.5px solid var(--border);border-radius:7px;padding:10px 14px;font-size:13px;color:var(--text);outline:none;width:100%;font-family:inherit;">
+          <option value="web" ${type==="web"?"selected":""}>🌐 ウェブサイト</option>
+          <option value="x" ${type==="x"?"selected":""}>✕ X (Twitter)</option>
+          <option value="instagram" ${type==="instagram"?"selected":""}>📷 Instagram</option>
+          <option value="roblox" ${type==="roblox"?"selected":""}>🎮 ROBLOX</option>
+          <option value="twitch" ${type==="twitch"?"selected":""}>🟣 Twitch</option>
+        </select>
+      </div>
+      <div class="field"><label>URL</label><input id="e_lurl" value="${url}"></div>
+      <div class="field"><label>カスタムアイコンURL</label><input id="e_licon" value="${iconUrl}"></div>
+      <div class="field"><label>表示順</label><input id="e_lorder" type="number" value="${order}"></div>`;
+    _editAction = async () => {
+      await window._updateDoc(window._doc(window._db,"links",id), {
+        name:    document.getElementById("e_lname").value.trim(),
+        type:    document.getElementById("e_ltype").value,
+        url:     document.getElementById("e_lurl").value.trim(),
+        iconUrl: document.getElementById("e_licon").value.trim(),
+        order:   Number(document.getElementById("e_lorder").value)||1,
+      });
+      showToast("更新しました！");
+    };
+    document.getElementById("editModal").classList.add("open");
+  };
+
   window.closeEdit = () => {
     document.getElementById("editModal").classList.remove("open");
     _editAction = null;
@@ -816,7 +909,7 @@
     });
   }
   function switchATab(name) {
-    const names = ["chat","gallery","shop","roblox","members"];
+    const names = ["chat","gallery","shop","roblox","members","links"];
     document.querySelectorAll(".atab").forEach((t,i) => t.classList.toggle("active", names[i]===name));
     document.querySelectorAll(".apanel").forEach(p => p.classList.toggle("active", p.id==="apanel-"+name));
   }

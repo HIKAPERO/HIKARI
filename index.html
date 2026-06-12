@@ -164,6 +164,17 @@
   .emoji-btn:hover { background:var(--bg3); }
   .emoji-btn.selected { background:var(--bg3); outline:1.5px solid var(--purple); }
 
+  /* SOCIAL LINKS */
+  .social-list { display:flex; flex-direction:column; gap:2px; }
+  .social-item { display:flex; align-items:center; gap:14px; padding:12px 14px; border-radius:10px; text-decoration:none; transition:background .2s; }
+  .social-item:hover { background:var(--bg3); }
+  .social-icon { width:36px; height:36px; border-radius:9px; background:var(--bg3); border:0.5px solid var(--border); display:flex; align-items:center; justify-content:center; flex-shrink:0; overflow:hidden; }
+  .social-icon img { width:100%; height:100%; object-fit:cover; border-radius:9px; }
+  .social-icon svg { width:18px; height:18px; }
+  .social-info { flex:1; min-width:0; }
+  .social-name { font-size:13px; font-weight:600; color:var(--text); margin-bottom:1px; }
+  .social-url { font-size:11px; color:var(--text-dim); letter-spacing:0.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
   /* ABOUT */
   .about-card { background:var(--bg2); border:0.5px solid var(--border); border-radius:12px; padding:24px; display:flex; gap:18px; align-items:center; margin-bottom:16px; }
   @media(max-width:480px){.about-card{flex-direction:column;text-align:center;}}
@@ -313,6 +324,13 @@
   <div class="section">
     <div class="sec-label">— ABOUT</div>
     <div id="memberList"><div style="color:var(--text-dim);font-size:12px;text-align:center;padding:24px;">読み込み中...</div></div>
+  </div>
+  <div class="section">
+    <div class="sec-label">— LINKS</div>
+    <div class="sec-title">リンク</div>
+    <div class="social-list" id="socialList">
+      <div style="color:var(--text-dim);font-size:12px;text-align:center;padding:16px;">読み込み中...</div>
+    </div>
   </div>
 </div>
 
@@ -512,6 +530,36 @@
         ${data.desc ? `<div style="font-size:11px;color:var(--text-muted);margin-bottom:10px;line-height:1.5;">${esc(data.desc)}</div>` : ""}
         <button class="shop-btn" onclick="openModal('shopModal')">カートに入れる</button>`;
       grid.appendChild(card);
+    });
+  });
+
+  // ── ソーシャルリンク ──
+  const SNS_ICONS = {"web": "<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>", "x": "<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25z"/></svg>", "instagram": "<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>", "roblox": "<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 4.8L6.2 21l14.8-3.8L17.8 3 3 4.8zm11.4 8.6l-4.8 1.2-.8-3.8 4.8-1.2.8 3.8z"/></svg>", "twitch": "<svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/></svg>"};
+  onSnapshot(query(collection(db,"links"), orderBy("order","asc")), snap => {
+    const list = document.getElementById("socialList");
+    list.innerHTML = "";
+    if (snap.empty) {
+      list.innerHTML = '<div style="color:var(--text-dim);font-size:12px;text-align:center;padding:16px;">リンクがありません</div>';
+      return;
+    }
+    snap.forEach(d => {
+      const lk = d.data();
+      const a  = document.createElement("a");
+      a.className = "social-item";
+      a.href      = esc(lk.url||"#");
+      a.target    = "_blank";
+      a.rel       = "noopener";
+      const iconHtml = lk.iconUrl
+        ? `<img src="${esc(lk.iconUrl)}" alt="${esc(lk.name)}">`
+        : (SNS_ICONS[lk.type||"web"] || SNS_ICONS["web"]);
+      const displayUrl = (lk.url||"").replace(/^https?:\/\//, "").replace(/\/$/, "");
+      a.innerHTML = `
+        <div class="social-icon" style="color:var(--purple-light);">${iconHtml}</div>
+        <div class="social-info">
+          <div class="social-name">${esc(lk.name)}</div>
+          <div class="social-url">${displayUrl}</div>
+        </div>`;
+      list.appendChild(a);
     });
   });
 
