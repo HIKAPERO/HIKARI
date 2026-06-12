@@ -115,6 +115,27 @@
   .star-lit:nth-child(4) { animation-delay:0.6s; }
   .star-lit:nth-child(5) { animation-delay:0.8s; }
   .star-dim { color:rgba(255,255,255,0.25); display:inline-block; }
+  .nojiru-badge {
+    position:absolute; bottom:4px; right:5px;
+    font-size:22px; line-height:1;
+    animation: jellyBrain 1.2s ease-in-out infinite;
+    pointer-events:none;
+    display:inline-block;
+    transform-origin: center bottom;
+  }
+  @keyframes jellyBrain {
+    0%   { transform: scale(1,1);      }
+    15%  { transform: scale(0.9,1.1);  }
+    30%  { transform: scale(1.15,0.88);}
+    45%  { transform: scale(0.95,1.08);}
+    60%  { transform: scale(1.08,0.94);}
+    75%  { transform: scale(0.97,1.04);}
+    100% { transform: scale(1,1);      }
+  }
+  .nojiru-label {
+    font-size:9px; font-weight:700; color:#ff69b4;
+    letter-spacing:1px;
+  }
   @keyframes starGlow {
     0%,100% { color:#f0c040; transform:scale(1);   text-shadow:0 0 4px #f0c040; }
     50%      { color:#ffe066; transform:scale(1.25); text-shadow:0 0 8px #ffe066, 0 0 16px #f0c040; }
@@ -662,12 +683,13 @@
       a.rel    = "noopener";
       const badge = g.platform ? esc(g.platform) : "GAME";
       const starsHtml = g.nojiru
-        ? `<div class="nojiru-badge">脳汁系</div>`
+        ? `<div class="nojiru-badge">🧠</div>`
         : g.rating ? (() => {
             const lit = Array.from({length: g.rating},     () => `<span class="star-lit">★</span>`).join("");
             const dim = Array.from({length: 5 - g.rating}, () => `<span class="star-dim">★</span>`).join("");
             return `<div class="game-showcase-stars">${lit}${dim}</div>`;
           })() : "";
+      const nojiruLabel = g.nojiru ? `<span class="nojiru-label">脳汁系</span>` : "";
       const commentHtml = g.comment ? `<div class="game-showcase-comment">${esc(g.comment)}</div>` : "";
       a.innerHTML = `
         <div class="game-showcase-thumb-wrap">
@@ -676,7 +698,7 @@
         </div>
         <div class="game-showcase-info">
           <div class="game-showcase-name">${esc(g.name)}</div>
-          <div class="game-showcase-badge">${badge} ↗</div>
+          <div class="game-showcase-badge">${badge} ↗ ${nojiruLabel}</div>
           ${commentHtml}
         </div>`;
       showcase.appendChild(a);
