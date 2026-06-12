@@ -179,7 +179,13 @@
       <div style="font-size:10px;letter-spacing:2px;color:var(--purple);margin-bottom:14px;">— 新しい作品を追加</div>
       <div class="field"><label>作品タイトル</label><input type="text" id="galleryTitle" placeholder="例：夕焼けの空"></div>
       <div class="field"><label>投稿者名</label><input type="text" id="galleryAuthor" placeholder="例：starpainter_22"></div>
-      <div class="field"><label>画像URL（GitHubにアップした画像のパス）</label><input type="text" id="galleryUrl" placeholder="例：./images/art01.png"></div>
+      <div class="field">
+        <label>画像ファイル名（galleryフォルダにアップしたファイル名）</label>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <input type="text" id="galleryUrl" placeholder="例：art01.png" oninput="previewGalleryUrl(this.value)" style="flex:1;">
+        </div>
+        <div style="font-size:11px; color:var(--text-dim); margin-top:6px;" id="galleryUrlPreview">URLプレビュー：ファイル名を入力してね</div>
+      </div>
       <div class="field"><label>HIKARIのコメント</label><textarea id="galleryComment" placeholder="この作品へのコメントを書こう！"></textarea></div>
       <button class="btn-add" onclick="addGallery()">追加する</button>
     </div>
@@ -412,7 +418,8 @@
   window.addGallery = async () => {
     const title   = document.getElementById("galleryTitle").value.trim();
     const author  = document.getElementById("galleryAuthor").value.trim();
-    const imageUrl= document.getElementById("galleryUrl").value.trim();
+    const fileName = document.getElementById("galleryUrl").value.trim();
+    const imageUrl = fileName ? "https://hikapero.github.io/HIKARI/gallery/" + fileName : "";
     const comment = document.getElementById("galleryComment").value.trim();
     if (!title || !author) { alert("タイトルと投稿者名は必須です"); return; }
     await window._addDoc(window._collection(window._db,"gallery"), { title, author, imageUrl, comment, createdAt:serverTimestamp() });
@@ -468,13 +475,17 @@
     document.getElementById("editModalBody").innerHTML = `
       <div class="field"><label>タイトル</label><input id="e_title" value="${title}"></div>
       <div class="field"><label>投稿者名</label><input id="e_author" value="${author}"></div>
-      <div class="field"><label>画像URL</label><input id="e_url" value="${imageUrl}"></div>
+      <div class="field">
+        <label>画像ファイル名</label>
+        <input id="e_url" value="${imageUrl.replace('https://hikapero.github.io/HIKARI/gallery/', '')}" placeholder="例：art01.png" oninput="document.getElementById('e_url_preview').textContent = 'https://hikapero.github.io/HIKARI/gallery/' + this.value">
+        <div style="font-size:11px; color:var(--text-dim); margin-top:6px;" id="e_url_preview">https://hikapero.github.io/HIKARI/gallery/${imageUrl.replace('https://hikapero.github.io/HIKARI/gallery/', '')}</div>
+      </div>
       <div class="field"><label>HIKARIのコメント</label><textarea id="e_comment">${comment}</textarea></div>`;
     _editAction = async () => {
       await window._updateDoc(window._doc(window._db,"gallery",id), {
         title: document.getElementById("e_title").value.trim(),
         author: document.getElementById("e_author").value.trim(),
-        imageUrl: document.getElementById("e_url").value.trim(),
+        imageUrl: document.getElementById("e_url").value.trim() ? "https://hikapero.github.io/HIKARI/gallery/" + document.getElementById("e_url").value.trim() : "",
         comment: document.getElementById("e_comment").value.trim(),
       });
       showToast("更新しました！");
@@ -534,6 +545,10 @@
 </script>
 
 <script>
+  function previewGalleryUrl(val) {
+    const preview = document.getElementById('galleryUrlPreview');
+    preview.textContent = val ? 'URLプレビュー：https://hikapero.github.io/HIKARI/gallery/' + val : 'URLプレビュー：ファイル名を入力してね';
+  }
   function switchATab(name) {
     const names = ["chat","gallery","shop","roblox"];
     document.querySelectorAll(".atab").forEach((t,i) => t.classList.toggle("active", names[i]===name));
