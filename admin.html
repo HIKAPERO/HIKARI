@@ -383,10 +383,20 @@
   // ── GLOBAL ACTIONS ──
   window.sendReply = async () => {
     const text = document.getElementById("replyText").value.trim();
-    if (!text) return;
-    await addDoc(collection(db,"messages"), { nick:"HIKARI", text, isHikari:true, createdAt:serverTimestamp() });
-    document.getElementById("replyText").value = "";
-    showToast("✦ 返信を送りました！");
+    if (!text) { alert("メッセージを入力してね！"); return; }
+    const btn = document.querySelector(".reply-form .btn-add");
+    btn.disabled = true;
+    btn.textContent = "送信中...";
+    try {
+      await addDoc(collection(db,"messages"), { nick:"HIKARI", text, isHikari:true, createdAt:serverTimestamp() });
+      document.getElementById("replyText").value = "";
+      showToast("✦ 返信を送りました！");
+    } catch(e) {
+      alert("送信に失敗しました：" + e.message);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "✦ HIKARIとして送信";
+    }
   };
 
   window.addGallery = async () => {
