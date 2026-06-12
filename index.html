@@ -3,416 +3,390 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HIKARI — Digital Art & Creativity</title>
+<title>HIKARI — 管理者ページ</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
     --bg0: #08080f; --bg1: #0d0d18; --bg2: #13131f; --bg3: #1a1428;
     --border: #252535; --border2: #3a2f6a;
     --purple: #6c5ce7; --purple-light: #9d86f5; --purple-pale: #c9b8ff;
-    --text: #d0cce8; --text-muted: #888; --text-dim: #444; --yellow: #f0c040;
+    --text: #d0cce8; --text-muted: #888; --text-dim: #444;
+    --green: #2ecc71; --red: #e74c3c; --yellow: #f0c040;
   }
-  html { scroll-behavior: smooth; }
   body { font-family: 'Segoe UI','Hiragino Sans','Meiryo',sans-serif; background: var(--bg0); color: var(--text); min-height: 100vh; }
 
-  /* NAV */
-  nav { position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; height: 54px; background: rgba(8,8,15,0.92); backdrop-filter: blur(12px); border-bottom: 0.5px solid var(--border); }
-  .nav-logo { font-size: 17px; font-weight: 600; letter-spacing: 4px; color: var(--purple-pale); text-decoration: none; }
-  .nav-links { display: flex; gap: 24px; }
-  .nav-links a { font-size: 10px; letter-spacing: 2px; color: var(--text-muted); text-decoration: none; transition: color .2s; }
-  .nav-links a:hover { color: var(--purple-pale); }
-  .hamburger { display: none; background: none; border: none; color: var(--text-muted); font-size: 22px; cursor: pointer; }
-  .mobile-menu { display: none; flex-direction: column; background: var(--bg1); border-bottom: 0.5px solid var(--border); }
-  .mobile-menu a { padding: 14px 28px; font-size: 11px; letter-spacing: 2px; color: var(--text-muted); text-decoration: none; border-bottom: 0.5px solid var(--border); }
-  .mobile-menu.open { display: flex; }
+  /* LOGIN */
+  #loginScreen { display:flex; align-items:center; justify-content:center; min-height:100vh; padding:20px; }
+  .login-card { background:var(--bg1); border:0.5px solid var(--border2); border-radius:16px; padding:40px 32px; text-align:center; max-width:320px; width:100%; }
+  .login-logo { font-size:22px; font-weight:700; letter-spacing:5px; color:var(--purple-pale); margin-bottom:6px; }
+  .login-sub { font-size:11px; color:var(--text-dim); letter-spacing:2px; margin-bottom:32px; }
+  .google-btn { display:flex; align-items:center; justify-content:center; gap:10px; width:100%; padding:12px 20px; background:#fff; color:#333; border:none; border-radius:8px; font-size:13px; font-weight:500; cursor:pointer; transition:opacity .2s; font-family:inherit; }
+  .google-btn:hover { opacity:.9; }
+  .google-btn svg { width:18px; height:18px; flex-shrink:0; }
+  .login-note { font-size:11px; color:var(--text-dim); margin-top:16px; line-height:1.6; }
 
-  /* HERO */
-  .hero { padding: 80px 28px 64px; text-align: center; border-bottom: 0.5px solid var(--border); position: relative; overflow: hidden; }
-  .hero::before { content:''; position: absolute; top: -80px; left: 50%; transform: translateX(-50%); width: 400px; height: 400px; background: radial-gradient(circle, rgba(108,92,231,0.12) 0%, transparent 70%); pointer-events: none; }
-  .hero-eyebrow { font-size: 10px; letter-spacing: 4px; color: var(--purple); margin-bottom: 16px; }
-  .hero h1 { font-size: clamp(44px,10vw,72px); font-weight: 700; letter-spacing: 10px; color: var(--purple-pale); margin-bottom: 10px; animation: fadeUp .7s ease both; }
-  .hero-sub { font-size: 13px; color: var(--text-muted); letter-spacing: 2px; margin-bottom: 32px; animation: fadeUp .7s .1s ease both; }
-  .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; animation: fadeUp .7s .2s ease both; }
-  .btn { padding: 10px 26px; border-radius: 5px; font-size: 11px; letter-spacing: 2px; cursor: pointer; transition: all .2s; text-decoration: none; display: inline-block; }
-  .btn-primary { background: var(--purple); color: #fff; border: none; }
-  .btn-primary:hover { background: #7d6ef0; transform: translateY(-1px); }
-  .btn-outline { background: transparent; color: var(--purple-pale); border: 0.5px solid var(--border2); }
-  .btn-outline:hover { background: var(--bg3); }
-  @keyframes fadeUp { from{opacity:0;transform:translateY(16px);} to{opacity:1;transform:translateY(0);} }
+  /* ADMIN LAYOUT */
+  #adminScreen { display:none; }
+  .admin-nav { display:flex; align-items:center; justify-content:space-between; padding:0 24px; height:54px; background:var(--bg1); border-bottom:0.5px solid var(--border); position:sticky; top:0; z-index:100; }
+  .admin-logo { font-size:15px; font-weight:600; letter-spacing:3px; color:var(--purple-pale); }
+  .admin-logo span { font-size:10px; color:var(--purple); letter-spacing:2px; margin-left:8px; }
+  .user-info { display:flex; align-items:center; gap:10px; }
+  .user-name { font-size:11px; color:var(--text-muted); }
+  .logout-btn { padding:5px 14px; background:transparent; border:0.5px solid var(--border); border-radius:5px; color:var(--text-muted); font-size:10px; letter-spacing:1px; cursor:pointer; font-family:inherit; transition:border-color .2s,color .2s; }
+  .logout-btn:hover { border-color:var(--red); color:var(--red); }
 
-  /* TABS */
-  .tabs-wrap { background: var(--bg0); border-bottom: 0.5px solid var(--border); overflow-x: auto; }
-  .tabs { display: flex; padding: 0 20px; gap: 2px; min-width: max-content; }
-  .tab-btn { font-size: 10px; letter-spacing: 2px; color: var(--text-dim); padding: 12px 16px; background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: color .2s, border-color .2s; white-space: nowrap; }
-  .tab-btn:hover { color: var(--text-muted); }
-  .tab-btn.active { color: var(--purple-pale); border-bottom-color: var(--purple); }
+  .admin-tabs { display:flex; gap:2px; padding:0 20px; background:var(--bg0); border-bottom:0.5px solid var(--border); overflow-x:auto; }
+  .atab { font-size:10px; letter-spacing:2px; color:var(--text-dim); padding:12px 16px; background:none; border:none; border-bottom:2px solid transparent; cursor:pointer; transition:color .2s,border-color .2s; white-space:nowrap; font-family:inherit; }
+  .atab:hover { color:var(--text-muted); }
+  .atab.active { color:var(--purple-pale); border-bottom-color:var(--purple); }
 
-  /* PANELS */
-  .panel { display: none; background: var(--bg1); }
-  .panel.active { display: block; }
-  .section { padding: 28px; border-bottom: 0.5px solid var(--border); }
-  .sec-label { font-size: 9px; letter-spacing: 3px; color: var(--purple); margin-bottom: 14px; }
-  .sec-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 16px; }
+  .apanel { display:none; padding:24px; max-width:800px; margin:0 auto; }
+  .apanel.active { display:block; }
 
-  /* GALLERY */
-  .gallery-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 16px; }
-  @media(max-width:500px){.gallery-grid{grid-template-columns:1fr;}}
-  .gallery-card { background:var(--bg2); border:0.5px solid var(--border); border-radius:10px; overflow:hidden; transition:border-color .2s,transform .2s; }
-  .gallery-card:hover { border-color:var(--purple); transform:translateY(-2px); }
-  .gallery-thumb { position:relative; aspect-ratio:1/1; background:var(--bg3); display:flex; align-items:center; justify-content:center; overflow:hidden; }
-  .gallery-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
-  .gallery-placeholder { font-size:40px; opacity:.2; }
-  .gallery-overlay { position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,0.72) 0%, transparent 50%); display:flex; flex-direction:column; justify-content:flex-end; padding:12px; }
-  .gallery-overlay-title { font-size:13px; font-weight:600; color:#fff; margin-bottom:2px; text-shadow:0 1px 4px rgba(0,0,0,.6); }
-  .gallery-overlay-author { font-size:10px; color:rgba(255,255,255,0.65); letter-spacing:1px; }
-  .badge-new { position:absolute; top:8px; left:8px; background:var(--purple); color:#fff; font-size:8px; padding:2px 7px; border-radius:3px; letter-spacing:1px; z-index:1; }
-  .gallery-comment { padding:12px 14px; border-top:0.5px solid var(--border); }
-  .hikari-label { font-size:9px; color:var(--purple-light); letter-spacing:1.5px; margin-bottom:5px; }
-  .hikari-text { font-size:12px; color:var(--purple-pale); line-height:1.6; }
-  .upload-tile { aspect-ratio:1/1; border-radius:10px; border:0.5px dashed var(--border2); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; color:var(--text-dim); font-size:11px; letter-spacing:1px; cursor:pointer; transition:border-color .2s,color .2s; }
-  .upload-tile:hover { border-color:var(--purple); color:var(--purple-pale); }
-  .upload-tile svg { width:24px; height:24px; }
+  /* COMMON ADMIN UI */
+  .sec-label { font-size:9px; letter-spacing:3px; color:var(--purple); margin-bottom:14px; }
+  .sec-title { font-size:15px; font-weight:600; color:var(--text); margin-bottom:20px; }
+  .card { background:var(--bg1); border:0.5px solid var(--border); border-radius:10px; padding:18px; margin-bottom:14px; }
+  .field { margin-bottom:14px; }
+  .field label { display:block; font-size:10px; letter-spacing:2px; color:var(--text-muted); margin-bottom:6px; }
+  .field input, .field textarea, .field select {
+    width:100%; background:var(--bg2); border:0.5px solid var(--border);
+    border-radius:7px; padding:10px 14px; font-size:13px; color:var(--text);
+    outline:none; font-family:inherit; transition:border-color .2s;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus { border-color:var(--purple); }
+  .field textarea { resize:vertical; min-height:80px; }
+  .field input::placeholder, .field textarea::placeholder { color:var(--text-dim); }
+  .btn-row { display:flex; gap:8px; flex-wrap:wrap; }
+  .btn-add { padding:9px 20px; background:var(--purple); color:#fff; border:none; border-radius:6px; font-size:11px; letter-spacing:1.5px; cursor:pointer; font-family:inherit; transition:background .2s; }
+  .btn-add:hover { background:#7d6ef0; }
+  .btn-add:disabled { opacity:.5; cursor:not-allowed; }
+  .btn-del { padding:6px 12px; background:transparent; color:var(--red); border:0.5px solid var(--red); border-radius:5px; font-size:10px; letter-spacing:1px; cursor:pointer; font-family:inherit; transition:background .2s; }
+  .btn-del:hover { background:rgba(231,76,60,.1); }
+  .btn-edit { padding:6px 12px; background:transparent; color:var(--purple-light); border:0.5px solid var(--border2); border-radius:5px; font-size:10px; letter-spacing:1px; cursor:pointer; font-family:inherit; transition:background .2s; }
+  .btn-edit:hover { background:var(--bg3); }
+  .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:var(--purple); color:#fff; padding:10px 22px; border-radius:8px; font-size:12px; letter-spacing:1px; opacity:0; transition:opacity .3s; pointer-events:none; z-index:999; }
+  .toast.show { opacity:1; }
 
-  /* SHOP */
-  .shop-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
-  @media(max-width:400px){.shop-grid{grid-template-columns:1fr;}}
-  .shop-card { background:var(--bg2); border:0.5px solid var(--border); border-radius:10px; padding:16px; transition:border-color .2s; }
-  .shop-card:hover { border-color:var(--purple); }
-  .shop-thumb { width:100%; aspect-ratio:1.5; background:var(--bg3); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:32px; opacity:.45; margin-bottom:12px; }
-  .shop-name { font-size:12px; color:var(--text); letter-spacing:1px; margin-bottom:6px; }
-  .shop-price { font-size:15px; font-weight:600; color:var(--purple-light); margin-bottom:12px; }
-  .shop-btn { width:100%; padding:8px; background:transparent; border:0.5px solid var(--border2); border-radius:5px; color:var(--purple-pale); font-size:10px; letter-spacing:1.5px; cursor:pointer; transition:background .2s; }
-  .shop-btn:hover { background:var(--bg3); }
+  /* CHAT PANEL */
+  .chat-thread { display:flex; flex-direction:column; gap:12px; max-height:400px; overflow-y:auto; padding:4px 0 16px; }
+  .msg-row { display:flex; align-items:flex-start; gap:10px; }
+  .msg-row.hikari { flex-direction:row-reverse; }
+  .msg-av { width:30px; height:30px; border-radius:50%; background:var(--bg2); border:0.5px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0; }
+  .msg-row.hikari .msg-av { background:var(--bg3); border-color:var(--purple); }
+  .msg-content { max-width:65%; }
+  .msg-meta { font-size:9px; color:var(--text-dim); margin-bottom:4px; }
+  .msg-row.hikari .msg-meta { text-align:right; color:var(--purple-light); }
+  .msg-bbl { padding:9px 13px; border-radius:12px; font-size:13px; line-height:1.55; }
+  .msg-row.visitor .msg-bbl { background:var(--bg2); border:0.5px solid var(--border); color:#aaa; border-top-left-radius:3px; }
+  .msg-row.hikari .msg-bbl { background:var(--bg3); border:0.5px solid var(--border2); color:var(--purple-pale); border-top-right-radius:3px; }
+  .msg-actions { display:flex; gap:6px; margin-top:4px; }
+  .msg-row.hikari .msg-actions { justify-content:flex-end; }
+  .reply-form { background:var(--bg2); border:0.5px solid var(--border2); border-radius:8px; padding:14px; margin-top:12px; }
+  .reply-form textarea { width:100%; background:var(--bg0); border:0.5px solid var(--border); border-radius:6px; padding:9px 12px; font-size:13px; color:var(--text); outline:none; resize:vertical; min-height:70px; font-family:inherit; margin-bottom:10px; }
+  .reply-form textarea:focus { border-color:var(--purple); }
+  .empty-note { text-align:center; color:var(--text-dim); font-size:12px; padding:24px 0; letter-spacing:1px; }
 
-  /* ROBLOX */
-  .rblx-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px; }
-  .rblx-stat { background:var(--bg2); border:0.5px solid var(--border); border-radius:8px; padding:14px; text-align:center; }
-  .rblx-icon { font-size:22px; margin-bottom:8px; opacity:.5; }
-  .rblx-label { font-size:9px; letter-spacing:2px; color:var(--text-dim); }
-  .rblx-val { font-size:18px; font-weight:600; color:var(--text); margin-top:4px; }
-  .rblx-diary { background:var(--bg2); border:0.5px solid var(--border); border-radius:8px; padding:16px; }
-  .rblx-diary-label { font-size:9px; letter-spacing:2px; color:var(--text-dim); margin-bottom:10px; }
-  /* SUB TABS */
-  .sub-tabs { display:flex; gap:4px; padding:14px 20px 0; background:var(--bg1); border-bottom:0.5px solid var(--border); }
-  .sub-tab { font-size:11px; letter-spacing:1.5px; color:var(--text-dim); padding:7px 18px; background:none; border:none; border-bottom:2px solid transparent; cursor:pointer; transition:color .2s,border-color .2s; white-space:nowrap; font-family:inherit; border-radius:6px 6px 0 0; }
-  .sub-tab:hover { color:var(--text-muted); }
-  .sub-tab.active { color:var(--purple-pale); border-bottom-color:var(--purple); background:var(--bg2); }
-  .sub-panel { display:none; }
-  .sub-panel.active { display:block; }
+  /* GALLERY ADMIN */
+  .gallery-list { display:flex; flex-direction:column; gap:10px; }
+  .gallery-row { display:flex; align-items:center; gap:12px; background:var(--bg2); border:0.5px solid var(--border); border-radius:8px; padding:12px; }
+  .gallery-row img { width:52px; height:52px; object-fit:cover; border-radius:6px; background:var(--bg3); flex-shrink:0; }
+  .gallery-row-info { flex:1; min-width:0; }
+  .gallery-row-title { font-size:13px; color:var(--text); margin-bottom:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .gallery-row-sub { font-size:10px; color:var(--text-dim); letter-spacing:1px; }
 
-  /* GAME SHOWCASE */
-  .game-showcase { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:4px; }
-  @media(max-width:480px){.game-showcase{grid-template-columns:repeat(2,1fr);}}
-  .game-showcase-card { background:var(--bg2); border:0.5px solid var(--border); border-radius:10px; overflow:hidden; text-decoration:none; display:flex; flex-direction:column; transition:border-color .2s,transform .2s; }
-  .game-showcase-card:hover { border-color:var(--purple); transform:translateY(-2px); }
-  .game-showcase-thumb { width:100%; aspect-ratio:1/1; object-fit:cover; display:block; }
-  .game-showcase-info { padding:7px 9px; }
-  .game-showcase-name { font-size:11px; font-weight:600; color:var(--text); margin-bottom:2px; }
-  .game-showcase-badge { font-size:9px; letter-spacing:1px; color:var(--purple-light); }
+  /* SHOP ADMIN */
+  .shop-list { display:flex; flex-direction:column; gap:10px; }
+  .shop-row { display:flex; align-items:center; gap:12px; background:var(--bg2); border:0.5px solid var(--border); border-radius:8px; padding:12px; }
+  .shop-row-emoji { width:44px; height:44px; background:var(--bg3); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
+  .shop-row-info { flex:1; }
+  .shop-row-name { font-size:13px; color:var(--text); margin-bottom:3px; }
+  .shop-row-price { font-size:12px; color:var(--purple-light); }
 
-  .diary-entry { padding:12px 0; border-bottom:0.5px solid var(--border); }
-  .diary-entry:last-child { border-bottom:none; }
-  .diary-date { font-size:9px; color:var(--text-dim); letter-spacing:1px; margin-bottom:6px; }
-  .diary-text { font-size:13px; color:#aaa; line-height:1.6; margin-bottom:8px; }
-  .diary-games { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
-  .diary-game-icon { display:flex; flex-direction:column; align-items:center; gap:3px; text-decoration:none; }
-  .diary-game-icon img { width:48px; height:48px; border-radius:10px; border:1.5px solid var(--border); object-fit:cover; transition:border-color .2s; }
-  .diary-game-icon:hover img { border-color:var(--purple); }
-  .diary-game-icon span { font-size:9px; color:var(--text-dim); max-width:52px; text-align:center; line-height:1.3; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+  /* ROBLOX ADMIN */
+  .diary-list { display:flex; flex-direction:column; gap:10px; }
+  .diary-row { background:var(--bg2); border:0.5px solid var(--border); border-radius:8px; padding:14px; }
+  .diary-row-date { font-size:10px; color:var(--text-dim); letter-spacing:1px; margin-bottom:6px; }
+  .diary-row-text { font-size:13px; color:#aaa; line-height:1.6; }
+  .diary-row-actions { display:flex; gap:6px; margin-top:10px; }
+  .game-master-grid { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:16px; }
+  .game-icon-card { width:80px; text-align:center; cursor:grab; user-select:none; }
+  .game-icon-card:active { cursor:grabbing; }
+  .game-icon-img { width:72px; height:72px; border-radius:12px; object-fit:cover; border:2px solid var(--border); transition:border-color .2s; display:block; margin:0 auto 4px; }
+  .game-icon-card:hover .game-icon-img { border-color:var(--purple); }
+  .game-icon-name { font-size:10px; color:var(--text-muted); letter-spacing:0.5px; line-height:1.3; word-break:break-all; }
+  /* DIARY LAYOUT */
+  .diary-layout { display:flex; gap:14px; align-items:flex-start; }
+  .game-sidebar { width:120px; flex-shrink:0; background:var(--bg2); border:0.5px solid var(--border2); border-radius:10px; padding:10px; }
+  .game-sidebar-label { font-size:9px; letter-spacing:2px; color:var(--purple); margin-bottom:10px; }
+  .game-sidebar-scroll { height:320px; overflow-y:auto; display:flex; flex-direction:column; gap:6px; }
+  .game-sidebar-scroll::-webkit-scrollbar { width:4px; }
+  .game-sidebar-scroll::-webkit-scrollbar-track { background:transparent; }
+  .game-sidebar-scroll::-webkit-scrollbar-thumb { background:var(--border2); border-radius:2px; }
+  .sidebar-game-item { display:flex; flex-direction:column; align-items:center; gap:3px; padding:6px 4px; border-radius:8px; cursor:grab; transition:background .15s; }
+  .sidebar-game-item:hover { background:var(--bg3); }
+  .sidebar-game-item:active { cursor:grabbing; }
+  .sidebar-game-item img { width:52px; height:52px; border-radius:8px; object-fit:cover; border:1px solid var(--border); }
+  .sidebar-game-item span { font-size:9px; color:var(--text-muted); text-align:center; line-height:1.3; word-break:break-all; }
+  .diary-form-area { flex:1; min-width:0; }
+  .drop-zone { border:2px dashed var(--border2); border-radius:10px; padding:14px; min-height:90px; display:flex; flex-wrap:wrap; gap:8px; align-items:center; transition:border-color .2s, background .2s; }
+  .drop-zone.dragover { border-color:var(--purple); background:rgba(108,92,231,0.08); }
+  .drop-zone-hint { font-size:12px; color:var(--text-dim); letter-spacing:1px; }
+  .dropped-icon { width:60px; text-align:center; position:relative; }
+  .dropped-icon img { width:56px; height:56px; border-radius:10px; object-fit:cover; display:block; margin:0 auto 2px; }
+  .dropped-icon .remove-btn { position:absolute; top:-4px; right:-4px; width:18px; height:18px; border-radius:50%; background:var(--red); color:#fff; font-size:11px; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; line-height:1; }
+  .dropped-icon-name { font-size:9px; color:var(--text-dim); }
 
-  /* CHAT */
-  .chat-status { display:flex; align-items:center; gap:8px; padding:12px 28px; background:var(--bg0); border-bottom:0.5px solid var(--border); }
-  .dot-maybe { width:8px; height:8px; border-radius:50%; background: #4cd97b; animation:blink 2.4s ease-in-out infinite; flex-shrink:0; }
-  @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.25;} }
-  .status-txt { font-size:11px; color:var(--text-muted); letter-spacing:1px; }
-  .status-txt strong { color:var(--purple-pale); font-weight:500; }
-  .chat-thread { padding:20px 28px; display:flex; flex-direction:column; gap:14px; max-height:420px; overflow-y:auto; }
-  .msg { display:flex; gap:10px; align-items:flex-start; }
-  .msg.hikari { flex-direction:row-reverse; }
-  .msg-avatar { width:32px; height:32px; border-radius:50%; background:var(--bg2); border:0.5px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
-  .msg.hikari .msg-avatar { background:var(--bg3); border-color:var(--purple); }
-  .msg-body { max-width:70%; }
-  .msg-name { font-size:9px; color:var(--text-dim); letter-spacing:1px; margin-bottom:5px; }
-  .msg.hikari .msg-name { text-align:right; color:var(--purple-light); }
-  .msg-time { font-size:9px; color:var(--text-dim); margin-top:4px; letter-spacing:0.5px; }
-  .msg.hikari .msg-time { text-align:right; }
-  .msg-bubble { padding:10px 14px; border-radius:14px; font-size:13px; line-height:1.6; }
-  .msg.visitor .msg-bubble { background:var(--bg2); border:0.5px solid var(--border); color:#aaa; border-top-left-radius:4px; }
-  .msg.hikari .msg-bubble { background:var(--bg3); border:0.5px solid var(--border2); color:var(--purple-pale); border-top-right-radius:4px; }
-  .chat-empty { text-align:center; color:var(--text-dim); font-size:12px; padding:20px 0; letter-spacing:1px; }
-  .chat-loading { text-align:center; color:var(--text-dim); font-size:12px; padding:20px 0; letter-spacing:1px; }
+  /* STAR RATING */
+  .star-rating { display:flex; gap:6px; flex-direction:row-reverse; justify-content:flex-end; }
+  .star-rating input { display:none; }
+  .star-rating label { font-size:24px; color:var(--border); cursor:pointer; transition:color .15s; }
+  .star-rating input:checked ~ label,
+  .star-rating label:hover,
+  .star-rating label:hover ~ label { color:#f0c040; }
 
-  .chat-form-wrap { padding:20px 28px; border-top:0.5px solid var(--border); background:var(--bg0); }
-  .chat-form-label { font-size:9px; letter-spacing:3px; color:var(--purple); margin-bottom:12px; }
-  .form-row { display:flex; flex-direction:column; gap:10px; }
-  .form-input { background:var(--bg2); border:0.5px solid var(--border); border-radius:7px; padding:10px 14px; font-size:13px; color:var(--text); outline:none; width:100%; font-family:inherit; transition:border-color .2s; }
-  .form-input:focus { border-color:var(--purple); }
-  .form-input::placeholder { color:var(--text-dim); }
-  textarea.form-input { resize:vertical; min-height:80px; }
-  .form-submit { align-self:flex-end; padding:10px 24px; background:var(--purple); color:#fff; border:none; border-radius:5px; font-size:10px; letter-spacing:2px; cursor:pointer; transition:background .2s,transform .15s; font-family:inherit; }
-  .form-submit:hover { background:#7d6ef0; transform:translateY(-1px); }
-  .form-submit:disabled { opacity:.5; cursor:not-allowed; transform:none; }
-  .form-hint { font-size:11px; color:var(--text-dim); margin-top:8px; letter-spacing:.5px; }
-  .sent-msg { display:none; text-align:center; padding:16px; color:var(--purple-pale); font-size:13px; line-height:1.7; }
-
-  /* EMOJI PICKER */
-  .emoji-picker-wrap { position:relative; margin-bottom:10px; }
-  .emoji-selected-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
-  .emoji-current { width:44px; height:44px; border-radius:50%; background:var(--bg2); border:1.5px solid var(--border2); display:flex; align-items:center; justify-content:center; font-size:22px; cursor:pointer; transition:border-color .2s; flex-shrink:0; }
-  .emoji-current:hover { border-color:var(--purple); }
-  .emoji-hint { font-size:11px; color:var(--text-dim); letter-spacing:1px; }
-  .emoji-panel { display:none; background:var(--bg1); border:0.5px solid var(--border2); border-radius:12px; padding:14px; margin-top:8px; }
-  .emoji-panel.open { display:block; }
-  .emoji-search { width:100%; background:var(--bg2); border:0.5px solid var(--border); border-radius:7px; padding:8px 12px; font-size:13px; color:var(--text); outline:none; font-family:inherit; margin-bottom:10px; }
-  .emoji-search::placeholder { color:var(--text-dim); }
-  .emoji-category { font-size:9px; letter-spacing:2px; color:var(--purple); margin-bottom:8px; margin-top:10px; }
-  .emoji-category:first-of-type { margin-top:0; }
-  .emoji-grid { display:flex; flex-wrap:wrap; gap:4px; }
-  .emoji-btn { width:36px; height:36px; border-radius:7px; background:none; border:none; font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .15s; }
-  .emoji-btn:hover { background:var(--bg3); }
-  .emoji-btn.selected { background:var(--bg3); outline:1.5px solid var(--purple); }
-
-  /* SOCIAL LINKS */
-  .social-list { display:flex; flex-direction:column; gap:2px; }
-  .social-item { display:flex; align-items:center; gap:14px; padding:12px 14px; border-radius:10px; text-decoration:none; transition:background .2s; }
-  .social-item:hover { background:var(--bg3); }
-  .social-icon { width:36px; height:36px; border-radius:9px; background:var(--bg3); border:0.5px solid var(--border); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:18px; }
-  .social-icon img { width:100%; height:100%; object-fit:cover; border-radius:9px; }
-  .social-info { flex:1; min-width:0; }
-  .social-name { font-size:13px; font-weight:600; color:var(--text); margin-bottom:1px; }
-  .social-url { font-size:11px; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-
-  /* ABOUT */
-  .about-card { background:var(--bg2); border:0.5px solid var(--border); border-radius:12px; padding:24px; display:flex; gap:18px; align-items:center; margin-bottom:16px; }
-  @media(max-width:480px){.about-card{flex-direction:column;text-align:center;}}
-  .about-avatar { width:110px; height:110px; border-radius:50%; background:var(--bg3); border:2px solid var(--purple); display:flex; align-items:center; justify-content:center; font-size:32px; flex-shrink:0; overflow:hidden; }
-  .about-avatar img { width:100%; height:100%; object-fit:cover; object-position:center top; }
-  .about-name { font-size:20px; font-weight:700; color:var(--purple-pale); letter-spacing:3px; margin-bottom:6px; }
-  .about-bio { font-size:13px; color:#888; line-height:1.7; margin-bottom:12px; }
-  .about-tags { display:flex; gap:8px; flex-wrap:wrap; }
-  .about-tag { font-size:10px; padding:4px 10px; border-radius:4px; background:var(--bg3); color:var(--purple-light); border:0.5px solid var(--border2); letter-spacing:1px; }
-  .about-facts { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
-  .fact-card { background:var(--bg2); border:0.5px solid var(--border); border-radius:8px; padding:14px; }
-  .fact-label { font-size:10px; color:var(--purple-light); letter-spacing:2px; margin-bottom:6px; }
-  .fact-val { font-size:13px; color:var(--text); }
-
-  /* FOOTER */
-  footer { padding:28px; text-align:center; border-top:0.5px solid var(--border); }
-  footer p { font-size:10px; color:var(--text-dim); letter-spacing:1.5px; }
-
-  /* MODAL */
-  .modal-backdrop { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:200; align-items:center; justify-content:center; }
+  /* EDIT MODAL */
+  .modal-backdrop { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:500; align-items:center; justify-content:center; padding:20px; }
   .modal-backdrop.open { display:flex; }
-  .modal { background:var(--bg1); border:0.5px solid var(--border2); border-radius:14px; padding:28px; max-width:360px; width:90%; text-align:center; }
-  .modal h3 { font-size:14px; color:var(--purple-pale); letter-spacing:2px; margin-bottom:10px; }
-  .modal p { font-size:12px; color:var(--text-muted); line-height:1.7; margin-bottom:20px; }
-  .modal-close { padding:8px 22px; background:var(--purple); color:#fff; border:none; border-radius:5px; font-size:11px; letter-spacing:1.5px; cursor:pointer; font-family:inherit; }
+  .modal-box { background:var(--bg1); border:0.5px solid var(--border2); border-radius:14px; padding:24px; width:100%; max-width:440px; }
+  .modal-title { font-size:13px; color:var(--purple-pale); letter-spacing:2px; margin-bottom:16px; }
+  .modal-btns { display:flex; gap:8px; justify-content:flex-end; margin-top:16px; }
+  .btn-cancel { padding:8px 18px; background:transparent; border:0.5px solid var(--border); border-radius:5px; color:var(--text-muted); font-size:11px; cursor:pointer; font-family:inherit; }
+  .btn-save { padding:8px 18px; background:var(--purple); color:#fff; border:none; border-radius:5px; font-size:11px; letter-spacing:1px; cursor:pointer; font-family:inherit; }
+  .btn-save:hover { background:#7d6ef0; }
 </style>
 </head>
 <body>
 
-<nav>
-  <a href="#" class="nav-logo">HIKARI</a>
-  <div class="nav-links" id="navLinks">
-    <a href="#" onclick="switchTab('about');return false;">ABOUT</a>
-    <a href="#" onclick="switchTab('chat');return false;">CHAT</a>
-    <a href="#" onclick="switchTab('diary');return false;">DIARY</a>
-    <a href="#" onclick="switchTab('game');return false;">GAME</a>
-    <a href="#" onclick="switchTab('links');return false;">LINKS</a>
-    <a href="#" onclick="switchTab('gallery');return false;">GALLERY</a>
-    <a href="#" onclick="switchTab('shop');return false;">SHOP</a>
-  </div>
-  <button class="hamburger" onclick="toggleMenu()" aria-label="メニュー">☰</button>
-</nav>
-<div class="mobile-menu" id="mobileMenu">
-  <a href="#" onclick="switchTab('about');toggleMenu();return false;">ABOUT</a>
-  <a href="#" onclick="switchTab('chat');toggleMenu();return false;">CHAT</a>
-  <a href="#" onclick="switchTab('diary');toggleMenu();return false;">DIARY</a>
-  <a href="#" onclick="switchTab('game');toggleMenu();return false;">GAME</a>
-  <a href="#" onclick="switchTab('links');toggleMenu();return false;">LINKS</a>
-  <a href="#" onclick="switchTab('gallery');toggleMenu();return false;">GALLERY</a>
-  <a href="#" onclick="switchTab('shop');toggleMenu();return false;">SHOP</a>
-</div>
-
-<section class="hero">
-  <div class="hero-eyebrow">DIGITAL ART &amp; CREATIVITY</div>
-  <h1>HIKARI</h1>
-  <p class="hero-sub">アート・ゲーム・あなたの作品</p>
-  <div class="hero-btns">
-    <a href="#" class="btn btn-primary" onclick="switchTab('gallery');return false;">GALLERY →</a>
-    <a href="#" class="btn btn-outline" onclick="switchTab('shop');return false;">SHOP</a>
-  </div>
-</section>
-
-<div class="tabs-wrap">
-  <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('about')">ABOUT</button>
-    <button class="tab-btn" onclick="switchTab('chat')">CHAT</button>
-    <button class="tab-btn" onclick="switchTab('diary')">DIARY</button>
-    <button class="tab-btn" onclick="switchTab('game')">GAME</button>
-    <button class="tab-btn" onclick="switchTab('links')">LINKS</button>
-    <button class="tab-btn" onclick="switchTab('gallery')">GALLERY</button>
-    <button class="tab-btn" onclick="switchTab('shop')">SHOP</button>
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">HIKARI</div>
+    <div class="login-sub">ADMIN</div>
+    <button class="google-btn" id="loginBtn">
+      <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.29-8.16 2.29-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
+      Googleアカウントでログイン
+    </button>
+    <p class="login-note">管理者として登録されたGoogleアカウントのみログインできます。</p>
   </div>
 </div>
 
-<!-- GALLERY -->
-<div class="panel" id="panel-gallery">
-  <div class="section">
-    <div class="sec-label">— COMMUNITY ART</div>
-    <div class="sec-title">みんなの作品</div>
+<!-- ADMIN -->
+<div id="adminScreen">
+  <div class="admin-nav">
+    <div class="admin-logo">HIKARI <span>ADMIN</span></div>
+    <div class="user-info">
+      <span class="user-name" id="userName"></span>
+      <button class="logout-btn" id="logoutBtn">ログアウト</button>
+    </div>
+  </div>
 
-    <div class="gallery-grid" id="galleryGrid">
-      <div class="upload-tile" onclick="openModal('uploadModal')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 16V8m0 0l-3 3m3-3l3 3M20 21H4a2 2 0 01-2-2V5a2 2 0 012-2h16a2 2 0 012 2v14a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        作品を投稿
+  <div class="admin-tabs">
+    <button class="atab active" onclick="switchATab('chat')">💬 チャット</button>
+    <button class="atab" onclick="switchATab('gallery')">🎨 ギャラリー</button>
+    <button class="atab" onclick="switchATab('shop')">🛍 ショップ</button>
+    <button class="atab" onclick="switchATab('diary')">📔 日記</button>
+    <button class="atab" onclick="switchATab('game')">🎮 ゲーム</button>
+    <button class="atab" onclick="switchATab('members')">👤 メンバー</button>
+    <button class="atab" onclick="switchATab('links')">🔗 リンク</button>
+  </div>
+
+  <!-- CHAT -->
+  <div class="apanel active" id="apanel-chat">
+    <div class="sec-label">— CHAT MANAGEMENT</div>
+    <div class="sec-title">チャット管理</div>
+    <div class="card">
+      <div class="chat-thread" id="adminChatThread">
+        <div class="empty-note">読み込み中...</div>
+      </div>
+    </div>
+    <div class="card reply-form">
+      <div style="font-size:10px;letter-spacing:2px;color:var(--purple);margin-bottom:10px;">— HIKARIとして返信する</div>
+      <textarea id="replyText" placeholder="返信メッセージを入力..."></textarea>
+      <div class="btn-row">
+        <button class="btn-add" onclick="sendReply()">✦ HIKARIとして送信</button>
       </div>
     </div>
   </div>
-</div>
 
-<!-- SHOP -->
-<div class="panel" id="panel-shop">
-  <div class="section">
-    <div class="sec-label">— HIKARI SHOP</div>
-    <div class="sec-title">グッズを買う</div>
-    <div class="shop-grid" id="shopGrid">
-      <div style="color:var(--text-dim);font-size:12px;text-align:center;padding:24px;grid-column:1/-1;">読み込み中...</div>
-    </div>
-  </div>
-</div>
-
-<!-- DIARY -->
-<div class="panel" id="panel-diary">
-  <div class="sub-tabs">
-    <button class="sub-tab active" onclick="switchSubTab('diary','hikari')">⭐ HIKARI</button>
-    <button class="sub-tab" onclick="switchSubTab('diary','pero')">🐱 ぺろちゃん</button>
-  </div>
-  <div class="sub-panel active" id="diary-hikari">
-    <div class="section">
-      <div class="sec-label">— HIKARI'S DIARY</div>
-      <div class="sec-title">HIKARIの日記</div>
-      <div class="rblx-diary">
-        <div id="diaryEntriesHikari"><div style="color:var(--text-dim);font-size:12px;text-align:center;padding:16px;">読み込み中...</div></div>
-      </div>
-    </div>
-  </div>
-  <div class="sub-panel" id="diary-pero">
-    <div class="section">
-      <div class="sec-label">— PERO'S DIARY</div>
-      <div class="sec-title">ぺろちゃんの日記</div>
-      <div class="rblx-diary">
-        <div id="diaryEntiresPero"><div style="color:var(--text-dim);font-size:12px;text-align:center;padding:16px;">読み込み中...</div></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- GAME -->
-<div class="panel" id="panel-game">
-  <div class="section">
-    <div class="sec-label">— GAMES</div>
-    <div class="sec-title">よくやるゲーム</div>
-    <div class="game-showcase" id="gameShowcase">
-      <div style="color:var(--text-dim);font-size:12px;text-align:center;padding:24px;grid-column:1/-1;">読み込み中...</div>
-    </div>
-  </div>
-</div>
-
-<!-- CHAT -->
-<div class="panel" id="panel-chat">
-  <div class="chat-status">
-    <div class="dot-maybe"></div>
-    <div class="status-txt"><strong>HIKARI</strong> はオンラインかもです...多分</div>
-  </div>
-  <div class="chat-thread" id="chatThread">
-    <div class="chat-loading">メッセージを読み込み中...</div>
-  </div>
-  <div class="chat-form-wrap">
-    <div class="chat-form-label">— メッセージを送る</div>
-    <div class="form-row" id="chatForm">
-      <div class="emoji-picker-wrap">
-        <div class="emoji-selected-row">
-          <div class="emoji-current" id="emojiCurrent" onclick="toggleEmojiPanel()" title="アイコンを選ぶ">💬</div>
-          <span class="emoji-hint">← タップしてアイコンを選んでね！</span>
+  <!-- GALLERY -->
+  <div class="apanel" id="apanel-gallery">
+    <div class="sec-label">— GALLERY MANAGEMENT</div>
+    <div class="sec-title">ギャラリー管理</div>
+    <div class="card">
+      <div style="font-size:10px;letter-spacing:2px;color:var(--purple);margin-bottom:14px;">— 新しい作品を追加</div>
+      <div class="field"><label>作品タイトル</label><input type="text" id="galleryTitle" placeholder="例：夕焼けの空"></div>
+      <div class="field"><label>投稿者名</label><input type="text" id="galleryAuthor" placeholder="例：starpainter_22"></div>
+      <div class="field">
+        <label>画像ファイル名（自動発行）</label>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+          <div style="background:var(--bg0); border:0.5px solid var(--border2); border-radius:7px; padding:9px 14px; font-size:14px; font-weight:600; color:var(--purple-pale); letter-spacing:1px; flex:1;" id="galleryFileName">—</div>
+          <button type="button" class="btn-edit" onclick="copyFileName()" id="copyBtn" style="white-space:nowrap;">📋 コピー</button>
+          <button type="button" class="btn-add" onclick="issueFileName()" style="white-space:nowrap;">発行する</button>
         </div>
-        <div class="emoji-panel" id="emojiPanel">
-          <input class="emoji-search" type="text" placeholder="絵文字を検索..." oninput="filterEmoji(this.value)" id="emojiSearch">
-          <div id="emojiList"></div>
+        <div style="font-size:11px; color:var(--text-dim); margin-top:6px;" id="galleryUrlPreview">↑「発行する」を押すとファイル名が自動で決まるよ</div>
+        <input type="hidden" id="galleryUrl">
+      </div>
+      <div class="field"><label>HIKARIのコメント</label><textarea id="galleryComment" placeholder="この作品へのコメントを書こう！"></textarea></div>
+      <button class="btn-add" onclick="addGallery()">追加する</button>
+    </div>
+    <div class="gallery-list" id="galleryList">
+      <div class="empty-note">読み込み中...</div>
+    </div>
+  </div>
+
+  <!-- SHOP -->
+  <div class="apanel" id="apanel-shop">
+    <div class="sec-label">— SHOP MANAGEMENT</div>
+    <div class="sec-title">ショップ管理</div>
+    <div class="card">
+      <div style="font-size:10px;letter-spacing:2px;color:var(--purple);margin-bottom:14px;">— 新しい商品を追加</div>
+      <div class="field"><label>商品名</label><input type="text" id="shopName" placeholder="例：オリジナルTシャツ"></div>
+      <div class="field"><label>価格（数字のみ）</label><input type="number" id="shopPrice" placeholder="例：2800"></div>
+      <div class="field"><label>絵文字アイコン</label><input type="text" id="shopEmoji" placeholder="例：👕" maxlength="2"></div>
+      <div class="field"><label>説明文</label><textarea id="shopDesc" placeholder="商品の説明を書こう！" style="min-height:60px;"></textarea></div>
+      <button class="btn-add" onclick="addShop()">追加する</button>
+    </div>
+    <div class="shop-list" id="shopList">
+      <div class="empty-note">読み込み中...</div>
+    </div>
+  </div>
+
+  <!-- DIARY -->
+  <div class="apanel" id="apanel-diary">
+    <div class="sec-label">— DIARY</div>
+    <div class="sec-title">日記を投稿</div>
+    <div class="card" style="margin-bottom:14px;">
+      <div class="diary-layout">
+        <!-- 左：ゲーム一覧 -->
+        <div class="game-sidebar">
+          <div class="game-sidebar-label">— GAMES</div>
+          <div class="game-sidebar-scroll" id="gameMasterGrid">
+            <div style="font-size:10px;color:var(--text-dim);text-align:center;padding:8px;">読み込み中...</div>
+          </div>
+        </div>
+        <!-- 右：日記フォーム -->
+        <div class="diary-form-area">
+          <div class="field">
+            <label>誰の日記？</label>
+            <select id="diaryOwner" style="background:var(--bg2);border:0.5px solid var(--border);border-radius:7px;padding:10px 14px;font-size:13px;color:var(--text);outline:none;width:100%;font-family:inherit;">
+              <option value="hikari">⭐ HIKARI</option>
+              <option value="pero">🐱 ぺろちゃん</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>今日やったゲーム（左からドラッグ＆ドロップ）</label>
+            <div class="drop-zone" id="dropZone" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="dropGame(event)">
+              <span class="drop-zone-hint">← ゲームをここにドロップ</span>
+            </div>
+            <input type="hidden" id="droppedGames" value="[]">
+          </div>
+          <div class="field"><label>今日のできごと（ゲーム・お絵描きなど自由に）</label><textarea id="rblxDiary" placeholder="今日は○○をやったよ！絵も描いたよ〜"></textarea></div>
+          <button class="btn-add" onclick="addRblx()">投稿する</button>
         </div>
       </div>
-      <input class="form-input" type="text" id="chatNick" placeholder="ニックネーム" style="max-width:200px;" maxlength="20">
-      <textarea class="form-input" id="chatMsg" placeholder="HIKARIへのメッセージ..." maxlength="300"></textarea>
-      <button class="form-submit" id="chatSubmit" onclick="sendMsg()">送信する</button>
     </div>
-    <div class="sent-msg" id="sentMsg">💜 メッセージを受け取ったよ！HIKARIが確認して返事するね。しばらく待ってね。</div>
-    <p class="form-hint">※ HIKARIが確認してから返事するよ！すこし待ってね。</p>
-  </div>
-</div>
-
-<!-- ABOUT -->
-<div class="panel active" id="panel-about">
-  <div class="section">
-    <div class="sec-label">— ABOUT</div>
-    <div id="memberList"><div style="color:var(--text-dim);font-size:12px;text-align:center;padding:24px;">読み込み中...</div></div>
-  </div>
-
-</div>
-
-<!-- LINKS -->
-<div class="panel" id="panel-links">
-  <div class="section">
-    <div class="sec-label">— LINKS</div>
-    <div class="sec-title">リンク</div>
-    <div class="social-list" id="socialList">
-      <div style="color:var(--text-dim);font-size:12px;text-align:center;padding:16px;">読み込み中...</div>
+    <div class="diary-list" id="diaryList">
+      <div class="empty-note">読み込み中...</div>
     </div>
   </div>
-</div>
 
-<footer><p>© 2025 HIKARI — All artworks by HIKARI</p></footer>
-
-<!-- MODALS -->
-<div class="modal-backdrop" id="uploadModal">
-  <div class="modal" style="max-width:420px; text-align:left;">
-    <h3 style="text-align:center; margin-bottom:16px;">作品を投稿してみよう！</h3>
-    <p style="margin-bottom:12px; text-align:center; font-size:13px; color:var(--text-muted);">HIKARIのInstagramのDMに絵を送ってね！<br>採用された作品はギャラリーに掲載されるよ。</p>
-    <div style="background:var(--bg2); border-radius:8px; padding:14px; margin-bottom:14px;">
-      <div style="font-size:9px; letter-spacing:2px; color:var(--purple); margin-bottom:10px;">— 送るときのルール</div>
-      <div style="display:flex; flex-direction:column; gap:7px;">
-        <div style="font-size:12px; color:var(--text-muted); line-height:1.5;">🎨 オリジナルの絵であること（デジタルでも、手書きを写真に撮ったものでもOK！）</div>
-        <div style="font-size:12px; color:var(--text-muted); line-height:1.5;">❌ 他の人の絵のコピーや、AIで作った絵はNG</div>
-        <div style="font-size:12px; color:var(--text-muted); line-height:1.5;">✏️ お名前（ニックネームOK）を一緒に教えてね</div>
-        <div style="font-size:12px; color:var(--text-muted); line-height:1.5;">⬜ 画像は<strong style="color:var(--purple-pale);">正方形（1:1）</strong>で送ると、きれいに表示されるよ！（正方形じゃなくてもOK、トリミングされることがあるよ）</div>
-        <div style="font-size:12px; color:var(--text-muted); line-height:1.5;">📁 画像は<strong style="color:var(--purple-pale);">25MB以下</strong>で送ってね（スマホの写真やお絵描きアプリの絵はだいたいOK！）</div>
-        <div style="font-size:12px; color:var(--purple-pale); font-weight:500; line-height:1.5;">👨‍👩‍👧 送る前に、お父さんかお母さんに送っていいか確認してね！</div>
+  <!-- GAME -->
+  <div class="apanel" id="apanel-game">
+    <div class="sec-label">— GAME</div>
+    <div class="sec-title">ゲーム管理</div>
+    <div class="card" style="margin-bottom:14px;">
+      <div style="font-size:10px;letter-spacing:2px;color:var(--purple);margin-bottom:14px;">— ゲームを登録する</div>
+      <input type="hidden" id="gameOwner" value="hikari">
+      <div class="field"><label>ゲーム名</label><input type="text" id="gameName" placeholder="例：Cats and Soup"></div>
+      <div class="field">
+        <label>プラットフォーム</label>
+        <select id="gamePlatform" style="background:var(--bg2);border:0.5px solid var(--border);border-radius:7px;padding:10px 14px;font-size:13px;color:var(--text);outline:none;width:100%;font-family:inherit;">
+          <option value="Roblox">Roblox</option>
+          <option value="Minecraft">Minecraft</option>
+          <option value="Meta Quest">Meta Quest</option>
+          <option value="その他">その他</option>
+        </select>
       </div>
+      <div class="field"><label>アイコン画像URL</label><input type="text" id="gameIconUrl" placeholder="例：https://tr.rbxcdn.com/..."></div>
+      <div class="field"><label>ゲームURL（任意）</label><input type="text" id="gameUrl" placeholder="例：https://www.roblox.com/ja/games/..."></div>
+      <button class="btn-add" onclick="addGame()">登録する</button>
     </div>
-    <div style="background:var(--bg3); border:0.5px solid var(--border2); border-radius:8px; padding:14px; margin-bottom:16px; text-align:center;">
-      <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px; line-height:1.7;">まず <strong style="color:var(--purple-pale);">@hikari.and.pero をフォロー</strong> してから、DMで絵を送ってね！<br>フォローしていないとメッセージが届かないよ。</div>
-      <a href="https://www.instagram.com/hikari.and.pero/" target="_blank" rel="noopener"
-        style="display:inline-block; padding:9px 22px; background:var(--purple); color:#fff; border-radius:6px; font-size:11px; letter-spacing:1.5px; text-decoration:none;">
-        Instagramを開く →
-      </a>
+    <div class="diary-list" id="gameAdminList" style="margin-top:14px;">
+      <div class="empty-note">読み込み中...</div>
     </div>
-    <p style="font-size:11px; color:var(--text-dim); text-align:center; line-height:1.7;">掲載できる作品の数には限りがあるので、すべての作品が掲載されるわけではありません。HIKARIが一枚一枚確認して選びます。掲載された場合はDMでお知らせするね！</p>
-    <div style="text-align:center; margin-top:16px;">
-      <button class="modal-close" onclick="closeModal('uploadModal')">とじる</button>
-    </div>
-  </div>
-</div>
-<div class="modal-backdrop" id="shopModal">
-  <div class="modal">
-    <h3>ショップは準備中</h3>
-    <p>もうすぐオープンするよ！チャットでメッセージをくれたら、入荷したときに教えるね 💜</p>
-    <button class="modal-close" onclick="closeModal('shopModal')">とじる</button>
   </div>
 </div>
 
-<!-- Firebase SDK -->
+  <!-- MEMBERS -->
+  <div class="apanel" id="apanel-members">
+    <div class="sec-label">— MEMBER MANAGEMENT</div>
+    <div class="sec-title">メンバー管理</div>
+    <div class="card">
+      <div style="font-size:10px;letter-spacing:2px;color:var(--purple);margin-bottom:14px;">— メンバーを追加</div>
+      <div class="field"><label>名前</label><input type="text" id="memberName" placeholder="例：HIKARI"></div>
+      <div class="field"><label>自己紹介文</label><textarea id="memberBio" placeholder="例：お絵描き大好き小4。"></textarea></div>
+      <div class="field"><label>タグ（カンマ区切り）</label><input type="text" id="memberTags" placeholder="例：デジタルアート, ROBLOX, ねこ好き🐱"></div>
+      <div class="field">
+        <label>プロフィール画像ファイル名（GitHubにアップしたファイル名）</label>
+        <input type="text" id="memberImage" placeholder="例：HIKARI05.png">
+        <div style="font-size:11px;color:var(--text-dim);margin-top:4px;">空欄の場合は絵文字アイコンを使います</div>
+      </div>
+      <div class="field"><label>絵文字アイコン（画像なしの場合）</label><input type="text" id="memberEmoji" placeholder="例：⭐" maxlength="2"></div>
+      <div class="field"><label>プロフィール詳細（1行に「ラベル：内容」形式で入力）</label><textarea id="memberFacts" placeholder="好きなゲーム：Blox Fruits ⚔️&#10;好きな色：むらさき 💜&#10;使ってるアプリ：Procreate / Ibis&#10;口ぐせ：「かわいい！✨」"></textarea></div>
+      <div class="field"><label>表示順（数字が小さいほど上に表示）</label><input type="number" id="memberOrder" placeholder="例：1" value="1"></div>
+      <button class="btn-add" onclick="addMember()">追加する</button>
+    </div>
+    <div id="memberAdminList">
+      <div class="empty-note">読み込み中...</div>
+    </div>
+  </div>
+
+  <!-- LINKS -->
+  <div class="apanel" id="apanel-links">
+    <div class="sec-label">— LINK MANAGEMENT</div>
+    <div class="sec-title">リンク管理</div>
+    <div class="card">
+      <div style="font-size:10px;letter-spacing:2px;color:var(--purple);margin-bottom:14px;">— リンクを追加</div>
+      <div class="field"><label>名前</label><input type="text" id="linkName" placeholder="例：Instagram"></div>
+      <div class="field">
+        <label>種類（アイコン自動選択）</label>
+        <select id="linkType" style="background:var(--bg2);border:0.5px solid var(--border);border-radius:7px;padding:10px 14px;font-size:13px;color:var(--text);outline:none;width:100%;font-family:inherit;">
+          <option value="web">🌐 ウェブサイト</option>
+          <option value="x">✕ X (Twitter)</option>
+          <option value="instagram">📷 Instagram</option>
+          <option value="roblox">🎮 ROBLOX</option>
+          <option value="twitch">🟣 Twitch</option>
+        </select>
+      </div>
+      <div class="field"><label>URL</label><input type="text" id="linkUrl" placeholder="例：https://instagram.com/..."></div>
+      <div class="field"><label>カスタムアイコン画像URL（任意）</label><input type="text" id="linkIconUrl" placeholder="空欄なら種類のアイコンを使用"></div>
+      <div class="field"><label>表示順</label><input type="number" id="linkOrder" value="1" placeholder="例：1"></div>
+      <button class="btn-add" onclick="addLink()">追加する</button>
+    </div>
+    <div id="linkAdminList"><div class="empty-note">読み込み中...</div></div>
+  </div>
+
+<!-- EDIT MODAL -->
+<div class="modal-backdrop" id="editModal">
+  <div class="modal-box">
+    <div class="modal-title" id="editModalTitle">編集</div>
+    <div id="editModalBody"></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeEdit()">キャンセル</button>
+      <button class="btn-save" id="editSaveBtn">保存する</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, where, serverTimestamp }
+  import { initializeApp }       from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc,
+           onSnapshot, query, orderBy, serverTimestamp, getDocs }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -424,367 +398,675 @@
     appId: "1:732585977344:web:54389e01ab87fbab679ae5"
   };
 
-  const app = initializeApp(firebaseConfig);
-  const db  = getFirestore(app);
-  const col = collection(db, "messages");
+  const app      = initializeApp(firebaseConfig);
+  const auth     = getAuth(app);
+  const db       = getFirestore(app);
+  window._db   = db;
+  window._auth = auth;
+  window._addDoc         = addDoc;
+  window._collection     = collection;
+  window._deleteDoc      = deleteDoc;
+  window._updateDoc      = updateDoc;
+  window._doc            = doc;
+  window._serverTimestamp = serverTimestamp;
+  window._getDocs         = getDocs;
+  window._query           = query;
+  window._orderBy         = orderBy;
 
-  // リアルタイムでメッセージを取得
-  const q = query(col, orderBy("createdAt", "asc"));
-  onSnapshot(q, (snapshot) => {
-    const thread = document.getElementById("chatThread");
-    thread.innerHTML = "";
+  function esc(s) { return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg; t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), 2500);
+  }
 
-    if (snapshot.empty) {
-      thread.innerHTML = '<div class="chat-empty">まだメッセージがないよ。最初のメッセージを送ってね！</div>';
-      return;
+  // ── AUTH ──
+  document.getElementById("loginBtn").addEventListener("click", () => {
+    signInWithPopup(auth, new GoogleAuthProvider()).catch(e => alert("ログイン失敗: " + e.message));
+  });
+  document.getElementById("logoutBtn").addEventListener("click", () => signOut(auth));
+
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      document.getElementById("loginScreen").style.display  = "none";
+      document.getElementById("adminScreen").style.display  = "block";
+      document.getElementById("userName").textContent = user.displayName || user.email;
+      initListeners();
+    } else {
+      document.getElementById("loginScreen").style.display  = "flex";
+      document.getElementById("adminScreen").style.display  = "none";
     }
-
-    snapshot.forEach((doc) => {
-      const d = doc.data();
-      const isHikari = d.isHikari === true;
-      const div = document.createElement("div");
-      div.className = "msg " + (isHikari ? "hikari" : "visitor");
-      let ts = null;
-      if (d.createdAt) {
-        try { ts = d.createdAt.toDate(); } catch(e) { ts = null; }
-      }
-      const timeStr = ts ? ts.toLocaleString('ja-JP', {
-        month:'numeric', day:'numeric',
-        hour:'2-digit', minute:'2-digit'
-      }) : '送信中...';
-      div.innerHTML = `
-        <div class="msg-avatar">${isHikari ? "⭐" : (esc(d.emoji)||"💬")}</div>
-        <div class="msg-body">
-          <div class="msg-name">${esc(d.nick)}</div>
-          <div class="msg-bubble">${esc(d.text)}</div>
-          ${timeStr ? `<div class="msg-time">${timeStr}</div>` : ''}
-        </div>`;
-      thread.appendChild(div);
-    });
-    thread.scrollTop = thread.scrollHeight;
   });
 
-  // 送信
-  window.sendMsg = async function() {
-    const nick  = document.getElementById("chatNick").value.trim();
-    const text  = document.getElementById("chatMsg").value.trim();
-    const emoji = selectedEmoji || "💬";
-    if (!nick || !text) { alert("ニックネームとメッセージを入力してね！"); return; }
+  // ── CHAT ──
+  function initListeners() {
+    // チャット
+    const msgQ = query(collection(db,"messages"), orderBy("createdAt","asc"));
+    onSnapshot(msgQ, snap => {
+      const thread = document.getElementById("adminChatThread");
+      thread.innerHTML = "";
+      if (snap.empty) { thread.innerHTML = '<div class="empty-note">まだメッセージがありません</div>'; return; }
+      snap.forEach(d => {
+        const data = d.data();
+        const isH  = data.isHikari === true;
+        const div  = document.createElement("div");
+        div.className = "msg-row " + (isH ? "hikari" : "visitor");
+        div.innerHTML = `
+          <div class="msg-av">${isH ? "⭐" : "💬"}</div>
+          <div class="msg-content">
+            <div class="msg-meta">${esc(data.nick)}</div>
+            <div class="msg-bbl">${esc(data.text)}</div>
+            <div class="msg-actions">
+              <button class="btn-del" onclick="window._delMsg('${d.id}')">削除</button>
+            </div>
+          </div>`;
+        thread.appendChild(div);
+      });
+      thread.scrollTop = thread.scrollHeight;
+    });
 
-    const btn = document.getElementById("chatSubmit");
+    // ギャラリー
+    const galQ = query(collection(db,"gallery"), orderBy("createdAt","desc"));
+    onSnapshot(galQ, snap => {
+      const list = document.getElementById("galleryList");
+      list.innerHTML = "";
+      if (snap.empty) { list.innerHTML = '<div class="empty-note">まだ作品がありません</div>'; return; }
+      snap.forEach(d => {
+        const data = d.data();
+        const div = document.createElement("div");
+        div.className = "gallery-row";
+        div.innerHTML = `
+          ${data.imageUrl ? `<img src="${esc(data.imageUrl)}" alt="">` : `<div style="width:52px;height:52px;background:var(--bg3);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🎨</div>`}
+          <div class="gallery-row-info">
+            <div class="gallery-row-title">${esc(data.title)}</div>
+            <div class="gallery-row-sub">by ${esc(data.author)}</div>
+          </div>
+          <div class="btn-row">
+            <button class="btn-edit" onclick="window._editGallery('${d.id}', ${JSON.stringify(esc(data.title))}, ${JSON.stringify(esc(data.author))}, ${JSON.stringify(esc(data.imageUrl||''))}, ${JSON.stringify(esc(data.comment||''))})">編集</button>
+            <button class="btn-del" onclick="window._delDoc('gallery','${d.id}')">削除</button>
+          </div>`;
+        list.appendChild(div);
+      });
+    });
+
+    // ショップ
+    const shopQ = query(collection(db,"shop"), orderBy("createdAt","desc"));
+    onSnapshot(shopQ, snap => {
+      const list = document.getElementById("shopList");
+      list.innerHTML = "";
+      if (snap.empty) { list.innerHTML = '<div class="empty-note">まだ商品がありません</div>'; return; }
+      snap.forEach(d => {
+        const data = d.data();
+        const div = document.createElement("div");
+        div.className = "shop-row";
+        div.innerHTML = `
+          <div class="shop-row-emoji">${esc(data.emoji||"🛍")}</div>
+          <div class="shop-row-info">
+            <div class="shop-row-name">${esc(data.name)}</div>
+            <div class="shop-row-price">¥${Number(data.price).toLocaleString()}</div>
+          </div>
+          <div class="btn-row">
+            <button class="btn-edit" onclick="window._editShop('${d.id}', ${JSON.stringify(esc(data.name))}, ${data.price||0}, ${JSON.stringify(esc(data.emoji||''))}, ${JSON.stringify(esc(data.desc||''))})">編集</button>
+            <button class="btn-del" onclick="window._delDoc('shop','${d.id}')">削除</button>
+          </div>`;
+        list.appendChild(div);
+      });
+    });
+
+    // ゲームマスター
+    onSnapshot(query(collection(db,"games"), orderBy("createdAt","asc")), snap => {
+      const grid = document.getElementById("gameMasterGrid");
+      grid.innerHTML = "";
+      if (snap.empty) { grid.innerHTML = '<div class="empty-note">まだゲームが登録されていません</div>'; return; }
+      snap.forEach(d => {
+        const g = d.data();
+        const card = document.createElement("div");
+        card.className = "game-icon-card";
+        card.draggable = true;
+        card.dataset.id   = d.id;
+        card.dataset.name = g.name;
+        card.dataset.icon = g.iconUrl;
+        card.dataset.url  = g.gameUrl||"";
+        card.innerHTML = `
+          <img class="game-icon-img" src="${esc(g.iconUrl)}" alt="${esc(g.name)}">
+          <div class="game-icon-name">${esc(g.name)}</div>`;
+        card.addEventListener("dragstart", e => {
+          e.dataTransfer.setData("gameId",   d.id);
+          e.dataTransfer.setData("gameName", g.name);
+          e.dataTransfer.setData("gameIcon", g.iconUrl);
+          e.dataTransfer.setData("gameUrl",  g.gameUrl||"");
+        });
+        // 削除ボタン
+        const delBtn = document.createElement("button");
+        delBtn.textContent = "×";
+        delBtn.style.cssText = "display:block;width:100%;margin-top:4px;background:none;border:0.5px solid var(--border);border-radius:4px;color:var(--text-dim);font-size:10px;cursor:pointer;";
+        delBtn.onclick = () => { if(confirm("削除しますか？")) window._delDoc("games", d.id); };
+        card.appendChild(delBtn);
+        grid.appendChild(card);
+      });
+    });
+
+    // ロブロックス
+    // 日記リスナー
+    const diaryQ = query(collection(db,"diary"), orderBy("createdAt","desc"));
+    onSnapshot(diaryQ, snap => {
+      const list = document.getElementById("diaryList");
+      list.innerHTML = "";
+      if (snap.empty) { list.innerHTML = '<div class="empty-note">まだ日記がありません</div>'; return; }
+      snap.forEach(d => {
+        const data = d.data();
+        const ownerLabel = data.owner === "pero" ? "🐱 ぺろちゃん" : "⭐ HIKARI";
+        const div = document.createElement("div");
+        div.className = "diary-row";
+        div.innerHTML = `
+          <div class="diary-row-date">${esc(data.date||"")} ｜ ${ownerLabel}</div>
+          <div class="diary-row-text">${esc(data.diary)}</div>
+          <div class="diary-row-actions">
+            <button class="btn-del">削除</button>
+          </div>`;
+        div.querySelector(".btn-del").addEventListener("click", () => window._delDoc("diary", d.id));
+        list.appendChild(div);
+      });
+    });
+
+    // ゲーム一覧リスナー（管理者用）
+    onSnapshot(query(collection(db,"games"), orderBy("createdAt","asc")), snap => {
+      const grid = document.getElementById("gameMasterGrid");
+      const adminList = document.getElementById("gameAdminList");
+      grid.innerHTML = "";
+      adminList.innerHTML = "";
+      if (snap.empty) {
+        grid.innerHTML = '<div class="empty-note">まだゲームが登録されていません</div>';
+        adminList.innerHTML = '<div class="empty-note">まだゲームが登録されていません</div>';
+        return;
+      }
+      snap.forEach(d => {
+        const g = d.data();
+        // ドラッグ用グリッド
+        const card = document.createElement("div");
+        card.className = "sidebar-game-item";
+        card.draggable = true;
+        card.innerHTML = `
+          <img src="${esc(g.iconUrl)}" alt="${esc(g.name)}">
+          <span>${esc(g.name)}</span>`;
+        card.addEventListener("dragstart", e => {
+          e.dataTransfer.setData("gameId",   d.id);
+          e.dataTransfer.setData("gameName", g.name);
+          e.dataTransfer.setData("gameIcon", g.iconUrl);
+          e.dataTransfer.setData("gameUrl",  g.gameUrl||"");
+        });
+        grid.appendChild(card);
+
+        // 管理リスト
+        const row = document.createElement("div");
+        row.className = "card";
+        row.style.cssText = "display:flex;align-items:center;gap:12px;margin-bottom:10px;";
+        const starsDisp = g.rating ? "★".repeat(g.rating) + "☆".repeat(5-g.rating) : "未評価";
+        row.innerHTML = `
+          <img src="${esc(g.iconUrl)}" style="width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0;">
+          <div style="flex:1;">
+            <div style="font-size:13px;color:var(--text);">${esc(g.name)}</div>
+            <div style="font-size:10px;color:var(--text-dim);">${esc(g.platform||"")}</div>
+            <div style="font-size:11px;color:#f0c040;">${starsDisp}</div>
+          </div>
+          <div class="btn-row">
+            <button class="btn-edit">編集</button>
+            <button class="btn-del">削除</button>
+          </div>`;
+        row.querySelector(".btn-edit").addEventListener("click", () => window._editGame(d.id, g.name||"", g.platform||"Roblox", g.iconUrl||"", g.gameUrl||"", g.rating||0, g.comment||""));
+        row.querySelector(".btn-del").addEventListener("click", () => window._delDoc("games", d.id));
+        adminList.appendChild(row);
+      });
+    });
+    // リンク
+    onSnapshot(query(collection(db,"links"), orderBy("order","asc")), snap => {
+      const list = document.getElementById("linkAdminList");
+      list.innerHTML = "";
+      if (snap.empty) { list.innerHTML = '<div class="empty-note">まだリンクがありません</div>'; return; }
+      snap.forEach(d => {
+        const lk = d.data();
+        const div = document.createElement("div");
+        div.className = "card";
+        div.style.cssText = "display:flex;align-items:center;gap:12px;margin-bottom:10px;";
+        const emoji = lk.type==="x"?"✕":lk.type==="instagram"?"📷":lk.type==="roblox"?"🎮":lk.type==="twitch"?"🟣":"🌐";
+        div.innerHTML = `
+          <div style="font-size:22px;flex-shrink:0;">${emoji}</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:13px;color:var(--text);margin-bottom:2px;">${esc(lk.name)}</div>
+            <div style="font-size:11px;color:var(--text-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(lk.url||"")}</div>
+          </div>
+          <div class="btn-row">
+            <button class="btn-edit">編集</button>
+            <button class="btn-del">削除</button>
+          </div>`;
+        div.querySelector(".btn-edit").addEventListener("click", () => {
+          window._editLink(d.id, lk.name||"", lk.type||"web", lk.url||"", lk.iconUrl||"", lk.order||1);
+        });
+        div.querySelector(".btn-del").addEventListener("click", () => {
+          window._delDoc("links", d.id);
+        });
+        list.appendChild(div);
+      });
+    });
+
+    // メンバー
+    const memberQ = query(collection(db,"members"), orderBy("order","asc"));
+    onSnapshot(memberQ, snap => {
+      const list = document.getElementById("memberAdminList");
+      list.innerHTML = "";
+      if (snap.empty) { list.innerHTML = '<div class="empty-note">まだメンバーがいません</div>'; return; }
+      snap.forEach(d => {
+        const m = d.data();
+        const div = document.createElement("div");
+        div.className = "card";
+        div.style.display = "flex";
+        div.style.alignItems = "center";
+        div.style.gap = "14px";
+        div.style.marginBottom = "10px";
+        const avatarHtml = m.imageUrl
+          ? `<img src="${esc(m.imageUrl)}" style="width:100%;height:100%;object-fit:cover;">`
+          : `<span style="font-size:22px;">${esc(m.emoji||"⭐")}</span>`;
+        div.innerHTML = `
+          <div style="width:48px;height:48px;border-radius:50%;background:var(--bg3);border:1.5px solid var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;">
+            ${avatarHtml}
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:13px;color:var(--text);margin-bottom:2px;">${esc(m.name)}</div>
+            <div style="font-size:11px;color:var(--text-dim);">表示順: ${m.order||0}</div>
+          </div>
+          <div class="btn-row">
+            <button class="btn-edit">編集</button>
+            <button class="btn-del">削除</button>
+          </div>`;
+        div.querySelector(".btn-edit").addEventListener("click", () => {
+          window._editMember(d.id, m.name||"", m.bio||"", m.tags||"", m.imageUrl||"", m.emoji||"", m.facts||"", m.order||1);
+        });
+        div.querySelector(".btn-del").addEventListener("click", () => {
+          window._delDoc("members", d.id);
+        });
+        list.appendChild(div);
+      });
+    });
+  }
+
+  // ── GLOBAL ACTIONS ──
+  window.sendReply = async () => {
+    const text = document.getElementById("replyText").value.trim();
+    if (!text) { alert("メッセージを入力してね！"); return; }
+    const btn = document.querySelector(".reply-form .btn-add");
     btn.disabled = true;
     btn.textContent = "送信中...";
-
     try {
-      await addDoc(col, {
-        nick,
-        text,
-        emoji,
-        isHikari: false,
-        createdAt: serverTimestamp()
+      await window._addDoc(window._collection(window._db,"messages"), {
+        nick:"HIKARI", text, isHikari:true, createdAt:window._serverTimestamp()
       });
-      document.getElementById("chatForm").style.display = "none";
-      document.getElementById("sentMsg").style.display  = "block";
-    } catch (e) {
-      alert("送信に失敗しました。もう一度試してね。");
+      document.getElementById("replyText").value = "";
+      showToast("✦ 返信を送りました！");
+    } catch(e) {
+      alert("送信に失敗しました：" + e.message);
+    } finally {
       btn.disabled = false;
-      btn.textContent = "送信する";
+      btn.textContent = "✦ HIKARIとして送信";
     }
   };
 
-  function esc(s) {
-    return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-  }
+  window.addGame = async () => {
+    const owner    = document.getElementById("gameOwner").value;
+    const name     = document.getElementById("gameName").value.trim();
+    const platform = document.getElementById("gamePlatform").value;
+    const iconUrl  = document.getElementById("gameIconUrl").value.trim();
+    const gameUrl  = document.getElementById("gameUrl").value.trim();
+    if (!name || !iconUrl) { alert("ゲーム名とアイコンURLは必須です"); return; }
+    await window._addDoc(window._collection(window._db,"games"), { owner, name, platform, iconUrl, gameUrl, createdAt:serverTimestamp() });
+    ["gameName","gameIconUrl","gameUrl"].forEach(id => document.getElementById(id).value="");
+    showToast("🎮 ゲームを登録しました！");
+  };
 
-  // ── ギャラリー ──
-  onSnapshot(query(collection(db,"gallery"), orderBy("createdAt","desc")), snap => {
-    const grid = document.getElementById("galleryGrid");
-    const uploadTile = grid.querySelector(".upload-tile");
-    grid.innerHTML = "";
+  window.addLink = async () => {
+    const name    = document.getElementById("linkName").value.trim();
+    const type    = document.getElementById("linkType").value;
+    const url     = document.getElementById("linkUrl").value.trim();
+    const iconUrl = document.getElementById("linkIconUrl").value.trim();
+    const order   = Number(document.getElementById("linkOrder").value)||1;
+    if (!name || !url) { alert("名前とURLは必須です"); return; }
+    await window._addDoc(window._collection(window._db,"links"), { name, type, url, iconUrl, order, createdAt:serverTimestamp() });
+    ["linkName","linkUrl","linkIconUrl"].forEach(id => document.getElementById(id).value="");
+    document.getElementById("linkOrder").value = "1";
+    showToast("🔗 リンクを追加しました！");
+  };
 
-    if (snap.empty) {
-      grid.appendChild(uploadTile);
-      return;
-    }
-
-    let isFirst = true;
-    snap.forEach(d => {
-      const data = d.data();
-      const card = document.createElement("div");
-      card.className = "gallery-card";
-
-      // サムネイル＋オーバーレイ
-      const thumb = document.createElement("div");
-      thumb.className = "gallery-thumb";
-      if (isFirst) thumb.innerHTML += '<span class="badge-new">NEW</span>';
-      if (data.imageUrl) {
-        thumb.innerHTML += `<img src="${esc(data.imageUrl)}" alt="${esc(data.title)}">`;
-      } else {
-        thumb.innerHTML += `<span class="gallery-placeholder">🎨</span>`;
-      }
-      // タイトル・投稿者オーバーレイ
-      thumb.innerHTML += `
-        <div class="gallery-overlay">
-          <div class="gallery-overlay-title">${esc(data.title)}</div>
-          <div class="gallery-overlay-author">by ${esc(data.author)}</div>
-        </div>`;
-      card.appendChild(thumb);
-
-      // HIKARIのコメント（画像の直下）
-      if (data.comment) {
-        const commentDiv = document.createElement("div");
-        commentDiv.className = "gallery-comment";
-        commentDiv.innerHTML = `
-          <div class="hikari-label">✦ HIKARI</div>
-          <div class="hikari-text">${esc(data.comment)}</div>`;
-        card.appendChild(commentDiv);
-      }
-
-      grid.appendChild(card);
-      isFirst = false;
+  window.addMember = async () => {
+    const name  = document.getElementById("memberName").value.trim();
+    const bio   = document.getElementById("memberBio").value.trim();
+    const tags  = document.getElementById("memberTags").value.trim();
+    const imgFile = document.getElementById("memberImage").value.trim();
+    const emoji = document.getElementById("memberEmoji").value.trim() || "⭐";
+    const facts = document.getElementById("memberFacts").value.trim();
+    const order = Number(document.getElementById("memberOrder").value) || 1;
+    const imageUrl = imgFile ? "https://hikapero.github.io/HIKARI/" + imgFile : "";
+    if (!name) { alert("名前は必須です"); return; }
+    await window._addDoc(window._collection(window._db,"members"), {
+      name, bio, tags, imageUrl, emoji, facts, order, createdAt:serverTimestamp()
     });
+    ["memberName","memberBio","memberTags","memberImage","memberEmoji","memberFacts"].forEach(id => document.getElementById(id).value="");
+    document.getElementById("memberOrder").value = "1";
+    showToast("👤 メンバーを追加しました！");
+  };
 
-    grid.appendChild(uploadTile);
+  window.addGallery = async () => {
+    const title   = document.getElementById("galleryTitle").value.trim();
+    const author  = document.getElementById("galleryAuthor").value.trim();
+    const fileName = document.getElementById("galleryUrl").value.trim();
+    const imageUrl = fileName ? "https://hikapero.github.io/HIKARI/gallery/" + fileName + ".png" : "";
+    const comment = document.getElementById("galleryComment").value.trim();
+    if (!title || !author) { alert("タイトルと投稿者名は必須です"); return; }
+    await window._addDoc(window._collection(window._db,"gallery"), { title, author, imageUrl, comment, createdAt:serverTimestamp() });
+    ["galleryTitle","galleryAuthor","galleryComment"].forEach(id => document.getElementById(id).value="");
+    document.getElementById("galleryUrl").value = "";
+    document.getElementById("galleryFileName").textContent = "—";
+    document.getElementById("galleryUrlPreview").textContent = "↑「発行する」を押すとファイル名が自動で決まるよ";
+    showToast("🎨 ギャラリーに追加しました！");
+  };
+
+  window.addShop = async () => {
+    const name  = document.getElementById("shopName").value.trim();
+    const price = Number(document.getElementById("shopPrice").value);
+    const emoji = document.getElementById("shopEmoji").value.trim() || "🛍";
+    const desc  = document.getElementById("shopDesc").value.trim();
+    if (!name || !price) { alert("商品名と価格は必須です"); return; }
+    await window._addDoc(window._collection(window._db,"shop"), { name, price, emoji, desc, createdAt:serverTimestamp() });
+    ["shopName","shopPrice","shopEmoji","shopDesc"].forEach(id => document.getElementById(id).value="");
+    showToast("🛍 商品を追加しました！");
+  };
+
+  window.dropGame = (e) => {
+    e.preventDefault();
+    const zone = document.getElementById("dropZone");
+    zone.classList.remove("dragover");
+    const name = e.dataTransfer.getData("gameName");
+    const icon = e.dataTransfer.getData("gameIcon");
+    const id   = e.dataTransfer.getData("gameId");
+    const url  = e.dataTransfer.getData("gameUrl");
+
+    // 既に追加済みなら無視
+    const current = JSON.parse(document.getElementById("droppedGames").value||"[]");
+    if (current.find(g => g.id === id)) return;
+
+    // ドロップゾーンにアイコン追加
+    const hint = zone.querySelector(".drop-zone-hint");
+    if (hint) hint.remove();
+    const wrap = document.createElement("div");
+    wrap.className = "dropped-icon";
+    wrap.innerHTML = `
+      <img src="${icon}" alt="${name}">
+      <div class="dropped-icon-name">${name}</div>
+      <button class="remove-btn" onclick="removeDropped('${id}', this.parentElement)">×</button>`;
+    zone.appendChild(wrap);
+
+    // hiddenに保存
+    current.push({ id, name, icon, url });
+    document.getElementById("droppedGames").value = JSON.stringify(current);
+  };
+
+  window.removeDropped = (id, el) => {
+    el.remove();
+    const current = JSON.parse(document.getElementById("droppedGames").value||"[]");
+    const updated = current.filter(g => g.id !== id);
+    document.getElementById("droppedGames").value = JSON.stringify(updated);
+    if (document.getElementById("dropZone").children.length === 0) {
+      document.getElementById("dropZone").innerHTML = '<span class="drop-zone-hint">ここにゲームをドロップ ↑</span>';
+    }
+  };
+
+  window.addRblx = async () => {
+    const owner = document.getElementById("diaryOwner").value;
+    const diary = document.getElementById("rblxDiary").value.trim();
+    if (!diary) { alert("日記の内容を書いてね！"); return; }
+    const now  = new Date();
+    const date = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,"0")}.${String(now.getDate()).padStart(2,"0")}`;
+    const games = JSON.parse(document.getElementById("droppedGames").value||"[]");
+    await window._addDoc(window._collection(window._db,"diary"), { owner, diary, date, games, createdAt:serverTimestamp() });
+    document.getElementById("rblxDiary").value = "";
+    document.getElementById("droppedGames").value = "[]";
+    document.getElementById("dropZone").innerHTML = '<span class="drop-zone-hint">ここにゲームをドロップ ↑</span>';
+    showToast("🎮 日誌を投稿しました！");
+  };
+
+  window._delMsg = async (id) => {
+    if (!confirm("このメッセージを削除しますか？")) return;
+    try {
+      await window._deleteDoc(window._doc(window._db,"messages",id));
+      showToast("削除しました");
+    } catch(e) { alert("削除失敗：" + e.message); }
+  };
+
+  window._delDoc = async (col, id) => {
+    if (!confirm("削除しますか？")) return;
+    try {
+      await window._deleteDoc(window._doc(window._db,col,id));
+      showToast("削除しました");
+    } catch(e) { alert("削除失敗：" + e.message); }
+  };
+
+  // ── EDIT MODAL ──
+  let _editAction = null;
+
+  window._editGallery = (id, title, author, imageUrl, comment) => {
+    document.getElementById("editModalTitle").textContent = "作品を編集";
+    document.getElementById("editModalBody").innerHTML = `
+      <div class="field"><label>タイトル</label><input id="e_title" value="${title}"></div>
+      <div class="field"><label>投稿者名</label><input id="e_author" value="${author}"></div>
+      <div class="field">
+        <label>画像ファイル名</label>
+        <input id="e_url" value="${imageUrl.replace('https://hikapero.github.io/HIKARI/gallery/', '')}" placeholder="例：art01.png" oninput="document.getElementById('e_url_preview').textContent = 'https://hikapero.github.io/HIKARI/gallery/' + this.value">
+        <div style="font-size:11px; color:var(--text-dim); margin-top:6px;" id="e_url_preview">https://hikapero.github.io/HIKARI/gallery/${imageUrl.replace('https://hikapero.github.io/HIKARI/gallery/', '')}</div>
+      </div>
+      <div class="field"><label>HIKARIのコメント</label><textarea id="e_comment">${comment}</textarea></div>`;
+    _editAction = async () => {
+      await window._updateDoc(window._doc(window._db,"gallery",id), {
+        title: document.getElementById("e_title").value.trim(),
+        author: document.getElementById("e_author").value.trim(),
+        imageUrl: document.getElementById("e_url").value.trim() ? "https://hikapero.github.io/HIKARI/gallery/" + document.getElementById("e_url").value.trim() : "",
+        comment: document.getElementById("e_comment").value.trim(),
+      });
+      showToast("更新しました！");
+    };
+    document.getElementById("editModal").classList.add("open");
+  };
+
+  window._editShop = (id, name, price, emoji, desc) => {
+    document.getElementById("editModalTitle").textContent = "商品を編集";
+    document.getElementById("editModalBody").innerHTML = `
+      <div class="field"><label>商品名</label><input id="e_name" value="${name}"></div>
+      <div class="field"><label>価格</label><input id="e_price" type="number" value="${price}"></div>
+      <div class="field"><label>絵文字</label><input id="e_emoji" value="${emoji}" maxlength="2"></div>
+      <div class="field"><label>説明</label><textarea id="e_desc">${desc}</textarea></div>`;
+    _editAction = async () => {
+      await window._updateDoc(window._doc(window._db,"shop",id), {
+        name: document.getElementById("e_name").value.trim(),
+        price: Number(document.getElementById("e_price").value),
+        emoji: document.getElementById("e_emoji").value.trim(),
+        desc: document.getElementById("e_desc").value.trim(),
+      });
+      showToast("更新しました！");
+    };
+    document.getElementById("editModal").classList.add("open");
+  };
+
+  window._editRblx = (id, playTime, level, friends, diary) => {
+    document.getElementById("editModalTitle").textContent = "日誌を編集";
+    document.getElementById("editModalBody").innerHTML = `
+      <div class="field"><label>プレイ時間</label><input id="e_time" value="${playTime}"></div>
+      <div class="field"><label>レベル</label><input id="e_level" value="${level}"></div>
+      <div class="field"><label>フレンド数</label><input id="e_friends" value="${friends}"></div>
+      <div class="field"><label>日誌</label><textarea id="e_diary">${diary}</textarea></div>`;
+    _editAction = async () => {
+      await window._updateDoc(window._doc(window._db,"roblox",id), {
+        playTime: document.getElementById("e_time").value.trim(),
+        level: document.getElementById("e_level").value.trim(),
+        friends: document.getElementById("e_friends").value.trim(),
+        diary: document.getElementById("e_diary").value.trim(),
+      });
+      showToast("更新しました！");
+    };
+    document.getElementById("editModal").classList.add("open");
+  };
+
+  document.getElementById("editSaveBtn").addEventListener("click", async () => {
+    if (_editAction) { await _editAction(); closeEdit(); }
   });
 
-  // ── ショップ ──
-  onSnapshot(query(collection(db,"shop"), orderBy("createdAt","desc")), snap => {
-    const grid = document.getElementById("shopGrid");
-    grid.innerHTML = "";
-    if (snap.empty) {
-      grid.innerHTML = '<div style="color:var(--text-dim);font-size:12px;text-align:center;padding:24px;grid-column:1/-1;">準備中だよ！もうすぐオープンするね 💜</div>';
-      return;
-    }
-    snap.forEach(d => {
-      const data = d.data();
-      const card = document.createElement("div");
-      card.className = "shop-card";
-      card.innerHTML = `
-        <div class="shop-thumb">${esc(data.emoji||"🛍")}</div>
-        <div class="shop-name">${esc(data.name)}</div>
-        <div class="shop-price">¥${Number(data.price).toLocaleString()}</div>
-        ${data.desc ? `<div style="font-size:11px;color:var(--text-muted);margin-bottom:10px;line-height:1.5;">${esc(data.desc)}</div>` : ""}
-        <button class="shop-btn" onclick="openModal('shopModal')">カートに入れる</button>`;
-      grid.appendChild(card);
-    });
-  });
+  window._editMember = (id, name, bio, tags, imageUrl, emoji, facts, order) => {
+    document.getElementById("editModalTitle").textContent = "メンバーを編集";
+    document.getElementById("editModalBody").innerHTML = `
+      <div class="field"><label>名前</label><input id="e_mname" value="${name}"></div>
+      <div class="field"><label>自己紹介文</label><textarea id="e_mbio">${bio}</textarea></div>
+      <div class="field"><label>タグ（カンマ区切り）</label><input id="e_mtags" value="${tags}"></div>
+      <div class="field"><label>画像ファイル名</label><input id="e_mimage" value="${imageUrl.replace('https://hikapero.github.io/HIKARI/','')}"></div>
+      <div class="field"><label>絵文字アイコン</label><input id="e_memoji" value="${emoji}" maxlength="2"></div>
+      <div class="field"><label>プロフィール詳細</label><textarea id="e_mfacts">${facts}</textarea></div>
+      <div class="field"><label>表示順</label><input id="e_morder" type="number" value="${order}"></div>`;
+    _editAction = async () => {
+      const imgFile = document.getElementById("e_mimage").value.trim();
+      await window._updateDoc(window._doc(window._db,"members",id), {
+        name:     document.getElementById("e_mname").value.trim(),
+        bio:      document.getElementById("e_mbio").value.trim(),
+        tags:     document.getElementById("e_mtags").value.trim(),
+        imageUrl: imgFile ? "https://hikapero.github.io/HIKARI/" + imgFile : "",
+        emoji:    document.getElementById("e_memoji").value.trim(),
+        facts:    document.getElementById("e_mfacts").value.trim(),
+        order:    Number(document.getElementById("e_morder").value) || 1,
+      });
+      showToast("更新しました！");
+    };
+    document.getElementById("editModal").classList.add("open");
+  };
 
-  // ── ソーシャルリンク ──
-  const SNS_EMOJI = { web:'🌐', x:'✕', instagram:'📷', roblox:'🎮', twitch:'🟣' };
-  onSnapshot(query(collection(db,"links"), orderBy("order","asc")), snap => {
-    const list = document.getElementById("socialList");
-    list.innerHTML = "";
-    if (snap.empty) {
-      list.innerHTML = '<div style="color:var(--text-dim);font-size:12px;text-align:center;padding:16px;">リンクがありません</div>';
-      return;
-    }
-    snap.forEach(d => {
-      const lk = d.data();
-      const a  = document.createElement("a");
-      a.className = "social-item";
-      a.href      = esc(lk.url||"#");
-      a.target    = "_blank";
-      a.rel       = "noopener";
-      const iconContent = lk.iconUrl
-        ? `<img src="${esc(lk.iconUrl)}" alt="${esc(lk.name)}">`
-        : (SNS_EMOJI[lk.type||"web"] || "🌐");
-      const displayUrl = (lk.url||"").replace(/^https?:\/\//, "").replace(/\/$/, "");
-      a.innerHTML = `
-        <div class="social-icon">${iconContent}</div>
-        <div class="social-info">
-          <div class="social-name">${esc(lk.name)}</div>
-          <div class="social-url">${displayUrl}</div>
-        </div>`;
-      list.appendChild(a);
-    });
-  });
-
-  // ── メンバー ──
-  onSnapshot(query(collection(db,"members"), orderBy("order","asc")), snap => {
-    const list = document.getElementById("memberList");
-    list.innerHTML = "";
-    if (snap.empty) {
-      list.innerHTML = '<div style="color:var(--text-dim);font-size:12px;text-align:center;padding:24px;">メンバー情報がありません</div>';
-      return;
-    }
-    snap.forEach(d => {
-      const m = d.data();
-      const tags = (m.tags||"").split(",").map(t => t.trim()).filter(t=>t);
-      const facts = (m.facts||"").split("\n").map(f => f.trim()).filter(f=>f);
-      const card = document.createElement("div");
-      card.innerHTML = `
-        <div class="about-card">
-          <div class="about-avatar">
-            ${m.imageUrl ? `<img src="${esc(m.imageUrl)}" alt="${esc(m.name)}">` : `<span style="font-size:32px;">${esc(m.emoji||"⭐")}</span>`}
-          </div>
-          <div>
-            <div class="about-name">${esc(m.name)}</div>
-            <div class="about-bio">${esc(m.bio||"")}</div>
-            <div class="about-tags">${tags.map(t=>`<span class="about-tag">${esc(t)}</span>`).join("")}</div>
-          </div>
+  window._editGame = (id, name, platform, iconUrl, gameUrl, rating, comment) => {
+    document.getElementById("editModalTitle").textContent = "ゲームを編集";
+    const r = rating || 0;
+    document.getElementById("editModalBody").innerHTML = `
+      <div class="field"><label>ゲーム名</label><input id="e_gname" value="${name}"></div>
+      <div class="field">
+        <label>プラットフォーム</label>
+        <select id="e_gplatform" style="background:var(--bg2);border:0.5px solid var(--border);border-radius:7px;padding:10px 14px;font-size:13px;color:var(--text);outline:none;width:100%;font-family:inherit;">
+          <option value="Roblox" ${platform==="Roblox"?"selected":""}>Roblox</option>
+          <option value="Minecraft" ${platform==="Minecraft"?"selected":""}>Minecraft</option>
+          <option value="Meta Quest" ${platform==="Meta Quest"?"selected":""}>Meta Quest</option>
+          <option value="その他" ${platform==="その他"?"selected":""}>その他</option>
+        </select>
+      </div>
+      <div class="field"><label>アイコン画像URL</label><input id="e_gicon" value="${iconUrl}"></div>
+      <div class="field"><label>ゲームURL（任意）</label><input id="e_gurl" value="${gameUrl}"></div>
+      <div class="field">
+        <label>★ ミシュラン評価（1〜5）</label>
+        <div class="star-rating">
+          <input type="radio" id="s5" name="grating" value="5" ${r===5?"checked":""}><label for="s5">★</label>
+          <input type="radio" id="s4" name="grating" value="4" ${r===4?"checked":""}><label for="s4">★</label>
+          <input type="radio" id="s3" name="grating" value="3" ${r===3?"checked":""}><label for="s3">★</label>
+          <input type="radio" id="s2" name="grating" value="2" ${r===2?"checked":""}><label for="s2">★</label>
+          <input type="radio" id="s1" name="grating" value="1" ${r===1?"checked":""}><label for="s1">★</label>
         </div>
-        ${facts.length ? `<div class="about-facts">${facts.map(f => {
-          const [label, ...rest] = f.split(":");
-          return `<div class="fact-card"><div class="fact-label">${esc(label)}</div><div class="fact-val">${esc(rest.join(":").trim())}</div></div>`;
-        }).join("")}</div>` : ""}`;
-      list.appendChild(card);
-    });
-  });
+      </div>
+      <div class="field"><label>一言感想</label><textarea id="e_gcomment" placeholder="例：ねこがかわいくて最高！" style="min-height:60px;">${comment||""}</textarea></div>`;
+    _editAction = async () => {
+      const ratingVal = document.querySelector('input[name="grating"]:checked');
+      await window._updateDoc(window._doc(window._db,"games",id), {
+        name:     document.getElementById("e_gname").value.trim(),
+        platform: document.getElementById("e_gplatform").value,
+        iconUrl:  document.getElementById("e_gicon").value.trim(),
+        gameUrl:  document.getElementById("e_gurl").value.trim(),
+        rating:   ratingVal ? Number(ratingVal.value) : 0,
+        comment:  document.getElementById("e_gcomment").value.trim(),
+      });
+      showToast("更新しました！");
+    };
+    document.getElementById("editModal").classList.add("open");
+  };
 
-  // ── ゲームショーケース ──
-  onSnapshot(query(collection(db,"games"), orderBy("createdAt","asc")), snap => {
-    const showcase = document.getElementById("gameShowcase");
-    showcase.innerHTML = "";
-    if (snap.empty) {
-      showcase.innerHTML = '<div style="color:var(--text-dim);font-size:12px;text-align:center;padding:24px;grid-column:1/-1;">まだゲームが登録されていないよ！</div>';
-      return;
-    }
-    snap.forEach(d => {
-      const g = d.data();
-      const a = document.createElement("a");
-      a.className = "game-showcase-card";
-      a.href   = esc(g.gameUrl||"#");
-      a.target = "_blank";
-      a.rel    = "noopener";
-      const badge = g.platform ? esc(g.platform) : "GAME";
-      a.innerHTML = `
-        <img class="game-showcase-thumb" src="${esc(g.iconUrl)}" alt="${esc(g.name)}">
-        <div class="game-showcase-info">
-          <div class="game-showcase-name">${esc(g.name)}</div>
-          <div class="game-showcase-badge">${badge} ↗</div>
-        </div>`;
-      showcase.appendChild(a);
-    });
-  });
+  window._editLink = (id, name, type, url, iconUrl, order) => {
+    document.getElementById("editModalTitle").textContent = "リンクを編集";
+    document.getElementById("editModalBody").innerHTML = `
+      <div class="field"><label>名前</label><input id="e_lname" value="${name}"></div>
+      <div class="field">
+        <label>種類</label>
+        <select id="e_ltype" style="background:var(--bg2);border:0.5px solid var(--border);border-radius:7px;padding:10px 14px;font-size:13px;color:var(--text);outline:none;width:100%;font-family:inherit;">
+          <option value="web" ${type==="web"?"selected":""}>🌐 ウェブサイト</option>
+          <option value="x" ${type==="x"?"selected":""}>✕ X (Twitter)</option>
+          <option value="instagram" ${type==="instagram"?"selected":""}>📷 Instagram</option>
+          <option value="roblox" ${type==="roblox"?"selected":""}>🎮 ROBLOX</option>
+          <option value="twitch" ${type==="twitch"?"selected":""}>🟣 Twitch</option>
+        </select>
+      </div>
+      <div class="field"><label>URL</label><input id="e_lurl" value="${url}"></div>
+      <div class="field"><label>カスタムアイコンURL</label><input id="e_licon" value="${iconUrl}"></div>
+      <div class="field"><label>表示順</label><input id="e_lorder" type="number" value="${order}"></div>`;
+    _editAction = async () => {
+      await window._updateDoc(window._doc(window._db,"links",id), {
+        name:    document.getElementById("e_lname").value.trim(),
+        type:    document.getElementById("e_ltype").value,
+        url:     document.getElementById("e_lurl").value.trim(),
+        iconUrl: document.getElementById("e_licon").value.trim(),
+        order:   Number(document.getElementById("e_lorder").value)||1,
+      });
+      showToast("更新しました！");
+    };
+    document.getElementById("editModal").classList.add("open");
+  };
 
-  // ── 日記（HIKARI・ぺろちゃん別）──
-  function renderDiary(snap, elId) {
-    const entries = document.getElementById(elId);
-    entries.innerHTML = "";
-    if (snap.empty) {
-      entries.innerHTML = '<div style="color:var(--text-dim);font-size:12px;text-align:center;padding:16px;">まだ日記がないよ！</div>';
-      return;
-    }
-    snap.forEach(d => {
-      const data = d.data();
-      const div  = document.createElement("div");
-      div.className = "diary-entry";
-      const ts = data.createdAt ? (() => { try { return data.createdAt.toDate(); } catch(e) { return null; } })() : null;
-      const timeStr = ts ? ts.toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '';
-      const games = data.games || [];
-      const gamesHtml = games.length ? `
-        <div class="diary-games">
-          ${games.map(g => `
-            <a class="diary-game-icon" href="${esc(g.url||'#')}" target="_blank" rel="noopener">
-              <img src="${esc(g.icon)}" alt="${esc(g.name)}">
-              <span>${esc(g.name)}</span>
-            </a>`).join("")}
-        </div>` : "";
-      div.innerHTML = `<div class="diary-date">${esc(data.date||"")}${timeStr ? " "+timeStr : ""}</div><div class="diary-text">${esc(data.diary)}</div>${gamesHtml}`;
-      entries.appendChild(div);
-    });
-  }
-  onSnapshot(query(collection(db,"diary"), where("owner","==","hikari"), orderBy("createdAt","desc"), limit(10)), snap => renderDiary(snap,"diaryEntriesHikari"));
-  onSnapshot(query(collection(db,"diary"), where("owner","==","pero"), orderBy("createdAt","desc"), limit(10)), snap => renderDiary(snap,"diaryEntiresPero"));
+  window.closeEdit = () => {
+    document.getElementById("editModal").classList.remove("open");
+    _editAction = null;
+  };
+  document.getElementById("editModal").addEventListener("click", e => {
+    if (e.target === document.getElementById("editModal")) closeEdit();
+  });
 </script>
 
 <script>
-  const TABS = ['about','chat','diary','game','links','gallery','shop'];
-  function switchSubTab(panel, name) {
-    const container = document.getElementById('panel-' + panel);
-    container.querySelectorAll('.sub-tab').forEach((t,i) => {
-      const names = ['hikari','pero'];
-      t.classList.toggle('active', names[i] === name);
+  async function issueFileName() {
+    // 今日の日付を取得（MMDD形式）
+    const now   = new Date();
+    const mm    = String(now.getMonth() + 1).padStart(2, '0');
+    const dd    = String(now.getDate()).padStart(2, '0');
+    const today = mm + dd;
+
+    // Firestoreから今日の枝番を確認
+    const snap = await window._getDocs(
+      window._query(
+        window._collection(window._db, 'gallery'),
+        window._orderBy('createdAt', 'desc')
+      )
+    );
+    // 今日付きのファイル名をカウント
+    let count = 0;
+    snap.forEach(d => {
+      const url = d.data().imageUrl || '';
+      const fname = url.split('/').pop().replace('.png','');
+      if (fname.startsWith(today)) count++;
     });
-    container.querySelectorAll('.sub-panel').forEach(p => {
-      p.classList.toggle('active', p.id === panel + '-' + name);
-    });
+    const branch = String(count + 1).padStart(2, '0');
+    const fileName = today + '_' + branch;
+
+    document.getElementById('galleryUrl').value    = fileName;
+    document.getElementById('galleryFileName').textContent = fileName + '.png';
+    document.getElementById('galleryUrlPreview').textContent = 'URL: https://hikapero.github.io/HIKARI/gallery/' + fileName + '.png';
   }
-  function switchTab(name) {
-    TABS.forEach((t,i) => {
-      document.querySelectorAll('.tab-btn')[i].classList.toggle('active', t===name);
-      document.getElementById('panel-'+t).classList.toggle('active', t===name);
-    });
-    window.scrollTo({top:0,behavior:'smooth'});
-  }
-  function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }
 
-  // ── 絵文字ピッカー ──
-  const EMOJI_DATA = [
-    { cat:'スマイリー', emojis:['😀','😁','😂','🤣','😃','😄','😅','😆','😇','😉','😊','🙂','🙃','😋','😌','😍','🥰','😎','🤩','😏','😐','😑','😶','😒','🙄','😳','🥺','😢','😭','😤','😠','😡','🤬','😈','👿','💀','😺','😸','😹','😻','😼','😽','🙀','😿','😾'] },
-    { cat:'動物', emojis:['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐮','🐷','🐸','🐙','🐵','🙈','🙉','🙊','🐔','🐧','🐦','🦆','🦉','🦇','🐺','🐗','🐴','🦄','🐝','🐛','🦋','🐌','🐞','🐜','🦟','🐢','🐍','🦎','🦕','🦖','🐬','🐳','🐋','🦈','🐊','🦓','🦍','🦧','🦣','🐘','🦛','🦏','🐪','🐫','🦒','🦘','🦬','🐃','🐂','🐄','🐎','🐖','🐏','🐑','🦙','🐐','🦌','🐕','🐩','🦮','🐈','🐓','🦃','🦤','🦚','🦜','🦢','🕊','🐇','🦝','🦨','🦡','🦫','🦦','🦥','🐁','🐀','🐿','🦔'] },
-    { cat:'食べ物', emojis:['🍎','🍊','🍋','🍇','🍓','🍒','🍑','🥭','🍍','🥝','🍅','🥑','🍆','🥕','🌽','🌶','🥦','🧄','🧅','🥔','🍠','🥐','🍞','🥖','🧀','🥚','🍳','🥞','🧇','🥓','🌭','🍔','🍟','🍕','🥙','🌮','🌯','🥗','🍜','🍝','🍛','🍣','🍱','🍤','🍙','🍘','🍥','🥮','🍡','🍧','🍨','🍦','🥧','🧁','🍰','🎂','🍮','🍭','🍬','🍫','🍿','🧃','🥤','🧋','☕','🍵','🧉','🍺','🎂'] },
-    { cat:'ハート・記号', emojis:['❤️','🧡','💛','💚','💙','💜','🖤','🤍','🤎','💔','❤️‍🔥','💕','💞','💓','💗','💖','💝','💘','💟','☮️','✝️','☯️','♾️','💲','♻️','⚜️','🔱','📛','🔰','⭕','✅','❌','❎','💮','🔅','🔆','🌟','⭐','🌠','✨','⚡','🌈','🎵','🎶','💫','🌀','🔮','💎','🏆','🎯','🎪','🎭','🎨'] },
-    { cat:'自然・天気', emojis:['🌸','🌺','🌻','🌹','🌷','💐','🌿','🍀','🍁','🍂','🍃','🌱','🌲','🌳','🌴','🌵','🎋','🎍','🍄','🌾','🌊','🌀','🌈','⚡','❄️','🔥','💧','🌙','⭐','🌟','☀️','🌤','⛅','🌦','🌧','⛈','🌩','🌨','🌬','🌪','🌫','🌊'] },
-    { cat:'もの・活動', emojis:['🎮','🕹','🎲','🎯','🎳','🎰','🎭','🎨','🖼','🎪','🎤','🎧','🎼','🎹','🥁','🎷','🎺','🎸','🪕','🎻','🎬','📷','📸','📱','💻','🖥','⌨️','🖱','🖨','📺','📻','🧲','💡','🔦','🕯','🪔','📚','📖','✏️','🖊','🖋','📝','📌','📍','✂️','🗂','📁','📂','🗒','📅','📆','📇','🗃','🗄','🗑','🔒','🔓','🔑','🗝','🔨','🪓','⛏','🔧','🔩','⚙️','🧰','🪤','🧲','🪜','🧪','🧫','🧬','🔭','🔬','🩺','💊','💉','🩹','🩼','🩻','🪥','🧴','🧷','🧹','🧺','🧻','🚿','🛁','🪣','🧼','🫧'] },
-  ];
-
-  let selectedEmoji = '💬';
-
-  function buildEmojiList(filter='') {
-    const container = document.getElementById('emojiList');
-    container.innerHTML = '';
-    const q = filter.toLowerCase();
-    EMOJI_DATA.forEach(({cat, emojis}) => {
-      const filtered = emojis.filter(e => !q || e.includes(q));
-      if (!filtered.length) return;
-      const catEl = document.createElement('div');
-      catEl.className = 'emoji-category';
-      catEl.textContent = cat;
-      container.appendChild(catEl);
-      const grid = document.createElement('div');
-      grid.className = 'emoji-grid';
-      filtered.forEach(e => {
-        const btn = document.createElement('button');
-        btn.className = 'emoji-btn' + (e === selectedEmoji ? ' selected' : '');
-        btn.textContent = e;
-        btn.onclick = () => selectEmoji(e);
-        grid.appendChild(btn);
-      });
-      container.appendChild(grid);
+  function copyFileName() {
+    const name = document.getElementById('galleryFileName').textContent;
+    if (name === '—') { alert('先に「発行する」を押してね！'); return; }
+    navigator.clipboard.writeText(name).then(() => {
+      const btn = document.getElementById('copyBtn');
+      btn.textContent = '✅ コピー済';
+      setTimeout(() => btn.textContent = '📋 コピー', 2000);
     });
   }
-
-  function selectEmoji(emoji) {
-    selectedEmoji = emoji;
-    document.getElementById('emojiCurrent').textContent = emoji;
-    document.querySelectorAll('.emoji-btn').forEach(b => b.classList.toggle('selected', b.textContent === emoji));
-    toggleEmojiPanel();
+  function switchATab(name) {
+    const names = ["chat","gallery","shop","diary","game","members","links"];
+    document.querySelectorAll(".atab").forEach((t,i) => t.classList.toggle("active", names[i]===name));
+    document.querySelectorAll(".apanel").forEach(p => p.classList.toggle("active", p.id==="apanel-"+name));
   }
-
-  function toggleEmojiPanel() {
-    const panel = document.getElementById('emojiPanel');
-    const open  = !panel.classList.contains('open');
-    panel.classList.toggle('open', open);
-    if (open) {
-      buildEmojiList();
-      document.getElementById('emojiSearch').focus();
-    }
-  }
-
-  function filterEmoji(val) { buildEmojiList(val); }
-
-  // パネル外クリックで閉じる
-  document.addEventListener('click', e => {
-    const wrap = document.querySelector('.emoji-picker-wrap');
-    if (wrap && !wrap.contains(e.target)) {
-      document.getElementById('emojiPanel').classList.remove('open');
-    }
-  });
-
-  function openModal(id)  { document.getElementById(id).classList.add('open'); }
-  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-  document.querySelectorAll('.modal-backdrop').forEach(m => {
-    m.addEventListener('click', e => { if(e.target===m) m.classList.remove('open'); });
-  });
-  function checkWidth() {
-    const links = document.getElementById('navLinks');
-    const ham   = document.querySelector('.hamburger');
-    if (window.innerWidth < 600) { links.style.display='none'; ham.style.display='block'; }
-    else { links.style.display='flex'; ham.style.display='none'; document.getElementById('mobileMenu').classList.remove('open'); }
-  }
-  checkWidth();
-  window.addEventListener('resize', checkWidth);
 </script>
 </body>
 </html>
