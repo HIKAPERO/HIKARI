@@ -305,12 +305,30 @@
           <option value="Roblox">Roblox</option>
           <option value="Minecraft">Minecraft</option>
           <option value="Meta Quest">Meta Quest</option>
-          <option value="脳汁系">🧠 脳汁系</option>
           <option value="その他">その他</option>
         </select>
       </div>
       <div class="field"><label>アイコン画像URL</label><input type="text" id="gameIconUrl" placeholder="例：https://tr.rbxcdn.com/..."></div>
       <div class="field"><label>ゲームURL（任意）</label><input type="text" id="gameUrl" placeholder="例：https://www.roblox.com/ja/games/..."></div>
+      <div class="field">
+        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+          <div>
+            <label>★ ミシュラン評価（1〜5）</label>
+            <div class="star-rating" style="margin-top:6px;">
+              <input type="radio" id="ng5" name="ngrating" value="5"><label for="ng5">★</label>
+              <input type="radio" id="ng4" name="ngrating" value="4"><label for="ng4">★</label>
+              <input type="radio" id="ng3" name="ngrating" value="3"><label for="ng3">★</label>
+              <input type="radio" id="ng2" name="ngrating" value="2"><label for="ng2">★</label>
+              <input type="radio" id="ng1" name="ngrating" value="1"><label for="ng1">★</label>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--bg2);border:0.5px solid var(--border);border-radius:8px;cursor:pointer;" onclick="this.querySelector('input').click()">
+            <input type="checkbox" id="gameNojiru" style="width:16px;height:16px;cursor:pointer;accent-color:var(--red);">
+            <label for="gameNojiru" style="font-size:12px;color:#ff4444;cursor:pointer;font-weight:700;letter-spacing:1px;">脳汁系</label>
+          </div>
+        </div>
+      </div>
+      <div class="field"><label>一言感想</label><textarea id="gameComment" placeholder="例：ねこがかわいくて最高！" style="min-height:60px;"></textarea></div>
       <button class="btn-add" onclick="addGame()">登録する</button>
     </div>
     <div class="diary-list" id="gameAdminList" style="margin-top:14px;">
@@ -614,7 +632,7 @@
             <button class="btn-edit">編集</button>
             <button class="btn-del">削除</button>
           </div>`;
-        row.querySelector(".btn-edit").addEventListener("click", () => window._editGame(d.id, g.name||"", g.platform||"Roblox", g.iconUrl||"", g.gameUrl||"", g.rating||0, g.comment||""));
+        row.querySelector(".btn-edit").addEventListener("click", () => window._editGame(d.id, g.name||"", g.platform||"Roblox", g.iconUrl||"", g.gameUrl||"", g.rating||0, g.nojiru||false, g.comment||""));
         row.querySelector(".btn-del").addEventListener("click", () => window._delDoc("games", d.id));
         adminList.appendChild(row);
       });
@@ -717,9 +735,15 @@
     const platform = document.getElementById("gamePlatform").value;
     const iconUrl  = document.getElementById("gameIconUrl").value.trim();
     const gameUrl  = document.getElementById("gameUrl").value.trim();
+    const ratingEl = document.querySelector("input[name=ngrating]:checked");
+    const rating   = ratingEl ? Number(ratingEl.value) : 0;
+    const nojiru   = document.getElementById("gameNojiru").checked;
+    const comment  = document.getElementById("gameComment").value.trim();
     if (!name || !iconUrl) { alert("ゲーム名とアイコンURLは必須です"); return; }
-    await window._addDoc(window._collection(window._db,"games"), { owner, name, platform, iconUrl, gameUrl, createdAt:serverTimestamp() });
-    ["gameName","gameIconUrl","gameUrl"].forEach(id => document.getElementById(id).value="");
+    await window._addDoc(window._collection(window._db,"games"), { owner, name, platform, iconUrl, gameUrl, rating, nojiru, comment, createdAt:serverTimestamp() });
+    ["gameName","gameIconUrl","gameUrl","gameComment"].forEach(id => document.getElementById(id).value="");
+    document.getElementById("gameNojiru").checked = false;
+    document.querySelectorAll("input[name=ngrating]").forEach(r => r.checked = false);
     showToast("🎮 ゲームを登録しました！");
   };
 
@@ -943,7 +967,7 @@
     document.getElementById("editModal").classList.add("open");
   };
 
-  window._editGame = (id, name, platform, iconUrl, gameUrl, rating, comment) => {
+  window._editGame = (id, name, platform, iconUrl, gameUrl, rating, nojiru, comment) => {
     document.getElementById("editModalTitle").textContent = "ゲームを編集";
     const r = Number(rating) || 0;
     const body = document.getElementById("editModalBody");
@@ -960,7 +984,7 @@
     const l2 = document.createElement("label"); l2.textContent = "プラットフォーム"; f2.appendChild(l2);
     const sel = document.createElement("select"); sel.id = "e_gplatform";
     sel.style.cssText = "background:var(--bg2);border:0.5px solid var(--border);border-radius:7px;padding:10px 14px;font-size:13px;color:var(--text);outline:none;width:100%;font-family:inherit;";
-    [["Roblox","Roblox"],["Minecraft","Minecraft"],["Meta Quest","Meta Quest"],["脳汁系","🧠 脳汁系"],["その他","その他"]].forEach(([v,t]) => {
+    [["Roblox","Roblox"],["Minecraft","Minecraft"],["Meta Quest","Meta Quest"],["その他","その他"]].forEach(([v,t]) => {
       const opt = document.createElement("option"); opt.value = v; opt.textContent = t;
       if (v === (platform||"")) opt.selected = true;
       sel.appendChild(opt);
@@ -979,17 +1003,35 @@
     const inp_url = document.createElement("input"); inp_url.className = "form-input"; inp_url.id = "e_gurl"; inp_url.value = gameUrl||"";
     f4.appendChild(inp_url); body.appendChild(f4);
 
-    // 星評価
+    // 星評価＋脳汁系チェック
     const f5 = document.createElement("div"); f5.className = "field";
-    const l5 = document.createElement("label"); l5.textContent = "★ ミシュラン評価（1〜5）"; f5.appendChild(l5);
-    const starDiv = document.createElement("div"); starDiv.className = "star-rating";
+    const rowWrap = document.createElement("div");
+    rowWrap.style.cssText = "display:flex;align-items:center;gap:16px;flex-wrap:wrap;";
+
+    const starWrap = document.createElement("div");
+    const l5 = document.createElement("label"); l5.textContent = "★ ミシュラン評価（1〜5）"; starWrap.appendChild(l5);
+    const starDiv = document.createElement("div"); starDiv.className = "star-rating"; starDiv.style.marginTop = "6px";
     [5,4,3,2,1].forEach(n => {
       const inp = document.createElement("input"); inp.type = "radio"; inp.id = "s"+n; inp.name = "grating"; inp.value = String(n);
       if (n === r) inp.checked = true;
       const lbl = document.createElement("label"); lbl.htmlFor = "s"+n; lbl.textContent = "★";
       starDiv.appendChild(inp); starDiv.appendChild(lbl);
     });
-    f5.appendChild(starDiv); body.appendChild(f5);
+    starWrap.appendChild(starDiv);
+    rowWrap.appendChild(starWrap);
+
+    const nojiruWrap = document.createElement("div");
+    nojiruWrap.style.cssText = "display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--bg2);border:0.5px solid var(--border);border-radius:8px;cursor:pointer;margin-top:18px;";
+    nojiruWrap.onclick = () => { const cb = nojiruWrap.querySelector("input"); cb.checked = !cb.checked; };
+    const nojiruCb = document.createElement("input"); nojiruCb.type = "checkbox"; nojiruCb.id = "e_gnojiru";
+    nojiruCb.style.cssText = "width:16px;height:16px;cursor:pointer;accent-color:#ff4444;";
+    nojiruCb.checked = !!(nojiru);
+    const nojiruLbl = document.createElement("label"); nojiruLbl.htmlFor = "e_gnojiru";
+    nojiruLbl.textContent = "脳汁系"; nojiruLbl.style.cssText = "font-size:12px;color:#ff4444;cursor:pointer;font-weight:700;letter-spacing:1px;";
+    nojiruWrap.appendChild(nojiruCb); nojiruWrap.appendChild(nojiruLbl);
+    rowWrap.appendChild(nojiruWrap);
+
+    f5.appendChild(rowWrap); body.appendChild(f5);
 
     // 感想
     const f6 = document.createElement("div"); f6.className = "field";
@@ -1006,6 +1048,7 @@
         iconUrl:  document.getElementById("e_gicon").value.trim(),
         gameUrl:  document.getElementById("e_gurl").value.trim(),
         rating:   ratingVal ? Number(ratingVal.value) : 0,
+        nojiru:   document.getElementById("e_gnojiru").checked,
         comment:  document.getElementById("e_gcomment").value.trim(),
       });
       showToast("更新しました！");

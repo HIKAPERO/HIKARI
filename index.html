@@ -115,20 +115,6 @@
   .star-lit:nth-child(4) { animation-delay:0.6s; }
   .star-lit:nth-child(5) { animation-delay:0.8s; }
   .star-dim { color:rgba(255,255,255,0.25); display:inline-block; }
-  .nojiru-badge {
-    position:absolute; bottom:5px; right:6px;
-    font-size:11px; font-weight:700; color:#ff4444;
-    text-shadow: 0 0 6px rgba(255,60,60,0.9), 0 0 12px rgba(255,60,60,0.6);
-    filter: blur(0.4px);
-    animation: nojiru 2s ease-in-out infinite;
-    letter-spacing:1px;
-    pointer-events:none;
-  }
-  @keyframes nojiru {
-    0%   { opacity:0;   text-shadow: 0 0 4px rgba(255,60,60,0.5); }
-    50%  { opacity:0.8; text-shadow: 0 0 10px rgba(255,60,60,1), 0 0 20px rgba(255,60,60,0.7); filter:blur(0.6px); }
-    100% { opacity:0;   text-shadow: 0 0 4px rgba(255,60,60,0.5); }
-  }
   @keyframes starGlow {
     0%,100% { color:#f0c040; transform:scale(1);   text-shadow:0 0 4px #f0c040; }
     50%      { color:#ffe066; transform:scale(1.25); text-shadow:0 0 8px #ffe066, 0 0 16px #f0c040; }
@@ -675,7 +661,7 @@
       a.target = "_blank";
       a.rel    = "noopener";
       const badge = g.platform ? esc(g.platform) : "GAME";
-      const starsHtml = g.platform === "脳汁系"
+      const starsHtml = g.nojiru
         ? `<div class="nojiru-badge">脳汁系</div>`
         : g.rating ? (() => {
             const lit = Array.from({length: g.rating},     () => `<span class="star-lit">★</span>`).join("");
