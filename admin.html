@@ -137,6 +137,14 @@
   .dropped-icon .remove-btn { position:absolute; top:-4px; right:-4px; width:18px; height:18px; border-radius:50%; background:var(--red); color:#fff; font-size:11px; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; line-height:1; }
   .dropped-icon-name { font-size:9px; color:var(--text-dim); }
 
+  /* STAR RATING */
+  .star-rating { display:flex; gap:6px; flex-direction:row-reverse; justify-content:flex-end; }
+  .star-rating input { display:none; }
+  .star-rating label { font-size:24px; color:var(--border); cursor:pointer; transition:color .15s; }
+  .star-rating input:checked ~ label,
+  .star-rating label:hover,
+  .star-rating label:hover ~ label { color:#f0c040; }
+
   /* EDIT MODAL */
   .modal-backdrop { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:500; align-items:center; justify-content:center; padding:20px; }
   .modal-backdrop.open { display:flex; }
@@ -593,17 +601,19 @@
         const row = document.createElement("div");
         row.className = "card";
         row.style.cssText = "display:flex;align-items:center;gap:12px;margin-bottom:10px;";
+        const starsDisp = g.rating ? "★".repeat(g.rating) + "☆".repeat(5-g.rating) : "未評価";
         row.innerHTML = `
           <img src="${esc(g.iconUrl)}" style="width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0;">
           <div style="flex:1;">
             <div style="font-size:13px;color:var(--text);">${esc(g.name)}</div>
             <div style="font-size:10px;color:var(--text-dim);">${esc(g.platform||"")}</div>
+            <div style="font-size:11px;color:#f0c040;">${starsDisp}</div>
           </div>
           <div class="btn-row">
             <button class="btn-edit">編集</button>
             <button class="btn-del">削除</button>
           </div>`;
-        row.querySelector(".btn-edit").addEventListener("click", () => window._editGame(d.id, g.name||"", g.platform||"Roblox", g.iconUrl||"", g.gameUrl||""));
+        row.querySelector(".btn-edit").addEventListener("click", () => window._editGame(d.id, g.name||"", g.platform||"Roblox", g.iconUrl||"", g.gameUrl||"", g.rating||0, g.comment||""));
         row.querySelector(".btn-del").addEventListener("click", () => window._delDoc("games", d.id));
         adminList.appendChild(row);
       });
@@ -923,8 +933,9 @@
     document.getElementById("editModal").classList.add("open");
   };
 
-  window._editGame = (id, name, platform, iconUrl, gameUrl) => {
+  window._editGame = (id, name, platform, iconUrl, gameUrl, rating, comment) => {
     document.getElementById("editModalTitle").textContent = "ゲームを編集";
+    const r = rating || 0;
     document.getElementById("editModalBody").innerHTML = `
       <div class="field"><label>ゲーム名</label><input id="e_gname" value="${name}"></div>
       <div class="field">
@@ -937,13 +948,27 @@
         </select>
       </div>
       <div class="field"><label>アイコン画像URL</label><input id="e_gicon" value="${iconUrl}"></div>
-      <div class="field"><label>ゲームURL（任意）</label><input id="e_gurl" value="${gameUrl}"></div>`;
+      <div class="field"><label>ゲームURL（任意）</label><input id="e_gurl" value="${gameUrl}"></div>
+      <div class="field">
+        <label>★ ミシュラン評価（1〜5）</label>
+        <div class="star-rating">
+          <input type="radio" id="s5" name="grating" value="5" ${r===5?"checked":""}><label for="s5">★</label>
+          <input type="radio" id="s4" name="grating" value="4" ${r===4?"checked":""}><label for="s4">★</label>
+          <input type="radio" id="s3" name="grating" value="3" ${r===3?"checked":""}><label for="s3">★</label>
+          <input type="radio" id="s2" name="grating" value="2" ${r===2?"checked":""}><label for="s2">★</label>
+          <input type="radio" id="s1" name="grating" value="1" ${r===1?"checked":""}><label for="s1">★</label>
+        </div>
+      </div>
+      <div class="field"><label>一言感想</label><textarea id="e_gcomment" placeholder="例：ねこがかわいくて最高！" style="min-height:60px;">${comment||""}</textarea></div>`;
     _editAction = async () => {
+      const ratingVal = document.querySelector('input[name="grating"]:checked');
       await window._updateDoc(window._doc(window._db,"games",id), {
         name:     document.getElementById("e_gname").value.trim(),
         platform: document.getElementById("e_gplatform").value,
         iconUrl:  document.getElementById("e_gicon").value.trim(),
         gameUrl:  document.getElementById("e_gurl").value.trim(),
+        rating:   ratingVal ? Number(ratingVal.value) : 0,
+        comment:  document.getElementById("e_gcomment").value.trim(),
       });
       showToast("更新しました！");
     };
