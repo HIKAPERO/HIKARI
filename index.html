@@ -131,8 +131,7 @@
   /* ABOUT */
   .about-card { background:var(--bg2); border:0.5px solid var(--border); border-radius:12px; padding:24px; display:flex; gap:18px; align-items:center; margin-bottom:16px; }
   @media(max-width:480px){.about-card{flex-direction:column;text-align:center;}}
-  .about-avatar { width:110px; height:110px; border-radius:50%; background:var(--bg3); border:2px solid var(--purple); display:flex; align-items:center; justify-content:center; font-size:32px; flex-shrink:0; overflow:hidden; }
-  .about-avatar img { width:100%; height:100%; object-fit:cover; object-position:center top; }
+  .about-avatar { width:72px; height:72px; border-radius:50%; background:var(--bg3); border:2px solid var(--purple); display:flex; align-items:center; justify-content:center; font-size:32px; flex-shrink:0; }
   .about-name { font-size:20px; font-weight:700; color:var(--purple-pale); letter-spacing:3px; margin-bottom:6px; }
   .about-bio { font-size:13px; color:#888; line-height:1.7; margin-bottom:12px; }
   .about-tags { display:flex; gap:8px; flex-wrap:wrap; }
@@ -201,12 +200,7 @@
   <div class="section">
     <div class="sec-label">— COMMUNITY ART</div>
     <div class="sec-title">みんなの作品</div>
-    <div class="gallery-grid">
-      <div class="gallery-item" onclick="openModal('uploadModal')"><span class="badge-new">NEW</span><span class="gallery-placeholder">🎨</span><span class="likes">♡ 24</span></div>
-      <div class="gallery-item"><span class="gallery-placeholder">🖼</span><span class="likes">♡ 18</span></div>
-      <div class="gallery-item"><span class="gallery-placeholder">✏️</span><span class="likes">♡ 31</span></div>
-      <div class="gallery-item"><span class="gallery-placeholder">⭐</span><span class="likes">♡ 9</span></div>
-      <div class="gallery-item"><span class="gallery-placeholder">✨</span><span class="likes">♡ 42</span></div>
+    <div class="gallery-grid" id="galleryGrid">
       <div class="upload-tile" onclick="openModal('uploadModal')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 16V8m0 0l-3 3m3-3l3 3M20 21H4a2 2 0 01-2-2V5a2 2 0 012-2h16a2 2 0 012 2v14a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round"/></svg>
         作品を投稿
@@ -216,10 +210,7 @@
   <div class="section">
     <div class="sec-label">— HIKARI'S COMMENTS</div>
     <div class="sec-title">HIKARIのコメント</div>
-    <div class="comment-card"><div class="comment-meta">USER: starpainter_22</div><div class="comment-text">空のグラデーションがすごくきれいです！どうやって描いたの？</div></div>
-    <div class="hikari-card"><div class="hikari-label">✦ HIKARI</div><div class="comment-text" style="color:var(--purple-pale);">ありがとう！むらさきと青をまぜたんだよ〜 💜 レイヤーを重ねるといい感じになるよ！</div></div>
-    <div class="comment-card"><div class="comment-meta">USER: pixel_fox</div><div class="comment-text">ロブロックスのキャラクターがかわいい！自分でデザインしたの？</div></div>
-    <div class="hikari-card"><div class="hikari-label">✦ HIKARI</div><div class="comment-text" style="color:var(--purple-pale);">じぶんでデザインしたの！ ✨ 投稿もしてみてね！</div></div>
+    <div id="galleryComments"><div style="color:var(--text-dim);font-size:12px;text-align:center;padding:16px;">読み込み中...</div></div>
   </div>
 </div>
 
@@ -228,11 +219,8 @@
   <div class="section">
     <div class="sec-label">— HIKARI SHOP</div>
     <div class="sec-title">グッズを買う</div>
-    <div class="shop-grid">
-      <div class="shop-card"><div class="shop-thumb">👕</div><div class="shop-name">オリジナルTシャツ</div><div class="shop-price">¥2,800</div><button class="shop-btn" onclick="openModal('shopModal')">カートに入れる</button></div>
-      <div class="shop-card"><div class="shop-thumb">📮</div><div class="shop-name">ポストカードセット</div><div class="shop-price">¥800</div><button class="shop-btn" onclick="openModal('shopModal')">カートに入れる</button></div>
-      <div class="shop-card"><div class="shop-thumb">🌟</div><div class="shop-name">ステッカーパック</div><div class="shop-price">¥500</div><button class="shop-btn" onclick="openModal('shopModal')">カートに入れる</button></div>
-      <div class="shop-card"><div class="shop-thumb">🖼</div><div class="shop-name">デジタルアート DL</div><div class="shop-price">¥300</div><button class="shop-btn" onclick="openModal('shopModal')">購入する</button></div>
+    <div class="shop-grid" id="shopGrid">
+      <div style="color:var(--text-dim);font-size:12px;text-align:center;padding:24px;grid-column:1/-1;">読み込み中...</div>
     </div>
   </div>
 </div>
@@ -243,9 +231,9 @@
     <div class="sec-label">— ROBLOX STATS</div>
     <div class="sec-title">今日のロブロックス</div>
     <div class="rblx-stats">
-      <div class="rblx-stat"><div class="rblx-icon">⏰</div><div class="rblx-label">TODAY</div><div class="rblx-val">3h 20m</div></div>
-      <div class="rblx-stat"><div class="rblx-icon">🏆</div><div class="rblx-label">LEVEL</div><div class="rblx-val">47</div></div>
-      <div class="rblx-stat"><div class="rblx-icon">👾</div><div class="rblx-label">FRIENDS</div><div class="rblx-val">12</div></div>
+      <div class="rblx-stat"><div class="rblx-icon">⏰</div><div class="rblx-label">TODAY</div><div class="rblx-val" id="rblxTime">—</div></div>
+      <div class="rblx-stat"><div class="rblx-icon">🏆</div><div class="rblx-label">LEVEL</div><div class="rblx-val" id="rblxLevel">—</div></div>
+      <div class="rblx-stat"><div class="rblx-icon">👾</div><div class="rblx-label">FRIENDS</div><div class="rblx-val" id="rblxFriends">—</div></div>
     </div>
   </div>
   <div class="section">
@@ -253,9 +241,7 @@
     <div class="sec-title">ゲーム日誌</div>
     <div class="rblx-diary">
       <div class="rblx-diary-label">— 最新のプレイ記録</div>
-      <div class="diary-entry"><div class="diary-date">2025.06.11</div><div class="diary-text">Blox Fruits でボス討伐に成功！ ⚔️ ぜんぶのステージをクリアして、レア装備もドロップした！</div></div>
-      <div class="diary-entry"><div class="diary-date">2025.06.10</div><div class="diary-text">フレンドと一緒にタワーディフェンスをやった🏰 チームワークがよくて最終ウェーブまでいけたよ！</div></div>
-      <div class="diary-entry"><div class="diary-date">2025.06.09</div><div class="diary-text">新しいアバターをデザインした✨ 紫と黒のコーデにしてみた。かっこよくなった！</div></div>
+      <div id="diaryEntries"><div style="color:var(--text-dim);font-size:12px;text-align:center;padding:16px;">読み込み中...</div></div>
     </div>
   </div>
 </div>
@@ -293,7 +279,7 @@
         <div class="about-tags">
           <span class="about-tag">デジタルアート</span>
           <span class="about-tag">ROBLOX</span>
-          <span class="about-tag">小学生</span>
+          <span class="about-tag">小学4年生</span>
           <span class="about-tag">ねこ好き🐱</span>
         </div>
       </div>
@@ -328,7 +314,7 @@
 <!-- Firebase SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp }
+  import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, serverTimestamp }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -398,8 +384,93 @@
   };
 
   function esc(s) {
-    return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
   }
+
+  // ── ギャラリー ──
+  onSnapshot(query(collection(db,"gallery"), orderBy("createdAt","desc")), snap => {
+    const grid     = document.getElementById("galleryGrid");
+    const comments = document.getElementById("galleryComments");
+    const uploadTile = grid.querySelector(".upload-tile");
+    grid.innerHTML = "";
+    comments.innerHTML = "";
+
+    if (snap.empty) {
+      grid.appendChild(uploadTile);
+      comments.innerHTML = '<div style="color:var(--text-dim);font-size:12px;text-align:center;padding:16px;">まだ作品がないよ。最初の投稿を待ってるよ！</div>';
+      return;
+    }
+
+    let isFirst = true;
+    snap.forEach(d => {
+      const data = d.data();
+      const item = document.createElement("div");
+      item.className = "gallery-item";
+      if (isFirst) item.innerHTML += '<span class="badge-new">NEW</span>';
+      if (data.imageUrl) {
+        item.innerHTML += `<img src="${esc(data.imageUrl)}" alt="${esc(data.title)}" style="width:100%;height:100%;object-fit:cover;">`;
+      } else {
+        item.innerHTML += `<span class="gallery-placeholder">🎨</span>`;
+      }
+      grid.appendChild(item);
+      if (data.comment) {
+        comments.innerHTML += `
+          <div class="comment-card"><div class="comment-meta">USER: ${esc(data.author)}</div><div class="comment-text">${esc(data.title)}</div></div>
+          <div class="hikari-card"><div class="hikari-label">✦ HIKARI</div><div class="comment-text" style="color:var(--purple-pale);">${esc(data.comment)}</div></div>`;
+      }
+      isFirst = false;
+    });
+    grid.appendChild(uploadTile);
+    if (!comments.innerHTML) {
+      comments.innerHTML = '<div style="color:var(--text-dim);font-size:12px;text-align:center;padding:16px;">コメントはまだないよ！</div>';
+    }
+  });
+
+  // ── ショップ ──
+  onSnapshot(query(collection(db,"shop"), orderBy("createdAt","desc")), snap => {
+    const grid = document.getElementById("shopGrid");
+    grid.innerHTML = "";
+    if (snap.empty) {
+      grid.innerHTML = '<div style="color:var(--text-dim);font-size:12px;text-align:center;padding:24px;grid-column:1/-1;">準備中だよ！もうすぐオープンするね 💜</div>';
+      return;
+    }
+    snap.forEach(d => {
+      const data = d.data();
+      const card = document.createElement("div");
+      card.className = "shop-card";
+      card.innerHTML = `
+        <div class="shop-thumb">${esc(data.emoji||"🛍")}</div>
+        <div class="shop-name">${esc(data.name)}</div>
+        <div class="shop-price">¥${Number(data.price).toLocaleString()}</div>
+        ${data.desc ? `<div style="font-size:11px;color:var(--text-muted);margin-bottom:10px;line-height:1.5;">${esc(data.desc)}</div>` : ""}
+        <button class="shop-btn" onclick="openModal('shopModal')">カートに入れる</button>`;
+      grid.appendChild(card);
+    });
+  });
+
+  // ── ロブロックス ──
+  onSnapshot(query(collection(db,"roblox"), orderBy("createdAt","desc"), limit(10)), snap => {
+    const entries = document.getElementById("diaryEntries");
+    entries.innerHTML = "";
+    if (snap.empty) {
+      document.getElementById("rblxTime").textContent    = "—";
+      document.getElementById("rblxLevel").textContent   = "—";
+      document.getElementById("rblxFriends").textContent = "—";
+      entries.innerHTML = '<div style="color:var(--text-dim);font-size:12px;text-align:center;padding:16px;">まだ日誌がないよ！</div>';
+      return;
+    }
+    const latest = snap.docs[0].data();
+    document.getElementById("rblxTime").textContent    = latest.playTime  || "—";
+    document.getElementById("rblxLevel").textContent   = latest.level     || "—";
+    document.getElementById("rblxFriends").textContent = latest.friends   || "—";
+    snap.forEach(d => {
+      const data = d.data();
+      const div  = document.createElement("div");
+      div.className = "diary-entry";
+      div.innerHTML = `<div class="diary-date">${esc(data.date||"")}</div><div class="diary-text">${esc(data.diary)}</div>`;
+      entries.appendChild(div);
+    });
+  });
 </script>
 
 <script>
