@@ -513,8 +513,7 @@
     snap.forEach(d => {
       const m = d.data();
       const tags = (m.tags||"").split(",").map(t => t.trim()).filter(t=>t);
-      const facts = (m.facts||"").split("
-").map(f => f.trim()).filter(f=>f);
+      const facts = (m.facts||"").split("\n").map(f => f.trim()).filter(f=>f);
       const card = document.createElement("div");
       card.innerHTML = `
         <div class="about-card">
@@ -523,7 +522,7 @@
           </div>
           <div>
             <div class="about-name">${esc(m.name)}</div>
-            <div class="about-bio">${esc(m.bio)}</div>
+            <div class="about-bio">${esc(m.bio||"")}</div>
             <div class="about-tags">${tags.map(t=>`<span class="about-tag">${esc(t)}</span>`).join("")}</div>
           </div>
         </div>
