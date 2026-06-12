@@ -257,6 +257,14 @@
   const app      = initializeApp(firebaseConfig);
   const auth     = getAuth(app);
   const db       = getFirestore(app);
+  window._db   = db;
+  window._auth = auth;
+  window._addDoc         = addDoc;
+  window._collection     = collection;
+  window._deleteDoc      = deleteDoc;
+  window._updateDoc      = updateDoc;
+  window._doc            = doc;
+  window._serverTimestamp = serverTimestamp;
 
   function esc(s) { return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
   function showToast(msg) {
@@ -388,7 +396,9 @@
     btn.disabled = true;
     btn.textContent = "送信中...";
     try {
-      await addDoc(collection(db,"messages"), { nick:"HIKARI", text, isHikari:true, createdAt:serverTimestamp() });
+      await window._addDoc(window._collection(window._db,"messages"), {
+        nick:"HIKARI", text, isHikari:true, createdAt:window._serverTimestamp()
+      });
       document.getElementById("replyText").value = "";
       showToast("✦ 返信を送りました！");
     } catch(e) {
