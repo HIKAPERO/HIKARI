@@ -93,14 +93,14 @@
   .rblx-diary { background:var(--bg2); border:0.5px solid var(--border); border-radius:8px; padding:16px; }
   .rblx-diary-label { font-size:9px; letter-spacing:2px; color:var(--text-dim); margin-bottom:10px; }
   /* GAME SHOWCASE */
-  .game-showcase { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-bottom:4px; }
-  @media(max-width:480px){.game-showcase{grid-template-columns:1fr;}}
-  .game-showcase-card { background:var(--bg2); border:0.5px solid var(--border); border-radius:12px; overflow:hidden; text-decoration:none; display:flex; flex-direction:column; transition:border-color .2s,transform .2s; }
+  .game-showcase { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:4px; }
+  @media(max-width:480px){.game-showcase{grid-template-columns:repeat(2,1fr);}}
+  .game-showcase-card { background:var(--bg2); border:0.5px solid var(--border); border-radius:10px; overflow:hidden; text-decoration:none; display:flex; flex-direction:column; transition:border-color .2s,transform .2s; }
   .game-showcase-card:hover { border-color:var(--purple); transform:translateY(-2px); }
   .game-showcase-thumb { width:100%; aspect-ratio:1/1; object-fit:cover; display:block; }
-  .game-showcase-info { padding:10px 12px; }
-  .game-showcase-name { font-size:13px; font-weight:600; color:var(--text); margin-bottom:2px; }
-  .game-showcase-badge { font-size:9px; letter-spacing:1.5px; color:var(--purple-light); }
+  .game-showcase-info { padding:7px 9px; }
+  .game-showcase-name { font-size:11px; font-weight:600; color:var(--text); margin-bottom:2px; }
+  .game-showcase-badge { font-size:9px; letter-spacing:1px; color:var(--purple-light); }
 
   .diary-entry { padding:12px 0; border-bottom:0.5px solid var(--border); }
   .diary-entry:last-child { border-bottom:none; }
