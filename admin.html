@@ -663,18 +663,27 @@
         div.style.alignItems = "center";
         div.style.gap = "14px";
         div.style.marginBottom = "10px";
+        const avatarHtml = m.imageUrl
+          ? `<img src="${esc(m.imageUrl)}" style="width:100%;height:100%;object-fit:cover;">`
+          : `<span style="font-size:22px;">${esc(m.emoji||"⭐")}</span>`;
         div.innerHTML = `
           <div style="width:48px;height:48px;border-radius:50%;background:var(--bg3);border:1.5px solid var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;">
-            ${m.imageUrl ? `<img src="${esc(m.imageUrl)}" style="width:100%;height:100%;object-fit:cover;">` : `<span style="font-size:22px;">${esc(m.emoji||"⭐")}</span>`}
+            ${avatarHtml}
           </div>
           <div style="flex:1;">
             <div style="font-size:13px;color:var(--text);margin-bottom:2px;">${esc(m.name)}</div>
             <div style="font-size:11px;color:var(--text-dim);">表示順: ${m.order||0}</div>
           </div>
           <div class="btn-row">
-            <button class="btn-edit" onclick="window._editMember('${d.id}', ${JSON.stringify(esc(m.name))}, ${JSON.stringify(esc(m.bio||''))}, ${JSON.stringify(esc(m.tags||''))}, ${JSON.stringify(esc(m.imageUrl||''))}, ${JSON.stringify(esc(m.emoji||''))}, ${JSON.stringify(esc(m.facts||''))}, ${m.order||1})">編集</button>
-            <button class="btn-del" onclick="window._delDoc('members','${d.id}')">削除</button>
+            <button class="btn-edit">編集</button>
+            <button class="btn-del">削除</button>
           </div>`;
+        div.querySelector(".btn-edit").addEventListener("click", () => {
+          window._editMember(d.id, m.name||"", m.bio||"", m.tags||"", m.imageUrl||"", m.emoji||"", m.facts||"", m.order||1);
+        });
+        div.querySelector(".btn-del").addEventListener("click", () => {
+          window._delDoc("members", d.id);
+        });
         list.appendChild(div);
       });
     });
