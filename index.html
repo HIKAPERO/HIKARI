@@ -211,6 +211,7 @@
     <a href="#" onclick="switchTab('roblox');return false;">ROBLOX</a>
     <a href="#" onclick="switchTab('chat');return false;">CHAT</a>
     <a href="#" onclick="switchTab('about');return false;">ABOUT</a>
+    <a href="#" onclick="switchTab('links');return false;">LINKS</a>
   </div>
   <button class="hamburger" onclick="toggleMenu()" aria-label="メニュー">☰</button>
 </nav>
@@ -220,6 +221,7 @@
   <a href="#" onclick="switchTab('roblox');toggleMenu();return false;">ROBLOX</a>
   <a href="#" onclick="switchTab('chat');toggleMenu();return false;">CHAT</a>
   <a href="#" onclick="switchTab('about');toggleMenu();return false;">ABOUT</a>
+  <a href="#" onclick="switchTab('links');toggleMenu();return false;">LINKS</a>
 </div>
 
 <section class="hero">
@@ -239,6 +241,7 @@
     <button class="tab-btn" onclick="switchTab('roblox')">ROBLOX</button>
     <button class="tab-btn" onclick="switchTab('chat')">CHAT</button>
     <button class="tab-btn" onclick="switchTab('about')">ABOUT</button>
+    <button class="tab-btn" onclick="switchTab('links')">LINKS</button>
   </div>
 </div>
 
@@ -324,6 +327,11 @@
     <div class="sec-label">— ABOUT</div>
     <div id="memberList"><div style="color:var(--text-dim);font-size:12px;text-align:center;padding:24px;">読み込み中...</div></div>
   </div>
+
+</div>
+
+<!-- LINKS -->
+<div class="panel" id="panel-links">
   <div class="section">
     <div class="sec-label">— LINKS</div>
     <div class="sec-title">リンク</div>
@@ -647,7 +655,7 @@
 </script>
 
 <script>
-  const TABS = ['gallery','shop','roblox','chat','about'];
+  const TABS = ['gallery','shop','roblox','chat','about','links'];
   function switchTab(name) {
     TABS.forEach((t,i) => {
       document.querySelectorAll('.tab-btn')[i].classList.toggle('active', t===name);
