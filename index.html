@@ -298,26 +298,8 @@
 <!-- ABOUT -->
 <div class="panel" id="panel-about">
   <div class="section">
-    <div class="sec-label">— ABOUT HIKARI</div>
-    <div class="about-card">
-      <div class="about-avatar"><img src="/HIKARI/HIKARI05.png" alt="HIKARI"></div>
-      <div>
-        <div class="about-name">HIKARI</div>
-        <div class="about-bio">お絵描き大好き。デジタルアートとロブロックスが生きがい。みんなの絵にコメントするよ！いっしょに楽しいサイトを作ろう。</div>
-        <div class="about-tags">
-          <span class="about-tag">デジタルアート</span>
-          <span class="about-tag">ROBLOX</span>
-          <span class="about-tag">小学4年生</span>
-          <span class="about-tag">ねこ好き🐱</span>
-        </div>
-      </div>
-    </div>
-    <div class="about-facts">
-      <div class="fact-card"><div class="fact-label">好きなゲーム</div><div class="fact-val">Blox Fruits ⚔️</div></div>
-      <div class="fact-card"><div class="fact-label">好きな色</div><div class="fact-val">むらさき 💜</div></div>
-      <div class="fact-card"><div class="fact-label">使ってるアプリ</div><div class="fact-val">Procreate / Ibis</div></div>
-      <div class="fact-card"><div class="fact-label">口ぐせ</div><div class="fact-val">「かわいい！✨」</div></div>
-    </div>
+    <div class="sec-label">— ABOUT</div>
+    <div id="memberList"><div style="color:var(--text-dim);font-size:12px;text-align:center;padding:24px;">読み込み中...</div></div>
   </div>
 </div>
 
@@ -517,6 +499,39 @@
         ${data.desc ? `<div style="font-size:11px;color:var(--text-muted);margin-bottom:10px;line-height:1.5;">${esc(data.desc)}</div>` : ""}
         <button class="shop-btn" onclick="openModal('shopModal')">カートに入れる</button>`;
       grid.appendChild(card);
+    });
+  });
+
+  // ── メンバー ──
+  onSnapshot(query(collection(db,"members"), orderBy("order","asc")), snap => {
+    const list = document.getElementById("memberList");
+    list.innerHTML = "";
+    if (snap.empty) {
+      list.innerHTML = '<div style="color:var(--text-dim);font-size:12px;text-align:center;padding:24px;">メンバー情報がありません</div>';
+      return;
+    }
+    snap.forEach(d => {
+      const m = d.data();
+      const tags = (m.tags||"").split(",").map(t => t.trim()).filter(t=>t);
+      const facts = (m.facts||"").split("
+").map(f => f.trim()).filter(f=>f);
+      const card = document.createElement("div");
+      card.innerHTML = `
+        <div class="about-card">
+          <div class="about-avatar">
+            ${m.imageUrl ? `<img src="${esc(m.imageUrl)}" alt="${esc(m.name)}">` : `<span style="font-size:32px;">${esc(m.emoji||"⭐")}</span>`}
+          </div>
+          <div>
+            <div class="about-name">${esc(m.name)}</div>
+            <div class="about-bio">${esc(m.bio)}</div>
+            <div class="about-tags">${tags.map(t=>`<span class="about-tag">${esc(t)}</span>`).join("")}</div>
+          </div>
+        </div>
+        ${facts.length ? `<div class="about-facts">${facts.map(f => {
+          const [label, ...rest] = f.split(":");
+          return `<div class="fact-card"><div class="fact-label">${esc(label)}</div><div class="fact-val">${esc(rest.join(":").trim())}</div></div>`;
+        }).join("")}</div>` : ""}`;
+      list.appendChild(card);
     });
   });
 

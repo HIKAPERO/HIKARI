@@ -151,6 +151,7 @@
     <button class="atab" onclick="switchATab('gallery')">🎨 ギャラリー</button>
     <button class="atab" onclick="switchATab('shop')">🛍 ショップ</button>
     <button class="atab" onclick="switchATab('roblox')">🎮 ロブロックス</button>
+    <button class="atab" onclick="switchATab('members')">👤 メンバー</button>
   </div>
 
   <!-- CHAT -->
@@ -231,6 +232,30 @@
     </div>
   </div>
 </div>
+
+  <!-- MEMBERS -->
+  <div class="apanel" id="apanel-members">
+    <div class="sec-label">— MEMBER MANAGEMENT</div>
+    <div class="sec-title">メンバー管理</div>
+    <div class="card">
+      <div style="font-size:10px;letter-spacing:2px;color:var(--purple);margin-bottom:14px;">— メンバーを追加</div>
+      <div class="field"><label>名前</label><input type="text" id="memberName" placeholder="例：HIKARI"></div>
+      <div class="field"><label>自己紹介文</label><textarea id="memberBio" placeholder="例：お絵描き大好き小4。"></textarea></div>
+      <div class="field"><label>タグ（カンマ区切り）</label><input type="text" id="memberTags" placeholder="例：デジタルアート, ROBLOX, ねこ好き🐱"></div>
+      <div class="field">
+        <label>プロフィール画像ファイル名（GitHubにアップしたファイル名）</label>
+        <input type="text" id="memberImage" placeholder="例：HIKARI05.png">
+        <div style="font-size:11px;color:var(--text-dim);margin-top:4px;">空欄の場合は絵文字アイコンを使います</div>
+      </div>
+      <div class="field"><label>絵文字アイコン（画像なしの場合）</label><input type="text" id="memberEmoji" placeholder="例：⭐" maxlength="2"></div>
+      <div class="field"><label>プロフィール詳細（1行に「ラベル：内容」形式で入力）</label><textarea id="memberFacts" placeholder="好きなゲーム：Blox Fruits ⚔️&#10;好きな色：むらさき 💜&#10;使ってるアプリ：Procreate / Ibis&#10;口ぐせ：「かわいい！✨」"></textarea></div>
+      <div class="field"><label>表示順（数字が小さいほど上に表示）</label><input type="number" id="memberOrder" placeholder="例：1" value="1"></div>
+      <button class="btn-add" onclick="addMember()">追加する</button>
+    </div>
+    <div id="memberAdminList">
+      <div class="empty-note">読み込み中...</div>
+    </div>
+  </div>
 
 <!-- EDIT MODAL -->
 <div class="modal-backdrop" id="editModal">
@@ -398,6 +423,35 @@
         list.appendChild(div);
       });
     });
+    // メンバー
+    const memberQ = query(collection(db,"members"), orderBy("order","asc"));
+    onSnapshot(memberQ, snap => {
+      const list = document.getElementById("memberAdminList");
+      list.innerHTML = "";
+      if (snap.empty) { list.innerHTML = '<div class="empty-note">まだメンバーがいません</div>'; return; }
+      snap.forEach(d => {
+        const m = d.data();
+        const div = document.createElement("div");
+        div.className = "card";
+        div.style.display = "flex";
+        div.style.alignItems = "center";
+        div.style.gap = "14px";
+        div.style.marginBottom = "10px";
+        div.innerHTML = `
+          <div style="width:48px;height:48px;border-radius:50%;background:var(--bg3);border:1.5px solid var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;">
+            ${m.imageUrl ? `<img src="${esc(m.imageUrl)}" style="width:100%;height:100%;object-fit:cover;">` : `<span style="font-size:22px;">${esc(m.emoji||"⭐")}</span>`}
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:13px;color:var(--text);margin-bottom:2px;">${esc(m.name)}</div>
+            <div style="font-size:11px;color:var(--text-dim);">表示順: ${m.order||0}</div>
+          </div>
+          <div class="btn-row">
+            <button class="btn-edit" onclick="window._editMember('${d.id}', ${JSON.stringify(esc(m.name))}, ${JSON.stringify(esc(m.bio||''))}, ${JSON.stringify(esc(m.tags||''))}, ${JSON.stringify(esc(m.imageUrl||''))}, ${JSON.stringify(esc(m.emoji||''))}, ${JSON.stringify(esc(m.facts||''))}, ${m.order||1})">編集</button>
+            <button class="btn-del" onclick="window._delDoc('members','${d.id}')">削除</button>
+          </div>`;
+        list.appendChild(div);
+      });
+    });
   }
 
   // ── GLOBAL ACTIONS ──
@@ -419,6 +473,24 @@
       btn.disabled = false;
       btn.textContent = "✦ HIKARIとして送信";
     }
+  };
+
+  window.addMember = async () => {
+    const name  = document.getElementById("memberName").value.trim();
+    const bio   = document.getElementById("memberBio").value.trim();
+    const tags  = document.getElementById("memberTags").value.trim();
+    const imgFile = document.getElementById("memberImage").value.trim();
+    const emoji = document.getElementById("memberEmoji").value.trim() || "⭐";
+    const facts = document.getElementById("memberFacts").value.trim();
+    const order = Number(document.getElementById("memberOrder").value) || 1;
+    const imageUrl = imgFile ? "https://hikapero.github.io/HIKARI/" + imgFile : "";
+    if (!name) { alert("名前は必須です"); return; }
+    await window._addDoc(window._collection(window._db,"members"), {
+      name, bio, tags, imageUrl, emoji, facts, order, createdAt:serverTimestamp()
+    });
+    ["memberName","memberBio","memberTags","memberImage","memberEmoji","memberFacts"].forEach(id => document.getElementById(id).value="");
+    document.getElementById("memberOrder").value = "1";
+    showToast("👤 メンバーを追加しました！");
   };
 
   window.addGallery = async () => {
@@ -544,6 +616,32 @@
     if (_editAction) { await _editAction(); closeEdit(); }
   });
 
+  window._editMember = (id, name, bio, tags, imageUrl, emoji, facts, order) => {
+    document.getElementById("editModalTitle").textContent = "メンバーを編集";
+    document.getElementById("editModalBody").innerHTML = `
+      <div class="field"><label>名前</label><input id="e_mname" value="${name}"></div>
+      <div class="field"><label>自己紹介文</label><textarea id="e_mbio">${bio}</textarea></div>
+      <div class="field"><label>タグ（カンマ区切り）</label><input id="e_mtags" value="${tags}"></div>
+      <div class="field"><label>画像ファイル名</label><input id="e_mimage" value="${imageUrl.replace('https://hikapero.github.io/HIKARI/','')}"></div>
+      <div class="field"><label>絵文字アイコン</label><input id="e_memoji" value="${emoji}" maxlength="2"></div>
+      <div class="field"><label>プロフィール詳細</label><textarea id="e_mfacts">${facts}</textarea></div>
+      <div class="field"><label>表示順</label><input id="e_morder" type="number" value="${order}"></div>`;
+    _editAction = async () => {
+      const imgFile = document.getElementById("e_mimage").value.trim();
+      await window._updateDoc(window._doc(window._db,"members",id), {
+        name:     document.getElementById("e_mname").value.trim(),
+        bio:      document.getElementById("e_mbio").value.trim(),
+        tags:     document.getElementById("e_mtags").value.trim(),
+        imageUrl: imgFile ? "https://hikapero.github.io/HIKARI/" + imgFile : "",
+        emoji:    document.getElementById("e_memoji").value.trim(),
+        facts:    document.getElementById("e_mfacts").value.trim(),
+        order:    Number(document.getElementById("e_morder").value) || 1,
+      });
+      showToast("更新しました！");
+    };
+    document.getElementById("editModal").classList.add("open");
+  };
+
   window.closeEdit = () => {
     document.getElementById("editModal").classList.remove("open");
     _editAction = null;
@@ -593,7 +691,7 @@
     });
   }
   function switchATab(name) {
-    const names = ["chat","gallery","shop","roblox"];
+    const names = ["chat","gallery","shop","roblox","members"];
     document.querySelectorAll(".atab").forEach((t,i) => t.classList.toggle("active", names[i]===name));
     document.querySelectorAll(".apanel").forEach(p => p.classList.toggle("active", p.id==="apanel-"+name));
   }
