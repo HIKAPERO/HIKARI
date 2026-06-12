@@ -532,16 +532,23 @@
         const div = document.createElement("div");
         div.className = "card";
         div.style.cssText = "display:flex;align-items:center;gap:12px;margin-bottom:10px;";
+        const emoji = lk.type==="x"?"✕":lk.type==="instagram"?"📷":lk.type==="roblox"?"🎮":lk.type==="twitch"?"🟣":"🌐";
         div.innerHTML = `
-          <div style="font-size:22px;flex-shrink:0;">${lk.type==="x"?"✕":lk.type==="instagram"?"📷":lk.type==="roblox"?"🎮":lk.type==="twitch"?"🟣":"🌐"}</div>
+          <div style="font-size:22px;flex-shrink:0;">${emoji}</div>
           <div style="flex:1;min-width:0;">
             <div style="font-size:13px;color:var(--text);margin-bottom:2px;">${esc(lk.name)}</div>
             <div style="font-size:11px;color:var(--text-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(lk.url||"")}</div>
           </div>
           <div class="btn-row">
-            <button class="btn-edit" onclick="window._editLink('${d.id}', ${JSON.stringify(esc(lk.name))}, ${JSON.stringify(lk.type||'web')}, ${JSON.stringify(esc(lk.url||''))}, ${JSON.stringify(esc(lk.iconUrl||''))}, ${lk.order||1})">編集</button>
-            <button class="btn-del" onclick="window._delDoc('links','${d.id}')">削除</button>
+            <button class="btn-edit">編集</button>
+            <button class="btn-del">削除</button>
           </div>`;
+        div.querySelector(".btn-edit").addEventListener("click", () => {
+          window._editLink(d.id, lk.name||"", lk.type||"web", lk.url||"", lk.iconUrl||"", lk.order||1);
+        });
+        div.querySelector(".btn-del").addEventListener("click", () => {
+          window._delDoc("links", d.id);
+        });
         list.appendChild(div);
       });
     });
