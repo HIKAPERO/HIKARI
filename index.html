@@ -92,6 +92,16 @@
   .rblx-val { font-size:18px; font-weight:600; color:var(--text); margin-top:4px; }
   .rblx-diary { background:var(--bg2); border:0.5px solid var(--border); border-radius:8px; padding:16px; }
   .rblx-diary-label { font-size:9px; letter-spacing:2px; color:var(--text-dim); margin-bottom:10px; }
+  /* GAME SHOWCASE */
+  .game-showcase { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-bottom:4px; }
+  @media(max-width:480px){.game-showcase{grid-template-columns:1fr;}}
+  .game-showcase-card { background:var(--bg2); border:0.5px solid var(--border); border-radius:12px; overflow:hidden; text-decoration:none; display:flex; flex-direction:column; transition:border-color .2s,transform .2s; }
+  .game-showcase-card:hover { border-color:var(--purple); transform:translateY(-2px); }
+  .game-showcase-thumb { width:100%; aspect-ratio:1/1; object-fit:cover; display:block; }
+  .game-showcase-info { padding:10px 12px; }
+  .game-showcase-name { font-size:13px; font-weight:600; color:var(--text); margin-bottom:2px; }
+  .game-showcase-badge { font-size:9px; letter-spacing:1.5px; color:var(--purple-light); }
+
   .diary-entry { padding:12px 0; border-bottom:0.5px solid var(--border); }
   .diary-entry:last-child { border-bottom:none; }
   .diary-date { font-size:9px; color:var(--text-dim); letter-spacing:1px; margin-bottom:6px; }
@@ -251,12 +261,10 @@
 <!-- ROBLOX -->
 <div class="panel" id="panel-roblox">
   <div class="section">
-    <div class="sec-label">— ROBLOX STATS</div>
-    <div class="sec-title">今日のロブロックス</div>
-    <div class="rblx-stats">
-      <div class="rblx-stat"><div class="rblx-icon">⏰</div><div class="rblx-label">TODAY</div><div class="rblx-val" id="rblxTime">—</div></div>
-      <div class="rblx-stat"><div class="rblx-icon">🏆</div><div class="rblx-label">LEVEL</div><div class="rblx-val" id="rblxLevel">—</div></div>
-      <div class="rblx-stat"><div class="rblx-icon">👾</div><div class="rblx-label">FRIENDS</div><div class="rblx-val" id="rblxFriends">—</div></div>
+    <div class="sec-label">— HIKARI'S GAMES</div>
+    <div class="sec-title">やったことあるゲーム</div>
+    <div class="game-showcase" id="gameShowcase">
+      <div style="color:var(--text-dim);font-size:12px;text-align:center;padding:24px;grid-column:1/-1;">読み込み中...</div>
     </div>
   </div>
   <div class="section">
@@ -539,21 +547,39 @@
     });
   });
 
-  // ── ロブロックス ──
+  // ── ゲームショーケース ──
+  onSnapshot(query(collection(db,"games"), orderBy("createdAt","asc")), snap => {
+    const showcase = document.getElementById("gameShowcase");
+    showcase.innerHTML = "";
+    if (snap.empty) {
+      showcase.innerHTML = '<div style="color:var(--text-dim);font-size:12px;text-align:center;padding:24px;grid-column:1/-1;">まだゲームが登録されていないよ！</div>';
+      return;
+    }
+    snap.forEach(d => {
+      const g = d.data();
+      const a = document.createElement("a");
+      a.className = "game-showcase-card";
+      a.href   = esc(g.gameUrl||"#");
+      a.target = "_blank";
+      a.rel    = "noopener";
+      a.innerHTML = `
+        <img class="game-showcase-thumb" src="${esc(g.iconUrl)}" alt="${esc(g.name)}">
+        <div class="game-showcase-info">
+          <div class="game-showcase-name">${esc(g.name)}</div>
+          <div class="game-showcase-badge">ROBLOX ↗</div>
+        </div>`;
+      showcase.appendChild(a);
+    });
+  });
+
+  // ── ロブロックス日誌 ──
   onSnapshot(query(collection(db,"roblox"), orderBy("createdAt","desc"), limit(10)), snap => {
     const entries = document.getElementById("diaryEntries");
     entries.innerHTML = "";
     if (snap.empty) {
-      document.getElementById("rblxTime").textContent    = "—";
-      document.getElementById("rblxLevel").textContent   = "—";
-      document.getElementById("rblxFriends").textContent = "—";
       entries.innerHTML = '<div style="color:var(--text-dim);font-size:12px;text-align:center;padding:16px;">まだ日誌がないよ！</div>';
       return;
     }
-    const latest = snap.docs[0].data();
-    document.getElementById("rblxTime").textContent    = latest.playTime  || "—";
-    document.getElementById("rblxLevel").textContent   = latest.level     || "—";
-    document.getElementById("rblxFriends").textContent = latest.friends   || "—";
     snap.forEach(d => {
       const data = d.data();
       const div  = document.createElement("div");
