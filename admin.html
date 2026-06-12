@@ -243,7 +243,11 @@
         </select>
       </div>
       <div class="field">
-        <label>今日やったゲーム（ゲームタブからドラッグ＆ドロップ）</label>
+        <label>今日やったゲーム（下のアイコンをドラッグ＆ドロップ）</label>
+        <div style="font-size:10px;letter-spacing:2px;color:var(--purple);margin-bottom:8px;">— 登録済みゲーム</div>
+        <div class="game-master-grid" id="gameMasterGrid" style="margin-bottom:10px;">
+          <div class="empty-note">読み込み中...</div>
+        </div>
         <div class="drop-zone" id="dropZone" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="dropGame(event)">
           <span class="drop-zone-hint">ここにゲームをドロップ ↑</span>
         </div>
@@ -283,12 +287,6 @@
       <div class="field"><label>アイコン画像URL</label><input type="text" id="gameIconUrl" placeholder="例：https://tr.rbxcdn.com/..."></div>
       <div class="field"><label>ゲームURL（任意）</label><input type="text" id="gameUrl" placeholder="例：https://www.roblox.com/ja/games/..."></div>
       <button class="btn-add" onclick="addGame()">登録する</button>
-    </div>
-    <div class="card">
-      <div style="font-size:10px;letter-spacing:2px;color:var(--purple);margin-bottom:12px;">— 登録済みゲーム（ドラッグして日記に追加）</div>
-      <div class="game-master-grid" id="gameMasterGrid">
-        <div class="empty-note">読み込み中...</div>
-      </div>
     </div>
     <div class="diary-list" id="gameAdminList" style="margin-top:14px;">
       <div class="empty-note">読み込み中...</div>
