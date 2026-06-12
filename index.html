@@ -107,7 +107,18 @@
   .game-showcase-card:hover { border-color:var(--purple); transform:translateY(-2px); }
   .game-showcase-thumb-wrap { position:relative; aspect-ratio:1/1; overflow:hidden; }
   .game-showcase-thumb { width:100%; height:100%; object-fit:cover; display:block; }
-  .game-showcase-stars { position:absolute; bottom:5px; right:6px; background:rgba(0,0,0,0.55); border-radius:5px; padding:2px 5px; font-size:10px; line-height:1; letter-spacing:1px; }
+  .game-showcase-stars { position:absolute; bottom:5px; right:6px; background:rgba(0,0,0,0.55); border-radius:5px; padding:2px 5px; font-size:10px; line-height:1; letter-spacing:0px; }
+  .star-lit { color:#f0c040; display:inline-block; animation:starGlow 1.8s ease-in-out infinite; }
+  .star-lit:nth-child(1) { animation-delay:0s; }
+  .star-lit:nth-child(2) { animation-delay:0.2s; }
+  .star-lit:nth-child(3) { animation-delay:0.4s; }
+  .star-lit:nth-child(4) { animation-delay:0.6s; }
+  .star-lit:nth-child(5) { animation-delay:0.8s; }
+  .star-dim { color:rgba(255,255,255,0.25); display:inline-block; }
+  @keyframes starGlow {
+    0%,100% { color:#f0c040; transform:scale(1);   text-shadow:0 0 4px #f0c040; }
+    50%      { color:#ffe066; transform:scale(1.25); text-shadow:0 0 8px #ffe066, 0 0 16px #f0c040; }
+  }
   .game-showcase-info { padding:7px 9px; }
   .game-showcase-name { font-size:11px; font-weight:600; color:var(--text); margin-bottom:2px; }
   .game-showcase-badge { font-size:9px; letter-spacing:1px; color:var(--purple-light); margin-bottom:3px; }
@@ -650,8 +661,11 @@
       a.target = "_blank";
       a.rel    = "noopener";
       const badge = g.platform ? esc(g.platform) : "GAME";
-      const stars = g.rating ? "★".repeat(g.rating) + "☆".repeat(5 - g.rating) : "";
-      const starsHtml = stars ? `<div class="game-showcase-stars">${stars}</div>` : "";
+      const starsHtml = g.rating ? (() => {
+        const lit  = Array.from({length: g.rating},       () => `<span class="star-lit">★</span>`).join("");
+        const dim  = Array.from({length: 5 - g.rating},   () => `<span class="star-dim">★</span>`).join("");
+        return `<div class="game-showcase-stars">${lit}${dim}</div>`;
+      })() : "";
       const commentHtml = g.comment ? `<div class="game-showcase-comment">${esc(g.comment)}</div>` : "";
       a.innerHTML = `
         <div class="game-showcase-thumb-wrap">
