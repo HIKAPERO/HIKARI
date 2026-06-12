@@ -180,11 +180,14 @@
       <div class="field"><label>作品タイトル</label><input type="text" id="galleryTitle" placeholder="例：夕焼けの空"></div>
       <div class="field"><label>投稿者名</label><input type="text" id="galleryAuthor" placeholder="例：starpainter_22"></div>
       <div class="field">
-        <label>画像ファイル名（galleryフォルダにアップしたファイル名）</label>
-        <div style="display:flex; gap:8px; align-items:center;">
-          <input type="text" id="galleryUrl" placeholder="例：art01.png" oninput="previewGalleryUrl(this.value)" style="flex:1;">
+        <label>画像ファイル名（自動発行）</label>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+          <div style="background:var(--bg0); border:0.5px solid var(--border2); border-radius:7px; padding:9px 14px; font-size:14px; font-weight:600; color:var(--purple-pale); letter-spacing:1px; flex:1;" id="galleryFileName">—</div>
+          <button type="button" class="btn-edit" onclick="copyFileName()" id="copyBtn" style="white-space:nowrap;">📋 コピー</button>
+          <button type="button" class="btn-add" onclick="issueFileName()" style="white-space:nowrap;">発行する</button>
         </div>
-        <div style="font-size:11px; color:var(--text-dim); margin-top:6px;" id="galleryUrlPreview">URLプレビュー：ファイル名を入力してね</div>
+        <div style="font-size:11px; color:var(--text-dim); margin-top:6px;" id="galleryUrlPreview">↑「発行する」を押すとファイル名が自動で決まるよ</div>
+        <input type="hidden" id="galleryUrl">
       </div>
       <div class="field"><label>HIKARIのコメント</label><textarea id="galleryComment" placeholder="この作品へのコメントを書こう！"></textarea></div>
       <button class="btn-add" onclick="addGallery()">追加する</button>
@@ -248,7 +251,7 @@
   import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc,
-           onSnapshot, query, orderBy, serverTimestamp }
+           onSnapshot, query, orderBy, serverTimestamp, getDocs }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -271,6 +274,9 @@
   window._updateDoc      = updateDoc;
   window._doc            = doc;
   window._serverTimestamp = serverTimestamp;
+  window._getDocs         = getDocs;
+  window._query           = query;
+  window._orderBy         = orderBy;
 
   function esc(s) { return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
   function showToast(msg) {
@@ -423,7 +429,10 @@
     const comment = document.getElementById("galleryComment").value.trim();
     if (!title || !author) { alert("タイトルと投稿者名は必須です"); return; }
     await window._addDoc(window._collection(window._db,"gallery"), { title, author, imageUrl, comment, createdAt:serverTimestamp() });
-    ["galleryTitle","galleryAuthor","galleryUrl","galleryComment"].forEach(id => document.getElementById(id).value="");
+    ["galleryTitle","galleryAuthor","galleryComment"].forEach(id => document.getElementById(id).value="");
+    document.getElementById("galleryUrl").value = "";
+    document.getElementById("galleryFileName").textContent = "—";
+    document.getElementById("galleryUrlPreview").textContent = "↑「発行する」を押すとファイル名が自動で決まるよ";
     showToast("🎨 ギャラリーに追加しました！");
   };
 
@@ -545,9 +554,43 @@
 </script>
 
 <script>
-  function previewGalleryUrl(val) {
-    const preview = document.getElementById('galleryUrlPreview');
-    preview.textContent = val ? 'URLプレビュー：https://hikapero.github.io/HIKARI/gallery/' + val : 'URLプレビュー：ファイル名を入力してね';
+  async function issueFileName() {
+    // 今日の日付を取得（MMDD形式）
+    const now   = new Date();
+    const mm    = String(now.getMonth() + 1).padStart(2, '0');
+    const dd    = String(now.getDate()).padStart(2, '0');
+    const today = mm + dd;
+
+    // Firestoreから今日の枝番を確認
+    const snap = await window._getDocs(
+      window._query(
+        window._collection(window._db, 'gallery'),
+        window._orderBy('createdAt', 'desc')
+      )
+    );
+    // 今日付きのファイル名をカウント
+    let count = 0;
+    snap.forEach(d => {
+      const url = d.data().imageUrl || '';
+      const fname = url.split('/').pop().replace('.png','');
+      if (fname.startsWith(today)) count++;
+    });
+    const branch = String(count + 1).padStart(2, '0');
+    const fileName = today + '_' + branch;
+
+    document.getElementById('galleryUrl').value    = fileName;
+    document.getElementById('galleryFileName').textContent = fileName + '.png';
+    document.getElementById('galleryUrlPreview').textContent = 'URL: https://hikapero.github.io/HIKARI/gallery/' + fileName + '.png';
+  }
+
+  function copyFileName() {
+    const name = document.getElementById('galleryFileName').textContent;
+    if (name === '—') { alert('先に「発行する」を押してね！'); return; }
+    navigator.clipboard.writeText(name).then(() => {
+      const btn = document.getElementById('copyBtn');
+      btn.textContent = '✅ コピー済';
+      setTimeout(() => btn.textContent = '📋 コピー', 2000);
+    });
   }
   function switchATab(name) {
     const names = ["chat","gallery","shop","roblox"];
