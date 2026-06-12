@@ -483,9 +483,15 @@
             <div class="gallery-row-sub">by ${esc(data.author)}</div>
           </div>
           <div class="btn-row">
-            <button class="btn-edit" onclick="window._editGallery('${d.id}', ${JSON.stringify(esc(data.title))}, ${JSON.stringify(esc(data.author))}, ${JSON.stringify(esc(data.imageUrl||''))}, ${JSON.stringify(esc(data.comment||''))})">編集</button>
-            <button class="btn-del" onclick="window._delDoc('gallery','${d.id}')">削除</button>
+            <button class="btn-edit">編集</button>
+            <button class="btn-del">削除</button>
           </div>`;
+        div.querySelector(".btn-edit").addEventListener("click", () => {
+          window._editGallery(d.id, data.title||"", data.author||"", data.imageUrl||"", data.comment||"");
+        });
+        div.querySelector(".btn-del").addEventListener("click", () => {
+          window._delDoc("gallery", d.id);
+        });
         list.appendChild(div);
       });
     });
@@ -507,9 +513,15 @@
             <div class="shop-row-price">¥${Number(data.price).toLocaleString()}</div>
           </div>
           <div class="btn-row">
-            <button class="btn-edit" onclick="window._editShop('${d.id}', ${JSON.stringify(esc(data.name))}, ${data.price||0}, ${JSON.stringify(esc(data.emoji||''))}, ${JSON.stringify(esc(data.desc||''))})">編集</button>
-            <button class="btn-del" onclick="window._delDoc('shop','${d.id}')">削除</button>
+            <button class="btn-edit">編集</button>
+            <button class="btn-del">削除</button>
           </div>`;
+        div.querySelector(".btn-edit").addEventListener("click", () => {
+          window._editShop(d.id, data.name||"", data.price||0, data.emoji||"", data.desc||"");
+        });
+        div.querySelector(".btn-del").addEventListener("click", () => {
+          window._delDoc("shop", d.id);
+        });
         list.appendChild(div);
       });
     });
@@ -1063,6 +1075,9 @@
       btn.textContent = '✅ コピー済';
       setTimeout(() => btn.textContent = '📋 コピー', 2000);
     });
+  }
+  function toggleMenu() {
+    document.getElementById('mobileMenu') && document.getElementById('mobileMenu').classList.toggle('open');
   }
   function switchATab(name) {
     const names = ["chat","gallery","shop","diary","game","members","links"];
