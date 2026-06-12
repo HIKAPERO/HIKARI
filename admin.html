@@ -945,56 +945,57 @@
 
   window._editGame = (id, name, platform, iconUrl, gameUrl, rating, comment) => {
     document.getElementById("editModalTitle").textContent = "ゲームを編集";
+    const r = Number(rating) || 0;
     const body = document.getElementById("editModalBody");
     body.innerHTML = "";
 
     // ゲーム名
     const f1 = document.createElement("div"); f1.className = "field";
-    f1.innerHTML = "<label>ゲーム名</label>";
-    const inp_name = document.createElement("input"); inp_name.id = "e_gname"; inp_name.className = "form-input"; inp_name.value = name||"";
+    const l1 = document.createElement("label"); l1.textContent = "ゲーム名"; f1.appendChild(l1);
+    const inp_name = document.createElement("input"); inp_name.className = "form-input"; inp_name.id = "e_gname"; inp_name.value = name||"";
     f1.appendChild(inp_name); body.appendChild(f1);
 
     // プラットフォーム
     const f2 = document.createElement("div"); f2.className = "field";
-    f2.innerHTML = "<label>プラットフォーム</label>";
+    const l2 = document.createElement("label"); l2.textContent = "プラットフォーム"; f2.appendChild(l2);
     const sel = document.createElement("select"); sel.id = "e_gplatform";
     sel.style.cssText = "background:var(--bg2);border:0.5px solid var(--border);border-radius:7px;padding:10px 14px;font-size:13px;color:var(--text);outline:none;width:100%;font-family:inherit;";
     [["Roblox","Roblox"],["Minecraft","Minecraft"],["Meta Quest","Meta Quest"],["脳汁系","🧠 脳汁系"],["その他","その他"]].forEach(([v,t]) => {
       const opt = document.createElement("option"); opt.value = v; opt.textContent = t;
-      if (v === platform) opt.selected = true;
+      if (v === (platform||"")) opt.selected = true;
       sel.appendChild(opt);
     });
     f2.appendChild(sel); body.appendChild(f2);
 
     // アイコンURL
     const f3 = document.createElement("div"); f3.className = "field";
-    f3.innerHTML = "<label>アイコン画像URL</label>";
-    const inp_icon = document.createElement("input"); inp_icon.id = "e_gicon"; inp_icon.className = "form-input"; inp_icon.value = iconUrl||"";
+    const l3 = document.createElement("label"); l3.textContent = "アイコン画像URL"; f3.appendChild(l3);
+    const inp_icon = document.createElement("input"); inp_icon.className = "form-input"; inp_icon.id = "e_gicon"; inp_icon.value = iconUrl||"";
     f3.appendChild(inp_icon); body.appendChild(f3);
 
     // ゲームURL
     const f4 = document.createElement("div"); f4.className = "field";
-    f4.innerHTML = "<label>ゲームURL（任意）</label>";
-    const inp_url = document.createElement("input"); inp_url.id = "e_gurl"; inp_url.className = "form-input"; inp_url.value = gameUrl||"";
+    const l4 = document.createElement("label"); l4.textContent = "ゲームURL（任意）"; f4.appendChild(l4);
+    const inp_url = document.createElement("input"); inp_url.className = "form-input"; inp_url.id = "e_gurl"; inp_url.value = gameUrl||"";
     f4.appendChild(inp_url); body.appendChild(f4);
 
     // 星評価
     const f5 = document.createElement("div"); f5.className = "field";
-    f5.innerHTML = "<label>★ ミシュラン評価（1〜5）</label>";
+    const l5 = document.createElement("label"); l5.textContent = "★ ミシュラン評価（1〜5）"; f5.appendChild(l5);
     const starDiv = document.createElement("div"); starDiv.className = "star-rating";
     [5,4,3,2,1].forEach(n => {
-      const inp = document.createElement("input"); inp.type = "radio"; inp.id = "s"+n; inp.name = "grating"; inp.value = n;
-      if (n === (rating||0)) inp.checked = true;
+      const inp = document.createElement("input"); inp.type = "radio"; inp.id = "s"+n; inp.name = "grating"; inp.value = String(n);
+      if (n === r) inp.checked = true;
       const lbl = document.createElement("label"); lbl.htmlFor = "s"+n; lbl.textContent = "★";
       starDiv.appendChild(inp); starDiv.appendChild(lbl);
     });
     f5.appendChild(starDiv); body.appendChild(f5);
 
-    // 一言感想
+    // 感想
     const f6 = document.createElement("div"); f6.className = "field";
-    f6.innerHTML = "<label>一言感想</label>";
-    const ta = document.createElement("textarea"); ta.id = "e_gcomment"; ta.className = "form-input"; ta.style.minHeight = "60px";
-    ta.placeholder = "例：ねこがかわいくて最高！"; ta.value = comment||"";
+    const l6 = document.createElement("label"); l6.textContent = "一言感想"; f6.appendChild(l6);
+    const ta = document.createElement("textarea"); ta.className = "form-input"; ta.id = "e_gcomment";
+    ta.style.minHeight = "60px"; ta.placeholder = "例：ねこがかわいくて最高！"; ta.value = comment||"";
     f6.appendChild(ta); body.appendChild(f6);
 
     window._editAction = async () => {
