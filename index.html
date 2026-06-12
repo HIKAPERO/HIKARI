@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HIKARI — Digital Art & Creativity</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg0: #08080f; --bg1: #0d0d18; --bg2: #13131f; --bg3: #1a1428;
+    --border: #252535; --border2: #3a2f6a;
+    --purple: #6c5ce7; --purple-light: #9d86f5; --purple-pale: #c9b8ff;
+    --text: #d0cce8; --text-muted: #888; --text-dim: #444; --yellow: #f0c040;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Segoe UI','Hiragino Sans','Meiryo',sans-serif; background: var(--bg0); color: var(--text); min-height: 100vh; }
+
+  /* NAV */
+  nav { position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; height: 54px; background: rgba(8,8,15,0.92); backdrop-filter: blur(12px); border-bottom: 0.5px solid var(--border); }
+  .nav-logo { font-size: 17px; font-weight: 600; letter-spacing: 4px; color: var(--purple-pale); text-decoration: none; }
+  .nav-links { display: flex; gap: 24px; }
+  .nav-links a { font-size: 10px; letter-spacing: 2px; color: var(--text-muted); text-decoration: none; transition: color .2s; }
+  .nav-links a:hover { color: var(--purple-pale); }
+  .hamburger { display: none; background: none; border: none; color: var(--text-muted); font-size: 22px; cursor: pointer; }
+  .mobile-menu { display: none; flex-direction: column; background: var(--bg1); border-bottom: 0.5px solid var(--border); }
+  .mobile-menu a { padding: 14px 28px; font-size: 11px; letter-spacing: 2px; color: var(--text-muted); text-decoration: none; border-bottom: 0.5px solid var(--border); }
+  .mobile-menu.open { display: flex; }
+
+  /* HERO */
+  .hero { padding: 80px 28px 64px; text-align: center; border-bottom: 0.5px solid var(--border); position: relative; overflow: hidden; }
+  .hero::before { content:''; position: absolute; top: -80px; left: 50%; transform: translateX(-50%); width: 400px; height: 400px; background: radial-gradient(circle, rgba(108,92,231,0.12) 0%, transparent 70%); pointer-events: none; }
+  .hero-eyebrow { font-size: 10px; letter-spacing: 4px; color: var(--purple); margin-bottom: 16px; }
+  .hero h1 { font-size: clamp(44px,10vw,72px); font-weight: 700; letter-spacing: 10px; color: var(--purple-pale); margin-bottom: 10px; animation: fadeUp .7s ease both; }
+  .hero-sub { font-size: 13px; color: var(--text-muted); letter-spacing: 2px; margin-bottom: 32px; animation: fadeUp .7s .1s ease both; }
+  .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; animation: fadeUp .7s .2s ease both; }
+  .btn { padding: 10px 26px; border-radius: 5px; font-size: 11px; letter-spacing: 2px; cursor: pointer; transition: all .2s; text-decoration: none; display: inline-block; }
+  .btn-primary { background: var(--purple); color: #fff; border: none; }
+  .btn-primary:hover { background: #7d6ef0; transform: translateY(-1px); }
+  .btn-outline { background: transparent; color: var(--purple-pale); border: 0.5px solid var(--border2); }
+  .btn-outline:hover { background: var(--bg3); }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(16px);} to{opacity:1;transform:translateY(0);} }
+
+  /* TABS */
+  .tabs-wrap { background: var(--bg0); border-bottom: 0.5px solid var(--border); overflow-x: auto; }
+  .tabs { display: flex; padding: 0 20px; gap: 2px; min-width: max-content; }
+  .tab-btn { font-size: 10px; letter-spacing: 2px; color: var(--text-dim); padding: 12px 16px; background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: color .2s, border-color .2s; white-space: nowrap; }
+  .tab-btn:hover { color: var(--text-muted); }
+  .tab-btn.active { color: var(--purple-pale); border-bottom-color: var(--purple); }
+
+  /* PANELS */
+  .panel { display: none; background: var(--bg1); }
+  .panel.active { display: block; }
+  .section { padding: 28px; border-bottom: 0.5px solid var(--border); }
+  .sec-label { font-size: 9px; letter-spacing: 3px; color: var(--purple); margin-bottom: 14px; }
+  .sec-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 16px; }
+
+  /* GALLERY */
+  .gallery-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+  @media(max-width:500px){.gallery-grid{grid-template-columns:repeat(2,1fr);}}
+  .gallery-item { aspect-ratio:1; border-radius:8px; background:var(--bg2); border:0.5px solid var(--border); position:relative; display:flex; align-items:center; justify-content:center; overflow:hidden; cursor:pointer; transition:border-color .2s,transform .2s; }
+  .gallery-item:hover { border-color:var(--purple); transform:scale(1.02); }
+  .gallery-placeholder { font-size:32px; opacity:.2; }
+  .badge-new { position:absolute; top:8px; left:8px; background:var(--purple); color:#fff; font-size:8px; padding:2px 7px; border-radius:3px; letter-spacing:1px; }
+  .likes { position:absolute; bottom:8px; right:10px; font-size:10px; color:var(--purple-light); }
+  .upload-tile { aspect-ratio:1; border-radius:8px; border:0.5px dashed var(--border2); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; color:var(--text-dim); font-size:11px; letter-spacing:1px; cursor:pointer; transition:border-color .2s,color .2s; }
+  .upload-tile:hover { border-color:var(--purple); color:var(--purple-pale); }
+  .upload-tile svg { width:24px; height:24px; }
+  .comment-card { background:var(--bg0); border:0.5px solid var(--border); border-radius:10px; padding:14px 16px; margin-bottom:10px; }
+  .comment-meta { font-size:9px; color:var(--text-dim); letter-spacing:1.5px; margin-bottom:6px; }
+  .comment-text { font-size:13px; color:#aaa; line-height:1.65; }
+  .hikari-card { background:var(--bg3); border:0.5px solid var(--border2); border-radius:10px; padding:14px 16px; margin-bottom:10px; }
+  .hikari-label { font-size:9px; color:var(--purple-light); letter-spacing:1.5px; margin-bottom:6px; }
+
+  /* SHOP */
+  .shop-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+  @media(max-width:400px){.shop-grid{grid-template-columns:1fr;}}
+  .shop-card { background:var(--bg2); border:0.5px solid var(--border); border-radius:10px; padding:16px; transition:border-color .2s; }
+  .shop-card:hover { border-color:var(--purple); }
+  .shop-thumb { width:100%; aspect-ratio:1.5; background:var(--bg3); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:32px; opacity:.45; margin-bottom:12px; }
+  .shop-name { font-size:12px; color:var(--text); letter-spacing:1px; margin-bottom:6px; }
+  .shop-price { font-size:15px; font-weight:600; color:var(--purple-light); margin-bottom:12px; }
+  .shop-btn { width:100%; padding:8px; background:transparent; border:0.5px solid var(--border2); border-radius:5px; color:var(--purple-pale); font-size:10px; letter-spacing:1.5px; cursor:pointer; transition:background .2s; }
+  .shop-btn:hover { background:var(--bg3); }
+
+  /* ROBLOX */
+  .rblx-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px; }
+  .rblx-stat { background:var(--bg2); border:0.5px solid var(--border); border-radius:8px; padding:14px; text-align:center; }
+  .rblx-icon { font-size:22px; margin-bottom:8px; opacity:.5; }
+  .rblx-label { font-size:9px; letter-spacing:2px; color:var(--text-dim); }
+  .rblx-val { font-size:18px; font-weight:600; color:var(--text); margin-top:4px; }
+  .rblx-diary { background:var(--bg2); border:0.5px solid var(--border); border-radius:8px; padding:16px; }
+  .rblx-diary-label { font-size:9px; letter-spacing:2px; color:var(--text-dim); margin-bottom:10px; }
+  .diary-entry { padding:10px 0; border-bottom:0.5px solid var(--border); }
+  .diary-entry:last-child { border-bottom:none; }
+  .diary-date { font-size:9px; color:var(--text-dim); letter-spacing:1px; margin-bottom:4px; }
+  .diary-text { font-size:13px; color:#aaa; line-height:1.6; }
+
+  /* CHAT */
+  .chat-status { display:flex; align-items:center; gap:8px; padding:12px 28px; background:var(--bg0); border-bottom:0.5px solid var(--border); }
+  .dot-maybe { width:8px; height:8px; border-radius:50%; background:var(--yellow); animation:blink 2.4s ease-in-out infinite; flex-shrink:0; }
+  @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.25;} }
+  .status-txt { font-size:11px; color:var(--text-muted); letter-spacing:1px; }
+  .status-txt strong { color:var(--purple-pale); font-weight:500; }
+  .chat-thread { padding:20px 28px; display:flex; flex-direction:column; gap:14px; max-height:420px; overflow-y:auto; }
+  .msg { display:flex; gap:10px; align-items:flex-start; }
+  .msg.hikari { flex-direction:row-reverse; }
+  .msg-avatar { width:32px; height:32px; border-radius:50%; background:var(--bg2); border:0.5px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
+  .msg.hikari .msg-avatar { background:var(--bg3); border-color:var(--purple); }
+  .msg-body { max-width:70%; }
+  .msg-name { font-size:9px; color:var(--text-dim); letter-spacing:1px; margin-bottom:5px; }
+  .msg.hikari .msg-name { text-align:right; color:var(--purple-light); }
+  .msg-bubble { padding:10px 14px; border-radius:14px; font-size:13px; line-height:1.6; }
+  .msg.visitor .msg-bubble { background:var(--bg2); border:0.5px solid var(--border); color:#aaa; border-top-left-radius:4px; }
+  .msg.hikari .msg-bubble { background:var(--bg3); border:0.5px solid var(--border2); color:var(--purple-pale); border-top-right-radius:4px; }
+  .chat-empty { text-align:center; color:var(--text-dim); font-size:12px; padding:20px 0; letter-spacing:1px; }
+  .chat-loading { text-align:center; color:var(--text-dim); font-size:12px; padding:20px 0; letter-spacing:1px; }
+
+  .chat-form-wrap { padding:20px 28px; border-top:0.5px solid var(--border); background:var(--bg0); }
+  .chat-form-label { font-size:9px; letter-spacing:3px; color:var(--purple); margin-bottom:12px; }
+  .form-row { display:flex; flex-direction:column; gap:10px; }
+  .form-input { background:var(--bg2); border:0.5px solid var(--border); border-radius:7px; padding:10px 14px; font-size:13px; color:var(--text); outline:none; width:100%; font-family:inherit; transition:border-color .2s; }
+  .form-input:focus { border-color:var(--purple); }
+  .form-input::placeholder { color:var(--text-dim); }
+  textarea.form-input { resize:vertical; min-height:80px; }
+  .form-submit { align-self:flex-end; padding:10px 24px; background:var(--purple); color:#fff; border:none; border-radius:5px; font-size:10px; letter-spacing:2px; cursor:pointer; transition:background .2s,transform .15s; font-family:inherit; }
+  .form-submit:hover { background:#7d6ef0; transform:translateY(-1px); }
+  .form-submit:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+  .form-hint { font-size:11px; color:var(--text-dim); margin-top:8px; letter-spacing:.5px; }
+  .sent-msg { display:none; text-align:center; padding:16px; color:var(--purple-pale); font-size:13px; line-height:1.7; }
+
+  /* ABOUT */
+  .about-card { background:var(--bg2); border:0.5px solid var(--border); border-radius:12px; padding:24px; display:flex; gap:18px; align-items:center; margin-bottom:16px; }
+  @media(max-width:480px){.about-card{flex-direction:column;text-align:center;}}
+  .about-avatar { width:72px; height:72px; border-radius:50%; background:var(--bg3); border:2px solid var(--purple); display:flex; align-items:center; justify-content:center; font-size:32px; flex-shrink:0; }
+  .about-name { font-size:20px; font-weight:700; color:var(--purple-pale); letter-spacing:3px; margin-bottom:6px; }
+  .about-bio { font-size:13px; color:#888; line-height:1.7; margin-bottom:12px; }
+  .about-tags { display:flex; gap:8px; flex-wrap:wrap; }
+  .about-tag { font-size:10px; padding:4px 10px; border-radius:4px; background:var(--bg3); color:var(--purple-light); border:0.5px solid var(--border2); letter-spacing:1px; }
+  .about-facts { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+  .fact-card { background:var(--bg2); border:0.5px solid var(--border); border-radius:8px; padding:14px; }
+  .fact-label { font-size:9px; color:var(--text-dim); letter-spacing:2px; margin-bottom:6px; }
+  .fact-val { font-size:13px; color:var(--text); }
+
+  /* FOOTER */
+  footer { padding:28px; text-align:center; border-top:0.5px solid var(--border); }
+  footer p { font-size:10px; color:var(--text-dim); letter-spacing:1.5px; }
+
+  /* MODAL */
+  .modal-backdrop { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:200; align-items:center; justify-content:center; }
+  .modal-backdrop.open { display:flex; }
+  .modal { background:var(--bg1); border:0.5px solid var(--border2); border-radius:14px; padding:28px; max-width:360px; width:90%; text-align:center; }
+  .modal h3 { font-size:14px; color:var(--purple-pale); letter-spacing:2px; margin-bottom:10px; }
+  .modal p { font-size:12px; color:var(--text-muted); line-height:1.7; margin-bottom:20px; }
+  .modal-close { padding:8px 22px; background:var(--purple); color:#fff; border:none; border-radius:5px; font-size:11px; letter-spacing:1.5px; cursor:pointer; font-family:inherit; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo">HIKARI</a>
+  <div class="nav-links" id="navLinks">
+    <a href="#" onclick="switchTab('gallery');return false;">GALLERY</a>
+    <a href="#" onclick="switchTab('shop');return false;">SHOP</a>
+    <a href="#" onclick="switchTab('roblox');return false;">ROBLOX</a>
+    <a href="#" onclick="switchTab('chat');return false;">CHAT</a>
+    <a href="#" onclick="switchTab('about');return false;">ABOUT</a>
+  </div>
+  <button class="hamburger" onclick="toggleMenu()" aria-label="メニュー">☰</button>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#" onclick="switchTab('gallery');toggleMenu();return false;">GALLERY</a>
+  <a href="#" onclick="switchTab('shop');toggleMenu();return false;">SHOP</a>
+  <a href="#" onclick="switchTab('roblox');toggleMenu();return false;">ROBLOX</a>
+  <a href="#" onclick="switchTab('chat');toggleMenu();return false;">CHAT</a>
+  <a href="#" onclick="switchTab('about');toggleMenu();return false;">ABOUT</a>
+</div>
+
+<section class="hero">
+  <div class="hero-eyebrow">DIGITAL ART &amp; CREATIVITY</div>
+  <h1>HIKARI</h1>
+  <p class="hero-sub">アート・ゲーム・あなたの作品</p>
+  <div class="hero-btns">
+    <a href="#" class="btn btn-primary" onclick="switchTab('gallery');return false;">GALLERY →</a>
+    <a href="#" class="btn btn-outline" onclick="switchTab('shop');return false;">SHOP</a>
+  </div>
+</section>
+
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('gallery')">GALLERY</button>
+    <button class="tab-btn" onclick="switchTab('shop')">SHOP</button>
+    <button class="tab-btn" onclick="switchTab('roblox')">ROBLOX</button>
+    <button class="tab-btn" onclick="switchTab('chat')">CHAT</button>
+    <button class="tab-btn" onclick="switchTab('about')">ABOUT</button>
+  </div>
+</div>
+
+<!-- GALLERY -->
+<div class="panel active" id="panel-gallery">
+  <div class="section">
+    <div class="sec-label">— COMMUNITY ART</div>
+    <div class="sec-title">みんなの作品</div>
+    <div class="gallery-grid">
+      <div class="gallery-item" onclick="openModal('uploadModal')"><span class="badge-new">NEW</span><span class="gallery-placeholder">🎨</span><span class="likes">♡ 24</span></div>
+      <div class="gallery-item"><span class="gallery-placeholder">🖼</span><span class="likes">♡ 18</span></div>
+      <div class="gallery-item"><span class="gallery-placeholder">✏️</span><span class="likes">♡ 31</span></div>
+      <div class="gallery-item"><span class="gallery-placeholder">⭐</span><span class="likes">♡ 9</span></div>
+      <div class="gallery-item"><span class="gallery-placeholder">✨</span><span class="likes">♡ 42</span></div>
+      <div class="upload-tile" onclick="openModal('uploadModal')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 16V8m0 0l-3 3m3-3l3 3M20 21H4a2 2 0 01-2-2V5a2 2 0 012-2h16a2 2 0 012 2v14a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        作品を投稿
+      </div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="sec-label">— HIKARI'S COMMENTS</div>
+    <div class="sec-title">HIKARIのコメント</div>
+    <div class="comment-card"><div class="comment-meta">USER: starpainter_22</div><div class="comment-text">空のグラデーションがすごくきれいです！どうやって描いたの？</div></div>
+    <div class="hikari-card"><div class="hikari-label">✦ HIKARI</div><div class="comment-text" style="color:var(--purple-pale);">ありがとう！むらさきと青をまぜたんだよ〜 💜 レイヤーを重ねるといい感じになるよ！</div></div>
+    <div class="comment-card"><div class="comment-meta">USER: pixel_fox</div><div class="comment-text">ロブロックスのキャラクターがかわいい！自分でデザインしたの？</div></div>
+    <div class="hikari-card"><div class="hikari-label">✦ HIKARI</div><div class="comment-text" style="color:var(--purple-pale);">じぶんでデザインしたの！ ✨ 投稿もしてみてね！</div></div>
+  </div>
+</div>
+
+<!-- SHOP -->
+<div class="panel" id="panel-shop">
+  <div class="section">
+    <div class="sec-label">— HIKARI SHOP</div>
+    <div class="sec-title">グッズを買う</div>
+    <div class="shop-grid">
+      <div class="shop-card"><div class="shop-thumb">👕</div><div class="shop-name">オリジナルTシャツ</div><div class="shop-price">¥2,800</div><button class="shop-btn" onclick="openModal('shopModal')">カートに入れる</button></div>
+      <div class="shop-card"><div class="shop-thumb">📮</div><div class="shop-name">ポストカードセット</div><div class="shop-price">¥800</div><button class="shop-btn" onclick="openModal('shopModal')">カートに入れる</button></div>
+      <div class="shop-card"><div class="shop-thumb">🌟</div><div class="shop-name">ステッカーパック</div><div class="shop-price">¥500</div><button class="shop-btn" onclick="openModal('shopModal')">カートに入れる</button></div>
+      <div class="shop-card"><div class="shop-thumb">🖼</div><div class="shop-name">デジタルアート DL</div><div class="shop-price">¥300</div><button class="shop-btn" onclick="openModal('shopModal')">購入する</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ROBLOX -->
+<div class="panel" id="panel-roblox">
+  <div class="section">
+    <div class="sec-label">— ROBLOX STATS</div>
+    <div class="sec-title">今日のロブロックス</div>
+    <div class="rblx-stats">
+      <div class="rblx-stat"><div class="rblx-icon">⏰</div><div class="rblx-label">TODAY</div><div class="rblx-val">3h 20m</div></div>
+      <div class="rblx-stat"><div class="rblx-icon">🏆</div><div class="rblx-label">LEVEL</div><div class="rblx-val">47</div></div>
+      <div class="rblx-stat"><div class="rblx-icon">👾</div><div class="rblx-label">FRIENDS</div><div class="rblx-val">12</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="sec-label">— GAME DIARY</div>
+    <div class="sec-title">ゲーム日誌</div>
+    <div class="rblx-diary">
+      <div class="rblx-diary-label">— 最新のプレイ記録</div>
+      <div class="diary-entry"><div class="diary-date">2025.06.11</div><div class="diary-text">Blox Fruits でボス討伐に成功！ ⚔️ ぜんぶのステージをクリアして、レア装備もドロップした！</div></div>
+      <div class="diary-entry"><div class="diary-date">2025.06.10</div><div class="diary-text">フレンドと一緒にタワーディフェンスをやった🏰 チームワークがよくて最終ウェーブまでいけたよ！</div></div>
+      <div class="diary-entry"><div class="diary-date">2025.06.09</div><div class="diary-text">新しいアバターをデザインした✨ 紫と黒のコーデにしてみた。かっこよくなった！</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- CHAT -->
+<div class="panel" id="panel-chat">
+  <div class="chat-status">
+    <div class="dot-maybe"></div>
+    <div class="status-txt"><strong>HIKARI</strong> はオンラインかもです</div>
+  </div>
+  <div class="chat-thread" id="chatThread">
+    <div class="chat-loading">メッセージを読み込み中...</div>
+  </div>
+  <div class="chat-form-wrap">
+    <div class="chat-form-label">— メッセージを送る</div>
+    <div class="form-row" id="chatForm">
+      <input class="form-input" type="text" id="chatNick" placeholder="ニックネーム" style="max-width:200px;" maxlength="20">
+      <textarea class="form-input" id="chatMsg" placeholder="HIKARIへのメッセージ..." maxlength="300"></textarea>
+      <button class="form-submit" id="chatSubmit" onclick="sendMsg()">送信する</button>
+    </div>
+    <div class="sent-msg" id="sentMsg">💜 メッセージを受け取ったよ！HIKARIが確認して返事するね。しばらく待ってね。</div>
+    <p class="form-hint">※ HIKARIが確認してから返事するよ！すこし待ってね。</p>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<div class="panel" id="panel-about">
+  <div class="section">
+    <div class="sec-label">— ABOUT HIKARI</div>
+    <div class="about-card">
+      <div class="about-avatar">⭐</div>
+      <div>
+        <div class="about-name">HIKARI</div>
+        <div class="about-bio">お絵描き大好き小4。デジタルアートとロブロックスが生きがい。みんなの絵にコメントするよ！いっしょに楽しいサイトを作ろう。</div>
+        <div class="about-tags">
+          <span class="about-tag">デジタルアート</span>
+          <span class="about-tag">ROBLOX</span>
+          <span class="about-tag">小学4年生</span>
+          <span class="about-tag">ねこ好き🐱</span>
+        </div>
+      </div>
+    </div>
+    <div class="about-facts">
+      <div class="fact-card"><div class="fact-label">好きなゲーム</div><div class="fact-val">Blox Fruits ⚔️</div></div>
+      <div class="fact-card"><div class="fact-label">好きな色</div><div class="fact-val">むらさき 💜</div></div>
+      <div class="fact-card"><div class="fact-label">使ってるアプリ</div><div class="fact-val">Procreate / Ibis</div></div>
+      <div class="fact-card"><div class="fact-label">口ぐせ</div><div class="fact-val">「かわいい！✨」</div></div>
+    </div>
+  </div>
+</div>
+
+<footer><p>© 2025 HIKARI — All artworks by HIKARI</p></footer>
+
+<!-- MODALS -->
+<div class="modal-backdrop" id="uploadModal">
+  <div class="modal">
+    <h3>作品を投稿する</h3>
+    <p>チャットページでメッセージを送ってね！HIKARIがギャラリーに追加して、コメントを書くよ 💜</p>
+    <button class="modal-close" onclick="closeModal('uploadModal')">とじる</button>
+  </div>
+</div>
+<div class="modal-backdrop" id="shopModal">
+  <div class="modal">
+    <h3>ショップは準備中</h3>
+    <p>もうすぐオープンするよ！チャットでメッセージをくれたら、入荷したときに教えるね 💜</p>
+    <button class="modal-close" onclick="closeModal('shopModal')">とじる</button>
+  </div>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDV8GPCXXFGoyAKcwwwa2aVElj6bXoDApk",
+    authDomain: "hikari-site-be671.firebaseapp.com",
+    projectId: "hikari-site-be671",
+    storageBucket: "hikari-site-be671.firebasestorage.app",
+    messagingSenderId: "732585977344",
+    appId: "1:732585977344:web:54389e01ab87fbab679ae5"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+  const col = collection(db, "messages");
+
+  // リアルタイムでメッセージを取得
+  const q = query(col, orderBy("createdAt", "asc"));
+  onSnapshot(q, (snapshot) => {
+    const thread = document.getElementById("chatThread");
+    thread.innerHTML = "";
+
+    if (snapshot.empty) {
+      thread.innerHTML = '<div class="chat-empty">まだメッセージがないよ。最初のメッセージを送ってね！</div>';
+      return;
+    }
+
+    snapshot.forEach((doc) => {
+      const d = doc.data();
+      const isHikari = d.isHikari === true;
+      const div = document.createElement("div");
+      div.className = "msg " + (isHikari ? "hikari" : "visitor");
+      div.innerHTML = `
+        <div class="msg-avatar">${isHikari ? "⭐" : "💬"}</div>
+        <div class="msg-body">
+          <div class="msg-name">${esc(d.nick)}</div>
+          <div class="msg-bubble">${esc(d.text)}</div>
+        </div>`;
+      thread.appendChild(div);
+    });
+    thread.scrollTop = thread.scrollHeight;
+  });
+
+  // 送信
+  window.sendMsg = async function() {
+    const nick = document.getElementById("chatNick").value.trim();
+    const text = document.getElementById("chatMsg").value.trim();
+    if (!nick || !text) { alert("ニックネームとメッセージを入力してね！"); return; }
+
+    const btn = document.getElementById("chatSubmit");
+    btn.disabled = true;
+    btn.textContent = "送信中...";
+
+    try {
+      await addDoc(col, {
+        nick,
+        text,
+        isHikari: false,
+        createdAt: serverTimestamp()
+      });
+      document.getElementById("chatForm").style.display = "none";
+      document.getElementById("sentMsg").style.display  = "block";
+    } catch (e) {
+      alert("送信に失敗しました。もう一度試してね。");
+      btn.disabled = false;
+      btn.textContent = "送信する";
+    }
+  };
+
+  function esc(s) {
+    return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+</script>
+
+<script>
+  const TABS = ['gallery','shop','roblox','chat','about'];
+  function switchTab(name) {
+    TABS.forEach((t,i) => {
+      document.querySelectorAll('.tab-btn')[i].classList.toggle('active', t===name);
+      document.getElementById('panel-'+t).classList.toggle('active', t===name);
+    });
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }
+  function openModal(id)  { document.getElementById(id).classList.add('open'); }
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+  document.querySelectorAll('.modal-backdrop').forEach(m => {
+    m.addEventListener('click', e => { if(e.target===m) m.classList.remove('open'); });
+  });
+  function checkWidth() {
+    const links = document.getElementById('navLinks');
+    const ham   = document.querySelector('.hamburger');
+    if (window.innerWidth < 600) { links.style.display='none'; ham.style.display='block'; }
+    else { links.style.display='flex'; ham.style.display='none'; document.getElementById('mobileMenu').classList.remove('open'); }
+  }
+  checkWidth();
+  window.addEventListener('resize', checkWidth);
+</script>
+</body>
+</html>
