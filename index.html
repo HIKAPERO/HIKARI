@@ -59,14 +59,16 @@
 
   /* HERO */
   .hero { padding: 80px 28px 64px; text-align: center; border-bottom: 0.5px solid var(--border); position: relative; overflow: hidden; }
+  .hero-video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; opacity:0.6; }
+  .hero-overlay { position:absolute; inset:0; background:linear-gradient(to bottom, rgba(8,8,15,0.3) 0%, rgba(8,8,15,0.15) 50%, rgba(8,8,15,0.4) 100%); z-index:1; }
+  [data-theme="light"] .hero-video { opacity:0.4; }
+  [data-theme="light"] .hero-overlay { background:linear-gradient(to bottom, rgba(240,238,255,0.4) 0%, rgba(240,238,255,0.2) 50%, rgba(240,238,255,0.5) 100%); }
+  .hero > *:not(.hero-video):not(.hero-overlay) { position:relative; z-index:2; }
   .hero::before { content:''; position: absolute; top: -80px; left: 50%; transform: translateX(-50%); width: 600px; height: 600px; background: radial-gradient(circle, var(--holo-1) 0%, var(--holo-2) 40%, transparent 70%); pointer-events: none; animation: holoPulse 4s ease-in-out infinite; }
   @keyframes holoPulse { 0%,100%{opacity:1;transform:translateX(-50%) scale(1);} 50%{opacity:0.7;transform:translateX(-50%) scale(1.1);} }
   .hero-eyebrow { font-size: 10px; letter-spacing: 4px; color: var(--purple); margin-bottom: 16px; }
-  .hero h1 { font-size: clamp(44px,10vw,72px); font-weight: 700; letter-spacing: 10px; color: var(--hero-text); margin-bottom: 10px; animation: fadeUp .7s ease both;
-    text-shadow: 0 0 30px rgba(108,92,231,0.4), 0 0 60px rgba(108,92,231,0.2);
-    background: linear-gradient(135deg, var(--purple-pale) 0%, #a78bff 30%, var(--purple-pale) 60%, #c4b5fd 100%);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-  }
+  .hero h1 { margin-bottom: 10px; animation: fadeUp .7s ease both; }
+  .hero-logo { max-width: min(600px, 90vw); width:100%; height:auto; display:block; margin:0 auto; filter: drop-shadow(0 0 20px rgba(108,92,231,0.5)); }
   .hero-sub { font-size: 13px; color: var(--text-muted); letter-spacing: 2px; margin-bottom: 32px; animation: fadeUp .7s .1s ease both; }
   .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; animation: fadeUp .7s .2s ease both; }
   .btn { padding: 10px 26px; border-radius: 5px; font-size: 11px; letter-spacing: 2px; cursor: pointer; transition: all .2s; text-decoration: none; display: inline-block; }
@@ -309,8 +311,12 @@
 </div>
 
 <section class="hero">
+  <video class="hero-video" autoplay muted loop playsinline>
+    <source src="/HIKARI/top01.mp4" type="video/mp4">
+  </video>
+  <div class="hero-overlay"></div>
   <div class="hero-eyebrow">DIGITAL ART &amp; CREATIVITY</div>
-  <h1>HIKARI</h1>
+  <h1><img src="/HIKARI/logo01.png" alt="HIKARI" class="hero-logo"></h1>
   <p class="hero-sub">アート・ゲーム・あなたの作品</p>
   <div class="hero-btns">
     <a href="#" class="btn btn-primary" onclick="switchTab('gallery');return false;">GALLERY →</a>
