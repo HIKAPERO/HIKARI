@@ -105,13 +105,10 @@
   @media(max-width:480px){.game-showcase{grid-template-columns:repeat(2,1fr);}}
   .game-showcase-card { background:var(--bg2); border:0.5px solid var(--border); border-radius:10px; overflow:hidden; text-decoration:none; display:flex; flex-direction:column; transition:border-color .2s,transform .2s; }
   .game-showcase-card:hover { border-color:var(--purple); transform:translateY(-2px); }
-  .game-showcase-thumb-wrap { position:relative; aspect-ratio:1/1; overflow:hidden; }
-  .game-showcase-thumb { width:100%; height:100%; object-fit:cover; display:block; }
-  .game-showcase-stars { position:absolute; bottom:5px; right:6px; background:rgba(0,0,0,0.55); border-radius:5px; padding:2px 5px; font-size:10px; line-height:1; letter-spacing:1px; }
+  .game-showcase-thumb { width:100%; aspect-ratio:1/1; object-fit:cover; display:block; }
   .game-showcase-info { padding:7px 9px; }
   .game-showcase-name { font-size:11px; font-weight:600; color:var(--text); margin-bottom:2px; }
-  .game-showcase-badge { font-size:9px; letter-spacing:1px; color:var(--purple-light); margin-bottom:3px; }
-  .game-showcase-comment { font-size:10px; color:var(--text-muted); line-height:1.4; margin-top:3px; }
+  .game-showcase-badge { font-size:9px; letter-spacing:1px; color:var(--purple-light); }
 
   .diary-entry { padding:12px 0; border-bottom:0.5px solid var(--border); }
   .diary-entry:last-child { border-bottom:none; }
@@ -650,18 +647,11 @@
       a.target = "_blank";
       a.rel    = "noopener";
       const badge = g.platform ? esc(g.platform) : "GAME";
-      const stars = g.rating ? "★".repeat(g.rating) + "☆".repeat(5 - g.rating) : "";
-      const starsHtml = stars ? `<div class="game-showcase-stars">${stars}</div>` : "";
-      const commentHtml = g.comment ? `<div class="game-showcase-comment">${esc(g.comment)}</div>` : "";
       a.innerHTML = `
-        <div class="game-showcase-thumb-wrap">
-          <img class="game-showcase-thumb" src="${esc(g.iconUrl)}" alt="${esc(g.name)}">
-          ${starsHtml}
-        </div>
+        <img class="game-showcase-thumb" src="${esc(g.iconUrl)}" alt="${esc(g.name)}">
         <div class="game-showcase-info">
           <div class="game-showcase-name">${esc(g.name)}</div>
           <div class="game-showcase-badge">${badge} ↗</div>
-          ${commentHtml}
         </div>`;
       showcase.appendChild(a);
     });
