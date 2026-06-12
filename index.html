@@ -310,26 +310,11 @@
 
 <!-- GAME -->
 <div class="panel" id="panel-game">
-  <div class="sub-tabs">
-    <button class="sub-tab active" onclick="switchSubTab('game','hikari')">⭐ HIKARI</button>
-    <button class="sub-tab" onclick="switchSubTab('game','pero')">🐱 ぺろちゃん</button>
-  </div>
-  <div class="sub-panel active" id="game-hikari">
-    <div class="section">
-      <div class="sec-label">— HIKARI'S GAMES</div>
-      <div class="sec-title">HIKARIのゲーム</div>
-      <div class="game-showcase" id="gameShowcaseHikari">
-        <div style="color:var(--text-dim);font-size:12px;text-align:center;padding:24px;grid-column:1/-1;">読み込み中...</div>
-      </div>
-    </div>
-  </div>
-  <div class="sub-panel" id="game-pero">
-    <div class="section">
-      <div class="sec-label">— PERO'S GAMES</div>
-      <div class="sec-title">ぺろちゃんのゲーム</div>
-      <div class="game-showcase" id="gameShowcasePero">
-        <div style="color:var(--text-dim);font-size:12px;text-align:center;padding:24px;grid-column:1/-1;">読み込み中...</div>
-      </div>
+  <div class="section">
+    <div class="sec-label">— GAMES</div>
+    <div class="sec-title">よくやるゲーム</div>
+    <div class="game-showcase" id="gameShowcase">
+      <div style="color:var(--text-dim);font-size:12px;text-align:center;padding:24px;grid-column:1/-1;">読み込み中...</div>
     </div>
   </div>
 </div>
@@ -646,9 +631,9 @@
     });
   });
 
-  // ── ゲームショーケース（HIKARI・ぺろちゃん別）──
-  function renderGameShowcase(snap, elId) {
-    const showcase = document.getElementById(elId);
+  // ── ゲームショーケース ──
+  onSnapshot(query(collection(db,"games"), orderBy("createdAt","asc")), snap => {
+    const showcase = document.getElementById("gameShowcase");
     showcase.innerHTML = "";
     if (snap.empty) {
       showcase.innerHTML = '<div style="color:var(--text-dim);font-size:12px;text-align:center;padding:24px;grid-column:1/-1;">まだゲームが登録されていないよ！</div>';
@@ -670,9 +655,7 @@
         </div>`;
       showcase.appendChild(a);
     });
-  }
-  onSnapshot(query(collection(db,"games"), where("owner","==","hikari"), orderBy("createdAt","asc")), snap => renderGameShowcase(snap,"gameShowcaseHikari"));
-  onSnapshot(query(collection(db,"games"), where("owner","==","pero"), orderBy("createdAt","asc")), snap => renderGameShowcase(snap,"gameShowcasePero"));
+  });
 
   // ── 日記（HIKARI・ぺろちゃん別）──
   function renderDiary(snap, elId) {
