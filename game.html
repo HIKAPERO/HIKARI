@@ -838,12 +838,24 @@ window.addEventListener('orientationchange', () => setTimeout(fitCanvas, 150));
 // ── 横画面要求（Screen Orientation API） ──
 function requestLandscape() {
   try {
-    const so = screen.orientation || screen.mozOrientation || screen.msOrientation;
-    if (so && so.lock) {
-      so.lock('landscape').catch(() => {}); // 対応ブラウザのみ
-    }
+    const so = screen.orientation;
+    if (so && so.lock) so.lock('landscape').catch(() => {});
   } catch(_) {}
 }
+
+function unlockOrientation() {
+  try {
+    const so = screen.orientation;
+    if (so && so.unlock) so.unlock();
+  } catch(_) {}
+}
+
+// ページを離れる・非表示になる全パターンでロック解除
+window.addEventListener('pagehide',       unlockOrientation);
+window.addEventListener('beforeunload',   unlockOrientation);
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') unlockOrientation();
+});
 // ページ読み込み時＋最初のタップ時に要求
 requestLandscape();
 document.addEventListener('touchstart', requestLandscape, { once: true });
