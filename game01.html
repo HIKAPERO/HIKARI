@@ -67,42 +67,55 @@
     letter-spacing: 2px;
   }
 
-  /* ── バーチャルパッド（スマホ用） ── */
-  #vpad {
+  /* ── バーチャルジョイスティック（スマホ用） ── */
+  #vpad-wrap {
     display: none;
     width: 480px;
     max-width: 100vw;
+    height: 110px;
     position: relative;
-    height: 80px;
-    margin-top: 4px;
+    margin-top: 6px;
+    touch-action: none;
     user-select: none;
     -webkit-user-select: none;
   }
-  .vpad-btn {
+  /* 左側：ジョイスティックエリア */
+  #joy-area {
     position: absolute;
-    width: 72px;
-    height: 72px;
+    left: 12px; top: 5px;
+    width: 100px; height: 100px;
+  }
+  /* ジョイスティック本体はcanvasで描画 */
+  #joy-canvas {
+    width: 100px; height: 100px;
+    touch-action: none;
+  }
+  /* 右側：フラップボタン */
+  #flap-btn {
+    position: absolute;
+    right: 20px; top: 15px;
+    width: 80px; height: 80px;
     border-radius: 50%;
-    border: 2px solid rgba(255,255,255,0.18);
-    background: rgba(255,255,255,0.07);
-    color: rgba(255,255,255,0.55);
-    font-size: 26px;
+    border: 2px solid rgba(255,180,40,0.45);
+    background: rgba(255,160,30,0.12);
+    color: #ffe08a;
+    font-size: 28px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 2px;
     cursor: pointer;
     touch-action: none;
     -webkit-tap-highlight-color: transparent;
+    transition: background .08s, transform .08s;
   }
-  .vpad-btn.active {
-    background: rgba(255,200,80,0.22);
-    border-color: rgba(255,200,80,0.5);
-    color: #ffe08a;
+  #flap-btn span { font-size: 10px; letter-spacing: 1px; color: rgba(255,224,138,0.7); }
+  #flap-btn.active {
+    background: rgba(255,180,40,0.32);
+    transform: scale(0.93);
   }
-  #vpad-left  { left: 20px;  top: 4px; }
-  #vpad-right { left: 108px; top: 4px; }
-  #vpad-down  { left: 64px;  top: 4px; }
-  #vpad-flap  { right: 20px; top: 4px; background: rgba(255,160,30,0.10); border-color: rgba(255,160,30,0.35); }
+
   /* OVERLAY */
   .canvas-wrap { position: relative; }
   #overlay {
@@ -168,12 +181,12 @@
   </div>
   <div class="hint">W / SPACE でフラップ上昇　　A / D で左右移動　　S で急降下　　敵より高い位置から当たると勝ち！</div>
 
-  <!-- スマホ用バーチャルパッド -->
-  <div id="vpad">
-    <div class="vpad-btn" id="vpad-left">◀</div>
-    <div class="vpad-btn" id="vpad-down">▼</div>
-    <div class="vpad-btn" id="vpad-right">▶</div>
-    <div class="vpad-btn" id="vpad-flap">🐥<br><span style="font-size:11px;line-height:1">フラップ</span></div>
+  <!-- スマホ用バーチャルジョイスティック -->
+  <div id="vpad-wrap">
+    <div id="joy-area">
+      <canvas id="joy-canvas" width="100" height="100"></canvas>
+    </div>
+    <div id="flap-btn">🐥<span>FLAP</span></div>
   </div>
 </div>
 
@@ -1485,7 +1498,6 @@ function handleFlap() {
 
 document.addEventListener('keydown', e => {
   keys[e.code] = true;
-  // フラップ系（押した瞬間だけ発火）
   if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') {
     e.preventDefault();
     handleFlap();
@@ -1496,71 +1508,194 @@ document.addEventListener('keydown', e => {
 });
 document.addEventListener('keyup', e => { keys[e.code] = false; });
 
-// update()内でWASD連続入力を反映
+// update()内でWASD＋ジョイスティック連続入力を反映
 function applyKeyInput() {
   if (state !== 'playing' || player.dead || player.drowning > 0) return;
   const MOVE_FORCE = 0.45;
   const MAX_VX     = 3.5;
-  if (keys['KeyA'] || keys['ArrowLeft']  || vpadState.left)  player.vx = Math.max(player.vx - MOVE_FORCE, -MAX_VX);
-  if (keys['KeyD'] || keys['ArrowRight'] || vpadState.right) player.vx = Math.min(player.vx + MOVE_FORCE,  MAX_VX);
-  if (keys['KeyS'] || keys['ArrowDown']  || vpadState.down)  player.vy = Math.min(player.vy + 1.2, 5); // 急降下
+
+  // キーボード
+  if (keys['KeyA'] || keys['ArrowLeft'])  player.vx = Math.max(player.vx - MOVE_FORCE, -MAX_VX);
+  if (keys['KeyD'] || keys['ArrowRight']) player.vx = Math.min(player.vx + MOVE_FORCE,  MAX_VX);
+  if (keys['KeyS'] || keys['ArrowDown'])  player.vy = Math.min(player.vy + 1.2, 5);
+
+  // ジョイスティック（アナログ：傾き量に比例して加速）
+  if (Math.abs(joy.nx) > 0.15) {
+    const force = MOVE_FORCE * Math.abs(joy.nx);          // 傾き量で力を変化
+    player.vx = joy.nx > 0
+      ? Math.min(player.vx + force, MAX_VX)
+      : Math.max(player.vx - force, -MAX_VX);
+  }
+  if (joy.ny > 0.4) {  // 下方向に深く倒したら急降下
+    player.vy = Math.min(player.vy + 1.2 * joy.ny, 5);
+  }
 }
 
 canvas.addEventListener('click', handleFlap);
+// キャンバスタップでフラップ（ジョイスティック操作中は除く）
 canvas.addEventListener('touchstart', e => { e.preventDefault(); handleFlap(); }, { passive: false });
 document.getElementById('startBtn').addEventListener('click', startGame, { once: true });
 
-// ── バーチャルパッド（スマホ用） ──
-const vpadState = { left: false, right: false, down: false };
+// ── 円形バーチャルジョイスティック ──
+const joy = { nx: 0, ny: 0 };   // 正規化された入力値 (-1〜1)
 
-function setupVpad() {
-  const vpad = document.getElementById('vpad');
+(function setupJoystick() {
+  const wrap     = document.getElementById('vpad-wrap');
+  const joyCanvas= document.getElementById('joy-canvas');
+  const flapBtn  = document.getElementById('flap-btn');
+  const jc       = joyCanvas.getContext('2d');
+  const CX = 50, CY = 50;   // ベース中心
+  const BASE_R  = 44;        // 外側リングの半径
+  const KNOB_R  = 18;        // ノブの半径
+  const DEAD_R  = 8;         // デッドゾーン半径（これ以下は入力なし）
+  let knobX = CX, knobY = CY;
+  let touching = false;
 
-  // タッチデバイス検出時にパッドを表示
-  function showVpad() {
-    vpad.style.display = 'block';
-    window.removeEventListener('touchstart', showVpad);
+  // ── 描画 ──
+  function drawJoy() {
+    jc.clearRect(0, 0, 100, 100);
+
+    // ベースリング（外側）
+    jc.beginPath();
+    jc.arc(CX, CY, BASE_R, 0, Math.PI * 2);
+    jc.strokeStyle = 'rgba(255,255,255,0.18)';
+    jc.lineWidth = 2;
+    jc.stroke();
+    jc.fillStyle = 'rgba(255,255,255,0.04)';
+    jc.fill();
+
+    // 方向インジケーター（十字の薄いライン）
+    jc.strokeStyle = 'rgba(255,255,255,0.08)';
+    jc.lineWidth = 1;
+    jc.beginPath(); jc.moveTo(CX, CY - BASE_R + 4); jc.lineTo(CX, CY + BASE_R - 4); jc.stroke();
+    jc.beginPath(); jc.moveTo(CX - BASE_R + 4, CY); jc.lineTo(CX + BASE_R - 4, CY); jc.stroke();
+
+    // ノブとベース中心を結ぶライン
+    if (touching) {
+      jc.beginPath();
+      jc.moveTo(CX, CY);
+      jc.lineTo(knobX, knobY);
+      jc.strokeStyle = 'rgba(255,200,80,0.25)';
+      jc.lineWidth = 3;
+      jc.stroke();
+    }
+
+    // ノブ（内側の動く円）
+    const dist = Math.sqrt((knobX-CX)**2 + (knobY-CY)**2);
+    const intensity = Math.min(dist / BASE_R, 1);
+    const knobColor = touching
+      ? `rgba(255,${Math.round(200 - intensity*80)},${Math.round(80 - intensity*60)},${0.7 + intensity*0.2})`
+      : 'rgba(255,255,255,0.25)';
+
+    // ノブ外縁グロー
+    const grd = jc.createRadialGradient(knobX - 4, knobY - 4, 2, knobX, knobY, KNOB_R);
+    grd.addColorStop(0, touching ? 'rgba(255,230,140,0.9)' : 'rgba(255,255,255,0.5)');
+    grd.addColorStop(1, knobColor);
+    jc.beginPath();
+    jc.arc(knobX, knobY, KNOB_R, 0, Math.PI * 2);
+    jc.fillStyle = grd;
+    jc.fill();
+    jc.strokeStyle = touching ? 'rgba(255,200,80,0.6)' : 'rgba(255,255,255,0.2)';
+    jc.lineWidth = 1.5;
+    jc.stroke();
+
+    // ノブ中心の小ドット
+    jc.beginPath();
+    jc.arc(knobX, knobY, 4, 0, Math.PI * 2);
+    jc.fillStyle = 'rgba(255,255,255,0.5)';
+    jc.fill();
   }
-  window.addEventListener('touchstart', showVpad, { passive: true });
 
-  // ボタンごとにタッチ開始・終了を管理
-  function bindBtn(id, key) {
-    const btn = document.getElementById(id);
-    const press = (e) => {
-      e.preventDefault();
-      vpadState[key] = true;
-      btn.classList.add('active');
+  // ── タッチ座標をキャンバス座標に変換 ──
+  function toLocal(touch) {
+    const rect = joyCanvas.getBoundingClientRect();
+    const scaleX = 100 / rect.width;
+    const scaleY = 100 / rect.height;
+    return {
+      x: (touch.clientX - rect.left) * scaleX,
+      y: (touch.clientY - rect.top)  * scaleY
     };
-    const release = (e) => {
-      e.preventDefault();
-      vpadState[key] = false;
-      btn.classList.remove('active');
-    };
-    btn.addEventListener('touchstart',  press,   { passive: false });
-    btn.addEventListener('touchend',    release, { passive: false });
-    btn.addEventListener('touchcancel', release, { passive: false });
-    // マウスでも動くように（デスクトップテスト用）
-    btn.addEventListener('mousedown', press);
-    btn.addEventListener('mouseup',   release);
-    btn.addEventListener('mouseleave',release);
   }
 
-  bindBtn('vpad-left',  'left');
-  bindBtn('vpad-right', 'right');
-  bindBtn('vpad-down',  'down');
+  // ── ノブ位置・入力値の更新 ──
+  function updateKnob(lx, ly) {
+    const dx = lx - CX, dy = ly - CY;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    const clamped = Math.min(dist, BASE_R);
+    const angle   = Math.atan2(dy, dx);
+    knobX = CX + Math.cos(angle) * clamped;
+    knobY = CY + Math.sin(angle) * clamped;
 
-  // フラップボタンは押した瞬間だけ発火
-  const flapBtn = document.getElementById('vpad-flap');
-  const flapPress = (e) => {
+    // デッドゾーン処理
+    if (dist < DEAD_R) {
+      joy.nx = 0; joy.ny = 0;
+    } else {
+      joy.nx = (knobX - CX) / BASE_R;   // -1〜1
+      joy.ny = (knobY - CY) / BASE_R;
+    }
+  }
+
+  function resetKnob() {
+    knobX = CX; knobY = CY;
+    joy.nx = 0; joy.ny = 0;
+    touching = false;
+  }
+
+  // ── ジョイスティックのタッチイベント ──
+  joyCanvas.addEventListener('touchstart', e => {
+    e.preventDefault();
+    touching = true;
+    const p = toLocal(e.touches[0]);
+    updateKnob(p.x, p.y);
+  }, { passive: false });
+
+  joyCanvas.addEventListener('touchmove', e => {
+    e.preventDefault();
+    const p = toLocal(e.touches[0]);
+    updateKnob(p.x, p.y);
+  }, { passive: false });
+
+  joyCanvas.addEventListener('touchend',   e => { e.preventDefault(); resetKnob(); }, { passive: false });
+  joyCanvas.addEventListener('touchcancel',e => { e.preventDefault(); resetKnob(); }, { passive: false });
+
+  // マウスでもテスト可能
+  let mouseDown = false;
+  joyCanvas.addEventListener('mousedown', e => {
+    mouseDown = true; touching = true;
+    const rect = joyCanvas.getBoundingClientRect();
+    updateKnob((e.clientX - rect.left) * (100/rect.width), (e.clientY - rect.top) * (100/rect.height));
+  });
+  joyCanvas.addEventListener('mousemove', e => {
+    if (!mouseDown) return;
+    const rect = joyCanvas.getBoundingClientRect();
+    updateKnob((e.clientX - rect.left) * (100/rect.width), (e.clientY - rect.top) * (100/rect.height));
+  });
+  document.addEventListener('mouseup', () => { if (mouseDown) { mouseDown = false; resetKnob(); } });
+
+  // ── フラップボタン ──
+  function doFlap(e) {
     e.preventDefault();
     flapBtn.classList.add('active');
     handleFlap();
     setTimeout(() => flapBtn.classList.remove('active'), 120);
-  };
-  flapBtn.addEventListener('touchstart', flapPress, { passive: false });
-  flapBtn.addEventListener('mousedown',  flapPress);
-}
-setupVpad();
+  }
+  flapBtn.addEventListener('touchstart', doFlap, { passive: false });
+  flapBtn.addEventListener('mousedown',  doFlap);
+
+  // ── スマホ検出時にパッド表示 ──
+  function showPad() {
+    wrap.style.display = 'block';
+    window.removeEventListener('touchstart', showPad);
+  }
+  window.addEventListener('touchstart', showPad, { passive: true });
+
+  // ── 描画ループ ──
+  function joyLoop() {
+    drawJoy();
+    requestAnimationFrame(joyLoop);
+  }
+  joyLoop();
+})();
 
 loop();
 </script>
