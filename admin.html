@@ -243,7 +243,8 @@
       <div style="font-size:10px;letter-spacing:2px;color:var(--purple);margin-bottom:14px;">— 新しい商品を追加</div>
       <div class="field"><label>商品名</label><input type="text" id="shopName" placeholder="例：オリジナルTシャツ"></div>
       <div class="field"><label>価格（数字のみ）</label><input type="number" id="shopPrice" placeholder="例：2800"></div>
-      <div class="field"><label>絵文字アイコン</label><input type="text" id="shopEmoji" placeholder="例：👕" maxlength="2"></div>
+      <div class="field"><label>商品画像URL</label><input type="text" id="shopEmoji" placeholder="例：https://hikapero.github.io/HIKARI/shop/item01.png"></div>
+      <div class="field"><label>ショップURL</label><input type="text" id="shopUrl" placeholder="例：https://minne.com/..."></div>
       <div class="field"><label>説明文</label><textarea id="shopDesc" placeholder="商品の説明を書こう！" style="min-height:60px;"></textarea></div>
       <button class="btn-add" onclick="addShop()">追加する</button>
     </div>
@@ -525,8 +526,15 @@
             <div class="shop-row-price">¥${Number(data.price).toLocaleString()}</div>
           </div>
           <div class="btn-row">
-            <button class="btn-edit" onclick="window._editShop('${d.id}', ${JSON.stringify(esc(data.name))}, ${data.price||0}, ${JSON.stringify(esc(data.emoji||''))}, ${JSON.stringify(esc(data.desc||''))})">編集</button>
-            <button class="btn-del" onclick="window._delDoc('shop','${d.id}')">削除</button>
+            <button class="btn-edit">編集</button>
+            <button class="btn-del">削除</button>`;
+        div.querySelector(".btn-edit").addEventListener("click", () => {
+          window._editShop(d.id, data.name||"", data.price||0, data.imageUrl||data.emoji||"", data.shopUrl||"", data.desc||"");
+        });
+        div.querySelector(".btn-del").addEventListener("click", () => {
+          window._delDoc("shop", d.id);
+        });
+        const _dummy = `
           </div>`;
         list.appendChild(div);
       });
@@ -794,13 +802,14 @@
   };
 
   window.addShop = async () => {
-    const name  = document.getElementById("shopName").value.trim();
-    const price = Number(document.getElementById("shopPrice").value);
-    const emoji = document.getElementById("shopEmoji").value.trim() || "🛍";
-    const desc  = document.getElementById("shopDesc").value.trim();
+    const name     = document.getElementById("shopName").value.trim();
+    const price    = Number(document.getElementById("shopPrice").value);
+    const imageUrl = document.getElementById("shopEmoji").value.trim();
+    const shopUrl  = document.getElementById("shopUrl").value.trim();
+    const desc     = document.getElementById("shopDesc").value.trim();
     if (!name || !price) { alert("商品名と価格は必須です"); return; }
-    await window._addDoc(window._collection(window._db,"shop"), { name, price, emoji, desc, createdAt:serverTimestamp() });
-    ["shopName","shopPrice","shopEmoji","shopDesc"].forEach(id => document.getElementById(id).value="");
+    await window._addDoc(window._collection(window._db,"shop"), { name, price, imageUrl, shopUrl, desc, createdAt:serverTimestamp() });
+    ["shopName","shopPrice","shopEmoji","shopUrl","shopDesc"].forEach(id => document.getElementById(id).value="");
     showToast("🛍 商品を追加しました！");
   };
 
@@ -899,19 +908,34 @@
     document.getElementById("editModal").classList.add("open");
   };
 
-  window._editShop = (id, name, price, emoji, desc) => {
+  window._editShop = (id, name, price, imageUrl, shopUrl, desc) => {
     document.getElementById("editModalTitle").textContent = "商品を編集";
-    document.getElementById("editModalBody").innerHTML = `
-      <div class="field"><label>商品名</label><input id="e_name" value="${name}"></div>
-      <div class="field"><label>価格</label><input id="e_price" type="number" value="${price}"></div>
-      <div class="field"><label>絵文字</label><input id="e_emoji" value="${emoji}" maxlength="2"></div>
-      <div class="field"><label>説明</label><textarea id="e_desc">${desc}</textarea></div>`;
+    const body = document.getElementById("editModalBody");
+    body.innerHTML = "";
+    const fields = [
+      ["商品名", "e_sname", "input", name||""],
+      ["価格", "e_sprice", "number", price||0],
+      ["商品画像URL", "e_simage", "input", imageUrl||""],
+      ["ショップURL", "e_surl", "input", shopUrl||""],
+      ["説明", "e_sdesc", "textarea", desc||""],
+    ];
+    fields.forEach(([label, id, type, val]) => {
+      const f = document.createElement("div"); f.className = "field";
+      const l = document.createElement("label"); l.textContent = label; f.appendChild(l);
+      const el = document.createElement(type === "textarea" ? "textarea" : "input");
+      el.className = "form-input"; el.id = id;
+      if (type === "number") el.type = "number";
+      if (type === "textarea") { el.style.minHeight = "60px"; el.value = val; }
+      else el.value = val;
+      f.appendChild(el); body.appendChild(f);
+    });
     window._editAction = async () => {
       await window._updateDoc(window._doc(window._db,"shop",id), {
-        name: document.getElementById("e_name").value.trim(),
-        price: Number(document.getElementById("e_price").value),
-        emoji: document.getElementById("e_emoji").value.trim(),
-        desc: document.getElementById("e_desc").value.trim(),
+        name:     document.getElementById("e_sname").value.trim(),
+        price:    Number(document.getElementById("e_sprice").value),
+        imageUrl: document.getElementById("e_simage").value.trim(),
+        shopUrl:  document.getElementById("e_surl").value.trim(),
+        desc:     document.getElementById("e_sdesc").value.trim(),
       });
       showToast("更新しました！");
     };
