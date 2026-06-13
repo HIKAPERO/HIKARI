@@ -60,7 +60,7 @@
       <div class="snow-deco">❄ ✦ ❄</div>
       <div class="ov-title" id="ovTitle">Sweet Stack</div>
       <div class="ov-sub" id="overlaySub">
-       飛んでくるスイーツに<br>
+        左右から飛んでくるスイーツに<br>
         タイミングよくジャンプして乗ろう！<br>
         <span style="color:#4488bb;">タップ / スペース でジャンプ</span>
       </div>
@@ -108,7 +108,8 @@ let bgmPlaying=false;
 // MP3ファイルの読み込み設定
 const bgmAudio = new Audio('game02-m.mp3');
 bgmAudio.loop = true;
-bgmAudio.volume = 0.35; // ゲームバランスに合わせた音量（0.0～1.0で調整可能）
+// ★【変更】音量を0.35から50%（0.175）に下げて、効果音を聞き取りやすくしました
+bgmAudio.volume = 0.175; 
 
 function getAC(){
   if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
@@ -133,7 +134,7 @@ function stopBGM(){
   bgmAudio.currentTime = 0; // 曲の最初に戻す
 }
 
-// 効果音用のピコピコ音生成発振器（そのまま維持）
+// 効果音用のピコピコ音生成発振器
 function beep(freq,dur,type='sine',vol=0.18){
   if(muted) return;
   try{
@@ -164,7 +165,7 @@ function sfxMiss(){
   setTimeout(()=>beep(280,0.15,'triangle',0.12),100);
 }
 
-// ミュート切り替えボタン（MP3と効果音の両方をスマートに制御）
+// ミュート切り替えボタン
 function toggleMute(){
   muted=!muted;
   document.getElementById('muteBtn').textContent=muted?'🔇':'🔊';
@@ -566,7 +567,6 @@ function checkSideCollision(){
 function update(){
   if(state!=='playing' && state!=='gameover') return;
 
-  // ゲームオーバー状態の時は、エフェクトの更新のみを行って即終了（フリーズ回避）
   if(state==='gameover'){
     updateParticles();
     return;
@@ -684,7 +684,7 @@ function showOverlay(type){
     btn.textContent='もう一度 ✦';
   } else {
     tit.textContent='Sweet Stack';
-    sub.innerHTML='飛んでくるスイーツに<br>タイミングよくジャンプして乗ろう！<br><span style="color:#4488bb;">タップ / スペース でジャンプ</span>';
+    sub.innerHTML='左右から飛んでくるスイーツに<br>タイミングよくジャンプして乗ろう！<br><span style="color:#4488bb;">タップ / スペース でジャンプ</span>';
     sc.style.display='none'; hi.style.display='none';
     btn.textContent='はじめる ✦';
   }
