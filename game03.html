@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>🚀 NEO GLADIUS - PORTABLE HYBRID</title>
+<title>🚀 NEO GLADIUS - HYBRID COCKPIT</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -20,15 +20,15 @@
       radial-gradient(ellipse 50% 50% at 80% 70%, rgba(157,134,245,0.08) 0%, transparent 60%);
   }
 
-  /* 3エリア横並びのメインコンテナ（スマホ横画面時にポータブル機化） */
+  /* 3エリア横並びのメインレイアウト（スマホ横画面時のみ左右パッドが出現） */
   .game-container {
     display: flex; flex-direction: row; align-items: center; justify-content: center; 
     width: 100vw; height: 100vh; padding: 10px; gap: 16px;
   }
 
-  /* 左エリア：ジョイスティック配置域 */
+  /* ── 左エリア：スマホ専用ジョイスティック（★位置を下部へ配置調整） ── */
   .layout-left-pad {
-    display: none; width: 120px; justify-content: center; align-items: center;
+    display: none; width: 120px; height: 100%; flex-direction: column; justify-content: flex-end; align-items: center; padding-bottom: 25px;
   }
   .joy-base {
     width: 105px; height: 105px; background: rgba(17, 17, 30, 0.6);
@@ -42,7 +42,7 @@
     top: 30px; left: 30px; pointer-events: none;
   }
 
-  /* 中央エリア：ゲーム表示枠セクション（不要なものは一切映さないクリア設計） */
+  /* ── 中央エリア：ゲーム画面メイン ── */
   .layout-center-screen {
     display: none; flex-direction: column; align-items: center; 
     width: 100%; max-width: 500px; z-index: 1;
@@ -56,9 +56,9 @@
     width: 100%; height: auto; aspect-ratio: 540 / 320; display: block;
   }
 
-  /* 右エリア：縦メーター＆攻撃ボタン配置域 */
+  /* ── 右エリア：スマホ専用のコントロールタワー ── */
   .layout-right-pad {
-    display: none; flex-direction: column; align-items: center; gap: 8px; width: 130px;
+    display: none; flex-direction: column; align-items: center; justify-content: flex-end; gap: 8px; width: 130px; height: 100%; padding-bottom: 25px;
   }
   .vertical-meter { display: flex; flex-direction: column; gap: 3px; width: 100%; }
   .meter-cell {
@@ -76,13 +76,21 @@
     box-shadow: 0 4px 12px rgba(108,92,231,0.3); cursor: pointer;
   }
 
-  /* PC専用：横型パワーアップメーター */
-  .pc-meter-wrap { display: none; width: 100%; margin-top: 8px; }
+  /* ── PC専用：下部メーター ＆ 操作方法案内パネル ── */
+  .pc-meter-wrap { display: none; width: 100%; margin-top: 8px; flex-direction: column; gap: 8px; }
   .pc-meter-container {
     display: flex; gap: 4px; width: 100%; background: #11111e; padding: 4px; border-radius: 6px; border: 1px solid #22223c;
   }
+  .control-guide-panel {
+    width: 100%; background: rgba(17, 17, 30, 0.6); 
+    border: 0.5px solid rgba(108, 92, 231, 0.2); border-radius: 8px;
+    padding: 8px 16px; display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  }
+  .guide-item { display: flex; flex-direction: column; gap: 2px; }
+  .guide-label { font-size: 9px; color: #6c5ce7; letter-spacing: 1px; font-weight: bold; text-transform: uppercase; }
+  .guide-value { font-size: 11px; color: #a78bff; font-weight: 500; }
 
-  /* サイバーネオン初期ランチャーオーバレイ */
+  /* ── スタイリッシュ特製ネオンランチャーオーバレイ ── */
   #mainLauncherOverlay {
     position: absolute; inset: 0; display: flex; flex-direction: column;
     align-items: center; justify-content: center; gap: 20px; z-index: 100;
@@ -107,11 +115,12 @@
   .launch-btn-cyber:hover {
     background: #00ffff; color: #05050b; box-shadow: 0 0 25px rgba(0,255,255,0.7); transform: scale(1.03);
   }
+  /* PC用GAME STARTスタイル */
   .pc-start-btn { border-color: #a78bff; color: #c9b8ff; box-shadow: 0 0 15px rgba(108,92,231,0.2); }
   .pc-start-btn:hover { background: #6c5ce7; color: #fff; box-shadow: 0 0 25px rgba(108,92,231,0.8); }
   .exit-btn { background: linear-gradient(135deg, #cc2b43, #a81c30); border: 0.5px solid #ff4466; }
   .btn-group { display: flex; gap: 16px; margin-top: 4px; }
-  .hint { font-size: 10px; color: #444; letter-spacing: 1px; text-align: center; margin-top: 4px; }
+  .hint { font-size: 10px; color: #222; letter-spacing: 1px; text-align: center; margin-top: 4px; }
 </style>
 </head>
 <body>
@@ -151,7 +160,20 @@
         <div class="meter-cell" id="pc-cell3">OPTION</div>
         <div class="meter-cell" id="pc-cell4">BARRIER</div>
       </div>
-      <div class="hint">PC: WASD移動 / SPACEレーザー / ENTER or Bキーでパワーアップ</div>
+      <div class="control-guide-panel">
+        <div class="guide-item">
+          <span class="guide-label">🚀 移動 / MOVE</span>
+          <span class="guide-value">WASD / 矢印キー</span>
+        </div>
+        <div class="guide-item" style="text-align: center;">
+          <span class="guide-label">🔥 攻撃 / SHOT</span>
+          <span class="guide-value">SPACEキー (長押し連射)</span>
+        </div>
+        <div class="guide-item" style="text-align: right;">
+          <span class="guide-label">⚡ 発動 / POWER UP</span>
+          <span class="guide-value">ENTER または Bキー</span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -658,7 +680,7 @@ function showOverlay(type) {
           <button class="launch-btn-cyber exit-btn" style="border-color:#ff4466; color:#ff6688;" onclick="exitGameAndCloseFullscreen()">基地へ帰還 🚪</button>
         </div>`;
     } else {
-      btnHtml = `<button class="launch-btn-cyber pc-start-btn" onclick="startGame()">再試行 ▶</button>`;
+      btnHtml = `<button class="launch-btn-cyber pc-start-btn" onclick="startGame()">GAME START ▶</button>`;
     }
     document.getElementById('launcherBtnArea').innerHTML = btnHtml;
     if (score > best) { best = score; document.getElementById('bestDisplay').textContent = best; }
@@ -668,14 +690,14 @@ function showOverlay(type) {
 function startGame() {
   document.getElementById('mainLauncherOverlay').style.display = 'none';
   
-  // ★【バグ修正】PC版とスマホ版の両方で中央ゲームゾーンを確実に可視化
+  // ★ 表示バグ完全修正：PC版・スマホ版を問わず、ゲームメインゾーンを確実に可視化
   document.getElementById('mobileCenterZone').style.display = 'flex';
   
   if (isTouchDevice) {
     document.getElementById('mobileLeftZone').style.display = 'flex';
     document.getElementById('mobileRightZone').style.display = 'flex';
   } else {
-    // PC版のみ横メーターを綺麗にドッキング
+    // PC版はバーチャルパッドを完全隠蔽したまま、横メーター＋操作ガイドを展開
     document.getElementById('pcMeterWrap').style.display = 'flex';
   }
 
@@ -706,6 +728,7 @@ function startWithFullscreen() {
   const requestFS = container.requestFullscreen || container.webkitRequestFullscreen;
   
   if (requestFS) {
+    container.style.display = "flex"; // Safari対策
     requestFS.call(container).then(() => {
       if (screen.orientation && screen.orientation.lock) {
         screen.orientation.lock('landscape').catch(err => console.log(err));
@@ -834,7 +857,7 @@ function toggleMute() {
   if (bgmGainNode) bgmGainNode.gain.setValueAtTime(muted ? 0 : 0.25, getAudioCtx().currentTime);
 }
 
-// ── 入力イベント（PC用） ──
+// ── PCキーボード入力 ──
 window.addEventListener('keydown', e => {
   keys[e.code] = true;
   if (state === 'playing' && (e.code === 'Enter' || e.code === 'KeyB')) triggerPowerUp();
@@ -853,7 +876,7 @@ function roundRect(ctx, x, y, w, h, r) {
   ctx.quadraticCurveTo(x, y, x+r, y); ctx.closePath();
 }
 
-// ── スマホ欄外タッチコントロール制御 ──
+// ── スマホ欄外独立タッチコントロール制御 ──
 const joyBase = document.getElementById('htmlJoystickBase');
 const joyStick = document.getElementById('htmlJoystickPad');
 const htmlShotBtn = document.getElementById('htmlShotBtn');
@@ -920,7 +943,7 @@ function initDynamicControlsGuide() {
   const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
   const btnArea = document.getElementById('launcherBtnArea');
   
-  // 初期状態では全エレメントを完全非表示
+  // 開始前はすべて隠蔽
   document.getElementById('mobileLeftZone').style.display = 'none';
   document.getElementById('mobileCenterZone').style.display = 'none';
   document.getElementById('mobileRightZone').style.display = 'none';
@@ -928,15 +951,17 @@ function initDynamicControlsGuide() {
 
   if (isTouch) {
     isTouchDevice = true;
+    // スマホ版専用ネオンエントリーボタン
     btnArea.innerHTML = `<button class="launch-btn-cyber" onclick="startWithFullscreen()">⚡ 全画面で出撃</button>`;
   } else {
     isTouchDevice = false;
-    btnArea.innerHTML = `<button class="launch-btn-cyber pc-start-btn" onclick="startGame()">ミッション開始 ▶</button>`;
+    // ★【修正①】PC版専用：全画面化を行わないシンプルな「GAME START」ボタンを配置
+    btnArea.innerHTML = `<button class="launch-btn-cyber pc-start-btn" onclick="startGame()">GAME START ▶</button>`;
   }
 }
 initDynamicControlsGuide();
 
-// ミュートボタン
+// ミュートボタンの生成
 const muteBtn = document.createElement('button');
 muteBtn.id = 'muteBtn'; muteBtn.textContent = '🔊'; muteBtn.title = 'ミュート切替';
 muteBtn.style.cssText = `
