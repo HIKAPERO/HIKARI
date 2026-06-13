@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HIKARI RUN!</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', 'Hiragino Sans', 'Meiryo', sans-serif;
+    background: #08080f;
+    color: #d0cce8;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 60% 40% at 20% 20%, rgba(108,92,231,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 50% at 80% 70%, rgba(157,134,245,0.08) 0%, transparent 60%);
+  }
+
+  .game-wrap {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    z-index: 1;
+  }
+
+  .game-title {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 6px;
+    background: linear-gradient(135deg, #c9b8ff 0%, #a78bff 50%, #c9b8ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
+  }
+
+  .score-row {
+    display: flex;
+    gap: 32px;
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: #9d86f5;
+  }
+  .score-row span { color: #c9b8ff; font-weight: 700; }
+
+  /* CANVAS */
+  #gameCanvas {
+    border: 0.5px solid rgba(108,92,231,0.4);
+    border-radius: 12px;
+    background: #0d0d18;
+    box-shadow: 0 0 30px rgba(108,92,231,0.15), inset 0 0 20px rgba(0,0,0,0.5);
+    display: block;
+    cursor: pointer;
+  }
+
+  .hint {
+    font-size: 11px;
+    color: #444;
+    letter-spacing: 2px;
+  }
+
+  /* OVERLAY */
+  #overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: rgba(8,8,15,0.75);
+    backdrop-filter: blur(4px);
+    border-radius: 12px;
+    z-index: 10;
+  }
+  .overlay-title {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: #c9b8ff;
+  }
+  .overlay-sub {
+    font-size: 12px;
+    color: #888;
+    letter-spacing: 2px;
+  }
+  .overlay-score {
+    font-size: 16px;
+    color: #9d86f5;
+    letter-spacing: 2px;
+  }
+  .start-btn {
+    padding: 10px 32px;
+    background: #6c5ce7;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background .2s, transform .15s;
+    margin-top: 8px;
+  }
+  .start-btn:hover { background: #7d6ef0; transform: translateY(-2px); }
+
+  .canvas-wrap { position: relative; }
+</style>
+</head>
+<body>
+
+<div class="game-wrap">
+  <div class="game-title">HIKARI RUN!</div>
+  <div class="score-row">
+    <div>SCORE <span id="scoreDisplay">0</span></div>
+    <div>BEST <span id="bestDisplay">0</span></div>
+  </div>
+
+  <div class="canvas-wrap">
+    <canvas id="gameCanvas" width="700" height="200"></canvas>
+    <div id="overlay">
+      <div class="overlay-title">HIKARI RUN!</div>
+      <div class="overlay-sub">スペース・タップ・クリックでジャンプ！</div>
+      <button class="start-btn" id="startBtn">スタート ▶</button>
+    </div>
+  </div>
+
+  <div class="hint">SPACE / TAP / CLICK でジャンプ　　ダブルジャンプもできるよ！</div>
+</div>
+
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx    = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+const GROUND = H - 40;
+
+// ── STATE ──
+let state = 'idle'; // idle | playing | dead
+let score = 0, best = 0, frame = 0, speed = 4;
+
+// ── PLAYER ──
+const player = {
+  x: 80, y: GROUND, w: 28, h: 36,
+  vy: 0, jumps: 0, maxJumps: 2,
+  color: '#9d86f5',
+  jump() {
+    if (this.jumps < this.maxJumps) {
+      this.vy = -13;
+      this.jumps++;
+    }
+  },
+  update() {
+    this.vy += 0.6; // gravity
+    this.y += this.vy;
+    if (this.y >= GROUND) {
+      this.y = GROUND;
+      this.vy = 0;
+      this.jumps = 0;
+    }
+  },
+  draw() {
+    const t = frame * 0.15;
+    const onGround = this.y >= GROUND - 1;
+
+    // 影
+    ctx.fillStyle = 'rgba(108,92,231,0.2)';
+    ctx.beginPath();
+    ctx.ellipse(this.x + this.w/2, GROUND + 4, this.w/2, 4, 0, 0, Math.PI*2);
+    ctx.fill();
+
+    // 体（ぷよぷよ感）
+    const squish = onGround ? 1 + Math.sin(t)*0.05 : 1;
+    const sx = this.w * squish, sy = this.h / squish;
+
+    // グロー
+    ctx.shadowColor = '#9d86f5';
+    ctx.shadowBlur = 10;
+
+    // 体
+    ctx.fillStyle = '#1a1428';
+    roundRect(ctx, this.x + (this.w - sx)/2, this.y - sy + this.h, sx, sy, 6);
+    ctx.fill();
+
+    // 髪（茶色ツインテ）
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = '#8B4513';
+    // 左ツインテ
+    ctx.beginPath();
+    ctx.ellipse(this.x + 4, this.y - sy + this.h - 2, 5, 10, -0.3, 0, Math.PI*2);
+    ctx.fill();
+    // 右ツインテ
+    ctx.beginPath();
+    ctx.ellipse(this.x + sx - 4, this.y - sy + this.h - 2, 5, 10, 0.3, 0, Math.PI*2);
+    ctx.fill();
+
+    // 頭
+    ctx.fillStyle = '#c8e0f0';
+    ctx.shadowColor = '#9d86f5';
+    ctx.shadowBlur = 8;
+    ctx.beginPath();
+    ctx.ellipse(this.x + sx/2, this.y - sy + this.h - 14, sx*0.38, sx*0.42, 0, 0, Math.PI*2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // 猫耳
+    ctx.fillStyle = '#c8e0f0';
+    ctx.beginPath(); ctx.moveTo(this.x+4, this.y-sy+this.h-22); ctx.lineTo(this.x+1, this.y-sy+this.h-30); ctx.lineTo(this.x+9, this.y-sy+this.h-24); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(this.x+sx-4, this.y-sy+this.h-22); ctx.lineTo(this.x+sx-1, this.y-sy+this.h-30); ctx.lineTo(this.x+sx-9, this.y-sy+this.h-24); ctx.fill();
+
+    // 目（走り）
+    ctx.fillStyle = '#6c5ce7';
+    const eyeY = this.y - sy + this.h - 14;
+    ctx.beginPath(); ctx.arc(this.x + sx/2 - 5, eyeY, 2.5, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(this.x + sx/2 + 5, eyeY, 2.5, 0, Math.PI*2); ctx.fill();
+
+    // ほっぺ
+    ctx.fillStyle = 'rgba(255,150,150,0.5)';
+    ctx.beginPath(); ctx.ellipse(this.x + sx/2 - 7, eyeY + 4, 4, 2.5, 0, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(this.x + sx/2 + 7, eyeY + 4, 4, 2.5, 0, 0, Math.PI*2); ctx.fill();
+
+    // 足（走りアニメ）
+    if (onGround) {
+      ctx.fillStyle = '#9d86f5';
+      const legOff = Math.sin(t*2) * 6;
+      ctx.beginPath(); ctx.ellipse(this.x+sx*0.3, this.y+this.h-4+legOff, 4, 5, 0, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(this.x+sx*0.7, this.y+this.h-4-legOff, 4, 5, 0, 0, Math.PI*2); ctx.fill();
+    }
+  }
+};
+
+// ── OBSTACLES ──
+let obstacles = [];
+const OBSTACLE_TYPES = [
+  // 低い障害物
+  { w:18, h:32, color:'#e74c3c', accent:'#ff6b6b', label:'👾' },
+  { w:14, h:44, color:'#e91e63', accent:'#ff69b4', label:'💀' },
+  // 高い障害物（上をくぐる）
+  { w:20, h:24, color:'#6c5ce7', accent:'#9d86f5', label:'⚡', floating: true },
+];
+
+function spawnObstacle() {
+  const type = OBSTACLE_TYPES[Math.floor(Math.random() * OBSTACLE_TYPES.length)];
+  const t = { ...type };
+  if (t.floating) {
+    t.y = GROUND - 60;
+  } else {
+    t.y = GROUND - t.h + 8;
+  }
+  t.x = W + 20;
+  obstacles.push(t);
+}
+
+// ── PARTICLES ──
+let particles = [];
+function spawnParticles(x, y) {
+  for (let i = 0; i < 8; i++) {
+    particles.push({
+      x, y,
+      vx: (Math.random()-0.5) * 4,
+      vy: (Math.random()-0.5) * 4 - 2,
+      life: 1,
+      color: ['#9d86f5','#c9b8ff','#6c5ce7','#ff69b4'][Math.floor(Math.random()*4)]
+    });
+  }
+}
+
+// ── STARS ──
+const stars = Array.from({length:40}, () => ({
+  x: Math.random()*W, y: Math.random()*GROUND,
+  r: Math.random()*1.5+0.3,
+  a: Math.random()
+}));
+
+// ── GROUND TILES ──
+let groundX = 0;
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.lineTo(x+w-r, y);
+  ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+  ctx.lineTo(x+w, y+h-r);
+  ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+  ctx.lineTo(x+r, y+h);
+  ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+  ctx.lineTo(x, y+r);
+  ctx.quadraticCurveTo(x, y, x+r, y);
+  ctx.closePath();
+}
+
+// ── DRAW ──
+function draw() {
+  // 背景
+  ctx.fillStyle = '#0d0d18';
+  ctx.fillRect(0, 0, W, H);
+
+  // 星
+  stars.forEach(s => {
+    s.a += 0.01;
+    ctx.fillStyle = `rgba(200,180,255,${0.3 + Math.sin(s.a)*0.3})`;
+    ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2); ctx.fill();
+  });
+
+  // 地面
+  groundX = (groundX - speed) % 40;
+  ctx.fillStyle = '#1a1428';
+  ctx.fillRect(0, GROUND+8, W, H - GROUND - 8);
+  ctx.strokeStyle = '#2a2a4a';
+  ctx.lineWidth = 0.5;
+  for (let x = groundX; x < W; x += 40) {
+    ctx.beginPath(); ctx.moveTo(x, GROUND+8); ctx.lineTo(x, H); ctx.stroke();
+  }
+  // 地面ライン（光る）
+  ctx.strokeStyle = 'rgba(108,92,231,0.4)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, GROUND+8); ctx.lineTo(W, GROUND+8); ctx.stroke();
+
+  // 障害物
+  obstacles.forEach(ob => {
+    ctx.shadowColor = ob.color;
+    ctx.shadowBlur = 12;
+    ctx.fillStyle = ob.color;
+    roundRect(ctx, ob.x, ob.y, ob.w, ob.h, 4);
+    ctx.fill();
+    // アクセント
+    ctx.fillStyle = ob.accent;
+    roundRect(ctx, ob.x+2, ob.y+2, ob.w-4, 4, 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    // 絵文字
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(ob.label, ob.x + ob.w/2, ob.y + ob.h/2 + 4);
+  });
+
+  // パーティクル
+  particles.forEach(p => {
+    ctx.globalAlpha = p.life;
+    ctx.fillStyle = p.color;
+    ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI*2); ctx.fill();
+  });
+  ctx.globalAlpha = 1;
+
+  // プレイヤー
+  player.draw();
+
+  // スコア表示（ゲーム中）
+  if (state === 'playing') {
+    ctx.fillStyle = 'rgba(108,92,231,0.3)';
+    ctx.font = '11px Segoe UI';
+    ctx.textAlign = 'right';
+    ctx.fillText(`${score}`, W - 12, 20);
+  }
+
+  // GAME OVER フラッシュ
+  if (state === 'dead') {
+    ctx.fillStyle = 'rgba(231,76,60,0.15)';
+    ctx.fillRect(0, 0, W, H);
+  }
+}
+
+// ── UPDATE ──
+function update() {
+  if (state !== 'playing') return;
+
+  frame++;
+  score = Math.floor(frame / 6);
+  speed = 4 + Math.floor(score / 150) * 0.5;
+
+  player.update();
+
+  // 障害物生成
+  const interval = Math.max(60, 100 - Math.floor(score/100)*3);
+  if (frame % interval === 0) spawnObstacle();
+
+  // 障害物更新
+  obstacles.forEach(ob => ob.x -= speed);
+  obstacles = obstacles.filter(ob => ob.x > -50);
+
+  // 当たり判定
+  for (const ob of obstacles) {
+    if (
+      player.x + 4 < ob.x + ob.w &&
+      player.x + player.w - 4 > ob.x &&
+      player.y - player.h + 8 < ob.y + ob.h &&
+      player.y + 8 > ob.y
+    ) {
+      spawnParticles(player.x + player.w/2, player.y - player.h/2);
+      die();
+      return;
+    }
+  }
+
+  // パーティクル更新
+  particles.forEach(p => {
+    p.x += p.vx; p.y += p.vy; p.vy += 0.15; p.life -= 0.05;
+  });
+  particles = particles.filter(p => p.life > 0);
+
+  // スコア表示更新
+  document.getElementById('scoreDisplay').textContent = score;
+}
+
+function die() {
+  state = 'dead';
+  if (score > best) best = score;
+  document.getElementById('bestDisplay').textContent = best;
+
+  const overlay = document.getElementById('overlay');
+  overlay.innerHTML = `
+    <div class="overlay-title">GAME OVER</div>
+    <div class="overlay-score">SCORE: ${score}</div>
+    ${score >= best && score > 0 ? '<div style="font-size:11px;color:#f0c040;letter-spacing:2px;">★ NEW BEST!</div>' : ''}
+    <button class="start-btn" id="startBtn">もう一度 ▶</button>
+  `;
+  overlay.style.display = 'flex';
+  document.getElementById('startBtn').addEventListener('click', startGame);
+}
+
+function startGame() {
+  state = 'playing';
+  frame = 0; score = 0; speed = 4;
+  player.y = GROUND; player.vy = 0; player.jumps = 0;
+  obstacles = [];
+  particles = [];
+  document.getElementById('scoreDisplay').textContent = '0';
+  document.getElementById('overlay').style.display = 'none';
+}
+
+// ── INPUT ──
+function handleJump() {
+  if (state === 'idle' || state === 'dead') return;
+  player.jump();
+}
+
+document.addEventListener('keydown', e => {
+  if (e.code === 'Space' || e.code === 'ArrowUp') {
+    e.preventDefault();
+    handleJump();
+  }
+});
+canvas.addEventListener('click', handleJump);
+canvas.addEventListener('touchstart', e => { e.preventDefault(); handleJump(); }, { passive: false });
+
+document.getElementById('startBtn').addEventListener('click', startGame);
+
+// ── LOOP ──
+function loop() {
+  update();
+  draw();
+  requestAnimationFrame(loop);
+}
+
+loop();
+</script>
+</body>
+</html>
