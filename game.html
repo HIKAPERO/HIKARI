@@ -116,11 +116,9 @@
   #soundBtn:hover  { background: rgba(108,92,231,0.35); transform: scale(1.08); }
   #soundBtn:active { transform: scale(0.94); }
 
-  /* CANVAS ラッパー：ビューポートに合わせて縮小 */
+  /* CANVAS ラッパー */
   .canvas-wrap {
     position: relative;
-    /* JS でインラインスタイルの transform: scale() を当てる */
-    transform-origin: top center;
   }
 
   #gameCanvas {
@@ -799,26 +797,37 @@ soundBtn.addEventListener('click', e => {
 });
 
 // ── キャンバス スケーリング（横画面スマホ対応） ──
+// transform:scale() はタッチ判定がズレるため、
+// canvas の CSS width/height を直接変更する方式を使う
 const CANVAS_W = 700, CANVAS_H = 200;
 const canvasWrap = document.getElementById('canvasWrap');
-const TOP_BAR_H  = 60;  // top-bar + gap の概算高さ
-const HINT_H     = 28;  // hint の概算高さ
-const V_PADDING  = 24;  // 上下余白
 
 function fitCanvas() {
   const vw = window.innerWidth;
   const vh = window.innerHeight;
+
+  // top-bar(実測) + gap + hint + 余白 を除いた高さ
+  const topBar = document.querySelector('.top-bar');
+  const hint   = document.querySelector('.hint');
+  const topH   = topBar ? topBar.getBoundingClientRect().height + 10 : 50;
+  const hintH  = hint   ? hint.getBoundingClientRect().height  + 10 : 24;
   const availW = vw - 16;
-  const availH = vh - TOP_BAR_H - HINT_H - V_PADDING;
-  const scale  = Math.min(1, availW / CANVAS_W, availH / CANVAS_H);
-  canvasWrap.style.transform = `scale(${scale})`;
-  // scale 後の実サイズを margin で吸収して中央揃え
-  const scaledH = CANVAS_H * scale;
-  const deltaH  = CANVAS_H - scaledH;
-  canvasWrap.style.marginBottom = `-${deltaH}px`;
+  const availH = vh - topH - hintH - 16;
+
+  const scale = Math.min(1, availW / CANVAS_W, availH / CANVAS_H);
+  const dispW = Math.floor(CANVAS_W * scale);
+  const dispH = Math.floor(CANVAS_H * scale);
+
+  // canvas の表示サイズだけ変える（論理サイズ=描画解像度は700×200のまま）
+  canvas.style.width  = dispW + 'px';
+  canvas.style.height = dispH + 'px';
+  canvasWrap.style.width  = dispW + 'px';
+  canvasWrap.style.height = dispH + 'px';
 }
 fitCanvas();
 window.addEventListener('resize', fitCanvas);
+// orientationchange は resize より早く発火することがあるので両方聴く
+window.addEventListener('orientationchange', () => setTimeout(fitCanvas, 150));
 
 // ── 横画面要求（Screen Orientation API） ──
 function requestLandscape() {
