@@ -36,7 +36,11 @@
     --hero-text: #4030a0;
     --mode-icon: "🌙";
   }
-  html { scroll-behavior: smooth; }
+  /* FOUC防止：テーマをできるだけ早く適用 */
+  (function() {
+    const saved = localStorage.getItem('hikari-theme');
+    if (saved === 'light') document.documentElement.setAttribute('data-theme', 'light');
+  })();
   body { font-family: 'Segoe UI','Hiragino Sans','Meiryo',sans-serif; background: var(--bg0); color: var(--text); min-height: 100vh; transition: background .4s, color .4s; }
   body::before { content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
     background:
@@ -345,14 +349,14 @@
 
 <div class="tabs-wrap">
   <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('about')">ABOUT</button>
-    <button class="tab-btn" onclick="switchTab('game')">GAME</button>
-    <button class="tab-btn" onclick="switchTab('shop')">SHOP</button>
-    <button class="tab-btn" onclick="switchTab('gallery')">GALLERY</button>
-    <button class="tab-btn" onclick="switchTab('chat')">CHAT</button>
-    <button class="tab-btn" onclick="switchTab('diary')">DIARY</button>
-    <button class="tab-btn" onclick="switchTab('links')">LINKS</button>
-    <button class="tab-btn" onclick="switchTab('play')">PLAY</button>
+    <button class="tab-btn active" data-tab="about" onclick="switchTab('about')">ABOUT</button>
+    <button class="tab-btn" data-tab="game" onclick="switchTab('game')">GAME</button>
+    <button class="tab-btn" data-tab="shop" onclick="switchTab('shop')">SHOP</button>
+    <button class="tab-btn" data-tab="gallery" onclick="switchTab('gallery')">GALLERY</button>
+    <button class="tab-btn" data-tab="chat" onclick="switchTab('chat')">CHAT</button>
+    <button class="tab-btn" data-tab="diary" onclick="switchTab('diary')">DIARY</button>
+    <button class="tab-btn" data-tab="links" onclick="switchTab('links')">LINKS</button>
+    <button class="tab-btn" data-tab="play" onclick="switchTab('play')">PLAY</button>
   </div>
 </div>
 
@@ -850,16 +854,11 @@
     document.getElementById('themeToggle').textContent = isLight ? '☀️' : '🌙';
     localStorage.setItem('hikari-theme', isLight ? 'dark' : 'light');
   }
-  // 保存済みテーマを復元
+  // ページロード時にボタンアイコンをテーマに合わせる
   (function() {
     const saved = localStorage.getItem('hikari-theme');
-    if (saved === 'light') {
-      document.documentElement.setAttribute('data-theme', 'light');
-      document.addEventListener('DOMContentLoaded', () => {
-        const btn = document.getElementById('themeToggle');
-        if (btn) btn.textContent = '🌙';
-      });
-    }
+    const btn = document.getElementById('themeToggle');
+    if (saved === 'light' && btn) btn.textContent = '🌙';
   })();
 
   const TABS = ['about','game','shop','gallery','chat','diary','links','play'];
@@ -873,10 +872,13 @@
       p.classList.toggle('active', p.id === panel + '-' + name);
     });
   }
+  // data-tab属性を使ってインデックスに依存しないタブ切替
   function switchTab(name) {
-    TABS.forEach((t,i) => {
-      document.querySelectorAll('.tab-btn')[i].classList.toggle('active', t===name);
-      document.getElementById('panel-'+t).classList.toggle('active', t===name);
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.tab === name);
+    });
+    TABS.forEach(t => {
+      document.getElementById('panel-' + t).classList.toggle('active', t === name);
     });
     window.scrollTo({top:0,behavior:'smooth'});
   }

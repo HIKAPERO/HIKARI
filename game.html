@@ -415,18 +415,20 @@ function update() {
 
 function die() {
   state = 'dead';
-  if (score > best) best = score;
+  const isNewBest = score > 0 && score > best;
+  if (isNewBest) best = score;
   document.getElementById('bestDisplay').textContent = best;
 
   const overlay = document.getElementById('overlay');
   overlay.innerHTML = `
     <div class="overlay-title">GAME OVER</div>
     <div class="overlay-score">SCORE: ${score}</div>
-    ${score >= best && score > 0 ? '<div style="font-size:11px;color:#f0c040;letter-spacing:2px;">★ NEW BEST!</div>' : ''}
+    ${isNewBest ? '<div style="font-size:11px;color:#f0c040;letter-spacing:2px;">★ NEW BEST!</div>' : ''}
     <button class="start-btn" id="startBtn">もう一度 ▶</button>
   `;
   overlay.style.display = 'flex';
-  document.getElementById('startBtn').addEventListener('click', startGame);
+  // { once: true } でリスナーが積み重なるバグを防ぐ
+  document.getElementById('startBtn').addEventListener('click', startGame, { once: true });
 }
 
 function startGame() {
@@ -441,7 +443,7 @@ function startGame() {
 
 // ── INPUT ──
 function handleJump() {
-  if (state === 'idle' || state === 'dead') return;
+  if (state !== 'playing') return;
   player.jump();
 }
 
