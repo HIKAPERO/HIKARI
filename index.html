@@ -316,24 +316,24 @@
 <div class="nav-links" id="navLinks">
     <a href="#" onclick="switchTab('about');return false;">ABOUT</a>
     <a href="#" onclick="switchTab('game');return false;">GAME</a>
+    <a href="#" onclick="switchTab('play');return false;">PLAY</a>
     <a href="#" onclick="switchTab('shop');return false;">SHOP</a>
     <a href="#" onclick="switchTab('gallery');return false;">GALLERY</a>
     <a href="#" onclick="switchTab('chat');return false;">CHAT</a>
     <a href="#" onclick="switchTab('diary');return false;">DIARY</a>
     <a href="#" onclick="switchTab('links');return false;">LINKS</a>
-    <a href="#" onclick="switchTab('play');return false;">PLAY</a>
   </div>
   <button class="hamburger" onclick="toggleMenu()" aria-label="メニュー">☰</button>
 </nav>
 <div class="mobile-menu" id="mobileMenu">
   <a href="#" onclick="switchTab('about');toggleMenu();return false;">ABOUT</a>
   <a href="#" onclick="switchTab('game');toggleMenu();return false;">GAME</a>
+  <a href="#" onclick="switchTab('play');toggleMenu();return false;">PLAY</a>
   <a href="#" onclick="switchTab('shop');toggleMenu();return false;">SHOP</a>
   <a href="#" onclick="switchTab('gallery');toggleMenu();return false;">GALLERY</a>
   <a href="#" onclick="switchTab('chat');toggleMenu();return false;">CHAT</a>
   <a href="#" onclick="switchTab('diary');toggleMenu();return false;">DIARY</a>
   <a href="#" onclick="switchTab('links');toggleMenu();return false;">LINKS</a>
-  <a href="#" onclick="switchTab('play');toggleMenu();return false;">PLAY</a>
 </div>
 
 <section class="hero">
@@ -354,12 +354,12 @@
   <div class="tabs">
     <button class="tab-btn active" data-tab="about" onclick="switchTab('about')">ABOUT</button>
     <button class="tab-btn" data-tab="game" onclick="switchTab('game')">GAME</button>
+    <button class="tab-btn" data-tab="play" onclick="switchTab('play')">PLAY</button>
     <button class="tab-btn" data-tab="shop" onclick="switchTab('shop')">SHOP</button>
     <button class="tab-btn" data-tab="gallery" onclick="switchTab('gallery')">GALLERY</button>
     <button class="tab-btn" data-tab="chat" onclick="switchTab('chat')">CHAT</button>
     <button class="tab-btn" data-tab="diary" onclick="switchTab('diary')">DIARY</button>
     <button class="tab-btn" data-tab="links" onclick="switchTab('links')">LINKS</button>
-    <button class="tab-btn" data-tab="play" onclick="switchTab('play')">PLAY</button>
   </div>
 </div>
 
@@ -864,7 +864,7 @@
     if (saved === 'light' && btn) btn.textContent = '🌙';
   })();
 
-  const TABS = ['about','game','shop','gallery','chat','diary','links','play'];
+  const TABS = ['about','game','play','shop','gallery','chat','diary','links'];
   function switchSubTab(panel, name) {
     const container = document.getElementById('panel-' + panel);
     container.querySelectorAll('.sub-tab').forEach((t,i) => {
