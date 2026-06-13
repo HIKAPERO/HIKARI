@@ -46,16 +46,28 @@
   }
   body > * { position:relative; z-index:1; }
 
-  /* NAV */
+  /* ── NAV BASE ── */
   nav { position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; height: 54px; background: var(--nav-bg); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); border-bottom: 0.5px solid var(--glass-border); box-shadow: 0 1px 0 var(--glass-shine), 0 4px 20px rgba(108,92,231,0.08); transition: background .4s; }
   .nav-logo { font-size: 17px; font-weight: 600; letter-spacing: 4px; color: var(--purple-pale); text-decoration: none; }
+  .nav-right-wrap { display: flex; align-items: center; gap: 20px; }
+  
+  /* PC用ナビゲーション */
   .nav-links { display: flex; gap: 24px; }
   .nav-links a { font-size: 10px; letter-spacing: 2px; color: var(--text-muted); text-decoration: none; transition: color .2s; }
   .nav-links a:hover { color: var(--purple-pale); }
-  .hamburger { display: none; background: none; border: none; color: var(--text-muted); font-size: 22px; cursor: pointer; }
-  .mobile-menu { display: none; flex-direction: column; background: var(--nav-bg); backdrop-filter:blur(20px); border-bottom: 0.5px solid var(--glass-border); }
-  .mobile-menu a { padding: 14px 28px; font-size: 11px; letter-spacing: 2px; color: var(--text-muted); text-decoration: none; border-bottom: 0.5px solid var(--border); }
+  
+  /* スマホ用メニュー（デフォルト非表示） */
+  .hamburger { display: none; background: none; border: none; color: var(--text-muted); font-size: 24px; cursor: pointer; padding: 4px; line-height: 1; }
+  .mobile-menu { display: none; flex-direction: column; background: var(--nav-bg); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-bottom: 0.5px solid var(--glass-border); position: fixed; top: 54px; left: 0; width: 100%; z-index: 99; box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
+  .mobile-menu a { padding: 16px 28px; font-size: 12px; letter-spacing: 2px; color: var(--text-muted); text-decoration: none; border-bottom: 0.5px solid var(--border); transition: background .2s, color .2s; }
+  .mobile-menu a:hover { background: var(--glass-bg); color: var(--purple-pale); }
   .mobile-menu.open { display: flex; }
+
+  /* ── RESPONSIVE NAV (メディアクエリによる出し分け) ── */
+  @media (max-width: 768px) {
+    .nav-links { display: none !important; } /* PC用メニューを非表示 */
+    .hamburger { display: block; }            /* ハンバーガーボタンを表示 */
+  }
 
   /* HERO */
   .hero { padding: 80px 28px 64px; text-align: center; border-bottom: 0.5px solid var(--border); position: relative; overflow: hidden; }
@@ -310,21 +322,30 @@
 
 <nav>
   <a href="#" class="nav-logo">HIKARI</a>
-  <div style="display:flex;align-items:center;gap:16px;">
-  <button id="themeToggle" onclick="toggleTheme()" style="background:var(--glass-bg);border:0.5px solid var(--glass-border);border-radius:20px;padding:5px 12px;font-size:14px;cursor:pointer;backdrop-filter:blur(8px);transition:all .3s;" title="テーマ切替">☀️</button>
-</div>
-<div class="nav-links" id="navLinks">
-    <a href="#" onclick="switchTab('about');return false;">ABOUT</a>
-    <a href="#" onclick="switchTab('game');return false;">GAME</a>
-    <a href="#" onclick="switchTab('play');return false;">PLAY</a>
-    <a href="#" onclick="switchTab('shop');return false;">SHOP</a>
-    <a href="#" onclick="switchTab('gallery');return false;">GALLERY</a>
-    <a href="#" onclick="switchTab('chat');return false;">CHAT</a>
-    <a href="#" onclick="switchTab('diary');return false;">DIARY</a>
-    <a href="#" onclick="switchTab('links');return false;">LINKS</a>
+  
+  <!-- 右側のコンテンツ（PCメニュー、テーマ変更、ハンバーガー）をまとめるラッパー -->
+  <div class="nav-right-wrap">
+    <!-- PC用ナビゲーションリンク -->
+    <div class="nav-links" id="navLinks">
+      <a href="#" onclick="switchTab('about');return false;">ABOUT</a>
+      <a href="#" onclick="switchTab('game');return false;">GAME</a>
+      <a href="#" onclick="switchTab('play');return false;">PLAY</a>
+      <a href="#" onclick="switchTab('shop');return false;">SHOP</a>
+      <a href="#" onclick="switchTab('gallery');return false;">GALLERY</a>
+      <a href="#" onclick="switchTab('chat');return false;">CHAT</a>
+      <a href="#" onclick="switchTab('diary');return false;">DIARY</a>
+      <a href="#" onclick="switchTab('links');return false;">LINKS</a>
+    </div>
+
+    <!-- テーマ切り替えボタン -->
+    <button id="themeToggle" onclick="toggleTheme()" style="background:var(--glass-bg);border:0.5px solid var(--glass-border);border-radius:20px;padding:5px 12px;font-size:14px;cursor:pointer;backdrop-filter:blur(8px);transition:all .3s;" title="テーマ切替">☀️</button>
+    
+    <!-- スマホ用ハンバーガーボタン -->
+    <button class="hamburger" onclick="toggleMenu()" aria-label="メニュー">☰</button>
   </div>
-  <button class="hamburger" onclick="toggleMenu()" aria-label="メニュー">☰</button>
 </nav>
+
+<!-- スマホ用スライドダウンメニュー -->
 <div class="mobile-menu" id="mobileMenu">
   <a href="#" onclick="switchTab('about');toggleMenu();return false;">ABOUT</a>
   <a href="#" onclick="switchTab('game');toggleMenu();return false;">GAME</a>
@@ -501,8 +522,8 @@
         <div style="font-size:12px; color:var(--text-muted); line-height:1.5;">🎨 オリジナルの絵であること（デジタルでも、手書きを写真に撮ったものでもOK！）</div>
         <div style="font-size:12px; color:var(--text-muted); line-height:1.5;">❌ 他の人の絵のコピーや、AIで作った絵はNG</div>
         <div style="font-size:12px; color:var(--text-muted); line-height:1.5;">✏️ お名前（ニックネームOK）を一緒に教えてね</div>
-        <div style="font-size:12px; color:var(--text-muted); line-height:1.5;">⬜ 画像は<strong style="color:var(--purple-pale);">正方形（1:1）</strong>で送ると、きれいに表示されるよ！（正方形じゃなくてもOK、トリミングされることがあるよ）</div>
-        <div style="font-size:12px; color:var(--text-muted); line-height:1.5;">📁 画像は<strong style="color:var(--purple-pale);">25MB以下</strong>で送ってね（スマホの写真やお絵描きアプリの絵はだいたいOK！）</div>
+        <div style="font-size:12px; color:var(--purple-pale); font-weight:500; line-height:1.5;">⬜ 画像は<strong style="color:var(--purple-pale);">正方形（1:1）</strong>で送ると、きれいに表示されるよ！（正方形じゃなくてもOK、トリミングされることがあるよ）</div>
+        <div style="font-size:12px; color:var(--purple-pale); font-weight:500; line-height:1.5;">📁 画像は<strong style="color:var(--purple-pale);">25MB以下</strong>で送ってね（スマホの写真やお絵描きアプリの絵はだいたいOK！）</div>
         <div style="font-size:12px; color:var(--purple-pale); font-weight:500; line-height:1.5;">👨‍👩‍👧 送る前に、お父さんかお母さんに送っていいか確認してね！</div>
       </div>
     </div>
@@ -890,7 +911,7 @@
   // ── 絵文字ピッカー ──
   const EMOJI_DATA = [
     { cat:'スマイリー', emojis:['😀','😁','😂','🤣','😃','😄','😅','😆','😇','😉','😊','🙂','🙃','😋','😌','😍','🥰','😎','🤩','😏','😐','😑','😶','😒','🙄','😳','🥺','😢','😭','😤','😠','😡','🤬','😈','👿','💀','😺','😸','😹','😻','😼','😽','🙀','😿','😾'] },
-    { cat:'動物', emojis:['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐮','🐷','🐸','🐙','🐵','🙈','🙉','🙊','🐔','🐧','🐦','🦆','🦉','🦇','🐺','🐗','🐴','🦄','🐝','🐛','🦋','🐌','🐞','🐜','🦟','🐢','🐍','🦎','🦕','🦖','🐬','🐳','🐋','🦈','🐊','🦓','🦍','🦧','🦣','🐘','🦛','🦏','🐪','🐫','🦒','🦘','🦬','🐃','🐂','🐄','🐎','🐖','🐏','🐑','🦙','🐐','🦌','🐕','🐩','🦮','🐈','🐓','🦃','🦤','🦚','🦜','🦢','🕊','🐇','🦝','🦨','🦡','🦫','🦦','🦥','🐁','🐀','🐿','🦔'] },
+    { cat:'動物', emojis:['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐮','🐷','🐸','🐙','🐵','🙈','🙉','🙊','🐔','🐧','🐦','🦆','🦉','🦇','🐺','🐗','🐴','🦄','🐝','🐛','🦋','🐌','🐞','🐜','🦟','🐢','🐍','🦎','🦕','🦖','🐬','🐳','🐋','🦈','🐊','🦓','🦍','🦧','🦣','👑','🦛','🦏','🐪','🐫','🦒','🦘','🦬','🐃','🐂','🐄','🐎','🐖','🐏','🐑','🦙','🐐','🦌','🐕','🐩','🦮','🐈','🐓','🦃','🦤','🦚','🦜','🦢','🕊','🐇','🦝','🦨','🦡','🦫','🦦','🦥','🐁','🐀','🐿','🦔'] },
     { cat:'食べ物', emojis:['🍎','🍊','🍋','🍇','🍓','🍒','🍑','🥭','🍍','🥝','🍅','🥑','🍆','🥕','🌽','🌶','🥦','🧄','🧅','🥔','🍠','🥐','🍞','🥖','🧀','🥚','🍳','🥞','🧇','🥓','🌭','🍔','🍟','🍕','🥙','🌮','🌯','🥗','🍜','🍝','🍛','🍣','🍱','🍤','🍙','🍘','🍥','🥮','🍡','🍧','🍨','🍦','🥧','🧁','🍰','🎂','🍮','🍭','🍬','🍫','🍿','🧃','🥤','🧋','☕','🍵','🧉','🍺','🎂'] },
     { cat:'ハート・記号', emojis:['❤️','🧡','💛','💚','💙','💜','🖤','🤍','🤎','💔','❤️‍🔥','💕','💞','💓','💗','💖','💝','💘','💟','☮️','✝️','☯️','♾️','💲','♻️','⚜️','🔱','📛','🔰','⭕','✅','❌','❎','💮','🔅','🔆','🌟','⭐','🌠','✨','⚡','🌈','🎵','🎶','💫','🌀','🔮','💎','🏆','🎯','🎪','🎭','🎨'] },
     { cat:'自然・天気', emojis:['🌸','🌺','🌻','🌹','🌷','💐','🌿','🍀','🍁','🍂','🍃','🌱','🌲','🌳','🌴','🌵','🎋','🎍','🍄','🌾','🌊','🌀','🌈','⚡','❄️','🔥','💧','🌙','⭐','🌟','☀️','🌤','⛅','🌦','🌧','⛈','🌩','🌨','🌬','🌪','🌫','🌊'] },
@@ -955,14 +976,8 @@
   document.querySelectorAll('.modal-backdrop').forEach(m => {
     m.addEventListener('click', e => { if(e.target===m) m.classList.remove('open'); });
   });
-  function checkWidth() {
-    const links = document.getElementById('navLinks');
-    const ham   = document.querySelector('.hamburger');
-    if (window.innerWidth < 600) { links.style.display='none'; ham.style.display='block'; }
-    else { links.style.display='flex'; ham.style.display='none'; document.getElementById('mobileMenu').classList.remove('open'); }
-  }
-  checkWidth();
-  window.addEventListener('resize', checkWidth);
+
+  // ナビゲーション表示のJavaScript制御を削除（CSSメディアクエリに一本化してバグを防止）
 </script>
 </body>
 </html>
