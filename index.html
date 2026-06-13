@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HIKARI — Digital Art & Creativity</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -147,7 +147,6 @@
   .play-name { font-size:13px; font-weight:600; color:var(--text); margin-bottom:3px; }
   .play-desc { font-size:10px; color:var(--text-muted); line-height:1.5; }
   .play-btn { margin:8px 12px 12px; padding:7px; background:var(--purple); color:#fff; border:none; border-radius:6px; font-size:10px; letter-spacing:1.5px; cursor:pointer; text-align:center; }
-  
   /* SUB TABS */
   .sub-tabs { display:flex; gap:4px; padding:14px 20px 0; background:var(--glass-bg); backdrop-filter:blur(12px); border-bottom:0.5px solid var(--glass-border); }
   .sub-tab { font-size:11px; letter-spacing:1.5px; color:var(--text-dim); padding:7px 18px; background:none; border:none; border-bottom:2px solid transparent; cursor:pointer; transition:color .2s,border-color .2s; white-space:nowrap; font-family:inherit; border-radius:6px 6px 0 0; }
@@ -188,7 +187,10 @@
     75%  { transform: scale(0.97,1.04);}
     100% { transform: scale(1,1);      }
   }
-  .nojiru-label { font-size:9px; font-weight:700; color:#ff69b4; letter-spacing:1px; }
+  .nojiru-label {
+    font-size:9px; font-weight:700; color:#ff69b4;
+    letter-spacing:1px;
+  }
   @keyframes starGlow {
     0%,100% { color:#f0c040; transform:scale(1);   text-shadow:0 0 4px #f0c040; }
     50%      { color:#ffe066; transform:scale(1.25); text-shadow:0 0 8px #ffe066, 0 0 16px #f0c040; }
@@ -295,92 +297,8 @@
   .modal h3 { font-size:14px; color:var(--purple-pale); letter-spacing:2px; margin-bottom:10px; }
   .modal p { font-size:12px; color:var(--text-muted); line-height:1.7; margin-bottom:20px; }
   .modal-close { padding:8px 22px; background:var(--purple); color:#fff; border:none; border-radius:5px; font-size:11px; letter-spacing:1.5px; cursor:pointer; font-family:inherit; }
-
-  /* ── 🌟【新設】ぺろちゃん特製ゲーム用ポータブルレイアウトCSS ── */
-  .gladius-container {
-    display: flex; flex-direction: row; align-items: center; justify-content: center; 
-    width: 100%; max-width: 820px; margin: 20px auto; padding: 10px; gap: 16px; position: relative;
-  }
-  /* 左エリア：ジョイスティック配置域（★位置を下部へ配置調整） */
-  .layout-left-pad {
-    display: none; width: 110px; height: 320px; flex-direction: column; justify-content: flex-end; align-items: center; padding-bottom: 20px;
-  }
-  .joy-base {
-    width: 100px; height: 100px; background: rgba(17, 17, 30, 0.6);
-    border: 2px solid rgba(108, 92, 231, 0.4); border-radius: 50%;
-    position: relative; display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 0 15px rgba(108,92,231,0.1);
-  }
-  .joy-stick {
-    width: 40px; height: 40px; background: linear-gradient(135deg, #a78bff, #6c5ce7);
-    border-radius: 50%; position: absolute; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-    top: 28px; left: 28px; pointer-events: none;
-  }
-  /* 中央エリア：ゲーム表示枠セクション */
-  .layout-center-screen {
-    display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 540px; z-index: 1;
-  }
-  .canvas-game-wrap { position: relative; width: 100%; }
-  #gameCanvas {
-    border: 0.5px solid rgba(108,92,231,0.4); border-radius: 12px;
-    background: #05050b; box-shadow: 0 0 25px rgba(108,92,231,0.2);
-    width: 100%; height: auto; aspect-ratio: 540 / 320; display: block;
-  }
-  /* 右エリア：縦メーター＆攻撃ボタン配置域（★位置を下部へ配置調整） */
-  .layout-right-pad {
-    display: none; flex-direction: column; align-items: center; justify-content: flex-end; gap: 8px; width: 120px; height: 320px; padding-bottom: 20px;
-  }
-  .vertical-meter { display: flex; flex-direction: column; gap: 3px; width: 100%; }
-  .game-meter-cell {
-    width: 100%; text-align: center; font-size: 8px; font-weight: bold; padding: 4px 0;
-    color: #444466; background: #090911; border-radius: 4px; border: 0.5px solid #1a1a2e;
-    letter-spacing: 1px; cursor: pointer; transition: all 0.1s;
-  }
-  .game-meter-cell.triggerable { color: #00ffff; background: #113344; border-color: #00ffff; animation: gameBlink 0.4s infinite alternate; }
-  @keyframes gameBlink { from { opacity: 0.7; } to { opacity: 1; } }
-
-  .action-shot-btn {
-    width: 100%; height: 44px; background: linear-gradient(135deg, #6c5ce7, #4b38c2);
-    border: 1px solid #a78bff; border-radius: 8px; color: #fff; font-size: 13px;
-    font-weight: bold; letter-spacing: 2px; text-align: center; display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 4px 12px rgba(108,92,231,0.3); cursor: pointer;
-  }
-  /* PC用横メーター */
-  .pc-meter-wrap { display: none; width: 100%; margin-top: 8px; flex-direction: column; gap: 8px; }
-  .pc-meter-container {
-    display: flex; gap: 4px; width: 100%; background: #11111e; padding: 4px; border-radius: 6px; border: 1px solid #22223c;
-  }
-  /* コントロールランチャーパネル */
-  #mainLauncherOverlay {
-    position: absolute; inset: 0; display: flex; flex-direction: column;
-    align-items: center; justify-content: center; gap: 16px; z-index: 10;
-    background: rgba(13, 13, 24, 0.95); border-radius: 12px;
-    border: 1px solid rgba(108,92,231,0.3); box-shadow: 0 0 30px rgba(0,0,0,0.8);
-    width: 100%; height: 100%;
-  }
-  .game-neon-title {
-    font-size: 26px; font-weight: 900; letter-spacing: 6px; text-align: center;
-    background: linear-gradient(135deg, #fff 0%, #a78bff 50%, #6c5ce7 100%);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 2px 10px rgba(108,92,231,0.5));
-  }
-  .game-neon-sub { font-size: 10px; color: #666688; letter-spacing: 1px; text-align: center; line-height: 1.6; padding: 0 10px; }
-  .game-copyright-notice {
-    margin-top: 4px; font-size: 8px; letter-spacing: 0.5px; text-align: center; line-height: 1.4; color: rgba(108, 92, 231, 0.6);
-  }
-  .game-warning-highlight { color: #ff3366; font-weight: bold; }
-  .launch-btn-cyber {
-    padding: 10px 28px; background: transparent; color: #00ffff;
-    border: 2px solid #00ffff; border-radius: 40px; font-size: 12px; font-weight: bold;
-    letter-spacing: 2px; cursor: pointer; transition: all 0.2s ease;
-    box-shadow: 0 0 10px rgba(0,255,255,0.2);
-  }
-  .launch-btn-cyber:hover { background: #00ffff; color: #05050b; box-shadow: 0 0 20px rgba(0,255,255,0.7); transform: scale(1.02); }
-  .game-pc-start-btn { border-color: #a78bff; color: #c9b8ff; }
-  .game-pc-start-btn:hover { background: #6c5ce7; color: #fff; box-shadow: 0 0 20px rgba(108,92,231,0.7); }
-  .game-gameover-btn-group { display: flex; gap: 10px; }
-  .game-exit-btn { background: linear-gradient(135deg, #cc2b43, #a81c30); border: 0.5px solid #ff4466; color: #fff; }
 </style>
+<!-- FOUC防止：テーマをできるだけ早く適用 -->
 <script>
   (function() {
     const saved = localStorage.getItem('hikari-theme');
@@ -434,9 +352,9 @@
 
 <div class="tabs-wrap">
   <div class="tabs">
-    <button class="tab-btn" data-tab="about" onclick="switchTab('about')">ABOUT</button>
+    <button class="tab-btn active" data-tab="about" onclick="switchTab('about')">ABOUT</button>
     <button class="tab-btn" data-tab="game" onclick="switchTab('game')">GAME</button>
-    <button class="tab-btn active" data-tab="play" onclick="switchTab('play')">PLAY</button>
+    <button class="tab-btn" data-tab="play" onclick="switchTab('play')">PLAY</button>
     <button class="tab-btn" data-tab="shop" onclick="switchTab('shop')">SHOP</button>
     <button class="tab-btn" data-tab="gallery" onclick="switchTab('gallery')">GALLERY</button>
     <button class="tab-btn" data-tab="chat" onclick="switchTab('chat')">CHAT</button>
@@ -445,6 +363,7 @@
   </div>
 </div>
 
+<!-- GALLERY -->
 <div class="panel" id="panel-gallery">
   <div class="section">
     <div class="sec-label">— COMMUNITY ART</div>
@@ -459,6 +378,7 @@
   </div>
 </div>
 
+<!-- SHOP -->
 <div class="panel" id="panel-shop">
   <div class="section">
     <div class="sec-label">— HIKARI SHOP</div>
@@ -469,6 +389,7 @@
   </div>
 </div>
 
+<!-- DIARY -->
 <div class="panel" id="panel-diary">
   <div class="sub-tabs">
     <button class="sub-tab active" onclick="switchSubTab('diary','hikari')">⭐ HIKARI</button>
@@ -494,6 +415,7 @@
   </div>
 </div>
 
+<!-- GAME -->
 <div class="panel" id="panel-game">
   <div class="section">
     <div class="sec-label">— GAMES</div>
@@ -504,6 +426,7 @@
   </div>
 </div>
 
+<!-- CHAT -->
 <div class="panel" id="panel-chat">
   <div class="chat-status">
     <div class="dot-maybe"></div>
@@ -534,13 +457,16 @@
   </div>
 </div>
 
-<div class="panel" id="panel-about">
+<!-- ABOUT -->
+<div class="panel active" id="panel-about">
   <div class="section">
     <div class="sec-label">— ABOUT</div>
     <div id="memberList"><div style="color:var(--text-dim);font-size:12px;text-align:center;padding:24px;">読み込み中...</div></div>
   </div>
+
 </div>
 
+<!-- LINKS -->
 <div class="panel" id="panel-links">
   <div class="section">
     <div class="sec-label">— LINKS</div>
@@ -551,7 +477,8 @@
   </div>
 </div>
 
-<div class="panel active" id="panel-play">
+<!-- PLAY -->
+<div class="panel" id="panel-play">
   <div class="section">
     <div class="sec-label">— MINI GAMES</div>
     <div class="sec-title">ミニゲーム</div>
@@ -559,90 +486,15 @@
       <div style="color:var(--text-dim);font-size:12px;text-align:center;padding:24px;grid-column:1/-1;">読み込み中...</div>
     </div>
   </div>
-
-  <div class="section" style="border-bottom:none;">
-    <div class="sec-label">— ORIGINAL SHOOTING GAME</div>
-    <div class="sec-title">NEO GLADIUS</div>
-    
-    <div class="gladius-container" id="gameStageContainer">
-      
-      <div id="mainLauncherOverlay">
-        <div class="game-neon-title">NEO GLADIUS</div>
-        <div class="game-neon-sub" id="launcherSubText">
-          SYSTEM STATUS: ONLINE<br>
-          スコア1500到達で巨大戦艦『ビッグコア』が襲来！
-        </div>
-        <div id="launcherBtnArea"></div>
-        
-        <div class="game-copyright-notice" id="launcherCopyright">
-          <span class="game-warning-highlight">⚠️ WARNING / 無断使用厳禁</span><br>
-          このゲームは「ぺろちゃん」がゼロから開発したオリジナル作品です。<br>
-          ソースコードの無断転載・複製・二次配布を固く禁じます。<br>
-          <span style="opacity:0.7;">© 2026 Perochan. All Rights Reserved.</span>
-        </div>
-      </div>
-
-      <div class="layout-left-pad" id="mobileLeftZone">
-        <div class="joy-base" id="htmlJoystickBase">
-          <div class="joy-stick" id="htmlJoystickPad"></div>
-        </div>
-      </div>
-
-      <div class="layout-center-screen" id="mobileCenterZone">
-        <div class="score-row">
-          <div>🚀 SCORE <span id="gameScoreDisplay">0</span></div>
-          <div>BEST <span id="gameBestDisplay">0</span></div>
-        </div>
-        <div class="canvas-game-wrap">
-          <canvas id="gameCanvas" width="540" height="320"></canvas>
-        </div>
-        
-        <div class="pc-meter-wrap" id="pcMeterWrap">
-          <div class="pc-meter-container" id="powerMeterPC">
-            <div class="game-meter-cell" id="pc-cell0">SPEED UP</div>
-            <div class="game-meter-cell" id="pc-cell1">MISSILE</div>
-            <div class="game-meter-cell" id="pc-cell2">LASER</div>
-            <div class="game-meter-cell" id="pc-cell3">OPTION</div>
-            <div class="game-meter-cell" id="pc-cell4">BARRIER</div>
-          </div>
-          <div class="control-guide-panel">
-            <div class="guide-item">
-              <span class="guide-label">🚀 移動 / MOVE</span>
-              <span class="guide-value">WASD / 矢印キー</span>
-            </div>
-            <div class="guide-item" style="text-align: center;">
-              <span class="guide-label">🔥 攻撃 / SHOT</span>
-              <span class="guide-value">SPACEキー (長押し連射)</span>
-            </div>
-            <div class="guide-item" style="text-align: right;">
-              <span class="guide-label">⚡ 発動 / POWER UP</span>
-              <span class="guide-value">ENTER または Bキー</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="layout-right-pad" id="mobileRightZone">
-        <div class="vertical-meter" id="powerMeterMobile">
-          <div class="game-meter-cell" id="mob-cell4">BARRIER</div>
-          <div class="game-meter-cell" id="mob-cell3">OPTION</div>
-          <div class="game-meter-cell" id="mob-cell2">LASER</div>
-          <div class="game-meter-cell" id="mob-cell1">MISSILE</div>
-          <div class="game-meter-cell" id="mob-cell0">SPEED UP</div>
-        </div>
-        <div class="action-shot-btn" id="htmlShotBtn">SHOT</div>
-      </div>
-
-    </div>
-    </div>
 </div>
 
 <footer><p>© 2025 HIKARI — All artworks by HIKARI</p></footer>
 
+<!-- MODALS -->
 <div class="modal-backdrop" id="uploadModal">
   <div class="modal" style="max-width:420px; text-align:left;">
     <h3 style="text-align:center; margin-bottom:16px;">作品を投稿してみよう！</h3>
-    <p style="margin-bottom:12px; text-align:center; font-size:13px; color:var(--text-muted);">HIKARIのInstagramのDMに絵を送ね！<br>採用された作品はギャラリーに掲載されるよ。</p>
+    <p style="margin-bottom:12px; text-align:center; font-size:13px; color:var(--text-muted);">HIKARIのInstagramのDMに絵を送ってね！<br>採用された作品はギャラリーに掲載されるよ。</p>
     <div style="background:var(--bg2); border-radius:8px; padding:14px; margin-bottom:14px;">
       <div style="font-size:9px; letter-spacing:2px; color:var(--purple); margin-bottom:10px;">— 送るときのルール</div>
       <div style="display:flex; flex-direction:column; gap:7px;">
@@ -675,6 +527,7 @@
   </div>
 </div>
 
+<!-- Firebase SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, where, serverTimestamp }
@@ -697,7 +550,6 @@
   const q = query(col, orderBy("createdAt", "asc"));
   onSnapshot(q, (snapshot) => {
     const thread = document.getElementById("chatThread");
-    if(!thread) return;
     thread.innerHTML = "";
 
     if (snapshot.empty) {
@@ -765,7 +617,6 @@
   // ── ギャラリー ──
   onSnapshot(query(collection(db,"gallery"), orderBy("createdAt","desc")), snap => {
     const grid = document.getElementById("galleryGrid");
-    if(!grid) return;
     const uploadTile = grid.querySelector(".upload-tile");
     grid.innerHTML = "";
 
@@ -780,6 +631,7 @@
       const card = document.createElement("div");
       card.className = "gallery-card";
 
+      // サムネイル＋オーバーレイ
       const thumb = document.createElement("div");
       thumb.className = "gallery-thumb";
       if (isFirst) thumb.innerHTML += '<span class="badge-new">NEW</span>';
@@ -788,6 +640,7 @@
       } else {
         thumb.innerHTML += `<span class="gallery-placeholder">🎨</span>`;
       }
+      // タイトル・投稿者オーバーレイ
       thumb.innerHTML += `
         <div class="gallery-overlay">
           <div class="gallery-overlay-title">${esc(data.title)}</div>
@@ -795,6 +648,7 @@
         </div>`;
       card.appendChild(thumb);
 
+      // HIKARIのコメント（画像の直下）
       if (data.comment) {
         const commentDiv = document.createElement("div");
         commentDiv.className = "gallery-comment";
@@ -814,7 +668,6 @@
   // ── ショップ ──
   onSnapshot(query(collection(db,"shop"), orderBy("createdAt","desc")), snap => {
     const grid = document.getElementById("shopGrid");
-    if(!grid) return;
     grid.innerHTML = "";
     if (snap.empty) {
       grid.innerHTML = '<div style="color:var(--text-dim);font-size:12px;text-align:center;padding:24px;grid-column:1/-1;">準備中だよ！もうすぐオープンするね 💜</div>';
@@ -834,6 +687,7 @@
         ${thumbHtml}
         <div class="shop-name">${esc(data.name)}</div>
         <div class="shop-price">¥${Number(data.price).toLocaleString()}</div>
+
         ${btnHtml}`;
       grid.appendChild(card);
     });
@@ -866,7 +720,6 @@
   const SNS_EMOJI = { web:'🌐', x:'✕', instagram:'📷', roblox:'🎮', twitch:'🟣' };
   onSnapshot(query(collection(db,"links"), orderBy("order","asc")), snap => {
     const list = document.getElementById("socialList");
-    if(!list) return;
     list.innerHTML = "";
     if (snap.empty) {
       list.innerHTML = '<div style="color:var(--text-dim);font-size:12px;text-align:center;padding:16px;">リンクがありません</div>';
@@ -896,7 +749,6 @@
   // ── メンバー ──
   onSnapshot(query(collection(db,"members"), orderBy("order","asc")), snap => {
     const list = document.getElementById("memberList");
-    if(!list) return;
     list.innerHTML = "";
     if (snap.empty) {
       list.innerHTML = '<div style="color:var(--text-dim);font-size:12px;text-align:center;padding:24px;">メンバー情報がありません</div>';
@@ -929,7 +781,6 @@
   // ── ゲームショーケース ──
   onSnapshot(query(collection(db,"games"), orderBy("createdAt","asc")), snap => {
     const showcase = document.getElementById("gameShowcase");
-    if(!showcase) return;
     showcase.innerHTML = "";
     if (snap.empty) {
       showcase.innerHTML = '<div style="color:var(--text-dim);font-size:12px;text-align:center;padding:24px;grid-column:1/-1;">まだゲームが登録されていないよ！</div>';
@@ -966,10 +817,9 @@
     });
   });
 
-  // ── 日記 ──
+  // ── 日記（HIKARI・ぺろちゃん別）──
   function renderDiary(snap, elId) {
     const entries = document.getElementById(elId);
-    if(!entries) return;
     entries.innerHTML = "";
     if (snap.empty) {
       entries.innerHTML = '<div style="color:var(--text-dim);font-size:12px;text-align:center;padding:16px;">まだ日記がないよ！</div>';
@@ -1007,6 +857,7 @@
     document.getElementById('themeToggle').textContent = isLight ? '☀️' : '🌙';
     localStorage.setItem('hikari-theme', isLight ? 'dark' : 'light');
   }
+  // ページロード時にボタンアイコンをテーマに合わせる
   (function() {
     const saved = localStorage.getItem('hikari-theme');
     const btn = document.getElementById('themeToggle');
@@ -1024,6 +875,7 @@
       p.classList.toggle('active', p.id === panel + '-' + name);
     });
   }
+  // data-tab属性を使ってインデックスに依存しないタブ切替
   function switchTab(name) {
     document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.tab === name);
@@ -1035,7 +887,7 @@
   }
   function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }
 
-  // 絵文字ピッカー
+  // ── 絵文字ピッカー ──
   const EMOJI_DATA = [
     { cat:'スマイリー', emojis:['😀','😁','😂','🤣','😃','😄','😅','😆','😇','😉','😊','🙂','🙃','😋','😌','😍','🥰','😎','🤩','😏','😐','😑','😶','😒','🙄','😳','🥺','😢','😭','😤','😠','😡','🤬','😈','👿','💀','😺','😸','😹','😻','😼','😽','🙀','😿','😾'] },
     { cat:'動物', emojis:['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐮','🐷','🐸','🐙','🐵','🙈','🙉','🙊','🐔','🐧','🐦','🦆','🦉','🦇','🐺','🐗','🐴','🦄','🐝','🐛','🦋','🐌','🐞','🐜','🦟','🐢','🐍','🦎','🦕','🦖','🐬','🐳','🐋','🦈','🐊','🦓','🦍','🦧','🦣','🐘','🦛','🦏','🐪','🐫','🦒','🦘','🦬','🐃','🐂','🐄','🐎','🐖','🐏','🐑','🦙','🐐','🦌','🐕','🐩','🦮','🐈','🐓','🦃','🦤','🦚','🦜','🦢','🕊','🐇','🦝','🦨','🦡','🦫','🦦','🦥','🐁','🐀','🐿','🦔'] },
@@ -1044,10 +896,11 @@
     { cat:'自然・天気', emojis:['🌸','🌺','🌻','🌹','🌷','💐','🌿','🍀','🍁','🍂','🍃','🌱','🌲','🌳','🌴','🌵','🎋','🎍','🍄','🌾','🌊','🌀','🌈','⚡','❄️','🔥','💧','🌙','⭐','🌟','☀️','🌤','⛅','🌦','🌧','⛈','🌩','🌨','🌬','🌪','🌫','🌊'] },
     { cat:'もの・活動', emojis:['🎮','🕹','🎲','🎯','🎳','🎰','🎭','🎨','🖼','🎪','🎤','🎧','🎼','🎹','🥁','🎷','🎺','🎸','🪕','🎻','🎬','📷','📸','📱','💻','🖥','⌨️','🖱','🖨','📺','📻','🧲','💡','🔦','🕯','🪔','📚','📖','✏️','🖊','🖋','📝','📌','📍','✂️','🗂','📁','📂','🗒','📅','📆','📇','🗃','🗄','🗑','🔒','🔓','🔑','🗝','🔨','🪓','⛏','🔧','🔩','⚙️','🧰','🪤','🧲','🪜','🧪','🧫','🧬','🔭','🔬','🩺','💊','💉','🩹','🩼','🩻','🪥','🧴','🧷','🧹','🧺','🧻','🚿','🛁','🪣','🧼','🫧'] },
   ];
+
   let selectedEmoji = '💬';
+
   function buildEmojiList(filter='') {
     const container = document.getElementById('emojiList');
-    if(!container) return;
     container.innerHTML = '';
     const q = filter.toLowerCase();
     EMOJI_DATA.forEach(({cat, emojis}) => {
@@ -1069,12 +922,14 @@
       container.appendChild(grid);
     });
   }
+
   function selectEmoji(emoji) {
     selectedEmoji = emoji;
     document.getElementById('emojiCurrent').textContent = emoji;
     document.querySelectorAll('.emoji-btn').forEach(b => b.classList.toggle('selected', b.textContent === emoji));
     toggleEmojiPanel();
   }
+
   function toggleEmojiPanel() {
     const panel = document.getElementById('emojiPanel');
     const open  = !panel.classList.contains('open');
@@ -1084,378 +939,30 @@
       document.getElementById('emojiSearch').focus();
     }
   }
-  window.filterEmoji = function(val) { buildEmojiList(val); }
+
+  function filterEmoji(val) { buildEmojiList(val); }
+
+  // パネル外クリックで閉じる
   document.addEventListener('click', e => {
     const wrap = document.querySelector('.emoji-picker-wrap');
     if (wrap && !wrap.contains(e.target)) {
-      const panel = document.getElementById('emojiPanel');
-      if(panel) panel.classList.remove('open');
+      document.getElementById('emojiPanel').classList.remove('open');
     }
   });
 
-  window.openModal = function(id)  { document.getElementById(id).classList.add('open'); }
-  window.closeModal = function(id) { document.getElementById(id).classList.remove('open'); }
+  function openModal(id)  { document.getElementById(id).classList.add('open'); }
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
   document.querySelectorAll('.modal-backdrop').forEach(m => {
     m.addEventListener('click', e => { if(e.target===m) m.classList.remove('open'); });
   });
   function checkWidth() {
     const links = document.getElementById('navLinks');
     const ham   = document.querySelector('.hamburger');
-    if(!links || !ham) return;
     if (window.innerWidth < 600) { links.style.display='none'; ham.style.display='block'; }
     else { links.style.display='flex'; ham.style.display='none'; document.getElementById('mobileMenu').classList.remove('open'); }
   }
   checkWidth();
   window.addEventListener('resize', checkWidth);
-
-  // ── 🌟【新設】ぺろちゃんオリジナルゲームスクリプト完全融合 ──
-  const gameCanvas = document.getElementById('gameCanvas');
-  const gameCtx = gameCanvas.getContext('2d');
-  const gameW = gameCanvas.width, gameH = gameCanvas.height;
-
-  let gameState = 'idle'; 
-  let gameScore = 0, gameBest = 0, gameFrame = 0;
-  let gameCapsuleCount = 0; 
-  let gameKeys = {};
-
-  let gameEnemies = [];
-  let gamePlayerBullets = [];
-  let gameEnemyBullets = [];
-  let gameCapsules = [];
-  let gameParticles = [];
-  let gameStars = Array.from({length: 35}, () => ({ x: Math.random()*gameW, y: Math.random()*gameH, speed: Math.random()*1.5 + 0.5 }));
-
-  let isTouchDeviceMode = false;
-  let touchJoyState = { active: false, startX: 0, startY: 0, moveX: 0, moveY: 0 };
-  let touchShootState = false;
-  let gameBoss = null;
-
-  const playerShip = {
-    x: 50, y: gameH/2, w: 24, h: 16, baseSpeed: 2.5, speedLevel: 0, missileLevel: 0, hasLaser: false, options: [], barrier: 0, history: [],
-    reset() {
-      this.x = 50; this.y = gameH/2; this.speedLevel = 0; this.missileLevel = 0; this.hasLaser = false; this.options = []; this.barrier = 0; this.history = [];
-      for(let i=0; i<300; i++) this.history.push({x: this.x, y: this.y});
-    },
-    get speed() { return this.baseSpeed + this.speedLevel * 0.8; },
-    update() {
-      let mx = 0, my = 0;
-      if (gameKeys['KeyW'] || gameKeys['ArrowUp']) my = -1;
-      if (gameKeys['KeyS'] || gameKeys['ArrowDown']) my = 1;
-      if (gameKeys['KeyA'] || gameKeys['ArrowLeft']) mx = -1;
-      if (gameKeys['KeyD'] || gameKeys['ArrowRight']) mx = 1;
-      if (touchJoyState.active) { mx = touchJoyState.moveX; my = touchJoyState.moveY; }
-      this.x = Math.max(10, Math.min(gameW - 30, this.x + mx * this.speed));
-      this.y = Math.max(10, Math.min(gameH - 25, this.y + my * this.speed));
-      this.history.unshift({x: this.x, y: this.y});
-      if (this.history.length > 300) this.history.pop();
-      this.options.forEach((opt, idx) => {
-        const delay = (idx + 1) * 8; 
-        const pos = this.history[Math.min(delay, this.history.length - 1)];
-        opt.x = pos.x; opt.y = pos.y;
-      });
-    },
-    draw() {
-      gameCtx.save(); gameCtx.shadowBlur = 10; gameCtx.shadowColor = '#a78bff'; gameCtx.fillStyle = '#c9b8ff';
-      gameCtx.beginPath(); gameCtx.moveTo(this.x + this.w, this.y + this.h/2); gameCtx.lineTo(this.x, this.y); gameCtx.lineTo(this.x + 4, this.y + this.h/2); gameCtx.lineTo(this.x, this.y + this.h); gameCtx.closePath(); gameCtx.fill();
-      gameCtx.fillStyle = '#00ffff'; gameCtx.fillRect(this.x + this.w*0.4, this.y + this.h*0.35, this.w*0.25, this.h*0.3);
-      if (this.barrier > 0) {
-        gameCtx.strokeStyle = `rgba(0, 255, 255, ${0.3 + Math.sin(gameFrame*0.1)*0.2})`; gameCtx.lineWidth = 2; gameCtx.shadowColor = '#00ffff';
-        gameCtx.beginPath(); gameCtx.arc(this.x + this.w/2, this.y + this.h/2, this.w, 0, Math.PI*2); gameCtx.stroke();
-      }
-      gameCtx.restore();
-      this.options.forEach(opt => {
-        gameCtx.save(); gameCtx.shadowBlur = 8; gameCtx.shadowColor = '#ff5500'; gameCtx.fillStyle = 'rgba(255, 90, 0, 0.8)';
-        gameCtx.beginPath(); gameCtx.arc(opt.x + this.w/2, opt.y + this.h/2, 5, 0, Math.PI*2); gameCtx.fill(); gameCtx.restore();
-      });
-    },
-    shoot() {
-      if (this.hasLaser) { gamePlayerBullets.push({ x: this.x + this.w, y: this.y + this.h/2 - 2, w: 24, h: 3, speed: 12, isLaser: true }); }
-      else { gamePlayerBullets.push({ x: this.x + this.w, y: this.y + this.h/2 - 2, w: 6, h: 4, speed: 7, isLaser: false }); }
-      if (this.missileLevel > 0) {
-        const interval = Math.max(2, 16 - this.missileLevel * 4);
-        if (gameFrame % interval === 0) { gamePlayerBullets.push({ x: this.x + this.w/2, y: this.y + this.h, w: 6, h: 4, speed: 4, vy: 2, isMissile: true }); }
-      }
-      this.options.forEach(opt => {
-        if (this.hasLaser) { gamePlayerBullets.push({ x: opt.x + this.w, y: opt.y + this.h/2 - 2, w: 24, h: 3, speed: 12, isLaser: true }); }
-        else { gamePlayerBullets.push({ x: opt.x + this.w, y: opt.y + this.h/2 - 2, w: 6, h: 4, speed: 7, isLaser: false }); }
-      });
-      gameLaserSFX();
-    }
-  };
-
-  window.triggerGamePowerUp = function() {
-    if (gameCapsuleCount === 0) return;
-    const choice = gameCapsuleCount - 1;
-    if (choice === 0) { if (playerShip.speedLevel < 4) playerShip.speedLevel++; gameSpawnText(playerShip.x, playerShip.y, "SPEED UP!"); }
-    else if (choice === 1) { playerShip.missileLevel++; gameSpawnText(playerShip.x, playerShip.y, `MISSILE Lv.${playerShip.missileLevel}`); }
-    else if (choice === 2) { playerShip.hasLaser = true; gameSpawnText(playerShip.x, playerShip.y, "LASER!"); }
-    else if (choice === 3) { playerShip.options.push({ x: playerShip.x, y: playerShip.y }); gameSpawnText(playerShip.x, playerShip.y, `OPTION x${playerShip.options.length}`); }
-    else if (choice === 4) { playerShip.barrier = 3; gameSpawnText(playerShip.x, playerShip.y, "BARRIER!"); }
-    gamePowerUpSFX(); gameCapsuleCount = 0; updateGameMeterUI();
-  }
-
-  function updateGameMeterUI() {
-    ['pc-cell', 'mob-cell'].forEach(prefix => {
-      for (let i = 0; i < 5; i++) {
-        const cell = document.getElementById(`${prefix}${i}`);
-        if(cell) { cell.className = 'game-meter-cell'; if (gameCapsuleCount > 0 && i === gameCapsuleCount - 1) cell.classList.add('triggerable'); }
-      }
-    });
-  }
-
-  function gameSpawnEnemy() {
-    if (gameBoss) return;
-    const isType2 = Math.random() > 0.6;
-    gameEnemies.push({ x: gameW + 20, y: Math.random() * (gameH - 60) + 30, w: 18, h: 18, speed: isType2 ? 1.5 : 2, hp: isType2 ? 3 : 1, isType2: isType2, sinOffset: Math.random() * 10, amp: isType2 ? 1.5 : 0 });
-  }
-  function gameSpawnText(x, y, txt) { gameParticles.push({ x, y, vx: 0, vy: -0.5, life: 1, text: txt, color: '#00ffff' }); }
-  function gameSpawnExplosion(x, y, color = '#a78bff', count = 8) {
-    for (let i = 0; i < count; i++) {
-      const angle = Math.random() * Math.PI * 2, spd = Math.random() * 2 + 1;
-      gameParticles.push({ x, y, vx: Math.cos(angle) * spd, vy: Math.sin(angle) * spd, life: 1, r: Math.random() * 2 + 1.5, color: color });
-    }
-  }
-
-  function gameUpdate() {
-    if (gameState !== 'playing') {
-      gameParticles.forEach(p => { p.x += p.vx; p.y += p.vy; p.life -= 0.02; });
-      gameParticles = gameParticles.filter(p => p.life > 0); return;
-    }
-    gameFrame++; gameScore = Math.floor(gameFrame / 5);
-    if (gameScore >= BOSS_TRIGGER_SCORE && !gameBoss) {
-      gameBoss = { x: gameW + 100, y: gameH / 2 - 40, w: 70, h: 80, state: 'enter', hp: 15, maxHp: 15, speedY: 1, shootTimer: 0, shields: [{ hp: 5, ox: -12, oy: 10, w: 6, h: 12 }, { hp: 5, ox: -12, oy: 26, w: 6, h: 12 }, { hp: 5, ox: -12, oy: 42, w: 6, h: 12 }, { hp: 5, ox: -12, oy: 58, w: 6, h: 12 }] };
-    }
-    gameStars.forEach(s => { s.x -= s.speed; if (s.x < 0) s.x = gameW; });
-    playerShip.update();
-    gamePlayerBullets.forEach(b => { b.x += b.speed; if (b.vy) b.y += b.vy; });
-    gamePlayerBullets = gamePlayerBullets.filter(b => b.x < gameW + 50 && b.y < gameH + 10);
-    if (gameFrame % 55 === 0) gameSpawnEnemy();
-
-    gameEnemies.forEach(e => {
-      e.x -= e.speed;
-      if (e.isType2) {
-        e.y = Math.max(15, Math.min(gameH - 35, e.y + Math.sin(gameFrame * 0.05 + e.sinOffset) * e.amp));
-        if (gameFrame % 80 === 0 && e.x < gameW - 50) gameEnemyBullets.push({ x: e.x, y: e.y + e.h/2, vx: -3, vy: 0, r: 3 });
-      }
-    });
-    gameEnemies = gameEnemies.filter(e => e.x > -30);
-
-    if (gameBoss) {
-      if (gameBoss.state === 'enter') { gameBoss.x -= 1.5; if (gameBoss.x <= gameW - 110) gameBoss.state = 'fight'; }
-      else if (gameBoss.state === 'fight') {
-        gameBoss.y += gameBoss.speedY; if (gameBoss.y < 20 || gameBoss.y > gameH - gameBoss.h - 20) gameBoss.speedY *= -1;
-        gameBoss.shootTimer++;
-        if (gameBoss.shootTimer % 75 === 0) {
-          gameEnemyBullets.push({ x: gameBoss.x, y: gameBoss.y + 15, vx: -4, vy: 0, r: 3.5 }, { x: gameBoss.x, y: gameBoss.y + 30, vx: -4, vy: -0.5, r: 3.5 }, { x: gameBoss.x, y: gameBoss.y + 50, vx: -4, vy: 0.5, r: 3.5 }, { x: gameBoss.x, y: gameBoss.y + 65, vx: -4, vy: 0, r: 3.5 });
-          gameLaserSFX();
-        }
-      }
-    }
-
-    gameEnemyBullets.forEach(eb => { eb.x += eb.vx; eb.y += eb.vy; });
-    gameEnemyBullets = gameEnemyBullets.filter(eb => eb.x > -20);
-    gameCapsules.forEach(c => { c.x -= 1.2; });
-    gameCapsules = gameCapsules.filter(c => c.x > -20);
-
-    // ヒット判定
-    gamePlayerBullets.forEach((b, bIdx) => {
-      gameEnemies.forEach((e, eIdx) => {
-        if (b.x < e.x + e.w && b.x + b.w > e.x && b.y < e.y + e.h && b.y + b.h > e.y) {
-          if (!b.isLaser) gamePlayerBullets.splice(bIdx, 1);
-          e.hp--;
-          if (e.hp <= 0) {
-            gameSpawnExplosion(e.x + e.w/2, e.y + e.h/2, e.isType2 ? '#ffcc00' : '#ff3366', 10); gameExplodeSFX();
-            if (Math.random() > 0.5 || e.isType2) gameCapsules.push({ x: e.x, y: e.y, r: 6 });
-            gameEnemies.splice(eIdx, 1);
-          }
-        }
-      });
-
-      if (gameBoss && gameBoss.state === 'fight') {
-        gameBoss.shields.forEach(sh => {
-          if (sh.hp > 0) {
-            const sx = gameBoss.x + sh.ox, sy = gameBoss.y + sh.oy;
-            if (b.x < sx + sh.w && b.x + b.w > sx && b.y < sy + sh.h && b.y + b.h > sy) {
-              if (!b.isLaser) gamePlayerBullets.splice(bIdx, 1); sh.hp--; gameHitSFX();
-              if (sh.hp <= 0) gameSpawnExplosion(sx + sh.w/2, sy + sh.h/2, '#00ffff', 12);
-            }
-          }
-        });
-        if (gameBoss.shields.filter(sh => sh.hp > 0).length === 0) {
-          const cx = gameBoss.x + 12, cy = gameBoss.y + gameBoss.h / 2 - 6;
-          if (b.x < cx + 14 && b.x + b.w > cx && b.y < cy + 12 && b.y + b.h > cy) {
-            if (!b.isLaser) gamePlayerBullets.splice(bIdx, 1); gameBoss.hp--; gameHitSFX();
-            if (gameBoss.hp <= 0) {
-              gameBoss.state = 'dead'; gameSpawnExplosion(gameBoss.x + gameBoss.w/2, gameBoss.y + gameBoss.h/2, '#ff3300', 45); gameExplodeBigSFX();
-              gameSpawnText(gameBoss.x, gameBoss.y, "BOSS DESTROYED! +5000");
-              for (let i = 0; i < 4; i++) gameCapsules.push({ x: gameBoss.x - i*20, y: gameBoss.y + gameBoss.h/2, r: 6 });
-              gameBoss = null;
-            }
-          }
-        }
-      }
-    });
-
-    gameCapsules.forEach((c, cIdx) => {
-      if (Math.hypot((playerShip.x + playerShip.w/2) - c.x, (playerShip.y + playerShip.h/2) - c.y) < playerShip.w/2 + c.r) {
-        gameCapsules.splice(cIdx, 1); gameCapsuleSFX(); gameCapsuleCount++; if (gameCapsuleCount > 5) gameCapsuleCount = 1; updateGameMeterUI();
-      }
-    });
-
-    const triggerHit = () => { if (playerShip.barrier > 0) { playerShip.barrier--; gameHitSFX(); return; } gameState = 'dead'; gameStopBGM(); gameSpawnExplosion(playerShip.x + playerShip.w/2, playerShip.y + playerShip.h/2, '#00ffff', 25); gameExplodeBigSFX(); setTimeout(() => showGameOverlay('gameover'), 1000); };
-    gameEnemies.forEach(e => { if (playerShip.x < e.x + e.w && playerShip.x + playerShip.w > e.x && playerShip.y < e.y + e.h && playerShip.y + playerShip.h > e.y) triggerHit(); });
-    if (gameBoss && (gameBoss.state === 'fight' || gameBoss.state === 'enter')) { if (playerShip.x < gameBoss.x + gameBoss.w && playerShip.x + playerShip.w > gameBoss.x && playerShip.y < gameBoss.y + gameBoss.h && playerShip.y + playerShip.h > gameBoss.y) triggerHit(); }
-    gameEnemyBullets.forEach((eb, ebIdx) => { if (eb.x > playerShip.x && eb.x < playerShip.x + playerShip.w && eb.y > playerShip.y && eb.y < playerShip.y + playerShip.h) { gameEnemyBullets.splice(ebIdx, 1); triggerHit(); } });
-
-    if (gameFrame % 8 === 0 && (gameKeys['Space'] || touchShootState)) playerShip.shoot();
-    gameParticles.forEach(p => { p.x += p.vx; p.y += p.vy; p.life -= 0.03; });
-    gameParticles = gameParticles.filter(p => p.life > 0);
-    document.getElementById('gameScoreDisplay').textContent = gameScore;
-  }
-
-  function gameDraw() {
-    gameCtx.clearRect(0, 0, gameW, gameH);
-    gameStars.forEach(s => { gameCtx.fillStyle = `rgba(200, 200, 255, ${s.speed * 0.5})`; gameCtx.fillRect(s.x, s.y, s.speed * 0.8, 1); });
-    gameCapsules.forEach(c => { gameCtx.save(); gameCtx.shadowBlur = 12; gameCtx.shadowColor = '#00ffff'; gameCtx.fillStyle = '#00f3ff'; gameCtx.beginPath(); gameCtx.arc(c.x, c.y, c.r, 0, Math.PI*2); gameCtx.fill(); gameCtx.fillStyle = '#e0ffff'; gameCtx.beginPath(); gameCtx.arc(c.x - 1.8, c.y - 1.8, 1.8, 0, Math.PI*2); gameCtx.fill(); gameCtx.restore(); });
-    gameEnemies.forEach(e => { gameCtx.save(); gameCtx.shadowBlur = 8; gameCtx.shadowColor = e.isType2 ? '#ffaa00' : '#ff0055'; gameCtx.fillStyle = e.isType2 ? '#e67e22' : '#e74c3c'; gameRoundRect(gameCtx, e.x, e.y, e.w, e.h, 4); gameCtx.fill(); gameCtx.restore(); });
-
-    if (gameBoss) {
-      gameCtx.save(); gameCtx.shadowBlur = 15; gameCtx.shadowColor = '#7d6ef0'; gameCtx.fillStyle = '#1e1a3a'; gameRoundRect(gameCtx, gameBoss.x + 10, gameBoss.y, gameBoss.w - 10, gameBoss.h, 6); gameCtx.fill(); gameCtx.fillStyle = '#3a3566'; gameCtx.fillRect(gameBoss.x + 25, gameBoss.y + 12, gameBoss.w - 30, gameBoss.h - 24); gameCtx.fillStyle = '#221e40'; gameCtx.fillRect(gameBoss.x, gameBoss.y + 6, 20, 16); gameCtx.fillRect(gameBoss.x, gameBoss.y + gameBoss.h - 22, 20, 16);
-      const aliveShields = gameBoss.shields.filter(sh => sh.hp > 0).length; gameCtx.shadowColor = '#ff0000'; gameCtx.fillStyle = aliveShields > 0 ? '#0055aa' : (gameFrame % 6 < 3 ? '#ff3300' : '#990000'); gameCtx.beginPath(); gameCtx.arc(gameBoss.x + 18, gameBoss.y + gameBoss.h / 2, 7, 0, Math.PI*2); gameCtx.fill(); gameCtx.restore();
-      gameBoss.shields.forEach(sh => { if (sh.hp > 0) { gameCtx.save(); gameCtx.shadowBlur = 8; gameCtx.shadowColor = '#00ffff'; gameCtx.fillStyle = `rgba(0, 240, 255, ${0.4 + sh.hp * 0.12})`; gameRoundRect(gameCtx, gameBoss.x + sh.ox, gameBoss.y + sh.oy, sh.w, sh.h, 1.5); gameCtx.fill(); gameCtx.restore(); } });
-    }
-
-    gamePlayerBullets.forEach(b => { gameCtx.save(); if (b.isLaser) { gameCtx.shadowBlur = 8; gameCtx.shadowColor = '#00ffff'; gameCtx.fillStyle = '#00ffff'; } else if (b.isMissile) { gameCtx.fillStyle = '#ffaa00'; } else { gameCtx.fillStyle = '#ffff00'; } gameCtx.fillRect(b.x, b.y, b.w, b.h); gameCtx.restore(); });
-    gameCtx.fillStyle = '#ff5500'; gameEnemyBullets.forEach(eb => { gameCtx.beginPath(); gameCtx.arc(eb.x, eb.y, eb.r, 0, Math.PI*2); gameCtx.fill(); });
-    if (gameState !== 'dead') playerShip.draw();
-
-    gameParticles.forEach(p => { gameCtx.save(); gameCtx.globalAlpha = p.life; if (p.text) { gameCtx.fillStyle = p.color; gameCtx.font = 'bold 10px monospace'; gameCtx.textAlign = 'center'; gameCtx.fillText(p.text, p.x, p.y); } else { gameCtx.fillStyle = p.color; gameCtx.beginPath(); gameCtx.arc(p.x, p.y, p.r, 0, Math.PI*2); gameCtx.fill(); } gameCtx.restore(); });
-  }
-
-  window.startGameMission = function() {
-    document.getElementById('mainLauncherOverlay').style.display = 'none';
-    document.getElementById('mobileCenterZone').style.display = 'flex';
-    if (isTouchDeviceMode) {
-      document.getElementById('mobileLeftZone').style.display = 'flex';
-      document.getElementById('mobileRightZone').style.display = 'flex';
-    } else {
-      document.getElementById('pcMeterWrap').style.display = 'flex';
-    }
-    gameScore = 0; gameFrame = 0; gameCapsuleCount = 0; gameBoss = null;
-    gameEnemies = []; gamePlayerBullets = []; gameEnemyBullets = []; gameCapsules = []; gameParticles = [];
-    playerShip.reset(); updateGameMeterUI(); gameState = 'playing'; gameStartBGM();
-  }
-
-  function showGameOverlay(type) {
-    const launcher = document.getElementById('mainLauncherOverlay'); launcher.style.display = 'flex';
-    if (type === 'gameover') {
-      document.getElementById('launcherSubText').innerHTML = `<span style="color:#ff3366; font-weight:bold; font-size:14px;">MISSION FAILED</span><br>SCORE: ${gameScore}`;
-      document.getElementById('launcherBtnArea').innerHTML = isTouchDeviceMode ? `<div class="game-gameover-btn-group"><button class="launch-btn-cyber" onclick="startGameMission()">再出撃 🚀</button><button class="launch-btn-cyber game-exit-btn" onclick="exitGameAndCloseFullscreen()">基地へ帰還 🚪</button></div>` : `<button class="launch-btn-cyber game-pc-start-btn" onclick="startGameMission()">GAME START ▶</button>`;
-      document.getElementById('launcherCopyright').style.display = 'block';
-      if (gameScore > gameBest) { gameBest = gameScore; document.getElementById('gameBestDisplay').textContent = gameBest; }
-    }
-  }
-
-  window.exitGameAndCloseFullscreen = function() {
-    if (document.fullscreenElement || document.webkitFullscreenElement) {
-      const exitFS = document.exitFullscreen || document.webkitExitFullscreen;
-      if (exitFS) exitFS.call(document).catch(err => console.log(err));
-    }
-    document.getElementById('mobileLeftZone').style.display = 'none';
-    document.getElementById('mobileCenterZone').style.display = 'none';
-    document.getElementById('mobileRightZone').style.display = 'none';
-    document.getElementById('pcMeterWrap').style.display = 'none';
-    gameState = 'idle'; initGameLauncherLayout();
-  }
-
-  window.startMobileFullscreenMission = function() {
-    const container = document.getElementById('gameStageContainer');
-    const requestFS = container.requestFullscreen || container.webkitRequestFullscreen;
-    if (requestFS) {
-      requestFS.call(container).then(() => { if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(e => console.log(e)); }).catch(e => console.log(e));
-    }
-    startGameMission();
-  }
-
-  // オーディオ
-  let gAudioCtx = null, gameGainNode = null, gameMuted = false;
-  function getGameAudioCtx() { if (!gAudioCtx) gAudioCtx = new (window.AudioContext || window.webkitAudioContext)(); return gAudioCtx; }
-  function gameLaserSFX() { const ac = getGameAudioCtx(); if(gameMuted) return; const o = ac.createOscillator(), g = ac.createGain(); o.type = 'sawtooth'; o.frequency.setValueAtTime(800, ac.currentTime); o.frequency.exponentialRampToValueAtTime(150, ac.currentTime + 0.12); g.gain.setValueAtTime(0.08, ac.currentTime); g.gain.linearRampToValueAtTime(0, ac.currentTime + 0.12); o.connect(g); g.connect(ac.destination); o.start(); o.stop(ac.currentTime + 0.13); }
-  function gameCapsuleSFX() { const ac = getGameAudioCtx(); if(gameMuted) return; const o = ac.createOscillator(), g = ac.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(587.33, ac.currentTime); o.frequency.setValueAtTime(880, ac.currentTime + 0.05); g.gain.setValueAtTime(0.1, ac.currentTime); g.gain.linearRampToValueAtTime(0, ac.currentTime + 0.15); o.connect(g); g.connect(ac.destination); o.start(); o.stop(ac.currentTime + 0.16); }
-  function gamePowerUpSFX() { const ac = getGameAudioCtx(); if(gameMuted) return; const o = ac.createOscillator(), g = ac.createGain(); o.type = 'triangle'; o.frequency.setValueAtTime(350, ac.currentTime); o.frequency.linearRampToValueAtTime(1200, ac.currentTime + 0.25); g.gain.setValueAtTime(0.15, ac.currentTime); g.gain.linearRampToValueAtTime(0, ac.currentTime + 0.25); o.connect(g); g.connect(ac.destination); o.start(); o.stop(ac.currentTime + 0.26); }
-  function gameHitSFX() { const ac = getGameAudioCtx(); if(gameMuted) return; const o = ac.createOscillator(), g = ac.createGain(); o.type = 'triangle'; o.frequency.setValueAtTime(180, ac.currentTime); g.gain.setValueAtTime(0.15, ac.currentTime); g.gain.linearRampToValueAtTime(0, ac.currentTime + 0.1); o.connect(g); g.connect(ac.destination); o.start(); o.stop(ac.currentTime + 0.11); }
-  function gameExplodeSFX() { const ac = getGameAudioCtx(); if(gameMuted) return; const o = ac.createOscillator(), g = ac.createGain(); o.type = 'sawtooth'; o.frequency.setValueAtTime(190, ac.currentTime); o.frequency.linearRampToValueAtTime(30, ac.currentTime + 0.18); g.gain.setValueAtTime(0.12, ac.currentTime); g.gain.linearRampToValueAtTime(0, ac.currentTime + 0.18); o.connect(g); g.connect(ac.destination); o.start(); o.stop(ac.currentTime + 0.19); }
-  function gameExplodeBigSFX() { const ac = getGameAudioCtx(); if(gameMuted) return; const o = ac.createOscillator(), g = ac.createGain(); o.type = 'sawtooth'; o.frequency.setValueAtTime(300, ac.currentTime); o.frequency.exponentialRampToValueAtTime(20, ac.currentTime + 0.6); g.gain.setValueAtTime(0.3, ac.currentTime); g.gain.linearRampToValueAtTime(0, ac.currentTime + 0.6); o.connect(g); g.connect(ac.destination); o.start(); o.stop(ac.currentTime + 0.61); }
-
-  let gameBgmTimer = null;
-  function gameStartBGM() {
-    if (gameBgmTimer) return; const ac = getGameAudioCtx(); if (ac.state === 'suspended') ac.resume();
-    let step = 0; const seq = [293.66, 293.66, 349.23, 392.00, 440.00, 440.00, 392.00, 349.23], bassSeq = [146.83, 146.83, 174.61, 196.00, 220.00, 220.00, 196.00, 174.61];
-    if (!gameGainNode) { gameGainNode = ac.createGain(); gameGainNode.connect(ac.destination); }
-    function runSeq() {
-      if (gameState !== 'playing') { gameStopBGM(); return; }
-      gameGainNode.gain.setValueAtTime(gameMuted ? 0 : 0.2, ac.currentTime); const t = ac.currentTime, idx = Math.floor(step / 2) % seq.length;
-      if (step % 2 === 0) { const o = ac.createOscillator(), g = ac.createGain(); o.type = 'square'; o.frequency.value = seq[idx]; g.gain.setValueAtTime(0.03, t); g.gain.linearRampToValueAtTime(0, t + 0.22); o.connect(g); g.connect(gameGainNode); o.start(t); o.stop(t + 0.23); }
-      const ob = ac.createOscillator(), gb = ac.createGain(); ob.type = 'sawtooth'; ob.frequency.value = bassSeq[idx] / (step % 2 === 0 ? 1 : 1.2); gb.gain.setValueAtTime(0.04, t); gb.gain.linearRampToValueAtTime(0, t + 0.13); ob.connect(gb); gb.connect(gameGainNode); ob.start(t); ob.stop(t + 0.14);
-      if (step % 4 === 2) { const od = ac.createOscillator(), gd = ac.createGain(); od.type = 'triangle'; od.frequency.setValueAtTime(150, t); od.frequency.linearRampToValueAtTime(40, t + 0.08); gd.gain.setValueAtTime(0.1, t); gd.gain.linearRampToValueAtTime(0, t + 0.08); od.connect(gd); gd.connect(gameGainNode); od.start(t); od.stop(t + 0.09); }
-      step++; gameBgmTimer = setTimeout(runSeq, 140);
-    }
-    runSeq();
-  }
-  function gameStopBGM() { if (gameBgmTimer) { clearTimeout(gameBgmTimer); gameBgmTimer = null; } }
-
-  window.addEventListener('keydown', e => { gameKeys[e.code] = true; if (gameState === 'playing' && (e.code === 'Enter' || e.code === 'KeyB')) triggerGamePowerUp(); });
-  window.addEventListener('keyup', e => { gameKeys[e.code] = false; });
-
-  function gameRoundRect(ctx, x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x+r, y); ctx.lineTo(x+w-r, y); ctx.quadraticCurveTo(x+w, y, x+w, y+r); ctx.lineTo(x+w, y+h-r); ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h); ctx.lineTo(x+r, y+h); ctx.quadraticCurveTo(x, y+h, x, y+h-r); ctx.lineTo(x, y+r); ctx.quadraticCurveTo(x, y, x+r, y); ctx.closePath(); }
-
-  // タッチコントローラー
-  const htmlJoyBase = document.getElementById('htmlJoystickBase');
-  const htmlJoyStick = document.getElementById('htmlJoystickPad');
-  const htmlShotBtn = document.getElementById('htmlShotBtn');
-  const powerMeterMobile = document.getElementById('powerMeterMobile');
-
-  htmlJoyBase.addEventListener('touchstart', e => {
-    e.preventDefault(); const touch = e.touches[0], rect = htmlJoyBase.getBoundingClientRect();
-    touchJoyState.active = true; touchJoyState.startX = rect.left + rect.width / 2; touchJoyState.startY = rect.top + rect.height / 2;
-    updateStickPos(touch.clientX, touch.clientY);
-  }, { passive: false });
-  htmlJoyBase.addEventListener('touchmove', e => { e.preventDefault(); if (!touchJoyState.active) return; updateStickPos(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
-  
-  function updateStickPos(clientX, clientY) {
-    const dx = clientX - touchJoyState.startX, dy = clientY - touchJoyState.startY, dist = Math.hypot(dx, dy), maxDist = 33;
-    let fx = dx, fy = dy; if (dist > maxDist) { fx = (dx / dist) * maxDist; fy = (dy / dist) * maxDist; }
-    htmlJoyStick.style.transform = `translate(${fx}px, ${fy}px)`; touchJoyState.moveX = fx / maxDist; touchJoyState.moveY = fy / maxDist;
-  }
-  const resetGameJoy = () => { touchJoyState.active = false; touchJoyState.moveX = 0; touchJoyState.moveY = 0; htmlJoyStick.style.transform = "translate(0px, 0px)"; };
-  htmlJoyBase.addEventListener('touchend', resetGameJoy);
-  htmlJoyBase.addEventListener('touchcancel', resetJoy);
-
-  htmlShotBtn.addEventListener('touchstart', e => { e.preventDefault(); touchShootState = true; if (gameState === 'playing') playerShip.shoot(); }, { passive: false });
-  htmlShotBtn.addEventListener('touchend', () => { touchShootState = false; });
-  htmlShotBtn.addEventListener('touchcancel', () => { touchShootState = false; });
-  powerMeterMobile.addEventListener('touchstart', e => { e.preventDefault(); if (gameState === 'playing') triggerGamePowerUp(); }, { passive: false });
-
-  function initGameLauncherLayout() {
-    const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-    const btnArea = document.getElementById('launcherBtnArea');
-    document.getElementById('mobileLeftZone').style.display = 'none';
-    document.getElementById('mobileCenterZone').style.display = 'none';
-    document.getElementById('mobileRightZone').style.display = 'none';
-    document.getElementById('pcMeterWrap').style.display = 'none';
-
-    if (isTouch) {
-      isTouchDeviceMode = true;
-      btnArea.innerHTML = `<button class="launch-btn-cyber" onclick="startMobileFullscreenMission()">⚡ 全画面で出撃</button>`;
-    } else {
-      isTouchDeviceMode = false;
-      btnArea.innerHTML = `<button class="launch-btn-cyber game-pc-start-btn" onclick="startGameMission()">GAME START ▶</button>`;
-    }
-  }
-  initGameLauncherLayout();
-
-  function gameLoop() { gameUpdate(); gameDraw(); requestAnimationFrame(gameLoop); }
-  gameLoop();
 </script>
 </body>
 </html>
