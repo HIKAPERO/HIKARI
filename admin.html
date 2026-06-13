@@ -396,7 +396,7 @@
       <div class="field"><label>ゲームタイトル</label><input type="text" id="playTitle" placeholder="例：HIKARI RUN!"></div>
       <div class="field"><label>一言説明</label><input type="text" id="playDesc" placeholder="例：ジャンプして障害物を避けよう！"></div>
       <div class="field"><label>ファイル名（GitHubにアップしたHTMLファイル名）</label><input type="text" id="playFile" placeholder="例：game.html"></div>
-      <div class="field"><label>サムネイル画像URL（任意）</label><input type="text" id="playThumb" placeholder="例：https://hikapero.github.io/HIKARI/thumb_game.png"></div>
+      <div class="field"><label>サムネURL（画像・動画どちらでも可・任意）</label><input type="text" id="playThumb" placeholder="例：https://hikapero.github.io/HIKARI/thumb_game.png または .mp4"></div>
       <div class="field"><label>表示順</label><input type="number" id="playOrder" value="1"></div>
       <button class="btn-add" onclick="addPlay()">登録する</button>
     </div>
@@ -674,7 +674,11 @@
         div.style.cssText = "display:flex;align-items:center;gap:12px;margin-bottom:10px;";
         div.innerHTML = `
           <div style="width:60px;height:40px;background:var(--bg3);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;">
-            ${g.thumbUrl ? `<img src="${esc(g.thumbUrl)}" style="width:100%;height:100%;object-fit:cover;">` : '<span style="font-size:20px;">🎮</span>'}
+            ${g.thumbUrl
+              ? /\.(mp4|webm|ogg|mov)(\?|$)/i.test(g.thumbUrl)
+                ? `<video src="${esc(g.thumbUrl)}" style="width:100%;height:100%;object-fit:cover;" muted playsinline loop autoplay></video>`
+                : `<img src="${esc(g.thumbUrl)}" style="width:100%;height:100%;object-fit:cover;">`
+              : '<span style="font-size:20px;">🎮</span>'}
           </div>
           <div style="flex:1;">
             <div style="font-size:13px;color:var(--text);">${esc(g.title)}</div>
@@ -1176,7 +1180,7 @@
       <div class="field"><label>ゲームタイトル</label><input id="e_ptitle" value="${title}" placeholder="例：HIKARI RUN!"></div>
       <div class="field"><label>一言説明</label><input id="e_pdesc" value="${desc}" placeholder="例：ジャンプして障害物を避けよう！"></div>
       <div class="field"><label>ファイル名</label><input id="e_pfile" value="${filename}" placeholder="例：game.html"></div>
-      <div class="field"><label>サムネイル画像URL（任意）</label><input id="e_pthumb" value="${thumbUrl}" placeholder="例：https://hikapero.github.io/HIKARI/thumb_game.png"></div>
+      <div class="field"><label>サムネURL（画像・動画どちらでも可・任意）</label><input id="e_pthumb" value="${thumbUrl}" placeholder="例：https://hikapero.github.io/HIKARI/thumb_game.png または .mp4"></div>
       <div class="field"><label>表示順</label><input id="e_porder" type="number" value="${order}"></div>`;
     window._editAction = async () => {
       await window._updateDoc(window._doc(window._db,"plays",id), {
