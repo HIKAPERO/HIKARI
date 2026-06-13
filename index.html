@@ -371,14 +371,14 @@
 
 <div class="tabs-wrap">
   <div class="tabs">
-    <button class="tab-btn active" data-tab="about" onclick="switchTab('about')">ABOUT</button>
-    <button class="tab-btn" data-tab="game" onclick="switchTab('game')">GAME</button>
-    <button class="tab-btn" data-tab="play" onclick="switchTab('play')">PLAY</button>
-    <button class="tab-btn" data-tab="shop" onclick="switchTab('shop')">SHOP</button>
-    <button class="tab-btn" data-tab="gallery" onclick="switchTab('gallery')">GALLERY</button>
-    <button class="tab-btn" data-tab="chat" onclick="switchTab('chat')">CHAT</button>
-    <button class="tab-btn" data-tab="diary" onclick="switchTab('diary')">DIARY</button>
-    <button class="tab-btn" data-tab="links" onclick="switchTab('links')">LINKS</button>
+    <button class="tab-btn active" data-tab="about"   data-click="stardust" onclick="switchTab('about')">ABOUT</button>
+    <button class="tab-btn" data-tab="game"    data-click="neon"     onclick="switchTab('game')">GAME</button>
+    <button class="tab-btn" data-tab="play"    data-click="gameui"   onclick="switchTab('play')">PLAY</button>
+    <button class="tab-btn" data-tab="shop"    data-click="crystal"  onclick="switchTab('shop')">SHOP</button>
+    <button class="tab-btn" data-tab="gallery" data-click="holo"     onclick="switchTab('gallery')">GALLERY</button>
+    <button class="tab-btn" data-tab="chat"    data-click="whisper"  onclick="switchTab('chat')">CHAT</button>
+    <button class="tab-btn" data-tab="diary"   data-click="magic"    onclick="switchTab('diary')">DIARY</button>
+    <button class="tab-btn" data-tab="links"   data-click="cyber"    onclick="switchTab('links')">LINKS</button>
   </div>
 </div>
 
@@ -1025,6 +1025,139 @@
   document.querySelectorAll('.modal-backdrop').forEach(m => {
     m.addEventListener('click', e => { if(e.target===m) m.classList.remove('open'); });
   });
+</script>
+
+<script>
+(function(){
+  if(/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) return;
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if(!AC) return;
+  let ctx = null;
+  function getCtx(){
+    if(!ctx) ctx = new AC();
+    if(ctx.state==='suspended') ctx.resume();
+    return ctx;
+  }
+
+  /* ⑮C ホバー音（音量1/4 = 元の半分のさらに半分） */
+  function playHover(c){
+    const o=c.createOscillator(),g=c.createGain();
+    o.connect(g);g.connect(c.destination);
+    o.type='sine';o.frequency.value=7000;
+    g.gain.setValueAtTime(0.05,c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.008);
+    o.start(c.currentTime);o.stop(c.currentTime+0.01);
+    const buf=c.createBuffer(1,c.sampleRate*0.01,c.sampleRate);
+    const d=buf.getChannelData(0);
+    for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,3);
+    const src=c.createBufferSource();src.buffer=buf;
+    const f=c.createBiquadFilter();f.type='highpass';f.frequency.value=10000;
+    const g2=c.createGain();g2.gain.value=0.15;
+    src.connect(f);f.connect(g2);g2.connect(c.destination);
+    src.start(c.currentTime);
+  }
+
+  /* クリック音（元の音量そのまま） */
+  const clicks={
+    stardust(c){
+      [1046,1318,1568].forEach((freq,i)=>{
+        const o=c.createOscillator(),g=c.createGain();
+        o.connect(g);g.connect(c.destination);o.type='sine';
+        o.frequency.setValueAtTime(freq,c.currentTime);
+        o.frequency.linearRampToValueAtTime(freq*1.02,c.currentTime+0.3);
+        const t=c.currentTime+i*0.03;
+        g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.11,t+0.04);
+        g.gain.exponentialRampToValueAtTime(0.001,t+0.35);
+        o.start(t);o.stop(t+0.4);
+      });
+    },
+    neon(c){
+      const o=c.createOscillator(),g=c.createGain();
+      const dist=c.createWaveShaper();
+      const curve=new Float32Array(256);
+      for(let i=0;i<256;i++){const x=i*2/256-1;curve[i]=x<0?-1:1;}
+      dist.curve=curve;
+      o.connect(dist);dist.connect(g);g.connect(c.destination);o.type='sine';
+      o.frequency.setValueAtTime(55,c.currentTime);
+      o.frequency.exponentialRampToValueAtTime(30,c.currentTime+0.1);
+      g.gain.setValueAtTime(0,c.currentTime);
+      g.gain.linearRampToValueAtTime(0.22,c.currentTime+0.01);
+      g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.13);
+      o.start(c.currentTime);o.stop(c.currentTime+0.15);
+    },
+    gameui(c){
+      const o=c.createOscillator(),g=c.createGain();
+      o.connect(g);g.connect(c.destination);o.type='square';
+      o.frequency.setValueAtTime(440,c.currentTime);
+      o.frequency.setValueAtTime(660,c.currentTime+0.04);
+      g.gain.setValueAtTime(0.1,c.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.12);
+      o.start(c.currentTime);o.stop(c.currentTime+0.12);
+    },
+    crystal(c){
+      const o=c.createOscillator(),g=c.createGain();
+      o.connect(g);g.connect(c.destination);o.type='sine';
+      o.frequency.setValueAtTime(1800,c.currentTime);
+      o.frequency.exponentialRampToValueAtTime(2400,c.currentTime+0.05);
+      o.frequency.exponentialRampToValueAtTime(1600,c.currentTime+0.2);
+      g.gain.setValueAtTime(0.25,c.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.25);
+      o.start(c.currentTime);o.stop(c.currentTime+0.25);
+    },
+    holo(c){
+      const o=c.createOscillator(),g=c.createGain();
+      const lfo=c.createOscillator(),lfoG=c.createGain();
+      lfo.frequency.value=18;lfoG.gain.value=120;
+      lfo.connect(lfoG);lfoG.connect(o.frequency);
+      o.connect(g);g.connect(c.destination);o.type='sine';
+      o.frequency.setValueAtTime(800,c.currentTime);
+      o.frequency.exponentialRampToValueAtTime(200,c.currentTime+0.2);
+      g.gain.setValueAtTime(0.2,c.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.22);
+      lfo.start(c.currentTime);lfo.stop(c.currentTime+0.22);
+      o.start(c.currentTime);o.stop(c.currentTime+0.22);
+    },
+    whisper(c){
+      const buf=c.createBuffer(1,c.sampleRate*0.12,c.sampleRate);
+      const d=buf.getChannelData(0);
+      for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1);
+      const src=c.createBufferSource();src.buffer=buf;
+      const f=c.createBiquadFilter();f.type='bandpass';f.frequency.value=4000;f.Q.value=0.5;
+      const g=c.createGain();src.connect(f);f.connect(g);g.connect(c.destination);
+      g.gain.setValueAtTime(0,c.currentTime);
+      g.gain.linearRampToValueAtTime(0.3,c.currentTime+0.03);
+      g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.12);
+      src.start(c.currentTime);
+    },
+    magic(c){
+      [1200,1600,2000].forEach((freq,i)=>{
+        const o=c.createOscillator(),g=c.createGain();
+        o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.value=freq;
+        const t=c.currentTime+i*0.05;
+        g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.15,t+0.02);
+        g.gain.exponentialRampToValueAtTime(0.001,t+0.2);
+        o.start(t);o.stop(t+0.2);
+      });
+    },
+    cyber(c){
+      const o=c.createOscillator(),g=c.createGain();
+      o.connect(g);g.connect(c.destination);o.type='sawtooth';
+      o.frequency.setValueAtTime(120,c.currentTime);
+      o.frequency.exponentialRampToValueAtTime(60,c.currentTime+0.15);
+      g.gain.setValueAtTime(0.15,c.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.18);
+      o.start(c.currentTime);o.stop(c.currentTime+0.18);
+    }
+  };
+
+  document.querySelectorAll('.tab-btn[data-click]').forEach(btn=>{
+    btn.addEventListener('mouseenter',()=>{ playHover(getCtx()); });
+    btn.addEventListener('click',()=>{
+      const fn=clicks[btn.dataset.click];
+      if(fn) fn(getCtx());
+    });
+  });
+})();
 </script>
 </body>
 </html>
