@@ -60,7 +60,7 @@
       <div class="snow-deco">❄ ✦ ❄</div>
       <div class="ov-title" id="ovTitle">Sweet Stack</div>
       <div class="ov-sub" id="overlaySub">
-        飛んでくるスイーツに<br>
+        左右から飛んでくるスイーツに<br>
         タイミングよくジャンプして乗ろう！<br>
         <span style="color:#4488bb;">タップ / スペース でジャンプ</span>
       </div>
@@ -100,19 +100,30 @@ const OFFSET_LIMIT=0.90;
 const INCOMING_DELAY=85;
 
 // ══════════════════════════════════════
-//  オーディオ（MP3 BGM & 自作シンセ効果音）
+//  オーディオ（Web Audio APIによるMP3音量強制制御システム）
 // ══════════════════════════════════════
 let muted=false, audioCtx=null;
 let bgmPlaying=false;
+let bgmSourceNode=null;
+let bgmGainNode=null;
 
-// MP3ファイルの読み込み設定
-const bgmAudio = new Audio('game02-m.mp3');
+// MP3オブジェクトの作成（念のためキャッシュ対策にクエリを付与）
+const bgmAudio = new Audio('game02-m.mp3?v=' + Date.now());
 bgmAudio.loop = true;
-// ★【変更】音量を0.35から50%（0.175）に下げて、効果音を聞き取りやすくしました
-bgmAudio.volume = 0.175; 
+bgmAudio.crossOrigin = "anonymous"; // サーバー経由時のCORS対策
 
 function getAC(){
-  if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+  if(!audioCtx) {
+    audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+    
+    // ★スマホの音量無視を突破するWeb Audio APIルーティングの構築
+    bgmSourceNode = audioCtx.createMediaElementSource(bgmAudio);
+    bgmGainNode = audioCtx.createGain();
+    
+    // MP3音源 ➔ 音量コントローラー ➔ スピーカーへと接続
+    bgmSourceNode.connect(bgmGainNode);
+    bgmGainNode.connect(audioCtx.destination);
+  }
   return audioCtx;
 }
 
@@ -120,9 +131,13 @@ function getAC(){
 function playBGM(){
   if(muted||bgmPlaying) return;
   bgmPlaying=true;
-  bgmAudio.muted=false;
+  
+  const ac = getAC();
+  // ★前回の35%から、さらに半分（17.5%）の音量へ強制固定
+  bgmGainNode.gain.setValueAtTime(0.175, ac.currentTime); 
+  
   bgmAudio.play().catch(e => {
-    console.log("ブラウザの自動再生ブロック対策:", e);
+    console.log("自動再生ブロック:", e);
     bgmPlaying=false;
   });
 }
@@ -131,10 +146,10 @@ function playBGM(){
 function stopBGM(){
   bgmPlaying=false;
   bgmAudio.pause();
-  bgmAudio.currentTime = 0; // 曲の最初に戻す
+  bgmAudio.currentTime = 0;
 }
 
-// 効果音用のピコピコ音生成発振器
+// 自作シンセ効果音（BGMとは独立してクリアに鳴り響きます）
 function beep(freq,dur,type='sine',vol=0.18){
   if(muted) return;
   try{
@@ -169,11 +184,14 @@ function sfxMiss(){
 function toggleMute(){
   muted=!muted;
   document.getElementById('muteBtn').textContent=muted?'🔇':'🔊';
-  bgmAudio.muted = muted;
   if(muted){
+    if(bgmGainNode) bgmGainNode.gain.setValueAtTime(0, audioCtx.currentTime);
     stopBGM();
   } else {
-    if(state==='playing') playBGM();
+    if(state==='playing') {
+      playBGM();
+      if(bgmGainNode) bgmGainNode.gain.setValueAtTime(0.175, audioCtx.currentTime);
+    }
   }
 }
 
@@ -298,44 +316,35 @@ const princess={
     ctx.restore();
 
     if(sad){
-      // 頬
       ctx.save(); ctx.fillStyle='rgba(255,100,120,0.3)';
       ctx.beginPath(); ctx.ellipse(px+pw*0.25,py+ph*0.22,pw*0.12,ph*0.04,0,0,Math.PI*2); ctx.fill(); ctx.restore();
       ctx.save(); ctx.fillStyle='rgba(255,100,120,0.3)';
       ctx.beginPath(); ctx.ellipse(px+pw*0.75,py+ph*0.22,pw*0.12,ph*0.04,0,0,Math.PI*2); ctx.fill(); ctx.restore();
-      // 左目
       ctx.save(); ctx.fillStyle='#2040a0';
       ctx.translate(px+pw*0.38,py+ph*0.15); ctx.rotate(-0.4);
       ctx.beginPath(); ctx.ellipse(0,0,pw*0.07,ph*0.05,0,0,Math.PI*2); ctx.fill(); ctx.restore();
-      // 右目
       ctx.save(); ctx.fillStyle='#2040a0';
       ctx.translate(px+pw*0.62,py+ph*0.15); ctx.rotate(0.4);
       ctx.beginPath(); ctx.ellipse(0,0,pw*0.07,ph*0.05,0,0,Math.PI*2); ctx.fill(); ctx.restore();
-      // ハイライト
       ctx.save(); ctx.fillStyle='white';
       ctx.beginPath(); ctx.arc(px+pw*0.40,py+ph*0.13,pw*0.022,0,Math.PI*2); ctx.fill(); ctx.restore();
       ctx.save(); ctx.fillStyle='white';
       ctx.beginPath(); ctx.arc(px+pw*0.64,py+ph*0.13,pw*0.022,0,Math.PI*2); ctx.fill(); ctx.restore();
-      // への字口
       ctx.save(); ctx.strokeStyle='#cc6680'; ctx.lineWidth=sx(1.2);
       ctx.beginPath(); ctx.arc(px+pw*0.5,py+ph*0.28,pw*0.09,Math.PI+0.3,Math.PI*2-0.3); ctx.stroke(); ctx.restore();
     } else {
-      // 頬
       ctx.save(); ctx.fillStyle='rgba(255,160,180,0.4)';
       ctx.beginPath(); ctx.ellipse(px+pw*0.28,py+ph*0.2,pw*0.1,ph*0.035,0,0,Math.PI*2); ctx.fill(); ctx.restore();
       ctx.save(); ctx.fillStyle='rgba(255,160,180,0.4)';
       ctx.beginPath(); ctx.ellipse(px+pw*0.72,py+ph*0.2,pw*0.1,ph*0.035,0,0,Math.PI*2); ctx.fill(); ctx.restore();
-      // 目
       ctx.save(); ctx.fillStyle='#2040a0';
       ctx.beginPath(); ctx.ellipse(px+pw*0.38,py+ph*0.15,pw*0.07,ph*0.055,0,0,Math.PI*2); ctx.fill(); ctx.restore();
       ctx.save(); ctx.fillStyle='#2040a0';
       ctx.beginPath(); ctx.ellipse(px+pw*0.62,py+ph*0.15,pw*0.07,ph*0.055,0,0,Math.PI*2); ctx.fill(); ctx.restore();
-      // ハイライト
       ctx.save(); ctx.fillStyle='white';
       ctx.beginPath(); ctx.arc(px+pw*0.4,py+ph*0.14,pw*0.025,0,Math.PI*2); ctx.fill(); ctx.restore();
       ctx.save(); ctx.fillStyle='white';
       ctx.beginPath(); ctx.arc(px+pw*0.64,py+ph*0.14,pw*0.025,0,Math.PI*2); ctx.fill(); ctx.restore();
-      // 口
       ctx.save(); ctx.strokeStyle='#cc6680'; ctx.lineWidth=sx(1);
       ctx.beginPath(); ctx.arc(px+pw*0.5,py+ph*0.2,pw*0.09,0.2,Math.PI-0.2); ctx.stroke(); ctx.restore();
     }
@@ -567,6 +576,7 @@ function checkSideCollision(){
 function update(){
   if(state!=='playing' && state!=='gameover') return;
 
+  // ゲームオーバー中もパーティクルの更新（裏での移動・消滅）だけは止めずに実行
   if(state==='gameover'){
     updateParticles();
     return;
@@ -684,7 +694,7 @@ function showOverlay(type){
     btn.textContent='もう一度 ✦';
   } else {
     tit.textContent='Sweet Stack';
-    sub.innerHTML='飛んでくるスイーツに<br>タイミングよくジャンプして乗ろう！<br><span style="color:#4488bb;">タップ / スペース でジャンプ</span>';
+    sub.innerHTML='左右から飛んでくるスイーツに<br>タイミングよくジャンプして乗ろう！<br><span style="color:#4488bb;">タップ / スペース でジャンプ</span>';
     sc.style.display='none'; hi.style.display='none';
     btn.textContent='はじめる ✦';
   }
