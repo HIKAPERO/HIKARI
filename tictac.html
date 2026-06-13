@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Work Tracker - プロフェッショナル・テロップ作業管理</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+:root {
+  --bg-app: #12141c;
+  --bg-card: #1a1d29;
+  --bg-input: #222636;
+  --bg-active: #1d9e751a;
+  
+  --color-primary: #1d9e75;
+  --color-primary-hover: #16825f;
+  --color-accent: #2b82c9;
+  --color-danger: #e05353;
+  --color-danger-hover: #b83f3f;
+  
+  --text-main: #f3f4f6;
+  --text-sub: #9ca3af;
+  --text-muted: #6b7280;
+  --border-color: #2d3247;
+  --radius-lg: 12px;
+  --radius-md: 8px;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg-app); color: var(--text-main); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+
+.app { padding: 2rem 1rem; max-width: 720px; margin: 0 auto; }
+
+/* ヘッダー */
+.header-main { margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; }
+.header-title { font-size: 18px; font-weight: 600; letter-spacing: 0.05em; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
+.header-title i { color: var(--color-primary); font-size: 22px; }
+
+/* タブバー */
+.tab-bar { display: flex; gap: 4px; border-bottom: 1px solid var(--border-color); margin-bottom: 1.75rem; overflow-x: auto; scrollbar-width: none; }
+.tab-bar::-webkit-scrollbar { display: none; }
+.tab { padding: 10px 16px; font-size: 13px; cursor: pointer; border: none; background: none; color: var(--text-sub); border-bottom: 2px solid transparent; white-space: nowrap; transition: all 0.2s ease; font-weight: 500; }
+.tab:hover { color: var(--text-main); background: rgba(255,255,255,0.02); }
+.tab.active { color: var(--color-primary); border-bottom-color: var(--color-primary); font-weight: 600; }
+
+.section { margin-bottom: 1.5rem; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+
+/* フォーム要素 */
+.field { margin-bottom: 12px; }
+.flabel { font-size: 11px; font-weight: 600; color: var(--text-sub); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+input[type=text], input[type=number], input[type=url], input[type=month], select, textarea { padding: 0 12px; font-size: 14px; width: 100%; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); transition: all 0.2s ease; font-family: inherit; }
+input[type=text], input[type=number], input[type=url], input[type=month], select { height: 42px; }
+textarea { padding: 10px 12px; resize: vertical; }
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(29, 158, 117, 0.15); }
+input::placeholder, textarea::placeholder { color: var(--text-muted); }
+
+/* ボタン */
+.row-buttons { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+.btn { height: 42px; padding: 0 18px; font-size: 13px; font-weight: 600; cursor: pointer; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-main); display: inline-flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s ease; }
+.btn:hover { background: var(--bg-input); border-color: var(--text-muted); }
+.btn-primary { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+.btn-primary:hover { background: var(--color-primary-hover); border-color: var(--color-primary-hover); }
+.btn-danger { color: var(--color-danger); border-color: rgba(224, 83, 83, 0.3); background: rgba(224, 83, 83, 0.05); }
+.btn-danger:hover { background: rgba(224, 83, 83, 0.15); border-color: var(--color-danger); }
+
+.btn-sm { height: 30px; padding: 0 10px; font-size: 12px; font-weight: 500; cursor: pointer; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--bg-input); color: var(--text-sub); display: inline-flex; align-items: center; gap: 4px; }
+.btn-sm:hover { background: var(--bg-card); color: var(--text-main); }
+.btn-sm-primary { background: var(--bg-active); color: var(--color-primary); border-color: rgba(29, 158, 117, 0.3); }
+
+/* カンバンボードUI */
+.kanban-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
+@media (max-width: 600px) { .kanban-board { grid-template-columns: 1fr; gap: 14px; } }
+.kanban-lane { background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 10px; min-height: 200px; display: flex; flex-direction: column; gap: 8px; }
+.lane-header { font-size: 11px; font-weight: 700; color: var(--text-sub); padding-bottom: 6px; border-bottom: 1px solid var(--border-color); margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; text-transform: uppercase; letter-spacing: 0.05em; }
+.lane-count { background: var(--bg-input); padding: 2px 6px; border-radius: 10px; color: var(--text-muted); font-size: 10px; }
+.kanban-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 8px 10px; font-size: 12px; display: flex; align-items: center; justify-content: space-between; gap: 6px; box-shadow: var(--shadow); cursor: pointer; transition: all 0.2s ease; }
+.kanban-card:hover { border-color: var(--text-muted); background: var(--bg-input); }
+.kanban-card .card-text { flex: 1; font-weight: 500; line-height: 1.3; }
+.kanban-card .card-actions { display: flex; gap: 4px; align-items: center; }
+.kanban-card .btn-move { border: none; background: none; color: var(--text-muted); cursor: pointer; padding: 4px; display: inline-flex; border-radius: 4px; }
+.kanban-card .btn-move:hover { color: var(--text-main); background: rgba(255,255,255,0.05); }
+.kanban-card .btn-del-task { border: none; background: none; color: rgba(224, 83, 83, 0.4); cursor: pointer; padding: 4px; display: inline-flex; border-radius: 4px; }
+.kanban-card .btn-del-task:hover { color: var(--color-danger); background: rgba(224, 83, 83, 0.1); }
+
+/* レーン別のカード装飾 */
+.lane-todo .kanban-card { border-left: 3px solid var(--text-muted); }
+.lane-doing .kanban-card { border-left: 3px solid var(--color-accent); background: rgba(43, 130, 201, 0.02); }
+.lane-done .kanban-card { border-left: 3px solid var(--color-primary); color: var(--text-muted); background: rgba(29, 158, 117, 0.01); }
+
+/* ログリスト */
+.log-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: 13px; margin-bottom: 6px; box-shadow: var(--shadow); }
+.log-time { font-weight: 600; color: var(--color-accent); font-family: var(--font-mono); }
+.log-diff { color: var(--text-muted); font-size: 11px; font-family: var(--font-mono); }
+
+/* メトリクスダッシュボード */
+.metric-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 1.5rem; }
+@media (min-width: 480px) { .metric-grid { grid-template-columns: repeat(4, 1fr); } }
+.metric { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 14px; box-shadow: var(--shadow); position: relative; overflow: hidden; }
+.metric::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--border-color); }
+.metric:nth-child(2)::before { background: var(--color-primary); }
+.metric:nth-child(3)::before { background: var(--color-accent); }
+.metric .m-label { font-size: 11px; font-weight: 600; color: var(--text-sub); margin-bottom: 6px; letter-spacing: 0.04em; }
+.metric .m-val { font-size: 22px; font-weight: 700; color: var(--text-main); font-family: var(--font-mono); display: flex; align-items: baseline; }
+.metric .m-unit { font-size: 11px; font-weight: 500; color: var(--text-muted); margin-left: 2px; }
+
+/* 案件カード */
+.job-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow); transition: border-color 0.2s ease; }
+.job-card.editing { border-color: var(--color-primary); box-shadow: 0 0 0 1px var(--color-primary), var(--shadow); }
+.jc-title { font-weight: 600; font-size: 15px; color: var(--text-main); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+.jc-meta { font-size: 12px; color: var(--text-sub); display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; }
+.jc-meta span { display: inline-flex; align-items: center; gap: 4px; background: rgba(255,255,255,0.03); padding: 3px 8px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.02); }
+.jc-badge { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; background: var(--bg-active); color: var(--color-primary); border: 1px solid rgba(29, 158, 117, 0.2); font-family: var(--font-mono); }
+.jc-links { display: flex; gap: 10px; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.04); }
+.jc-link { font-size: 12px; color: var(--color-accent); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; font-weight: 500; }
+.jc-link:hover { text-decoration: underline; color: #4fa3e6; }
+
+/* 編集フォーム内部 */
+.edit-form { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-color); }
+.edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.edit-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px; }
+.edit-flabel { font-size: 11px; color: var(--text-sub); margin-bottom: 4px; }
+.edit-actions { display: flex; gap: 8px; margin-top: 14px; }
+
+/* 月次カード */
+.month-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); margin-bottom: 14px; overflow: hidden; box-shadow: var(--shadow); }
+.mc-header { padding: 14px 16px; font-weight: 600; font-size: 14px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+.mc-body { padding: 16px; }
+.mc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
+.mc-stat { text-align: center; padding: 8px 4px; background: rgba(255,255,255,0.01); border-radius: var(--radius-md); }
+.ms-val { font-size: 15px; font-weight: 700; color: var(--text-main); font-family: var(--font-mono); }
+.ms-label { font-size: 10px; color: var(--text-muted); margin-top: 4px; font-weight: 500; }
+.mc-jobs { font-size: 11px; color: var(--text-sub); display: flex; flex-wrap: wrap; gap: 4px; }
+.mc-jobs span { display: inline-block; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 4px; padding: 2px 6px; }
+
+/* インフォ・バナー系 */
+.active-banner { background: #1d9e7525; border: 1px solid var(--color-primary); border-radius: var(--radius-md); padding: 12px 16px; font-size: 13px; font-weight: 600; color: var(--color-primary); margin-bottom: 1.25rem; display: flex; align-items: center; gap: 8px; animation: pulse 2s infinite; }
+@keyframes pulse { 0% { opacity: 0.9; } 50% { opacity: 1; box-shadow: 0 0 12px rgba(29, 158, 117, 0.2); } 100% { opacity: 0.9; } }
+.archive-badge { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; background: rgba(43, 130, 201, 0.15); color: var(--color-accent); border: 1px solid rgba(43, 130, 201, 0.3); }
+.archive-note { font-size: 11px; color: var(--text-sub); display: flex; align-items: center; gap: 6px; margin-top: 12px; padding: 10px; background: rgba(255,255,255,0.01); border: 1px dashed var(--border-color); border-radius: var(--radius-md); }
+
+.export-section { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 16px; margin-bottom: 14px; box-shadow: var(--shadow); }
+.export-section h3 { font-size: 14px; font-weight: 600; margin-bottom: 4px; color: var(--text-main); }
+.export-section p { font-size: 12px; color: var(--text-sub); margin-bottom: 12px; }
+.export-box { background: #0d0f14; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 12px; font-size: 12px; font-family: var(--font-mono); white-space: pre; overflow-x: auto; margin-top: 10px; max-height: 180px; overflow-y: auto; color: #a7b0cd; }
+
+.status-bar { font-size: 12px; font-weight: 500; color: var(--color-primary); margin-top: 8px; min-height: 18px; display: flex; align-items: center; gap: 4px; }
+.divider { border: none; border-top: 1px solid var(--border-color); margin: 1.25rem 0; }
+.empty { text-align: center; padding: 3rem 1rem; color: var(--text-muted); font-size: 13px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.empty i { font-size: 24px; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+</style>
+</head>
+<body>
+
+<div class="app">
+<header class="header-main">
+  <h1 class="header-title"><i class="ti ti-timeline"></i> Work Tracker</h1>
+  <div style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">v3.4.0 Pro</div>
+</header>
+
+<div class="tab-bar" role="tablist">
+  <button class="tab active" id="tab-record" role="tab" aria-selected="true">作業記録</button>
+  <button class="tab" id="tab-history" role="tab" aria-selected="false">案件履歴</button>
+  <button class="tab" id="tab-growth" role="tab" aria-selected="false">成長グラフ</button>
+  <button class="tab" id="tab-monthly" role="tab" aria-selected="false">月次サマリ</button>
+  <button class="tab" id="tab-presets" role="tab" aria-selected="false">マスタ管理</button>
+  <button class="tab" id="tab-export" role="tab" aria-selected="false">データ書き出し</button>
+</div>
+
+<div id="pane-record" role="tabpanel">
+  <div id="active-banner" style="display:none" class="active-banner">
+    <i class="ti ti-player-record-filled" style="animation: blink 1s infinite alternate;"></i>
+    <span id="banner-text">作業中：</span>
+  </div>
+  <style>@keyframes blink { from { opacity: 0.3; } to { opacity: 1; } }</style>
+
+  <div class="section">
+    <div class="grid-2">
+      <div class="field"><div class="flabel">フォルダ名</div><input type="text" id="job-folder" placeholder="例：20260611-1"></div>
+      <div class="field"><div class="flabel">prprj名</div><input type="text" id="job-prprj" placeholder="例：0027"></div>
+    </div>
+    <div class="grid-2">
+      <div class="field"><div class="flabel">尺（分）</div><input type="number" id="job-len" placeholder="例：33"></div>
+      <div class="field"><div class="flabel">報酬（円）</div><input type="number" id="job-reward" placeholder="例：1802"></div>
+    </div>
+    <div class="field"><div class="flabel">依頼サイトURL</div><input type="url" id="job-url" placeholder="https://crowdworks.jp/... "></div>
+    <div class="grid-2">
+      <div class="field"><div class="flabel">元データURL</div><input type="url" id="job-src" placeholder="GigaFile便など"></div>
+      <div class="field"><div class="flabel">提出データURL</div><input type="url" id="job-out" placeholder="GigaFile便など"></div>
+    </div>
+    <div class="row-buttons">
+      <button class="btn btn-primary" id="btn-start-job"><i class="ti ti-player-play-filled"></i> 案件開始</button>
+      <button class="btn" id="btn-end-job"><i class="ti ti-player-stop-filled"></i> 終了・保存</button>
+      <button class="btn" id="btn-add-break"><i class="ti ti-coffee"></i> 休憩の切替</button>
+    </div>
+    <div class="status-bar" id="status-bar"></div>
+  </div>
+  
+  <hr class="divider">
+  
+  <div class="section">
+    <div class="flabel" style="margin-bottom: 4px;">案件工程アジャイルボード（クリックで進捗移動）</div>
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <input type="text" id="custom-stamp" placeholder="今回の案件用のカスタム工程を追加..." style="flex:1; height:38px;">
+      <button class="btn" id="btn-kanban-add-custom" style="height:38px; padding:0 14px;"><i class="ti ti-plus"></i> 追加</button>
+    </div>
+    
+    <div class="kanban-board">
+      <div class="kanban-lane lane-todo">
+        <div class="lane-header">未着手 <span class="lane-count" id="count-todo">0</span></div>
+        <div id="kanban-todo-list" style="display:flex; flex-direction:column; gap:6px;"></div>
+      </div>
+      <div class="kanban-lane lane-doing">
+        <div class="lane-header">進行中 <span class="lane-count" id="count-doing">0</span></div>
+        <div id="kanban-doing-list" style="display:flex; flex-direction:column; gap:6px;"></div>
+      </div>
+      <div class="kanban-lane lane-done">
+        <div class="lane-header">完了済み <span class="lane-count" id="count-done">0</span></div>
+        <div id="kanban-done-list" style="display:flex; flex-direction:column; gap:6px;"></div>
+      </div>
+    </div>
+  </div>
+  
+  <hr class="divider">
+  
+  <div class="section">
+    <div class="flabel" style="margin-bottom: 8px;">現在のリアルタイムログ</div>
+    <div id="current-log-list"><div class="empty"><i class="ti ti-hourglass-empty"></i>案件を開始するとタイムラインが表示されます</div></div>
+  </div>
+</div>
+
+<div id="pane-history" style="display:none" role="tabpanel">
+  <div class="export-section" style="margin-bottom: 1.5rem;">
+    <h3><i class="ti ti-plus"></i> 過去案件の手動登録</h3>
+    <p style="margin-bottom:12px;">計測し忘れた案件や、過去の確定案件を直接履歴に追加できます。</p>
+    
+    <div class="grid-2">
+      <div class="field"><div class="flabel">フォルダ名</div><input type="text" id="manual-folder" placeholder="例：20260601-1"></div>
+      <div class="field"><div class="flabel">prprj名</div><input type="text" id="manual-prprj" placeholder="例：0025"></div>
+    </div>
+    <div class="grid-2">
+      <div class="field"><div class="flabel">稼働時間（時間）*必須</div><input type="number" id="manual-hours" step="0.01" placeholder="例：2.5"></div>
+      <div class="field"><div class="flabel">報酬（円）</div><input type="number" id="manual-reward" placeholder="例：5000"></div>
+    </div>
+    <div class="grid-2">
+      <div class="field"><div class="flabel">尺（分）</div><input type="number" id="manual-len" placeholder="例：15"></div>
+      <div class="field">
+        <div class="flabel">売上計上月</div>
+        <input type="month" id="manual-month" style="height: 42px;">
+      </div>
+    </div>
+    <button class="btn btn-primary" id="btn-manual-add" style="margin-top: 4px;"><i class="ti ti-database-plus"></i> 履歴に直接追加する</button>
+  </div>
+
+  <div class="metric-grid">
+    <div class="metric"><div class="m-label">総案件数</div><div class="m-val" id="sm-total">0<span class="m-unit">件</span></div></div>
+    <div class="metric"><div class="m-label">平均時給</div><div class="m-val" id="sm-wage">—<span class="m-unit">円</span></div></div>
+    <div class="metric"><div class="m-label">平均分速</div><div class="m-val" id="sm-speed">—<span class="m-unit">分/h</span></div></div>
+    <div class="metric"><div class="m-label">総報酬額</div><div class="m-val" id="sm-total-reward">0<span class="m-unit">円</span></div></div>
+  </div>
+  <div id="job-history-list"></div>
+</div>
+
+<div id="pane-growth" style="display:none" role="tabpanel">
+  <div style="display:flex;gap:8px;margin-bottom:1.25rem">
+    <button class="btn btn-sm btn-sm-primary" id="graph-wage-btn">時給推移</button>
+    <button class="btn btn-sm" id="graph-speed-btn">分速推移</button>
+  </div>
+  <div style="position:relative;width:100%;height:300px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:14px;box-shadow:var(--shadow);">
+    <canvas id="growthChart" role="img" aria-label="作業効率の推移グラフ">作業効率推移データ</canvas>
+  </div>
+  <div id="growth-empty" class="empty" style="display:none"><i class="ti ti-chart-line"></i>案件を1件以上記録するとデータをマッピングします</div>
+</div>
+
+<div id="pane-monthly" style="display:none" role="tabpanel">
+  <div id="monthly-list"></div>
+</div>
+
+<div id="pane-presets" style="display:none" role="tabpanel">
+  <div class="export-section">
+    <h3><i class="ti ti-settings-automation"></i> 新しい工程セットの登録</h3>
+    <p style="margin-bottom:12px;">テロップ生成や各種配信用など、作業工程のデフォルトセットを作成できます。</p>
+    <div class="field">
+      <div class="flabel">セットのタイトル名</div>
+      <input type="text" id="preset-title" placeholder="例：Youtubeテロップ標準、ショート高速枠など">
+    </div>
+    <div class="field">
+      <div class="flabel">各工程（1行に1工程ずつ入力してください）</div>
+      <textarea id="preset-tasks" rows="5" placeholder="動画DL完了&#13;Vrew文字起こし完了&#13;誤字脱字チェック完了"></textarea>
+    </div>
+    <button class="btn btn-primary" id="btn-save-preset"><i class="ti ti-plus"></i> 新規セットを登録する</button>
+  </div>
+
+  <div class="flabel" style="margin-bottom: 8px;">登録済みの工程セットマスタ</div>
+  <div id="preset-master-list"></div>
+</div>
+
+<div id="pane-export" style="display:none" role="tabpanel">
+  <div class="export-section">
+    <h3><i class="ti ti-table-share"></i> 明細データ（月別出力）</h3>
+    <p>スプレッドシートやExcelの明細行に直接コピペできるタブ区切り（TSV）形式です。</p>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <select id="export-month-select" style="flex:1; min-width:140px;"></select>
+      <button class="btn btn-primary" id="btn-export-detail"><i class="ti ti-refresh"></i> 生成</button>
+      <button class="btn" id="btn-copy-detail"><i class="ti ti-copy"></i> コピー</button>
+    </div>
+    <div class="export-box" id="export-box">月を選択して「生成」をクリックしてください</div>
+  </div>
+  
+  <div class="export-section">
+    <h3><i class="ti ti-archive"></i> 月次収支（アーカイブ一括出力）</h3>
+    <p>確定申告や年間収支シート用。アーカイブされた月の集計データを出力します。</p>
+    <div style="display:flex;gap:8px;margin-bottom:10px">
+      <button class="btn btn-primary" id="btn-export-archive"><i class="ti ti-database-export"></i> 集計データ生成</button>
+      <button class="btn" id="btn-copy-archive"><i class="ti ti-copy"></i> コピー</button>
+    </div>
+    <div class="export-box" id="export-archive-box">アーカイブ済みの月次データが出力されます</div>
+  </div>
+  
+  <hr class="divider">
+  <div style="text-align: right;">
+    <button class="btn btn-danger" id="btn-clear-all"><i class="ti ti-trash"></i> データベース初期化</button>
+  </div>
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+let currentJob=null,currentLogs=[],breakStart=null,jobs=[],archives=[],growthMode='wage',growthChart=null;
+let editingIdx=null, editingPresetId=null;
+
+// デフォルトのマスターセット
+const DEFAULT_TASKS = [
+  'CW返信完了', 'ファイルDL完了', 'テロップmp4書き出し完了', 
+  'Vrew読み込み完了', 'Vrew編集半分完了', 'Vrew編集完了', 
+  'Vrew書き出し完了', 'SRT適用完了', 'タイミング/誤字脱字確認完了', 
+  'キャプション位置調整完了', '不明点確認・送信完了'
+];
+
+let activeKanbanTasks = [];
+let presets = []; // 工程マスタプリセット配列
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return str
+    .toString()
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+async function loadData(){
+  try {
+    jobs = JSON.parse(localStorage.getItem('telop_jobs_v3') || '[]');
+  } catch(e) { jobs = []; }
+  try {
+    archives = JSON.parse(localStorage.getItem('telop_archives_v3') || '[]');
+  } catch(e) { archives = []; }
+  try {
+    presets = JSON.parse(localStorage.getItem('telop_presets_v3') || '[]');
+    // 初回ロード時に空ならデフォルトセットを登録しておく
+    if(presets.length === 0) {
+      presets.push({
+        id: 'p-default',
+        title: '標準テロップ作業工程セット',
+        tasks: [...DEFAULT_TASKS]
+      });
+      localStorage.setItem('telop_presets_v3', JSON.stringify(presets));
+    }
+  } catch(e) { presets = []; }
+  
+  jobs.forEach(j => { if(!j.accountMonth && j.startTime) j.accountMonth = monthKey(new Date(j.startTime)); });
+  
+  // ボードの初期化（登録済みの最初のセット、無ければDEFAULT_TASKSを使用）
+  initKanbanBlank();
+  renderAll();
+}
+
+async function saveJobs(){
+  try { localStorage.setItem('telop_jobs_v3', JSON.stringify(jobs)); } catch(e) { console.error(e); }
+}
+async function saveArchives(){
+  try { localStorage.setItem('telop_archives_v3', JSON.stringify(archives)); } catch(e) { console.error(e); }
+}
+async function savePresets(){
+  try { localStorage.setItem('telop_presets_v3', JSON.stringify(presets)); } catch(e) { console.error(e); }
+}
+
+const now=()=>new Date();
+const fmt=d=>d.toTimeString().slice(0,5);
+function fmtDiff(ms){const m=Math.floor(ms/60000),h=Math.floor(m/60),rm=m%60;return h>0?`${h}時間${rm}分`:`${m}分`;}
+const toHours=ms=>ms/3600000;
+const monthKey=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+const monthLabel=k=>{const[y,m]=k.split('-');return`${y}年${parseInt(m)}月`;};
+
+function getRelativeMonthKey(baseKey, offset) {
+  const [y, m] = baseKey.split('-').map(Number);
+  const d = new Date(y, m - 1 + offset, 1);
+  return monthKey(d);
+}
+
+function recalc(j){
+  if(j.reward&&j.workHours)j.wage=Math.round(j.reward/j.workHours);else j.wage=null;
+  if(j.len&&j.workHours)j.speed=Math.round((j.len/j.workHours)*10)/10;else j.speed=null;
+}
+
+// カンバンボードに初期工程を展開する
+function initKanbanBlank(taskNamesArray = null) {
+  let targetSrc = DEFAULT_TASKS;
+  if (taskNamesArray && taskNamesArray.length > 0) {
+    targetSrc = taskNamesArray;
+  } else if (presets.length > 0) {
+    targetSrc = presets[0].tasks;
+  }
+  activeKanbanTasks = targetSrc.map((t, idx) => ({ id: 't-' + idx, name: t, status: 'todo' }));
+  renderKanban();
+}
+
+function renderKanban() {
+  const todoEl = document.getElementById('kanban-todo-list');
+  const doingEl = document.getElementById('kanban-doing-list');
+  const doneEl = document.getElementById('kanban-done-list');
+  
+  const todoArr = activeKanbanTasks.filter(t => t.status === 'todo');
+  const doingArr = activeKanbanTasks.filter(t => t.status === 'doing');
+  const doneArr = activeKanbanTasks.filter(t => t.status === 'done');
+  
+  document.getElementById('count-todo').textContent = todoArr.length;
+  document.getElementById('count-doing').textContent = doingArr.length;
+  document.getElementById('count-done').textContent = doneArr.length;
+
+  const makeCardHtml = (t) => {
+    let icon = '<i class="ti ti-arrow-right"></i>';
+    if(t.status === 'doing') icon = '<i class="ti ti-checkbox"></i>';
+    if(t.status === 'done') icon = '<i class="ti ti-refresh"></i>';
+    
+    return `
+      <div class="kanban-card data-move-id" data-id="${t.id}">
+        <span class="card-text">${escapeHtml(t.name)}</span>
+        <div class="card-actions">
+          <button class="btn-move data-move-btn" data-id="${t.id}" title="進捗を進める">${icon}</button>
+          <button class="btn-del-task data-del-btn" data-id="${t.id}" title="この工程を除外する"><i class="ti ti-x"></i></button>
+        </div>
+      </div>`;
+  };
+
+  todoEl.innerHTML = todoArr.map(makeCardHtml).join('') || '<div style="font-size:11px; color:var(--text-muted); text-align:center; padding:10px;">なし</div>';
+  doingEl.innerHTML = doingArr.map(makeCardHtml).join('') || '<div style="font-size:11px; color:var(--text-muted); text-align:center; padding:10px;">なし</div>';
+  doneEl.innerHTML = doneArr.map(makeCardHtml).join('') || '<div style="font-size:11px; color:var(--text-muted); text-align:center; padding:10px;">なし</div>';
+
+  document.querySelectorAll('.data-move-id').forEach(el => {
+    el.addEventListener('click', () => kanbanMove(el.dataset.id));
+  });
+  document.querySelectorAll('.data-move-btn').forEach(el => {
+    el.addEventListener('click', (e) => { e.stopPropagation(); kanbanMove(el.dataset.id); });
+  });
+  document.querySelectorAll('.data-del-btn').forEach(el => {
+    el.addEventListener('click', (e) => { e.stopPropagation(); kanbanDeleteTask(el.dataset.id); });
+  });
+}
+
+function kanbanMove(id) {
+  if(!currentJob){setStatus('先に案件を開始してください','var(--color-danger)');return;}
+  const task = activeKanbanTasks.find(t => t.id === id);
+  if(!task) return;
+
+  if(task.status === 'todo') {
+    task.status = 'doing';
+    addLog(`【着手】${task.name}`);
+    setStatus(`➔「${task.name}」を開始しました`);
+  } else if(task.status === 'doing') {
+    task.status = 'done';
+    addLog(`【完了】${task.name}`);
+    setStatus(`✓「${task.name}」が完了しました`);
+  } else if(task.status === 'done') {
+    task.status = 'todo';
+    addLog(`【リセット】${task.name}`);
+    setStatus(`↺「${task.name}」を未着手に戻しました`);
+  }
+  renderKanban();
+}
+
+function kanbanAddCustom() {
+  const val = document.getElementById('custom-stamp').value.trim();
+  if(!val) return;
+  const newId = 'custom-' + Date.now();
+  activeKanbanTasks.push({ id: newId, name: val, status: 'todo' });
+  document.getElementById('custom-stamp').value = '';
+  renderKanban();
+  if(currentJob) setStatus(`工程に「${val}」を追加しました`);
+}
+
+function kanbanDeleteTask(id) {
+  const task = activeKanbanTasks.find(t => t.id === id);
+  activeKanbanTasks = activeKanbanTasks.filter(t => t.id !== id);
+  renderKanban();
+  if(currentJob && task) setStatus(`工程から「${task.name}」を削除しました`, 'var(--color-danger)');
+}
+
+/* マスタ管理（プリセット）関連機能 */
+async function saveOrUpdatePreset() {
+  const titleInput = document.getElementById('preset-title');
+  const tasksInput = document.getElementById('preset-tasks');
+  const title = titleInput.value.trim();
+  const tasksText = tasksInput.value.trim();
+
+  if(!title || !tasksText) {
+    setStatus('タイトルと各工程を入力してください。', 'var(--color-danger)');
+    return;
+  }
+
+  // 改行区切りで配列化、空行は除外
+  const taskArray = tasksText.split('\n').map(t => t.trim()).filter(t => t.length > 0);
+
+  if(editingPresetId) {
+    // 既存セットの編集モード
+    const idx = presets.findIndex(p => p.id === editingPresetId);
+    if(idx !== -1) {
+      presets[idx].title = title;
+      presets[idx].tasks = taskArray;
+      setStatus(`工程セット「${title}」の変更を保存しました。`);
+    }
+    editingPresetId = null;
+    document.getElementById('btn-save-preset').innerHTML = '<i class="ti ti-plus"></i> 新規セットを登録する';
+  } else {
+    // 新規登録
+    const newPreset = {
+      id: 'p-' + Date.now(),
+      title: title,
+      tasks: taskArray
+    };
+    presets.push(newPreset);
+    setStatus(`新しい工程セット「${title}」を登録しました。`);
+  }
+
+  titleInput.value = '';
+  tasksInput.value = '';
+  await savePresets();
+  renderPresets();
+}
+
+function startEditPreset(id) {
+  const target = presets.find(p => p.id === id);
+  if(!target) return;
+
+  editingPresetId = id;
+  document.getElementById('preset-title').value = target.title;
+  document.getElementById('preset-tasks').value = target.tasks.join('\n');
+  document.getElementById('btn-save-preset').innerHTML = '<i class="ti ti-check"></i> 修正内容をマスタに保存する';
+  document.getElementById('preset-title').focus();
+  setStatus(`「${target.title}」の編集モードに入りました。`);
+}
+
+async function deletePreset(id) {
+  if(!confirm('この工程セットをマスタから完全に削除してもよろしいですか？')) return;
+  presets = presets.filter(p => p.id !== id);
+  if(editingPresetId === id) {
+    editingPresetId = null;
+    document.getElementById('preset-title').value = '';
+    document.getElementById('preset-tasks').value = '';
+    document.getElementById('btn-save-preset').innerHTML = '<i class="ti ti-plus"></i> 新規セットを登録する';
+  }
+  await savePresets();
+  renderPresets();
+  setStatus('工程セットを削除しました。', 'var(--color-danger)');
+}
+
+function applyPresetToBoard(id) {
+  const target = presets.find(p => p.id === id);
+  if(!target) return;
+  if(currentJob && !confirm('現在計測中のタスクがあります。現在のボード状態を破棄してこのセットを反映しますか？')) return;
+  
+  initKanbanBlank(target.tasks);
+  setStatus(`ボードに「${target.title}」の工程を適用しました。`);
+  switchTab('record');
+}
+
+function renderPresets() {
+  const el = document.getElementById('preset-master-list');
+  if(!presets.length) {
+    el.innerHTML = '<div class="empty"><i class="ti ti-settings-off"></i>登録済みの工程プリセットマスタがありません</div>';
+    return;
+  }
+
+  el.innerHTML = presets.map(p => {
+    return `
+      <div class="job-card" style="border-left: 3px solid var(--color-accent);">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+          <div class="jc-title" style="margin-bottom:0;"><i class="ti ti-copy-check" style="color:var(--color-accent)"></i> ${escapeHtml(p.title)}</div>
+          <div style="display:flex; gap:6px;">
+            <button class="btn-sm btn-sm-primary btn-apply-preset" data-id="${p.id}"><i class="ti ti-layout-grid-add"></i> ボードへ適用</button>
+            <button class="btn-sm btn-edit-preset" data-id="${p.id}"><i class="ti ti-edit"></i> 修正</button>
+            <button class="btn-sm btn-del-preset" data-id="${p.id}" style="color:var(--color-danger)"><i class="ti ti-trash"></i> 削除</button>
+          </div>
+        </div>
+        <div class="mc-jobs" style="margin-top:8px;">
+          ${p.tasks.map((t, idx) => `<span>${idx + 1}. ${escapeHtml(t)}</span>`).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // 動的イベントリスナー付与
+  document.querySelectorAll('.btn-apply-preset').forEach(btn => {
+    btn.addEventListener('click', () => applyPresetToBoard(btn.dataset.id));
+  });
+  document.querySelectorAll('.btn-edit-preset').forEach(btn => {
+    btn.addEventListener('click', () => startEditPreset(btn.dataset.id));
+  });
+  document.querySelectorAll('.btn-del-preset').forEach(btn => {
+    btn.addEventListener('click', () => deletePreset(btn.dataset.id));
+  });
+}
+
+
+function startJob(){
+  const folder=document.getElementById('job-folder').value.trim();
+  const prprj=document.getElementById('job-prprj').value.trim();
+  if(!folder&&!prprj){setStatus('フォルダ名またはprprj名を入力してください','var(--color-danger)');return;}
+  if(currentJob){setStatus('現在作業中の案件があります','var(--color-danger)');return;}
+  
+  const startTimeObj = now();
+  currentJob={folder,prprj,len:parseFloat(document.getElementById('job-len').value)||0,reward:parseFloat(document.getElementById('job-reward').value)||0,siteUrl:document.getElementById('job-url').value.trim(),srcUrl:document.getElementById('job-src').value.trim(),outUrl:document.getElementById('job-out').value.trim(),startTime:startTimeObj,endTime:null,breakMs:0,logs:[],accountMonth:monthKey(startTimeObj),kanbanSnapshot: []};
+  currentLogs=[];breakStart=null;
+  addLog('作業開始');
+  const label=prprj||folder;
+  setStatus(`「${label}」の計測を開始しました。`);
+  document.getElementById('active-banner').style.display='flex';
+  document.getElementById('banner-text').textContent=`作業中：${label}`;
+}
+
+async function endJob(){
+  if(!currentJob){setStatus('作業中の案件がありません','var(--color-danger)');return;}
+  if(breakStart){currentJob.breakMs+=now()-breakStart;breakStart=null;}
+  currentJob.endTime=now();
+  addLog('作業終了');
+  currentJob.logs=[...currentLogs];
+  
+  currentJob.kanbanSnapshot = JSON.parse(JSON.stringify(activeKanbanTasks));
+  
+  const workMs=(currentJob.endTime-currentJob.startTime)-currentJob.breakMs;
+  currentJob.workHours=toHours(workMs);currentJob.workMs=workMs;
+  recalc(currentJob);
+  jobs.push({...currentJob,startTime:currentJob.startTime.toISOString(),endTime:currentJob.endTime.toISOString()});
+  
+  await saveJobs();
+  
+  const label=currentJob.prprj||currentJob.folder;
+  setStatus(`「${label}」を保存しました。${currentJob.wage?'時給換算: '+currentJob.wage+'円':''}`);
+  
+  // 各種入力欄の自動クリア
+  document.getElementById('job-folder').value = '';
+  document.getElementById('job-len').value = '';
+  document.getElementById('job-reward').value = '';
+  document.getElementById('job-url').value = '';
+  document.getElementById('job-src').value = '';
+  document.getElementById('job-out').value = '';
+
+  // 連番インクリメント
+  const prprjInput = document.getElementById('job-prprj');
+  const currentPrprjVal = prprjInput.value.trim();
+  if (currentPrprjVal && /\d+$/.test(currentPrprjVal)) {
+    prprjInput.value = currentPrprjVal.replace(/\d+$/, match => {
+      return String(Number(match) + 1).padStart(match.length, '0');
+    });
+  }
+
+  currentJob=null;currentLogs=[];
+  // 現在ボード上に展開されている「ベースとなった型」を維持して未着手にリセット
+  const currentPresetNames = activeKanbanTasks.map(t => t.name);
+  initKanbanBlank(currentPresetNames); 
+  document.getElementById('active-banner').style.display='none';
+  renderAll();
+}
+
+function addBreak(){
+  if(!currentJob){setStatus('作業中の案件がありません','var(--color-danger)');return;}
+  if(!breakStart){breakStart=now();addLog('休憩開始');setStatus('休憩中… もう一度押すと再開します','var(--color-accent)');}
+  else{const dur=now()-breakStart;currentJob.breakMs+=dur;breakStart=null;addLog(`休憩終了（${fmtDiff(dur)}）`);setStatus('作業を再開しました');}
+}
+
+function addLog(name){
+  const t=now();
+  const prev=currentLogs.length?new Date(currentLogs[currentLogs.length-1].iso):t;
+  currentLogs.push({name,time:fmt(t),iso:t.toISOString(),diff:currentLogs.length?t-prev:0});
+  renderCurrentLog();
+}
+
+function renderCurrentLog(){
+  const el=document.getElementById('current-log-list');
+  if(!currentLogs.length){el.innerHTML='<div class="empty"><i class="ti ti-hourglass-empty"></i>案件を開始するとタイムラインが表示されます</div>';return;}
+  el.innerHTML=currentLogs.map((l,i)=>`<div class="log-item"><span class="log-time">${escapeHtml(l.time)}</span><span style="flex:1;margin:0 12px; font-weight:500;">${escapeHtml(l.name)}</span><span class="log-diff">${i>0?'+'+fmtDiff(l.diff):''}</span></div>`).join('');
+}
+
+// 過去案件の手動登録処理
+async function addJobManually() {
+  const folder = document.getElementById('manual-folder').value.trim();
+  const prprj = document.getElementById('manual-prprj').value.trim();
+  const hoursVal = parseFloat(document.getElementById('manual-hours').value);
+  const rewardVal = parseFloat(document.getElementById('manual-reward').value) || 0;
+  const lenVal = parseFloat(document.getElementById('manual-len').value) || 0;
+  let monthVal = document.getElementById('manual-month').value;
+
+  if (!folder && !prprj) {
+    setStatus('フォルダ名またはprprj名のどちらかは必ず入力してください', 'var(--color-danger)');
+    return;
+  }
+  if (isNaN(hoursVal) || hoursVal <= 0) {
+    setStatus('稼働時間を正しく入力してください（例: 1.5）', 'var(--color-danger)');
+    return;
+  }
+
+  if (!monthVal) {
+    monthVal = monthKey(now());
+  }
+
+  const manualJob = {
+    folder,
+    prprj,
+    len: lenVal,
+    reward: rewardVal,
+    siteUrl: '',
+    srcUrl: '',
+    outUrl: '',
+    startTime: new Date().toISOString(),
+    endTime: new Date().toISOString(),
+    breakMs: 0,
+    workMs: hoursVal * 3600000,
+    workHours: hoursVal,
+    accountMonth: monthVal,
+    logs: [{ name: "手動登録案件", time: fmt(now()), iso: new Date().toISOString(), diff: 0 }],
+    kanbanSnapshot: []
+  };
+
+  recalc(manualJob);
+  jobs.push(manualJob);
+  await saveJobs();
+
+  document.getElementById('manual-folder').value = '';
+  document.getElementById('manual-prprj').value = '';
+  document.getElementById('manual-hours').value = '';
+  document.getElementById('manual-reward').value = '';
+  document.getElementById('manual-len').value = '';
+  document.getElementById('manual-month').value = '';
+
+  renderAll();
+  setStatus(`過去案件「${prprj || folder}」を手動登録しました。`);
+}
+
+function toggleEdit(realIdx){
+  if(editingIdx===realIdx){editingIdx=null;}else{editingIdx=realIdx;}
+  renderHistory();
+}
+
+async function saveEdit(realIdx){
+  const j=jobs[realIdx];
+  const hoursVal = parseFloat(document.getElementById(`edit-hours-${realIdx}`).value);
+  
+  if (isNaN(hoursVal) || hoursVal <= 0) {
+    setStatus('稼働時間は0より大きい数値を入力してください', 'var(--color-danger)');
+    return;
+  }
+
+  j.workHours = hoursVal;
+  j.workMs = hoursVal * 3600000;
+  j.reward=parseFloat(document.getElementById(`edit-reward-${realIdx}`).value) || 0;
+  j.len=parseFloat(document.getElementById(`edit-len-${realIdx}`).value) || 0;
+  j.folder=document.getElementById(`edit-folder-${realIdx}`).value.trim();
+  j.prprj=document.getElementById(`edit-prprj-${realIdx}`).value.trim();
+  j.siteUrl=document.getElementById(`edit-siteurl-${realIdx}`).value.trim();
+  j.srcUrl=document.getElementById(`edit-srcurl-${realIdx}`).value.trim();
+  j.outUrl=document.getElementById(`edit-outurl-${realIdx}`).value.trim();
+  j.accountMonth=document.getElementById(`edit-month-${realIdx}`).value;
+  
+  recalc(j);
+  editingIdx=null;
+  await saveJobs();
+  renderAll();
+  setStatus(`案件 #${realIdx+1} の修正データを反映しました`);
+}
+
+function renderHistory(){
+  const el=document.getElementById('job-history-list');
+  document.getElementById('sm-total').innerHTML=`${jobs.length}<span class="m-unit">件</span>`;
+  const ww=jobs.filter(j=>j.wage),ws=jobs.filter(j=>j.speed);
+  document.getElementById('sm-wage').innerHTML=ww.length?`${Math.round(ww.reduce((a,j)=>a+j.wage,0)/ww.length)}<span class="m-unit">円</span>`:'—';
+  document.getElementById('sm-speed').innerHTML=ws.length?`${(ws.reduce((a,j)=>a+j.speed,0)/ws.length).toFixed(1)}<span class="m-unit">分/h</span>`:'—';
+  document.getElementById('sm-total-reward').innerHTML=`${jobs.reduce((a,j)=>a+(j.reward||0),0).toLocaleString()}<span class="m-unit">円</span>`;
+  if(!jobs.length){el.innerHTML='<div class="empty"><i class="ti ti-folder-off"></i>記録済みの案件履歴がありません</div>';return;}
+
+  el.innerHTML=[...jobs].map((j,dispI)=>{
+    const realIdx=jobs.length-1-dispI;
+    const jj=jobs[realIdx];
+    const label=jj.prprj||jj.folder||'—';
+    const wh=jj.workHours?jj.workHours.toFixed(2):'0.00';
+    const isEditing=editingIdx===realIdx;
+    const links=[
+      jj.siteUrl?`<a href="${escapeHtml(jj.siteUrl)}" class="jc-link" target="_blank"><i class="ti ti-external-link"></i> プラットフォーム</a>`:'',
+      jj.srcUrl?`<a href="${escapeHtml(jj.srcUrl)}" class="jc-link" target="_blank"><i class="ti ti-download"></i> 素材元</a>`:'',
+      jj.outUrl?`<a href="${escapeHtml(jj.outUrl)}" class="jc-link" target="_blank"><i class="ti ti-upload"></i> 納品データ</a>`:''
+    ].filter(Boolean).join('');
+
+    if(!jj.accountMonth) jj.accountMonth = monthKey(new Date(jj.startTime));
+
+    const baseMonth = monthKey(new Date(jj.startTime));
+    const mPrev = getRelativeMonthKey(baseMonth, -1);
+    const mNext = getRelativeMonthKey(baseMonth, 1);
+
+    const snap = jj.kanbanSnapshot || [];
+    const completedTasks = snap.filter(t => t.status === 'done').map(t => t.name);
+    const kanbanBadgesHtml = completedTasks.length 
+      ? `<div style="margin-top:8px; font-size:11px; color:var(--text-muted); display:flex; flex-wrap:wrap; gap:4px;">
+          <span style="color:var(--color-primary); font-weight:600;"><i class="ti ti-subtask"></i> 完了工程:</span> 
+          ${completedTasks.map(t => `<span style="background:rgba(255,255,255,0.02); border:1px solid var(--border-color); padding:1px 6px; border-radius:4px;">${escapeHtml(t)}</span>`).join('')}
+         </div>`
+      : '';
+
+    const viewPart=`
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div class="jc-title">#${realIdx+1} ${jj.folder?`<span style="color:var(--text-muted);font-weight:400">${escapeHtml(jj.folder)} / </span>`:''}${escapeHtml(label)}</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          ${jj.wage?`<span class="jc-badge">¥${jj.wage.toLocaleString()}/h</span>`:''}
+          <button class="btn-sm hist-toggle-btn ${isEditing?'btn-sm-primary':''}" data-idx="${realIdx}">
+            <i class="ti ti-edit"></i>${isEditing?'閉じる':'編集'}
+          </button>
+        </div>
+      </div>
+      <div class="jc-meta">
+        <span><i class="ti ti-clock"></i> 稼働: ${wh}h</span>
+        ${jj.len?`<span><i class="ti ti-video"></i> ${jj.len}分</span>`:''}
+        ${jj.speed?`<span><i class="ti ti-bolt"></i> 分速 ${jj.speed}</span>`:''}
+        ${jj.reward?`<span><i class="ti ti-coin"></i> ¥${jj.reward.toLocaleString()}</span>`:''}
+        <span><i class="ti ti-calendar"></i> 売上月: ${escapeHtml(monthLabel(jj.accountMonth))}</span>
+      </div>
+      ${kanbanBadgesHtml}
+      ${links?`<div class="jc-links">${links}</div>`:''}`;
+
+    const editPart=isEditing?`
+      <div class="edit-form">
+        <div class="edit-grid">
+          <div><div class="edit-flabel">フォルダ名</div><input type="text" id="edit-folder-${realIdx}" value="${escapeHtml(jj.folder||'')}"></div>
+          <div><div class="edit-flabel">prprj名</div><input type="text" id="edit-prprj-${realIdx}" value="${escapeHtml(jj.prprj||'')}"></div>
+        </div>
+        <div class="edit-grid-3">
+          <div><div class="edit-flabel" style="color:var(--color-primary); font-weight:600;">稼働時間（h）</div><input type="number" step="0.01" id="edit-hours-${realIdx}" value="${jj.workHours ? jj.workHours : ''}"></div>
+          <div><div class="edit-flabel">報酬（円）</div><input type="number" id="edit-reward-${realIdx}" value="${jj.reward||''}"></div>
+          <div><div class="edit-flabel">尺（分）</div><input type="number" id="edit-len-${realIdx}" value="${jj.len||''}"></div>
+        </div>
+        <div class="edit-grid">
+          <div style="grid-column: span 2;">
+            <div class="edit-flabel" style="color:var(--color-accent); font-weight:600;"><i class="ti ti-arrows-left-right"></i> 売上計上月の補正</div>
+            <select id="edit-month-${realIdx}">
+              <option value="${mPrev}" ${jj.accountMonth===mPrev?'selected':''}>${escapeHtml(monthLabel(mPrev))}（前月に計上）</option>
+              <option value="${baseMonth}" ${jj.accountMonth===baseMonth?'selected':''}>${escapeHtml(monthLabel(baseMonth))}（当月に計上）</option>
+              <option value="${mNext}" ${jj.accountMonth===mNext?'selected':''}>${escapeHtml(monthLabel(mNext))}（次月に計上）</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-bottom:10px; margin-top:10px;"><div class="edit-flabel">依頼サイトURL</div><input type="url" id="edit-siteurl-${realIdx}" value="${escapeHtml(jj.siteUrl||'')}"></div>
+        <div class="edit-grid">
+          <div><div class="edit-flabel">元データURL</div><input type="url" id="edit-srcurl-${realIdx}" value="${escapeHtml(jj.srcUrl||'')}"></div>
+          <div><div class="edit-flabel">提出データURL</div><input type="url" id="edit-outurl-${realIdx}" value="${escapeHtml(jj.outUrl||'')}"></div>
+        </div>
+        <div class="edit-actions">
+          <button class="btn btn-primary hist-save-btn" data-idx="${realIdx}"><i class="ti ti-check"></i> 変更を保存</button>
+          <button class="btn hist-cancel-btn" data-idx="${realIdx}">キャンセル</button>
+        </div>
+      </div>`:''
+
+    return `<div class="job-card${isEditing?' editing':''}">${viewPart}${editPart}</div>`;
+  }).join('');
+
+  document.querySelectorAll('.hist-toggle-btn').forEach(el => {
+    el.addEventListener('click', () => toggleEdit(parseInt(el.dataset.idx)));
+  });
+  document.querySelectorAll('.hist-save-btn').forEach(el => {
+    el.addEventListener('click', () => saveEdit(parseInt(el.dataset.idx)));
+  });
+  document.querySelectorAll('.hist-cancel-btn').forEach(el => {
+    el.addEventListener('click', () => toggleEdit(parseInt(el.dataset.idx)));
+  });
+}
+
+function calcMonthStats(list){
+  const totalReward=list.reduce((a,j)=>a+(j.reward||0),0);
+  const totalHours=list.reduce((a,j)=>a+(j.workHours||0),0);
+  const wl=list.filter(j=>j.wage),sl=list.filter(j=>j.speed);
+  return{count:list.length,totalReward,totalHours,realWage:totalHours>0?Math.round(totalReward/totalHours):null,avgWage:wl.length?Math.round(wl.reduce((a,j)=>a+j.wage,0)/wl.length):null,avgSpeed:sl.length?(sl.reduce((a,j)=>a+j.speed,0)/sl.length).toFixed(1):null,names:list.map(j=>j.prprj||j.folder||'—')};
+}
+
+async function archiveMonth(key){
+  const list=jobs.filter(j=>j.accountMonth===key);
+  if(!list.length)return;
+  const stats=calcMonthStats(list);
+  const existing=archives.findIndex(a=>a.key===key);
+  const entry={key,...stats,archivedAt:new Date().toISOString()};
+  if(existing>=0)archives[existing]=entry;else archives.push(entry);
+  jobs=jobs.filter(j=>j.accountMonth!==key);
+  await saveJobs();
+  await saveArchives();
+  renderAll();
+  setStatus(`${monthLabel(key)} のデータを確定アーカイブへ移行しました。`);
+}
+
+function confirmArchive(key){
+  if(!confirm(`${monthLabel(key)} をアーカイブします。\n\nサマリデータを固定保存し、詳細なタイムラインや案件明細ログをクリアします。\nスプレッドシート等へのエクスポートは事前にお済ませください。\n\nこの処理は元に戻せません。`))return;
+  archiveMonth(key);
+}
+
+function renderMonthly(){
+  const el=document.getElementById('monthly-list');
+  const byMonth={};
+  
+  jobs.forEach(j=>{
+    const k = j.accountMonth || monthKey(new Date(j.startTime));
+    if(!byMonth[k])byMonth[k]=[];
+    byMonth[k].push(j);
+  });
+  
+  const activeKeys=Object.keys(byMonth).sort((a,b)=>b.localeCompare(a));
+  const archiveKeys=[...archives].sort((a,b)=>b.key.localeCompare(a.key));
+  let html='';
+  if(!activeKeys.length&&!archiveKeys.length){el.innerHTML='<div class="empty"><i class="ti ti-file-analytics"></i>集計対象のデータが存在しません</div>';return;}
+  
+  if(activeKeys.length){
+    html+='<div class="flabel" style="margin-bottom:8px;">現在進行中の月次データ</div>';
+    html+=activeKeys.map(key=>{
+      const s=calcMonthStats(byMonth[key]);
+      const isPast=key<monthKey(now());
+      return `<div class="month-card"><div class="mc-header"><span>${escapeHtml(monthLabel(key))}<span style="font-size:12px;font-weight:400;color:var(--text-sub);margin-left:8px">${s.count} 件の未処理</span></span>${isPast?`<button class="btn btn-sm btn-sm-primary month-arc-btn" data-key="${key}"><i class="ti ti-archive"></i> アーカイブ化</button>`:'<span class="jc-badge">当月</span>'}</div><div class="mc-body"><div class="mc-grid"><div class="mc-stat"><div class="ms-val">¥${s.totalReward.toLocaleString()}</div><div class="ms-label">期間報酬</div></div><div class="mc-stat"><div class="ms-val">${s.totalHours.toFixed(1)}h</div><div class="ms-label">稼働時間</div></div><div class="mc-stat"><div class="ms-val">${s.realWage?'¥'+s.realWage:'—'}</div><div class="ms-label">実質時給</div></div><div class="mc-stat"><div class="ms-val">${s.avgSpeed??'—'}</div><div class="ms-label">平均分速</div></div></div><div class="mc-jobs">${s.names.map(n=>`<span>${escapeHtml(n)}</span>`).join('')}</div>${isPast?`<div class="archive-note"><i class="ti ti-info-circle"></i>月を跨いだデータをアーカイブすると、容量最適化のため個別明細リンクはクリアされます。</div>`:''}</div></div>`;
+    }).join('');
+  }
+  if(archiveKeys.length){
+    html+=`<div class="flabel" style="margin:18px 0 8px;">確定・アーカイブ済み</div>`;
+    html+=archiveKeys.map(a=>`<div class="month-card"><div class="mc-header"><span>${escapeHtml(monthLabel(a.key))}<span style="font-size:12px;font-weight:400;color:var(--text-sub);margin-left:8px">${a.count}件</span></span><span class="archive-badge"><i class="ti ti-circle-check"></i> アーカイブ済</span></div><div class="mc-body"><div class="mc-grid"><div class="mc-stat"><div class="ms-val">¥${a.totalReward.toLocaleString()}</div><div class="ms-label">月間売上</div></div><div class="mc-stat"><div class="ms-val">${a.totalHours.toFixed(1)}h</div><div class="ms-label">総稼働</div></div><div class="mc-stat"><div class="ms-val">${a.realWage?'¥'+a.realWage:'—'}</div><div class="ms-label">確定時給</div></div><div class="mc-stat"><div class="ms-val">${a.avgSpeed??'—'}</div><div class="ms-label">平均分速</div></div></div><div class="mc-jobs">${(a.names||[]).map(n=>`<span>${escapeHtml(n)}</span>`).join('')}</div></div></div>`).join('');
+  }
+  el.innerHTML=html;
+
+  document.querySelectorAll('.month-arc-btn').forEach(el => {
+    el.addEventListener('click', () => confirmArchive(el.dataset.key));
+  });
+}
+
+function renderGrowth(){
+  const valid=jobs.filter(j=>growthMode==='wage'?j.wage:j.speed);
+  const canvas=document.getElementById('growthChart');
+  const emptyEl=document.getElementById('growth-empty');
+  if(!valid.length){canvas.style.display='none';emptyEl.style.display='block';return;}
+  canvas.style.display='block';emptyEl.style.display='none';
+  
+  const labels=valid.map((j, i)=>`#${i+1}`);
+  const data=valid.map(j=>growthMode==='wage'?j.wage:j.speed);
+  if(growthChart)growthChart.destroy();
+  
+  growthChart=new Chart(canvas,{
+    type:'line',
+    data:{
+      labels,
+      datasets:[{
+        label:growthMode==='wage'?'時給（円）':'分速（分/h）',
+        data,
+        borderColor:'#1d9e75',
+        backgroundColor:'rgba(29, 158, 117, 0.08)',
+        fill:true,
+        tension:0.25,
+        pointRadius:5,
+        pointHoverRadius:7,
+        pointBackgroundColor:'#1d9e75',
+        borderWidth:2
+      }]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        y:{grid:{color:'#2d3247'},ticks:{color:'#9ca3af',font:{size:11}}},
+        x:{grid:{display:false},ticks:{color:'#9ca3af',font:{size:10},maxRotation:30}}
+      }
+    }
+  });
+}
+
+function setGraph(mode){
+  growthMode=mode;
+  document.getElementById('graph-wage-btn').className = mode==='wage' ? 'btn btn-sm btn-sm-primary' : 'btn btn-sm';
+  document.getElementById('graph-speed-btn').className = mode==='speed' ? 'btn btn-sm btn-sm-primary' : 'btn btn-sm';
+  renderGrowth();
+}
+
+function populateMonthSelect(){
+  const sel=document.getElementById('export-month-select');
+  const byMonth={};
+  jobs.forEach(j=>{
+    const k = j.accountMonth || monthKey(new Date(j.startTime));
+    byMonth[k]=true;
+  });
+  const keys=Object.keys(byMonth).sort((a,b)=>b.localeCompare(a));
+  sel.innerHTML=keys.length?keys.map(k=>`<option value="${k}">${escapeHtml(monthLabel(k))}</option>`).join(''):'<option value="">選択可能な月がありません</option>';
+}
+
+function generateExport(type){
+  if(type==='detail'){
+    const key=document.getElementById('export-month-select').value;
+    if(!key){document.getElementById('export-box').textContent='エクスポート可能な案件がありません';return;}
+    const list=jobs.filter(j=>j.accountMonth===key);
+    if(!list.length){document.getElementById('export-box').textContent='該当月の詳細レコードがありません';return;}
+    const h='フォルダ名\tprprj名\t尺\t開始\t終了\t計上月\t作業時間(h)\t休憩\t報酬\t時給\t分速\t依頼URL\t元データ\t提出データ';
+    const rows=list.map(j=>{const s=j.startTime?new Date(j.startTime).toTimeString().slice(0,5):'';const e=j.endTime?new Date(j.endTime).toTimeString().slice(0,5):'';return[j.folder||'',j.prprj||'',j.len||'',s,e,monthLabel(j.accountMonth),j.workHours?j.workHours.toFixed(2):'',j.breakMs?fmtDiff(j.breakMs):'0',j.reward||'',j.wage||'',j.speed||'',j.siteUrl||'',j.srcUrl||'',j.outUrl||''].join('\t');});
+    document.getElementById('export-box').textContent=[h,...rows].join('\n');
+  }else{
+    if(!archives.length){document.getElementById('export-archive-box').textContent='アーカイブ化されたサマリログが見つかりません。';return;}
+    const h='年月\t件数\t月間報酬\t総作業時間(h)\t実質時給\t平均時給\t平均分速\t案件名';
+    const rows=[...archives].sort((a,b)=>a.key.localeCompare(b.key)).map(a=>[monthLabel(a.key),a.count,a.totalReward,a.totalHours.toFixed(2),a.realWage||'',a.avgWage||'',a.avgSpeed||'',(a.names||[]).join('・')].join('\t'));
+    document.getElementById('export-archive-box').textContent=[h,...rows].join('\n');
+  }
+}
+
+function copyExport(id){
+  const text = document.getElementById(id).textContent;
+  if(navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(()=>{
+      setStatus('クリップボードにコピーしました。CSV/スプレッドシートへペースト可能です。');
+    }).catch(()=>{
+      fallbackCopy(text);
+    });
+  } else {
+    fallbackCopy(text);
+  }
+}
+
+function fallbackCopy(text) {
+  try {
+    const ta=document.createElement('textarea');
+    ta.value=text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    const success = document.execCommand('copy');
+    ta.remove();
+    if(success) {
+      setStatus('クリップボードにコピーしました（フォールバック）');
+    } else {
+      setStatus('コピーに失敗しました。手動で選択して取得してください','var(--color-danger)');
+    }
+  } catch(e) {
+    setStatus('コピーに失敗しました。手動で選択して取得してください','var(--color-danger)');
+  }
+}
+
+async function clearAll(){
+  if(!confirm('すべてのローカルリポジトリデータ（明細および確定アーカイブ）を完全に削除します。よろしいですか？'))return;
+  jobs=[];
+  archives=[];
+  currentJob=null;
+  currentLogs=[];
+  breakStart=null;
+  initKanbanBlank();
+  
+  await saveJobs();
+  await saveArchives();
+  renderAll();
+  document.getElementById('active-banner').style.display='none';
+  setStatus('すべての環境データを消去しました（計測中タスクもクリア）','var(--color-danger)');
+}
+
+function setStatus(msg,color='var(--color-primary)'){
+  const el=document.getElementById('status-bar');
+  el.innerHTML=`<i class="ti ti-info-circle-filled"></i> ${msg}`;
+  el.style.color=color;
+}
+
+function renderAll(){renderHistory();renderGrowth();renderMonthly();populateMonthSelect();renderKanban();renderPresets();}
+
+function switchTab(tab){
+  ['record','history','growth','monthly','presets','export'].forEach(t=>{
+    document.getElementById('pane-'+t).style.display=t===tab?'block':'none';
+    document.getElementById('tab-'+t).classList.toggle('active',t===tab);
+    document.getElementById('tab-'+t).setAttribute('aria-selected', t===tab ? 'true' : 'false');
+  });
+  if(tab==='growth')renderGrowth();
+  if(tab==='monthly')renderMonthly();
+  if(tab==='presets')renderPresets();
+  if(tab==='export')populateMonthSelect();
+}
+
+// イベントリスナー初期化 (addEventListener)
+document.getElementById('tab-record').addEventListener('click', () => switchTab('record'));
+document.getElementById('tab-history').addEventListener('click', () => switchTab('history'));
+document.getElementById('tab-growth').addEventListener('click', () => switchTab('growth'));
+document.getElementById('tab-monthly').addEventListener('click', () => switchTab('monthly'));
+document.getElementById('tab-presets').addEventListener('click', () => switchTab('presets'));
+document.getElementById('tab-export').addEventListener('click', () => switchTab('export'));
+
+document.getElementById('btn-start-job').addEventListener('click', startJob);
+document.getElementById('btn-end-job').addEventListener('click', endJob);
+document.getElementById('btn-add-break').addEventListener('click', addBreak);
+document.getElementById('btn-kanban-add-custom').addEventListener('click', kanbanAddCustom);
+
+document.getElementById('graph-wage-btn').addEventListener('click', () => setGraph('wage'));
+document.getElementById('graph-speed-btn').addEventListener('click', () => setGraph('speed'));
+
+document.getElementById('btn-save-preset').addEventListener('click', saveOrUpdatePreset);
+document.getElementById('btn-manual-add').addEventListener('click', addJobManually);
+
+document.getElementById('btn-export-detail').addEventListener('click', () => generateExport('detail'));
+document.getElementById('btn-copy-detail').addEventListener('click', () => copyExport('export-box'));
+document.getElementById('btn-export-archive').addEventListener('click', () => generateExport('archive'));
+document.getElementById('btn-copy-archive').addEventListener('click', () => copyExport('export-archive-box'));
+document.getElementById('btn-clear-all').addEventListener('click', clearAll);
+
+loadData();
+</script>
+</body>
+</html>
