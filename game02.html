@@ -133,8 +133,8 @@ function playBGM(){
   bgmPlaying=true;
   
   const ac = getAC();
-  // ★前回の35%から、さらに半分（17.5%）の音量へ強制固定
-  bgmGainNode.gain.setValueAtTime(0.175, ac.currentTime); 
+  // ★音量1⃣
+  bgmGainNode.gain.setValueAtTime(0.5, ac.currentTime); 
   
   bgmAudio.play().catch(e => {
     console.log("自動再生ブロック:", e);
@@ -180,7 +180,7 @@ function sfxMiss(){
   setTimeout(()=>beep(280,0.15,'triangle',0.12),100);
 }
 
-// ミュート切り替えボタン
+// ミュート切り替えボタンと★音量2⃣
 function toggleMute(){
   muted=!muted;
   document.getElementById('muteBtn').textContent=muted?'🔇':'🔊';
@@ -190,7 +190,7 @@ function toggleMute(){
   } else {
     if(state==='playing') {
       playBGM();
-      if(bgmGainNode) bgmGainNode.gain.setValueAtTime(0.175, audioCtx.currentTime);
+      if(bgmGainNode) bgmGainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
     }
   }
 }
