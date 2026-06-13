@@ -2,26 +2,20 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HIKARI RUN!</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
   body {
     font-family: 'Segoe UI', 'Hiragino Sans', 'Meiryo', sans-serif;
     background: #08080f;
     color: #d0cce8;
-    width: 100vw;
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    touch-action: none;
   }
   body::before {
     content: '';
@@ -31,96 +25,36 @@
       radial-gradient(ellipse 50% 50% at 80% 70%, rgba(157,134,245,0.08) 0%, transparent 60%);
   }
 
-  /* ── 縦持ち警告オーバーレイ ── */
-  #portrait-guard {
-    display: none;
-    position: fixed; inset: 0; z-index: 9999;
-    background: #08080f;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-    text-align: center;
-    padding: 32px;
-  }
-  #portrait-guard .pg-icon { font-size: 52px; animation: rotate90 1.2s ease-in-out infinite alternate; }
-  @keyframes rotate90 {
-    from { transform: rotate(0deg); }
-    to   { transform: rotate(90deg); }
-  }
-  #portrait-guard p {
-    font-size: 15px;
-    letter-spacing: 2px;
-    color: #9d86f5;
-    line-height: 1.8;
-  }
-  /* スマホ縦持ちで表示 */
-  @media (max-aspect-ratio: 1/1) and (max-width: 768px) {
-    #portrait-guard { display: flex; }
-    .game-wrap { display: none; }
-  }
-
-  /* ── ゲーム本体 ── */
   .game-wrap {
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 16px;
     z-index: 1;
-    width: 100%;
-  }
-
-  /* タイトル＋スコア＋音ボタン を1行に並べる */
-  .top-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    max-width: 700px;
-    padding: 0 4px;
   }
 
   .game-title {
-    font-size: clamp(16px, 3vw, 28px);
+    font-size: 28px;
     font-weight: 700;
-    letter-spacing: 5px;
+    letter-spacing: 6px;
     background: linear-gradient(135deg, #c9b8ff 0%, #a78bff 50%, #c9b8ff 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    text-shadow: none;
   }
 
   .score-row {
     display: flex;
-    gap: 20px;
-    font-size: clamp(10px, 1.8vw, 12px);
+    gap: 32px;
+    font-size: 12px;
     letter-spacing: 2px;
     color: #9d86f5;
   }
   .score-row span { color: #c9b8ff; font-weight: 700; }
 
-  /* サウンドボタン */
-  #soundBtn {
-    background: rgba(108,92,231,0.18);
-    border: 1px solid rgba(108,92,231,0.4);
-    color: #c9b8ff;
-    font-size: 18px;
-    border-radius: 8px;
-    width: 36px; height: 36px;
-    cursor: pointer;
-    line-height: 1;
-    transition: background .2s, transform .1s;
-    flex-shrink: 0;
-  }
-  #soundBtn:hover  { background: rgba(108,92,231,0.35); transform: scale(1.08); }
-  #soundBtn:active { transform: scale(0.94); }
-
-  /* CANVAS ラッパー */
-  .canvas-wrap {
-    position: relative;
-  }
-
+  /* CANVAS */
   #gameCanvas {
     border: 0.5px solid rgba(108,92,231,0.4);
     border-radius: 12px;
@@ -131,7 +65,7 @@
   }
 
   .hint {
-    font-size: clamp(9px, 1.5vw, 11px);
+    font-size: 11px;
     color: #444;
     letter-spacing: 2px;
   }
@@ -145,65 +79,56 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 12px;
     background: rgba(8,8,15,0.75);
     backdrop-filter: blur(4px);
     border-radius: 12px;
     z-index: 10;
   }
   .overlay-title {
-    font-size: clamp(16px, 3vw, 22px);
+    font-size: 22px;
     font-weight: 700;
     letter-spacing: 4px;
     color: #c9b8ff;
   }
   .overlay-sub {
-    font-size: clamp(10px, 1.6vw, 12px);
+    font-size: 12px;
     color: #888;
     letter-spacing: 2px;
   }
   .overlay-score {
-    font-size: clamp(13px, 2.2vw, 16px);
+    font-size: 16px;
     color: #9d86f5;
     letter-spacing: 2px;
   }
   .start-btn {
-    padding: 10px 28px;
+    padding: 10px 32px;
     background: #6c5ce7;
     color: #fff;
     border: none;
     border-radius: 8px;
-    font-size: clamp(11px, 1.8vw, 13px);
+    font-size: 13px;
     letter-spacing: 2px;
     cursor: pointer;
     font-family: inherit;
     transition: background .2s, transform .15s;
-    margin-top: 6px;
+    margin-top: 8px;
   }
-  .start-btn:hover  { background: #7d6ef0; transform: translateY(-2px); }
-  .start-btn:active { transform: translateY(0); }
+  .start-btn:hover { background: #7d6ef0; transform: translateY(-2px); }
+
+  .canvas-wrap { position: relative; }
 </style>
 </head>
 <body>
 
-<!-- 縦持ち警告 -->
-<div id="portrait-guard">
-  <div class="pg-icon">📱</div>
-  <p>横向きにしてください<br><span style="font-size:12px;color:#666;">Please rotate your device</span></p>
-</div>
-
 <div class="game-wrap">
-  <!-- タイトル・スコア・音ボタンを1行に -->
-  <div class="top-bar">
-    <div class="game-title">HIKARI RUN!</div>
-    <div class="score-row">
-      <div>SCORE <span id="scoreDisplay">0</span></div>
-      <div>BEST <span id="bestDisplay">0</span></div>
-    </div>
-    <button id="soundBtn" title="サウンド ON/OFF">🔊</button>
+  <div class="game-title">HIKARI RUN!</div>
+  <div class="score-row">
+    <div>SCORE <span id="scoreDisplay">0</span></div>
+    <div>BEST <span id="bestDisplay">0</span></div>
   </div>
 
-  <div class="canvas-wrap" id="canvasWrap">
+  <div class="canvas-wrap">
     <canvas id="gameCanvas" width="700" height="200"></canvas>
     <div id="overlay">
       <div class="overlay-title">HIKARI RUN!</div>
@@ -212,7 +137,7 @@
     </div>
   </div>
 
-  <div class="hint">SPACE / TAP / CLICK でジャンプ　　ダブルジャンプもできるよ！</div>
+  <div class="hint">SPACE / TAP / CLICK でジャンプ  ダブルジャンプもできるよ！</div>
 </div>
 
 <script>
@@ -223,7 +148,7 @@ const GROUND = H - 40;
 
 // ── STATE ──
 let state = 'idle'; // idle | playing | dead
-let score = 0, best = 0, frame = 0, speed = 4, _spawnDist = 0;
+let score = 0, best = 0, frame = 0, speed = 4;
 
 // ── PLAYER ──
 const player = {
@@ -456,15 +381,9 @@ function update() {
 
   player.update();
 
-  // 障害物生成（ピクセル距離ベースで間隔を一定に保つ）
-  // speed が上がっても画面上の見かけの間隔が変わらないよう、
-  // 「何px進んだら次を出す」で管理する
-  _spawnDist += speed;
-  const spawnInterval = Math.max(220, 380 - Math.floor(score / 100) * 8);
-  if (_spawnDist >= spawnInterval) {
-    _spawnDist = 0;
-    spawnObstacle();
-  }
+  // 障害物生成
+  const interval = Math.max(60, 100 - Math.floor(score/100)*3);
+  if (frame % interval === 0) spawnObstacle();
 
   // 障害物更新
   obstacles.forEach(ob => ob.x -= speed);
@@ -510,13 +429,12 @@ function die() {
     <button class="start-btn" id="startBtn">もう一度 ▶</button>
   `;
   overlay.style.display = 'flex';
-  // { once: true } でリスナーが積み重なるバグを防ぐ
   document.getElementById('startBtn').addEventListener('click', startGame, { once: true });
 }
 
 function startGame() {
   state = 'playing';
-  frame = 0; score = 0; speed = 4; _spawnDist = 0;
+  frame = 0; score = 0; speed = 4;
   player.y = GROUND; player.vy = 0; player.jumps = 0;
   obstacles = [];
   particles = [];
@@ -546,15 +464,21 @@ document.getElementById('startBtn').addEventListener('click', startGame);
 
 // ── AUDIO ──
 let audioCtx = null;
-let bgmNodes = {};
+let bgmSourceNode = null;
+let bgmGainNode = null;
 let bgmRunning = false;
+
+// キャッシュ対策用のクエリ付きMP3オーディオインスタンス
+const bgmAudio = new Audio('game-m.mp3?v=' + Date.now());
+bgmAudio.loop = true;
+bgmAudio.crossOrigin = "anonymous";
 
 function getAudioCtx() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   return audioCtx;
 }
 
-// マスターゲイン
+// マスターゲイン（SE全体の調整用）
 function getMaster() {
   const ctx = getAudioCtx();
   if (!getMaster._node) {
@@ -588,9 +512,8 @@ function sfxJump(isDouble) {
 // ダイ音
 function sfxDie() {
   const ctx = getAudioCtx();
-  // 下降スウィープ
   playTone(80, 'sawtooth', 0.5, 0.5, 320, true);
-  // ノイズバースト
+  
   const bufSize = ctx.sampleRate * 0.15;
   const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
   const data = buf.getChannelData(0);
@@ -621,244 +544,68 @@ function sfxMilestone() {
   });
 }
 
-// ── PERCUSSION BGM ──
-// ゲームスピードに連動してBPMが上がるドラムループ
-// speed: 4(初期) → 4.5 → 5.0 … (score/150 ごとに +0.5)
-// BPM:   88(初期) → 100 → 112 → 124 → 136 → 148 → 160(上限)
-
-function getBpm() {
-  const level = Math.floor(score / 150); // speed段階と同じ
-  return Math.min(160, 88 + level * 12);
-}
-
-// ── 打楽器合成ユーティリティ ──
-function synthKick(t) {
+// ── MP3 BGM WEB AUDIO SYSTEM ──
+function initBgmRouting() {
   const ctx = getAudioCtx();
-  const osc = ctx.createOscillator();
-  const g   = ctx.createGain();
-  osc.type = 'sine';
-  osc.frequency.setValueAtTime(160, t);
-  osc.frequency.exponentialRampToValueAtTime(40, t + 0.08);
-  g.gain.setValueAtTime(0.9, t);
-  g.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
-  osc.connect(g); g.connect(getMaster());
-  osc.start(t); osc.stop(t + 0.25);
-}
-
-function synthSnare(t) {
-  const ctx = getAudioCtx();
-  // トーン成分
-  const osc = ctx.createOscillator();
-  const gOsc = ctx.createGain();
-  osc.type = 'triangle';
-  osc.frequency.value = 220;
-  gOsc.gain.setValueAtTime(0.3, t);
-  gOsc.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
-  osc.connect(gOsc); gOsc.connect(getMaster());
-  osc.start(t); osc.stop(t + 0.15);
-  // ノイズ成分
-  const bufLen = Math.floor(ctx.sampleRate * 0.15);
-  const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
-  const d = buf.getChannelData(0);
-  for (let i = 0; i < bufLen; i++) d[i] = Math.random() * 2 - 1;
-  const src = ctx.createBufferSource();
-  src.buffer = buf;
-  const gNoise = ctx.createGain();
-  gNoise.gain.setValueAtTime(0.5, t);
-  gNoise.gain.exponentialRampToValueAtTime(0.0001, t + 0.15);
-  src.connect(gNoise); gNoise.connect(getMaster());
-  src.start(t);
-}
-
-function synthHihat(t, open) {
-  const ctx = getAudioCtx();
-  const decay = open ? 0.18 : 0.06;
-  const bufLen = Math.floor(ctx.sampleRate * decay);
-  const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
-  const d = buf.getChannelData(0);
-  for (let i = 0; i < bufLen; i++) d[i] = Math.random() * 2 - 1;
-  const src = ctx.createBufferSource();
-  src.buffer = buf;
-  // バンドパスで金属感
-  const bpf = ctx.createBiquadFilter();
-  bpf.type = 'bandpass';
-  bpf.frequency.value = 8000;
-  bpf.Q.value = 0.8;
-  const g = ctx.createGain();
-  g.gain.setValueAtTime(open ? 0.25 : 0.18, t);
-  g.gain.exponentialRampToValueAtTime(0.0001, t + decay);
-  src.connect(bpf); bpf.connect(g); g.connect(getMaster());
-  src.start(t);
-}
-
-function synthRim(t) {
-  const ctx = getAudioCtx();
-  const osc = ctx.createOscillator();
-  const g   = ctx.createGain();
-  osc.type  = 'square';
-  osc.frequency.value = 1600;
-  g.gain.setValueAtTime(0.22, t);
-  g.gain.exponentialRampToValueAtTime(0.0001, t + 0.05);
-  osc.connect(g); g.connect(getMaster());
-  osc.start(t); osc.stop(t + 0.06);
-}
-
-// ── パターン定義（16ステップ, 1=hit） ──
-// level 0: 基本4つ打ち
-// level 1: 8分ハット追加
-// level 2: リムショット追加
-// level 3+: 細かいハット＋キック追加
-const PATTERNS = [
-  // [kick, snare, hihat(closed), hihat(open), rim]  各16step
-  { // lv0: シンプル4つ打ち
-    kick:   [1,0,0,0, 0,0,0,0, 1,0,0,0, 0,0,0,0],
-    snare:  [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
-    hh:     [1,0,0,0, 1,0,0,0, 1,0,0,0, 1,0,0,0],
-    hho:    [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,1,0,0],
-    rim:    [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0],
-  },
-  { // lv1: 8分ハット
-    kick:   [1,0,0,0, 0,0,0,0, 1,0,0,0, 0,0,0,0],
-    snare:  [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
-    hh:     [1,0,1,0, 1,0,1,0, 1,0,1,0, 1,0,1,0],
-    hho:    [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,1,0,0],
-    rim:    [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0],
-  },
-  { // lv2: リムショット追加＋キックシンコペ
-    kick:   [1,0,0,0, 0,0,1,0, 1,0,0,0, 0,1,0,0],
-    snare:  [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
-    hh:     [1,0,1,0, 1,0,1,0, 1,0,1,0, 1,0,1,0],
-    hho:    [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,1,0,0],
-    rim:    [0,0,0,0, 0,1,0,0, 0,0,0,0, 0,0,1,0],
-  },
-  { // lv3: 16分ハット＋キック強化
-    kick:   [1,0,0,0, 0,0,1,0, 1,0,0,1, 0,1,0,0],
-    snare:  [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
-    hh:     [1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1],
-    hho:    [0,0,0,0, 0,0,0,1, 0,0,0,0, 0,0,1,0],
-    rim:    [0,0,1,0, 0,1,0,0, 0,0,1,0, 0,1,0,1],
-  },
-  { // lv4+: 全力ビート
-    kick:   [1,0,1,0, 0,0,1,0, 1,0,0,1, 0,1,0,1],
-    snare:  [0,0,0,0, 1,0,0,1, 0,0,0,0, 1,0,1,0],
-    hh:     [1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1],
-    hho:    [0,0,0,1, 0,0,0,0, 0,1,0,0, 0,0,1,0],
-    rim:    [0,1,0,0, 1,0,1,0, 0,1,0,1, 0,0,1,0],
-  },
-];
-
-function getPattern() {
-  const level = Math.floor(score / 150);
-  return PATTERNS[Math.min(level, PATTERNS.length - 1)];
-}
-
-// ── スケジューラ ──
-let bgmLoopTimeout = null;
-const STEPS = 16;
-
-function scheduleBeat(startTime) {
-  if (!bgmRunning) return;
-  const ctx  = getAudioCtx();
-  const bpm  = getBpm();
-  const step = 60 / bpm / 4; // 16分音符1個の長さ(秒)
-  const pat  = getPattern();
-
-  for (let i = 0; i < STEPS; i++) {
-    const t = startTime + i * step;
-    if (pat.kick[i])  synthKick(t);
-    if (pat.snare[i]) synthSnare(t);
-    if (pat.hho[i])   synthHihat(t, true);
-    else if (pat.hh[i]) synthHihat(t, false);
-    if (pat.rim[i])   synthRim(t);
+  if (!bgmSourceNode) {
+    bgmSourceNode = ctx.createMediaElementSource(bgmAudio);
+    bgmGainNode = ctx.createGain();
+    
+    // MP3 ➔ 音量制限ノード ➔ スピーカーへとルーティング
+    bgmSourceNode.connect(bgmGainNode);
+    bgmGainNode.connect(ctx.destination);
   }
-
-  const loopLen = STEPS * step;
-  // 次ループをスコアに応じたBPMで再スケジュール（リアルタイム反映）
-  bgmLoopTimeout = setTimeout(() => {
-    if (bgmRunning) scheduleBeat(startTime + loopLen);
-  }, (loopLen - 0.05) * 1000);
 }
 
 function startBgm() {
   if (bgmRunning) return;
   bgmRunning = true;
+  
   const ctx = getAudioCtx();
   if (ctx.state === 'suspended') ctx.resume();
-  scheduleBeat(ctx.currentTime + 0.05);
+  
+  initBgmRouting();
+  
+  // ★スマホの爆音ガードを突破して音量を【0.75】に強制固定
+  bgmGainNode.gain.setValueAtTime(muted ? 0 : 0.75, ctx.currentTime);
+  
+  bgmAudio.play().catch(e => {
+    console.log("自動再生ブロック制限:", e);
+    bgmRunning = false;
+  });
 }
 
 function stopBgm() {
   bgmRunning = false;
-  if (bgmLoopTimeout) clearTimeout(bgmLoopTimeout);
+  bgmAudio.pause();
+  bgmAudio.currentTime = 0;
 }
 
-// ── サウンド ON/OFF ボタン（HTML内のボタンを使用） ──
+// ── 音ボタン UI ──
+const muteBtn = document.createElement('button');
+muteBtn.textContent = '🔊';
+muteBtn.title = 'ミュート切替';
+muteBtn.style.cssText = `
+  position:fixed; top:12px; right:12px; z-index:100;
+  background:rgba(108,92,231,0.2); border:1px solid rgba(108,92,231,0.4);
+  color:#c9b8ff; font-size:18px; border-radius:8px;
+  width:36px; height:36px; cursor:pointer; line-height:1;
+  transition:background .2s;
+`;
 let muted = false;
-const soundBtn = document.getElementById('soundBtn');
-soundBtn.addEventListener('click', e => {
+muteBtn.addEventListener('click', e => {
   e.stopPropagation();
   muted = !muted;
-  getMaster().gain.value = muted ? 0 : 0.25;
-  soundBtn.textContent = muted ? '🔇' : '🔊';
+  
+  // 効果音(マスター)とBGM(ゲインノード)の両方を一括制御
+  getMaster().gain.setValueAtTime(muted ? 0 : 0.25, getAudioCtx().currentTime);
+  if (bgmGainNode) {
+    bgmGainNode.gain.setValueAtTime(muted ? 0 : 0.75, getAudioCtx().currentTime);
+  }
+  
+  muteBtn.textContent = muted ? '🔇' : '🔊';
 });
-
-// ── キャンバス スケーリング（横画面スマホ対応） ──
-// transform:scale() はタッチ判定がズレるため、
-// canvas の CSS width/height を直接変更する方式を使う
-const CANVAS_W = 700, CANVAS_H = 200;
-const canvasWrap = document.getElementById('canvasWrap');
-
-function fitCanvas() {
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
-
-  // top-bar(実測) + gap + hint + 余白 を除いた高さ
-  const topBar = document.querySelector('.top-bar');
-  const hint   = document.querySelector('.hint');
-  const topH   = topBar ? topBar.getBoundingClientRect().height + 10 : 50;
-  const hintH  = hint   ? hint.getBoundingClientRect().height  + 10 : 24;
-  const availW = vw - 16;
-  const availH = vh - topH - hintH - 16;
-
-  const scale = Math.min(1, availW / CANVAS_W, availH / CANVAS_H);
-  const dispW = Math.floor(CANVAS_W * scale);
-  const dispH = Math.floor(CANVAS_H * scale);
-
-  // canvas の表示サイズだけ変える（論理サイズ=描画解像度は700×200のまま）
-  canvas.style.width  = dispW + 'px';
-  canvas.style.height = dispH + 'px';
-  canvasWrap.style.width  = dispW + 'px';
-  canvasWrap.style.height = dispH + 'px';
-}
-fitCanvas();
-window.addEventListener('resize', fitCanvas);
-// orientationchange は resize より早く発火することがあるので両方聴く
-window.addEventListener('orientationchange', () => setTimeout(fitCanvas, 150));
-
-// ── 横画面要求（Screen Orientation API） ──
-function requestLandscape() {
-  try {
-    const so = screen.orientation;
-    if (so && so.lock) so.lock('landscape').catch(() => {});
-  } catch(_) {}
-}
-
-function unlockOrientation() {
-  try {
-    const so = screen.orientation;
-    if (so && so.unlock) so.unlock();
-  } catch(_) {}
-}
-
-// ページを離れる・非表示になる全パターンでロック解除
-window.addEventListener('pagehide',       unlockOrientation);
-window.addEventListener('beforeunload',   unlockOrientation);
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'hidden') unlockOrientation();
-});
-// ページ読み込み時＋最初のタップ時に要求
-requestLandscape();
-document.addEventListener('touchstart', requestLandscape, { once: true });
+document.body.appendChild(muteBtn);
 
 // ── ジャンプ音パッチ ──
 const _origJump = player.jump.bind(player);
@@ -877,7 +624,6 @@ function loop() {
   update();
   draw();
 
-  // スコアマイルストーン
   if (state === 'playing') {
     const m = Math.floor(score / 100);
     if (m > 0 && m !== _lastMilestone) {
