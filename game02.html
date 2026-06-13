@@ -134,7 +134,7 @@ function playBGM(){
   
   const ac = getAC();
   // ★音量1⃣
-  bgmGainNode.gain.setValueAtTime(0.5, ac.currentTime); 
+  bgmGainNode.gain.setValueAtTime(0.75, ac.currentTime); 
   
   bgmAudio.play().catch(e => {
     console.log("自動再生ブロック:", e);
@@ -190,7 +190,7 @@ function toggleMute(){
   } else {
     if(state==='playing') {
       playBGM();
-      if(bgmGainNode) bgmGainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
+      if(bgmGainNode) bgmGainNode.gain.setValueAtTime(0.75, audioCtx.currentTime);
     }
   }
 }
