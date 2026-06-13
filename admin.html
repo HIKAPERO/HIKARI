@@ -189,6 +189,7 @@
     <button class="atab" onclick="switchATab('game')">🎮 ゲーム</button>
     <button class="atab" onclick="switchATab('members')">👤 メンバー</button>
     <button class="atab" onclick="switchATab('links')">🔗 リンク</button>
+    <button class="atab" onclick="switchATab('play')">🎮 ゲーム登録</button>
   </div>
 
   <!-- CHAT -->
@@ -385,6 +386,22 @@
       <button class="btn-add" onclick="addLink()">追加する</button>
     </div>
     <div id="linkAdminList"><div class="empty-note">読み込み中...</div></div>
+  </div>
+
+  <!-- PLAY -->
+  <div class="apanel" id="apanel-play">
+    <div class="sec-label">— MINI GAME MANAGEMENT</div>
+    <div class="sec-title">ミニゲーム管理</div>
+    <div class="card">
+      <div style="font-size:10px;letter-spacing:2px;color:var(--purple);margin-bottom:14px;">— ゲームを登録する</div>
+      <div class="field"><label>ゲームタイトル</label><input type="text" id="playTitle" placeholder="例：HIKARI RUN!"></div>
+      <div class="field"><label>一言説明</label><input type="text" id="playDesc" placeholder="例：ジャンプして障害物を避けよう！"></div>
+      <div class="field"><label>ファイル名（GitHubにアップしたHTMLファイル名）</label><input type="text" id="playFile" placeholder="例：game.html"></div>
+      <div class="field"><label>サムネイル画像URL（任意）</label><input type="text" id="playThumb" placeholder="例：https://hikapero.github.io/HIKARI/thumb_game.png"></div>
+      <div class="field"><label>表示順</label><input type="number" id="playOrder" value="1"></div>
+      <button class="btn-add" onclick="addPlay()">登録する</button>
+    </div>
+    <div id="playAdminList"><div class="empty-note">読み込み中...</div></div>
   </div>
 
 <!-- EDIT MODAL -->
@@ -645,6 +662,30 @@
         adminList.appendChild(row);
       });
     });
+    // ミニゲーム
+    onSnapshot(query(collection(db,"plays"), orderBy("order","asc")), snap => {
+      const list = document.getElementById("playAdminList");
+      list.innerHTML = "";
+      if (snap.empty) { list.innerHTML = '<div class="empty-note">まだゲームが登録されていません</div>'; return; }
+      snap.forEach(d => {
+        const g = d.data();
+        const div = document.createElement("div");
+        div.className = "card";
+        div.style.cssText = "display:flex;align-items:center;gap:12px;margin-bottom:10px;";
+        div.innerHTML = `
+          <div style="width:60px;height:40px;background:var(--bg3);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;">
+            ${g.thumbUrl ? `<img src="${esc(g.thumbUrl)}" style="width:100%;height:100%;object-fit:cover;">` : '<span style="font-size:20px;">🎮</span>'}
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:13px;color:var(--text);">${esc(g.title)}</div>
+            <div style="font-size:10px;color:var(--text-dim);">${esc(g.filename||"")} ｜ 順: ${g.order||1}</div>
+          </div>
+          <button class="btn-del">削除</button>`;
+        div.querySelector(".btn-del").addEventListener("click", () => window._delDoc("plays", d.id));
+        list.appendChild(div);
+      });
+    });
+
     // リンク
     onSnapshot(query(collection(db,"links"), orderBy("order","asc")), snap => {
       const list = document.getElementById("linkAdminList");
@@ -752,6 +793,19 @@
     ["gameName","gameIconUrl","gameUrl","gameComment"].forEach(id => document.getElementById(id).value="");
     document.getElementById("gameNojiru").checked = false;
     document.querySelectorAll("input[name=ngrating]").forEach(r => r.checked = false);
+    showToast("🎮 ゲームを登録しました！");
+  };
+
+  window.addPlay = async () => {
+    const title    = document.getElementById("playTitle").value.trim();
+    const desc     = document.getElementById("playDesc").value.trim();
+    const filename = document.getElementById("playFile").value.trim();
+    const thumbUrl = document.getElementById("playThumb").value.trim();
+    const order    = Number(document.getElementById("playOrder").value)||1;
+    if (!title || !filename) { alert("タイトルとファイル名は必須です"); return; }
+    await window._addDoc(window._collection(window._db,"plays"), { title, desc, filename, thumbUrl, order, createdAt:serverTimestamp() });
+    ["playTitle","playDesc","playFile","playThumb"].forEach(id => document.getElementById(id).value="");
+    document.getElementById("playOrder").value = "1";
     showToast("🎮 ゲームを登録しました！");
   };
 
@@ -1159,7 +1213,7 @@
     });
   }
   function switchATab(name) {
-    const names = ["chat","gallery","shop","diary","game","members","links"];
+    const names = ["chat","gallery","shop","diary","game","members","links","play"];
     document.querySelectorAll(".atab").forEach((t,i) => t.classList.toggle("active", names[i]===name));
     document.querySelectorAll(".apanel").forEach(p => p.classList.toggle("active", p.id==="apanel-"+name));
   }
