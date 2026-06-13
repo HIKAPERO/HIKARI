@@ -2,20 +2,26 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>HIKARI RUN!</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
+
   body {
     font-family: 'Segoe UI', 'Hiragino Sans', 'Meiryo', sans-serif;
     background: #08080f;
     color: #d0cce8;
-    min-height: 100vh;
+    width: 100vw;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    touch-action: none;
   }
   body::before {
     content: '';
@@ -25,36 +31,98 @@
       radial-gradient(ellipse 50% 50% at 80% 70%, rgba(157,134,245,0.08) 0%, transparent 60%);
   }
 
+  /* ── 縦持ち警告オーバーレイ ── */
+  #portrait-guard {
+    display: none;
+    position: fixed; inset: 0; z-index: 9999;
+    background: #08080f;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    text-align: center;
+    padding: 32px;
+  }
+  #portrait-guard .pg-icon { font-size: 52px; animation: rotate90 1.2s ease-in-out infinite alternate; }
+  @keyframes rotate90 {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(90deg); }
+  }
+  #portrait-guard p {
+    font-size: 15px;
+    letter-spacing: 2px;
+    color: #9d86f5;
+    line-height: 1.8;
+  }
+  /* スマホ縦持ちで表示 */
+  @media (max-aspect-ratio: 1/1) and (max-width: 768px) {
+    #portrait-guard { display: flex; }
+    .game-wrap { display: none; }
+  }
+
+  /* ── ゲーム本体 ── */
   .game-wrap {
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 16px;
+    gap: 10px;
     z-index: 1;
+    width: 100%;
+  }
+
+  /* タイトル＋スコア＋音ボタン を1行に並べる */
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 700px;
+    padding: 0 4px;
   }
 
   .game-title {
-    font-size: 28px;
+    font-size: clamp(16px, 3vw, 28px);
     font-weight: 700;
-    letter-spacing: 6px;
+    letter-spacing: 5px;
     background: linear-gradient(135deg, #c9b8ff 0%, #a78bff 50%, #c9b8ff 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    text-shadow: none;
   }
 
   .score-row {
     display: flex;
-    gap: 32px;
-    font-size: 12px;
+    gap: 20px;
+    font-size: clamp(10px, 1.8vw, 12px);
     letter-spacing: 2px;
     color: #9d86f5;
   }
   .score-row span { color: #c9b8ff; font-weight: 700; }
 
-  /* CANVAS */
+  /* サウンドボタン */
+  #soundBtn {
+    background: rgba(108,92,231,0.18);
+    border: 1px solid rgba(108,92,231,0.4);
+    color: #c9b8ff;
+    font-size: 18px;
+    border-radius: 8px;
+    width: 36px; height: 36px;
+    cursor: pointer;
+    line-height: 1;
+    transition: background .2s, transform .1s;
+    flex-shrink: 0;
+  }
+  #soundBtn:hover  { background: rgba(108,92,231,0.35); transform: scale(1.08); }
+  #soundBtn:active { transform: scale(0.94); }
+
+  /* CANVAS ラッパー：ビューポートに合わせて縮小 */
+  .canvas-wrap {
+    position: relative;
+    /* JS でインラインスタイルの transform: scale() を当てる */
+    transform-origin: top center;
+  }
+
   #gameCanvas {
     border: 0.5px solid rgba(108,92,231,0.4);
     border-radius: 12px;
@@ -65,7 +133,7 @@
   }
 
   .hint {
-    font-size: 11px;
+    font-size: clamp(9px, 1.5vw, 11px);
     color: #444;
     letter-spacing: 2px;
   }
@@ -79,56 +147,65 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 12px;
+    gap: 10px;
     background: rgba(8,8,15,0.75);
     backdrop-filter: blur(4px);
     border-radius: 12px;
     z-index: 10;
   }
   .overlay-title {
-    font-size: 22px;
+    font-size: clamp(16px, 3vw, 22px);
     font-weight: 700;
     letter-spacing: 4px;
     color: #c9b8ff;
   }
   .overlay-sub {
-    font-size: 12px;
+    font-size: clamp(10px, 1.6vw, 12px);
     color: #888;
     letter-spacing: 2px;
   }
   .overlay-score {
-    font-size: 16px;
+    font-size: clamp(13px, 2.2vw, 16px);
     color: #9d86f5;
     letter-spacing: 2px;
   }
   .start-btn {
-    padding: 10px 32px;
+    padding: 10px 28px;
     background: #6c5ce7;
     color: #fff;
     border: none;
     border-radius: 8px;
-    font-size: 13px;
+    font-size: clamp(11px, 1.8vw, 13px);
     letter-spacing: 2px;
     cursor: pointer;
     font-family: inherit;
     transition: background .2s, transform .15s;
-    margin-top: 8px;
+    margin-top: 6px;
   }
-  .start-btn:hover { background: #7d6ef0; transform: translateY(-2px); }
-
-  .canvas-wrap { position: relative; }
+  .start-btn:hover  { background: #7d6ef0; transform: translateY(-2px); }
+  .start-btn:active { transform: translateY(0); }
 </style>
 </head>
 <body>
 
+<!-- 縦持ち警告 -->
+<div id="portrait-guard">
+  <div class="pg-icon">📱</div>
+  <p>横向きにしてください<br><span style="font-size:12px;color:#666;">Please rotate your device</span></p>
+</div>
+
 <div class="game-wrap">
-  <div class="game-title">HIKARI RUN!</div>
-  <div class="score-row">
-    <div>SCORE <span id="scoreDisplay">0</span></div>
-    <div>BEST <span id="bestDisplay">0</span></div>
+  <!-- タイトル・スコア・音ボタンを1行に -->
+  <div class="top-bar">
+    <div class="game-title">HIKARI RUN!</div>
+    <div class="score-row">
+      <div>SCORE <span id="scoreDisplay">0</span></div>
+      <div>BEST <span id="bestDisplay">0</span></div>
+    </div>
+    <button id="soundBtn" title="サウンド ON/OFF">🔊</button>
   </div>
 
-  <div class="canvas-wrap">
+  <div class="canvas-wrap" id="canvasWrap">
     <canvas id="gameCanvas" width="700" height="200"></canvas>
     <div id="overlay">
       <div class="overlay-title">HIKARI RUN!</div>
@@ -711,25 +788,50 @@ function stopBgm() {
   if (bgmLoopTimeout) clearTimeout(bgmLoopTimeout);
 }
 
-// ── 音ボタン UI ──
-const muteBtn = document.createElement('button');
-muteBtn.textContent = '🔊';
-muteBtn.title = 'ミュート切替';
-muteBtn.style.cssText = `
-  position:fixed; top:12px; right:12px; z-index:100;
-  background:rgba(108,92,231,0.2); border:1px solid rgba(108,92,231,0.4);
-  color:#c9b8ff; font-size:18px; border-radius:8px;
-  width:36px; height:36px; cursor:pointer; line-height:1;
-  transition:background .2s;
-`;
+// ── サウンド ON/OFF ボタン（HTML内のボタンを使用） ──
 let muted = false;
-muteBtn.addEventListener('click', e => {
+const soundBtn = document.getElementById('soundBtn');
+soundBtn.addEventListener('click', e => {
   e.stopPropagation();
   muted = !muted;
   getMaster().gain.value = muted ? 0 : 0.25;
-  muteBtn.textContent = muted ? '🔇' : '🔊';
+  soundBtn.textContent = muted ? '🔇' : '🔊';
 });
-document.body.appendChild(muteBtn);
+
+// ── キャンバス スケーリング（横画面スマホ対応） ──
+const CANVAS_W = 700, CANVAS_H = 200;
+const canvasWrap = document.getElementById('canvasWrap');
+const TOP_BAR_H  = 60;  // top-bar + gap の概算高さ
+const HINT_H     = 28;  // hint の概算高さ
+const V_PADDING  = 24;  // 上下余白
+
+function fitCanvas() {
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const availW = vw - 16;
+  const availH = vh - TOP_BAR_H - HINT_H - V_PADDING;
+  const scale  = Math.min(1, availW / CANVAS_W, availH / CANVAS_H);
+  canvasWrap.style.transform = `scale(${scale})`;
+  // scale 後の実サイズを margin で吸収して中央揃え
+  const scaledH = CANVAS_H * scale;
+  const deltaH  = CANVAS_H - scaledH;
+  canvasWrap.style.marginBottom = `-${deltaH}px`;
+}
+fitCanvas();
+window.addEventListener('resize', fitCanvas);
+
+// ── 横画面要求（Screen Orientation API） ──
+function requestLandscape() {
+  try {
+    const so = screen.orientation || screen.mozOrientation || screen.msOrientation;
+    if (so && so.lock) {
+      so.lock('landscape').catch(() => {}); // 対応ブラウザのみ
+    }
+  } catch(_) {}
+}
+// ページ読み込み時＋最初のタップ時に要求
+requestLandscape();
+document.addEventListener('touchstart', requestLandscape, { once: true });
 
 // ── ジャンプ音パッチ ──
 const _origJump = player.jump.bind(player);
