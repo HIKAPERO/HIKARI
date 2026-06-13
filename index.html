@@ -115,15 +115,16 @@
   .upload-tile svg { width:24px; height:24px; }
 
   /* SHOP */
-  .shop-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+  .shop-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+  @media(max-width:500px){.shop-grid{grid-template-columns:repeat(2,1fr);}}
   @media(max-width:400px){.shop-grid{grid-template-columns:1fr;}}
-  .shop-card { background:var(--glass-bg); backdrop-filter:blur(8px); border:0.5px solid var(--glass-border); border-radius:10px; padding:16px; transition:border-color .2s; }
+  .shop-card { background:var(--glass-bg); backdrop-filter:blur(8px); border:0.5px solid var(--glass-border); border-radius:8px; padding:10px; transition:border-color .2s; }
   .shop-card:hover { border-color:var(--purple); }
-  .shop-thumb { width:100%; aspect-ratio:1.5; background:var(--bg3); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:32px; opacity:.45; margin-bottom:12px; overflow:hidden; }
-  .shop-thumb img { width:100%; height:100%; object-fit:cover; opacity:1; }
-  .shop-name { font-size:12px; color:var(--text); letter-spacing:1px; margin-bottom:6px; }
-  .shop-price { font-size:15px; font-weight:600; color:var(--purple-light); margin-bottom:12px; }
-  .shop-btn { width:100%; padding:8px; background:transparent; border:0.5px solid var(--border2); border-radius:5px; color:var(--purple-pale); font-size:10px; letter-spacing:1.5px; cursor:pointer; transition:background .2s; }
+  .shop-thumb { width:100%; aspect-ratio:1.5; background:var(--bg3); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:32px; margin-bottom:8px; overflow:hidden; }
+  .shop-thumb img { width:100%; height:100%; object-fit:cover; }
+  .shop-name { font-size:10px; color:var(--text); letter-spacing:0.5px; margin-bottom:4px; }
+  .shop-price { font-size:12px; font-weight:600; color:var(--purple-light); margin-bottom:8px; }
+  .shop-btn { width:100%; padding:5px 4px; font-size:9px; background:transparent; border:0.5px solid var(--border2); border-radius:5px; color:var(--purple-pale); font-size:10px; letter-spacing:1.5px; cursor:pointer; transition:background .2s; }
   .shop-btn:hover { background:var(--bg3); }
 
   /* ROBLOX */
@@ -296,22 +297,22 @@
 <div class="nav-links" id="navLinks">
     <a href="#" onclick="switchTab('about');return false;">ABOUT</a>
     <a href="#" onclick="switchTab('game');return false;">GAME</a>
-    <a href="#" onclick="switchTab('diary');return false;">DIARY</a>
+    <a href="#" onclick="switchTab('shop');return false;">SHOP</a>
     <a href="#" onclick="switchTab('gallery');return false;">GALLERY</a>
     <a href="#" onclick="switchTab('chat');return false;">CHAT</a>
+    <a href="#" onclick="switchTab('diary');return false;">DIARY</a>
     <a href="#" onclick="switchTab('links');return false;">LINKS</a>
-    <a href="#" onclick="switchTab('shop');return false;">SHOP</a>
   </div>
   <button class="hamburger" onclick="toggleMenu()" aria-label="メニュー">☰</button>
 </nav>
 <div class="mobile-menu" id="mobileMenu">
   <a href="#" onclick="switchTab('about');toggleMenu();return false;">ABOUT</a>
   <a href="#" onclick="switchTab('game');toggleMenu();return false;">GAME</a>
-  <a href="#" onclick="switchTab('diary');toggleMenu();return false;">DIARY</a>
+  <a href="#" onclick="switchTab('shop');toggleMenu();return false;">SHOP</a>
   <a href="#" onclick="switchTab('gallery');toggleMenu();return false;">GALLERY</a>
   <a href="#" onclick="switchTab('chat');toggleMenu();return false;">CHAT</a>
+  <a href="#" onclick="switchTab('diary');toggleMenu();return false;">DIARY</a>
   <a href="#" onclick="switchTab('links');toggleMenu();return false;">LINKS</a>
-  <a href="#" onclick="switchTab('shop');toggleMenu();return false;">SHOP</a>
 </div>
 
 <section class="hero">
@@ -332,11 +333,11 @@
   <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('about')">ABOUT</button>
     <button class="tab-btn" onclick="switchTab('game')">GAME</button>
-    <button class="tab-btn" onclick="switchTab('diary')">DIARY</button>
+    <button class="tab-btn" onclick="switchTab('shop')">SHOP</button>
     <button class="tab-btn" onclick="switchTab('gallery')">GALLERY</button>
     <button class="tab-btn" onclick="switchTab('chat')">CHAT</button>
+    <button class="tab-btn" onclick="switchTab('diary')">DIARY</button>
     <button class="tab-btn" onclick="switchTab('links')">LINKS</button>
-    <button class="tab-btn" onclick="switchTab('shop')">SHOP</button>
   </div>
 </div>
 
@@ -438,21 +439,6 @@
 <div class="panel active" id="panel-about">
   <div class="section">
     <div class="sec-label">— ABOUT</div>
-    <div style="background:var(--glass-bg);backdrop-filter:blur(8px);border:0.5px solid var(--glass-border);border-radius:12px;padding:22px 24px;margin-bottom:20px;">
-      <div style="font-size:16px;font-weight:700;color:var(--purple-pale);letter-spacing:2px;margin-bottom:14px;">HIKARIとぺろちゃんについて</div>
-      <p style="font-size:13px;color:var(--text);line-height:1.9;margin-bottom:12px;">
-        はじめまして！HIKARIとぺろちゃん（ママ）です。
-      </p>
-      <p style="font-size:13px;color:var(--text);line-height:1.9;margin-bottom:12px;">
-        HIKARIは絵を描くのとゲームが大好きな小学生。ロブロックスで出会ったフレンドたちに自分のことを知ってほしくて、このサイトを作りました。「絵がうまい」ってママに褒められるのが一番うれしい！
-      </p>
-      <p style="font-size:13px;color:var(--text);line-height:1.9;margin-bottom:12px;">
-        ぺろちゃんはHIKARIのママ。仕事で忙しいけど、カフェで一緒に絵を描いたり、カラオケ・買い物・洋服選びをするのが親子の楽しい時間です。マイクラとかゲームも一緒にやります。
-      </p>
-      <p style="font-size:13px;color:var(--purple-pale);line-height:1.9;">
-        このサイトにはHIKARIの作品やゲームのこと、日常のことをのせていくよ。気軽にチャットしてね！💜
-      </p>
-    </div>
     <div id="memberList"><div style="color:var(--text-dim);font-size:12px;text-align:center;padding:24px;">読み込み中...</div></div>
   </div>
 
@@ -827,7 +813,7 @@
     }
   })();
 
-  const TABS = ['about','game','diary','gallery','chat','links','shop'];
+  const TABS = ['about','chat','diary','game','links','gallery','shop'];
   function switchSubTab(panel, name) {
     const container = document.getElementById('panel-' + panel);
     container.querySelectorAll('.sub-tab').forEach((t,i) => {
