@@ -50,11 +50,9 @@
   nav { position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; height: 54px; background: var(--nav-bg); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); border-bottom: 0.5px solid var(--glass-border); box-shadow: 0 1px 0 var(--glass-shine), 0 4px 20px rgba(108,92,231,0.08); transition: background .4s; }
   .nav-logo { font-size: 17px; font-weight: 600; letter-spacing: 4px; color: var(--purple-pale); text-decoration: none; }
   .nav-links { display: none; }
+  .mobile-menu { display: none !important; }
   .hamburger { background: none; border: none; color: var(--text-muted); font-size: 22px; cursor: pointer; padding: 4px 6px; line-height: 1; transition: color .2s; }
   .hamburger:hover { color: var(--purple-pale); }
-  .mobile-menu { display: none !important; }
-
-  /* ── ドロワーメニュー ── */
   .nav-drawer {
     position: fixed; top: 54px; right: 0; bottom: 0;
     width: min(280px, 78vw);
@@ -920,6 +918,8 @@
     document.getElementById('navOverlay').classList.remove('open');
     document.getElementById('hamburgerBtn').textContent = '☰';
   }
+
+  // ── 絵文字ピッカー ──
   const EMOJI_DATA = [
     { cat:'スマイリー', emojis:['😀','😁','😂','🤣','😃','😄','😅','😆','😇','😉','😊','🙂','🙃','😋','😌','😍','🥰','😎','🤩','😏','😐','😑','😶','😒','🙄','😳','🥺','😢','😭','😤','😠','😡','🤬','😈','👿','💀','😺','😸','😹','😻','😼','😽','🙀','😿','😾'] },
     { cat:'動物', emojis:['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐮','🐷','🐸','🐙','🐵','🙈','🙉','🙊','🐔','🐧','🐦','🦆','🦉','🦇','🐺','🐗','🐴','🦄','🐝','🐛','🦋','🐌','🐞','🐜','🦟','🐢','🐍','🦎','🦕','🦖','🐬','🐳','🐋','🦈','🐊','🦓','🦍','🦧','🦣','🐘','🦛','🦏','🐪','🐫','🦒','🦘','🦬','🐃','🐂','🐄','🐎','🐖','🐏','🐑','🦙','🐐','🦌','🐕','🐩','🦮','🐈','🐓','🦃','🦤','🦚','🦜','🦢','🕊','🐇','🦝','🦨','🦡','🦫','🦦','🦥','🐁','🐀','🐿','🦔'] },
@@ -987,12 +987,6 @@
   document.querySelectorAll('.modal-backdrop').forEach(m => {
     m.addEventListener('click', e => { if(e.target===m) m.classList.remove('open'); });
   });
-
-  (function() {
-    const saved = localStorage.getItem('hikari-theme');
-    const btn = document.getElementById('themeToggle');
-    if (saved === 'light' && btn) btn.textContent = '🌙';
-  })();
 </script>
 </body>
 </html>
