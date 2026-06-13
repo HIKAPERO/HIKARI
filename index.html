@@ -654,7 +654,7 @@
         ${thumbHtml}
         <div class="shop-name">${esc(data.name)}</div>
         <div class="shop-price">¥${Number(data.price).toLocaleString()}</div>
-        ${data.desc ? `<div style="font-size:11px;color:var(--text-muted);margin-bottom:10px;line-height:1.5;">${esc(data.desc)}</div>` : ""}
+
         ${btnHtml}`;
       grid.appendChild(card);
     });
