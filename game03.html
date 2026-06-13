@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>🚀 NEO GLADIUS - FULLSCREEN UPDATE</title>
+<title>🚀 NEO GLADIUS - PERFECT MOBILE UPDATE</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -19,7 +19,6 @@
       radial-gradient(ellipse 60% 40% at 20% 20%, rgba(108,92,231,0.12) 0%, transparent 60%),
       radial-gradient(ellipse 50% 50% at 80% 70%, rgba(157,134,245,0.08) 0%, transparent 60%);
   }
-  /* フルスクリーン時にゲーム全体を綺麗に収めるためのコンテナ */
   .game-container {
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
   }
@@ -66,7 +65,6 @@
   .overlay-title { font-size: 22px; font-weight: 700; letter-spacing: 4px; color: #c9b8ff; }
   .overlay-sub { font-size: 11px; color: #777; letter-spacing: 1px; text-align: center; line-height: 1.6; }
   
-  /* ボタン配置用のコンテナ */
   .btn-group { display: flex; gap: 16px; margin-top: 8px; }
   .start-btn {
     padding: 10px 24px; background: #6c5ce7; color: #fff; border: none; border-radius: 8px;
@@ -75,6 +73,10 @@
   .start-btn:hover { background: #7d6ef0; transform: translateY(-2px); }
   .mobile-fs-btn { background: linear-gradient(135deg, #00b4db, #0083b0); }
   .mobile-fs-btn:hover { background: linear-gradient(135deg, #00c6ff, #0072ff); }
+  
+  /* ★ 新設：ゲーム終了ボタン用のスタイル */
+  .exit-btn { background: linear-gradient(135deg, #cc2b43, #a81c30); border: 0.5px solid #ff4466; }
+  .exit-btn:hover { background: linear-gradient(135deg, #e03b58, #b8233a); }
 
   .hint { font-size: 10px; color: #444; letter-spacing: 1px; text-align: center; margin-top: 2px; }
 </style>
@@ -479,11 +481,8 @@ function update() {
     spawnExplosion(player.x + player.w/2, player.y + player.h/2, '#00ffff', 25);
     sfxExplodeBig();
     
-    // ★ フルスクリーンを解除するバグ防止安全処理
-    if (document.fullscreenElement) {
-      document.exitFullscreen().catch(e => console.log(e));
-    }
-    
+    // ★【バグ修正】ゲームオーバー直後にフルスクリーンを「自動解除しない」ように変更！
+    // 連続プレイのために横画面＆全画面を維持したままオーバーレイへ移行します。
     setTimeout(() => showOverlay('gameover'), 1000);
   };
 
@@ -626,20 +625,21 @@ function draw() {
   }
 }
 
+// ── オーバレイ制御 ──
 function showOverlay(type) {
   const ov = document.getElementById('overlay');
   ov.style.display = 'flex';
   if (type === 'gameover') {
+    // ★【変更】再出撃ボタンのとなりに、フルスクリーンを解除して縦画面に戻る「基地へ帰還（終了）」ボタンを新設！
     ov.innerHTML = `
       <div class="overlay-title">GAME OVER</div>
       <div class="overlay-score" style="color:#ff3366;">SCORE: ${score}</div>
       <div class="btn-group">
         <button class="start-btn" onclick="startGame()">再出撃 🚀</button>
-        <button class="start-btn mobile-fs-btn" id="fullScreenBtnOver" style="display:none;" onclick="startWithFullscreen()">📱 全画面で再出撃</button>
+        <button class="start-btn exit-btn" onclick="exitGameAndCloseFullscreen()">基地へ帰還 🚪</button>
       </div>
     `;
     if (score > best) { best = score; document.getElementById('bestDisplay').textContent = best; }
-    initDynamicControlsGuide(); // ゲームオーバー時もボタンの出し分けを再判定
   }
 }
 
@@ -652,16 +652,38 @@ function startGame() {
   startAudioBGM();
 }
 
-// ── ★【新規追加】スマホ専用の強制フルスクリーン＆横向きロック起動処理 ──
+// ★【新設】ゲーム終了（基地へ帰還）ボタンを押したときのフルスクリーン完全解除処理
+function exitGameAndCloseFullscreen() {
+  if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) {
+    const exitFS = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
+    if (exitFS) {
+      exitFS.call(document).catch(err => console.log(err));
+    }
+  }
+  // 最初の画面（初期状態）に戻す
+  const ov = document.getElementById('overlay');
+  ov.innerHTML = `
+    <div class="overlay-title">NEO GLADIUS</div>
+    <div class="overlay-sub">
+      スコア1500に到達すると巨大戦艦『ビッグコア』が襲来！<br>
+      スマホの方は「全画面でプレイ」を押すと、アドレスバーのない横画面無双モードに突入します！
+    </div>
+    <div class="btn-group">
+      <button class="start-btn" id="startBtn" onclick="startGame()">通常スタート ▶</button>
+      <button class="start-btn mobile-fs-btn" id="fullScreenBtn" onclick="startWithFullscreen()">📱 全画面でプレイ</button>
+    </div>
+  `;
+  state = 'idle';
+  initDynamicControlsGuide();
+}
+
+// ── 強制フルスクリーン＆横向きロック起動処理 ──
 function startWithFullscreen() {
   const container = document.getElementById('stageContainer');
-  
-  // 1. 各種スマホブラウザのFullscreen APIを呼び出す（アドレスバーを消す）
   const requestFS = container.requestFullscreen || container.webkitRequestFullscreen || container.mozRequestFullScreen || container.msRequestFullscreen;
   
   if (requestFS) {
     requestFS.call(container).then(() => {
-      // 2. 画面を「横向き（Landscape）」に強制ロックする
       if (screen.orientation && screen.orientation.lock) {
         screen.orientation.lock('landscape').catch(err => console.log("向きロック制限:", err));
       }
@@ -669,8 +691,6 @@ function startWithFullscreen() {
       console.log("フルスクリーン拒否:", err);
     });
   }
-  
-  // そのままゲームをロード開始
   startGame();
 }
 
@@ -901,17 +921,14 @@ function roundRect(ctx, x, y, w, h, r) {
   ctx.quadraticCurveTo(x, y, x+r, y); ctx.closePath();
 }
 
-// ── ★ PC/スマホの環境検知・ボタン出し分け・ガイド切り替え処理 ──
 function initDynamicControlsGuide() {
   const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
   
   if (isTouch) {
-    // スマホ用表示への最適化
     document.getElementById('guideMove').textContent = "左画面スワイプ (仮想スティック)";
     document.getElementById('guideShoot').textContent = "右下 [SHOT] ボタン長押し";
     document.getElementById('guidePower').textContent = "下部メーターを直接タップ";
     
-    // 通常ボタンを隠し、シアン色の「全画面でプレイ」ボタンを出現させる
     if(document.getElementById('fullScreenBtn')) document.getElementById('fullScreenBtn').style.display = "inline-block";
     if(document.getElementById('fullScreenBtnOver')) document.getElementById('fullScreenBtnOver').style.display = "inline-block";
   } else {
