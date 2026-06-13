@@ -218,6 +218,7 @@ const player = {
       this.y = WATER_Y - this.h;
       this.vy = 0;
       this.vx = 0;
+      if (this.drowning === 0) sfxSplash();
       this.drowning++;
       if (this.drowning > 80) {
         this.loseLife();
@@ -641,6 +642,7 @@ class Enemy {
     this.state = 'dead';
     score += 500;
     updateHUD();
+    sfxStomp();
     spawnParticles(this.x + this.w/2, this.y + this.h/2, '#fffde0', 10);
   }
 }
@@ -664,7 +666,7 @@ class Crab {
   update() {
     this.timer++;
     if (!this.active) {
-      if (this.timer > this.waitTimer) { this.active = true; this.y = WATER_Y + 4; }
+      if (this.timer > this.waitTimer) { this.active = true; this.y = WATER_Y + 4; sfxCrabJump(); }
       return;
     }
     this.vy += 0.32;
@@ -837,6 +839,7 @@ function showOverlay(type) {
       ${isNewBest && score > 0 ? '<div style="font-size:12px;color:#ffe08a;letter-spacing:2px;">★ NEW BEST!</div>' : ''}
       <button class="start-btn" id="startBtn" style="background:#44dd88;color:#002200;">もう一度あそぶ ▶</button>`;
   } else if (type === 'levelup') {
+    sfxLevelUp();
     overlay.innerHTML = `
       <div class="overlay-title" style="color:#44dd88;">LEVEL ${level}!</div>
       <div class="overlay-sub">次のステージへ！</div>`;
@@ -851,45 +854,139 @@ function showOverlay(type) {
 let audioCtx = null;
 let bgmNodes = null; // BGMのノード群を管理
 let bgmPlaying = false;
+let masterGain = null;
 
 function getAudioCtx() {
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    masterGain = audioCtx.createGain();
+    masterGain.gain.value = 0.75;
+    masterGain.connect(audioCtx.destination);
+  }
   return audioCtx;
 }
 
+function getMaster() {
+  getAudioCtx();
+  return masterGain;
+}
+
 // 短い音を鳴らすユーティリティ
-function playTone({ freq = 440, type = 'square', gain = 0.18, duration = 0.12, attack = 0.005, decay = 0.08, freqEnd = null } = {}) {
+function playTone({ freq = 440, type = 'square', gain = 0.18, duration = 0.12, attack = 0.005, decay = 0.08, freqEnd = null, startTime = null } = {}) {
   const ac = getAudioCtx();
+  const t = startTime !== null ? startTime : ac.currentTime;
   const osc = ac.createOscillator();
   const env = ac.createGain();
-  osc.connect(env); env.connect(ac.destination);
+  osc.connect(env); env.connect(getMaster());
   osc.type = type;
-  osc.frequency.setValueAtTime(freq, ac.currentTime);
-  if (freqEnd) osc.frequency.exponentialRampToValueAtTime(freqEnd, ac.currentTime + duration);
-  env.gain.setValueAtTime(0, ac.currentTime);
-  env.gain.linearRampToValueAtTime(gain, ac.currentTime + attack);
-  env.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + attack + decay);
-  osc.start(ac.currentTime);
-  osc.stop(ac.currentTime + duration);
+  osc.frequency.setValueAtTime(freq, t);
+  if (freqEnd) osc.frequency.exponentialRampToValueAtTime(freqEnd, t + duration);
+  env.gain.setValueAtTime(0, t);
+  env.gain.linearRampToValueAtTime(gain, t + attack);
+  env.gain.exponentialRampToValueAtTime(0.001, t + attack + decay);
+  osc.start(t);
+  osc.stop(t + duration + 0.01);
+  return osc;
+}
+
+// ホワイトノイズバースト（打撃・爆発感）
+function playNoise({ gain = 0.15, duration = 0.08, attack = 0.001, startTime = null } = {}) {
+  const ac = getAudioCtx();
+  const t = startTime !== null ? startTime : ac.currentTime;
+  const bufLen = Math.ceil(ac.sampleRate * duration);
+  const buf = ac.createBuffer(1, bufLen, ac.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < bufLen; i++) data[i] = Math.random() * 2 - 1;
+  const src = ac.createBufferSource();
+  src.buffer = buf;
+  const env = ac.createGain();
+  const filt = ac.createBiquadFilter();
+  filt.type = 'bandpass';
+  filt.frequency.value = 1200;
+  filt.Q.value = 0.8;
+  src.connect(filt); filt.connect(env); env.connect(getMaster());
+  env.gain.setValueAtTime(0, t);
+  env.gain.linearRampToValueAtTime(gain, t + attack);
+  env.gain.exponentialRampToValueAtTime(0.001, t + duration);
+  src.start(t);
+  src.stop(t + duration + 0.01);
 }
 
 // フラップ音（軽くて高い「ぱっ」）
 function sfxFlap() {
-  playTone({ freq: 520, freqEnd: 680, type: 'triangle', gain: 0.12, duration: 0.08, attack: 0.002, decay: 0.06 });
+  playTone({ freq: 520, freqEnd: 720, type: 'triangle', gain: 0.11, duration: 0.09, attack: 0.002, decay: 0.07 });
+  playNoise({ gain: 0.05, duration: 0.05, attack: 0.001 });
 }
 
-// ヒット音（敵に当たった・風船割れ）
+// ヒット音（敵の風船割れ：パン！）
 function sfxHit() {
-  const ac = getAudioCtx();
-  // ポン！という破裂音
-  playTone({ freq: 320, freqEnd: 80, type: 'square', gain: 0.22, duration: 0.15, attack: 0.002, decay: 0.12 });
-  setTimeout(() => playTone({ freq: 180, freqEnd: 60, type: 'sawtooth', gain: 0.14, duration: 0.12, attack: 0.001, decay: 0.1 }), 40);
+  playNoise({ gain: 0.28, duration: 0.10, attack: 0.001 });
+  playTone({ freq: 340, freqEnd: 90, type: 'square', gain: 0.20, duration: 0.15, attack: 0.002, decay: 0.12 });
+  setTimeout(() => playTone({ freq: 200, freqEnd: 70, type: 'sawtooth', gain: 0.12, duration: 0.12, attack: 0.001, decay: 0.10 }), 35);
+}
+
+// 卵踏みつけ音（ぽよん！）
+function sfxStomp() {
+  playTone({ freq: 200, freqEnd: 600, type: 'sine', gain: 0.25, duration: 0.12, attack: 0.002, decay: 0.10 });
+  setTimeout(() => playTone({ freq: 900, freqEnd: 400, type: 'triangle', gain: 0.18, duration: 0.10, attack: 0.001, decay: 0.08 }), 30);
 }
 
 // ミス音（落下・やられ）
 function sfxMiss() {
-  playTone({ freq: 440, freqEnd: 160, type: 'sawtooth', gain: 0.2, duration: 0.3, attack: 0.005, decay: 0.28 });
-  setTimeout(() => playTone({ freq: 220, freqEnd: 80, type: 'sawtooth', gain: 0.15, duration: 0.3, attack: 0.005, decay: 0.28 }), 120);
+  playTone({ freq: 460, freqEnd: 150, type: 'sawtooth', gain: 0.20, duration: 0.35, attack: 0.005, decay: 0.30 });
+  setTimeout(() => playTone({ freq: 230, freqEnd: 75, type: 'sawtooth', gain: 0.14, duration: 0.30, attack: 0.005, decay: 0.28 }), 130);
+  playNoise({ gain: 0.12, duration: 0.18, attack: 0.002 });
+}
+
+// 水没音（ぽちゃん！）
+function sfxSplash() {
+  playTone({ freq: 380, freqEnd: 120, type: 'sine', gain: 0.22, duration: 0.18, attack: 0.003, decay: 0.15 });
+  playNoise({ gain: 0.18, duration: 0.14, attack: 0.002 });
+  setTimeout(() => playTone({ freq: 160, freqEnd: 60, type: 'sine', gain: 0.14, duration: 0.20, attack: 0.01, decay: 0.18 }), 60);
+}
+
+// カニジャンプ音（にゅるっ）
+function sfxCrabJump() {
+  playTone({ freq: 150, freqEnd: 300, type: 'sine', gain: 0.12, duration: 0.10, attack: 0.005, decay: 0.08 });
+}
+
+// 嵐開始音（ゴォォ…）
+function sfxStorm() {
+  const ac = getAudioCtx();
+  const bufLen = Math.ceil(ac.sampleRate * 1.0);
+  const buf = ac.createBuffer(1, bufLen, ac.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < bufLen; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / bufLen);
+  const src = ac.createBufferSource();
+  src.buffer = buf;
+  const filt = ac.createBiquadFilter();
+  filt.type = 'lowpass';
+  filt.frequency.value = 500;
+  const env = ac.createGain();
+  src.connect(filt); filt.connect(env); env.connect(getMaster());
+  env.gain.setValueAtTime(0, ac.currentTime);
+  env.gain.linearRampToValueAtTime(0.22, ac.currentTime + 0.1);
+  env.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 1.0);
+  src.start(ac.currentTime);
+  // 雷のような高音スパーク
+  [0.05, 0.3, 0.6].forEach(delay => {
+    setTimeout(() => playTone({ freq: 1200, freqEnd: 200, type: 'sawtooth', gain: 0.15, duration: 0.12, attack: 0.001, decay: 0.10 }), delay * 1000);
+  });
+}
+
+// レベルアップ音（上昇するファンファーレ）
+function sfxLevelUp() {
+  const ac = getAudioCtx();
+  [[392,0],[523,0.12],[659,0.24],[784,0.36]].forEach(([freq, delay]) => {
+    setTimeout(() => playTone({ freq, type: 'triangle', gain: 0.20, duration: 0.18, attack: 0.008, decay: 0.15 }), delay * 1000);
+  });
+}
+
+// ゲームスタートジングル
+function sfxStart() {
+  [[523,0],[659,0.1],[784,0.2]].forEach(([freq, delay]) => {
+    setTimeout(() => playTone({ freq, type: 'triangle', gain: 0.18, duration: 0.14, attack: 0.005, decay: 0.12 }), delay * 1000);
+  });
 }
 
 // ゲームクリア音（明るいファンファーレ）
@@ -904,21 +1001,20 @@ function sfxClear() {
     { freq: 1319, t: 0.82 },// E6
   ];
   melody.forEach(({ freq, t }) => {
-    setTimeout(() => playTone({
-      freq, type: 'triangle', gain: 0.22, duration: 0.18, attack: 0.01, decay: 0.15
-    }), t * 1000);
+    setTimeout(() => {
+      playTone({ freq, type: 'triangle', gain: 0.22, duration: 0.18, attack: 0.01, decay: 0.15 });
+      playNoise({ gain: 0.04, duration: 0.04, attack: 0.001 });
+    }, t * 1000);
   });
-  // 和音で重ねる
   setTimeout(() => {
-    playTone({ freq: 1047, type: 'sine', gain: 0.15, duration: 0.6, attack: 0.02, decay: 0.5 });
-    playTone({ freq: 1319, type: 'sine', gain: 0.12, duration: 0.6, attack: 0.02, decay: 0.5 });
-    playTone({ freq: 1568, type: 'sine', gain: 0.10, duration: 0.6, attack: 0.02, decay: 0.5 });
+    playTone({ freq: 1047, type: 'sine', gain: 0.15, duration: 0.8, attack: 0.02, decay: 0.7 });
+    playTone({ freq: 1319, type: 'sine', gain: 0.12, duration: 0.8, attack: 0.02, decay: 0.7 });
+    playTone({ freq: 1568, type: 'sine', gain: 0.10, duration: 0.8, attack: 0.02, decay: 0.7 });
   }, 950);
 }
 
-// ── BGM（ループするかわいいメロディー）──
+// ── BGM（豊かなループメロディー）──
 const BGM_MELODY = [
-  // 音程(Hz), 長さ(拍), 種類
   [523,1],[587,0.5],[659,0.5],[698,1],[784,1],
   [784,0.5],[698,0.5],[659,1],[587,1],
   [523,1],[659,0.5],[784,0.5],[880,1],[784,1],
@@ -930,6 +1026,19 @@ const BGM_MELODY = [
   [784,0.5],[698,0.5],[659,1],[523,2],
 ];
 
+// 対旋律（ハーモニー）
+const BGM_HARMONY = [
+  [659,1],[698,0.5],[784,0.5],[880,1],[1047,1],
+  [1047,0.5],[880,0.5],[784,1],[698,1],
+  [659,1],[784,0.5],[880,0.5],[1047,1],[880,1],
+  [784,0.5],[698,0.5],[659,1],[659,2],
+
+  [784,1],[880,0.5],[1047,0.5],[1175,1],[1047,1],
+  [1047,0.5],[880,0.5],[784,1],[698,1],
+  [659,1],[698,0.5],[784,0.5],[880,1],[1047,1],
+  [880,0.5],[784,0.5],[698,1],[659,2],
+];
+
 const BGM_BASS = [
   [131,2],[165,2],[175,2],[147,2],
   [131,2],[165,2],[175,2],[147,2],
@@ -937,7 +1046,52 @@ const BGM_BASS = [
   [131,2],[165,2],[175,2],[131,2],
 ];
 
+// パーカッション（キック・スネアパターン）
+// 1拍=BEAT秒、[type:'kick'|'snare'|'hat', offset_in_beats]
+const BGM_DRUMS = [
+  // 4小節×4拍 = 16拍のパターン（ループ内で繰り返す）
+  {type:'kick', t:0}, {type:'hat', t:0.5}, {type:'snare', t:1}, {type:'hat', t:1.5},
+  {type:'kick', t:2}, {type:'hat', t:2.5}, {type:'snare', t:3}, {type:'hat', t:3.5},
+  {type:'kick', t:4}, {type:'kick', t:4.5},{type:'snare', t:5}, {type:'hat', t:5.5},
+  {type:'kick', t:6}, {type:'hat', t:6.5}, {type:'snare', t:7}, {type:'hat', t:7.5},
+  {type:'kick', t:8}, {type:'hat', t:8.5}, {type:'snare', t:9}, {type:'hat', t:9.5},
+  {type:'kick', t:10},{type:'hat', t:10.5},{type:'snare', t:11},{type:'hat', t:11.5},
+  {type:'kick', t:12},{type:'kick', t:12.5},{type:'snare',t:13},{type:'hat', t:13.5},
+  {type:'kick', t:14},{type:'hat', t:14.5},{type:'snare', t:15},{type:'hat', t:15.5},
+];
+
 const BEAT = 0.22; // 1拍の秒数
+
+function playDrum(type, t, ac) {
+  const bufLen = Math.ceil(ac.sampleRate * 0.15);
+  const buf = ac.createBuffer(1, bufLen, ac.sampleRate);
+  const data = buf.getChannelData(0);
+  const src = ac.createBufferSource();
+  const env = ac.createGain();
+  const filt = ac.createBiquadFilter();
+  src.buffer = buf;
+
+  if (type === 'kick') {
+    for (let i = 0; i < bufLen; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / bufLen);
+    filt.type = 'lowpass'; filt.frequency.value = 200;
+    env.gain.setValueAtTime(0.18, t);
+    env.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+  } else if (type === 'snare') {
+    for (let i = 0; i < bufLen; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / bufLen);
+    filt.type = 'bandpass'; filt.frequency.value = 1500; filt.Q.value = 0.5;
+    env.gain.setValueAtTime(0.13, t);
+    env.gain.exponentialRampToValueAtTime(0.001, t + 0.10);
+  } else { // hat
+    for (let i = 0; i < bufLen; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / bufLen);
+    filt.type = 'highpass'; filt.frequency.value = 6000;
+    env.gain.setValueAtTime(0.06, t);
+    env.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+  }
+
+  src.connect(filt); filt.connect(env); env.connect(getMaster());
+  src.start(t);
+  src.stop(t + 0.2);
+}
 
 function startBGM() {
   if (bgmPlaying) return;
@@ -957,48 +1111,73 @@ function scheduleBGM() {
   if (!bgmPlaying) return;
   const ac = getAudioCtx();
   const nodes = [];
-  let melodyTime = ac.currentTime + 0.05;
-  let bassTime   = ac.currentTime + 0.05;
+  let melodyTime  = ac.currentTime + 0.05;
+  let harmonyTime = ac.currentTime + 0.05;
+  let bassTime    = ac.currentTime + 0.05;
 
-  // メロディー
+  // メロディー（triangle）
   BGM_MELODY.forEach(([freq, beats]) => {
     const dur = beats * BEAT;
     const osc = ac.createOscillator();
     const env = ac.createGain();
-    osc.connect(env); env.connect(ac.destination);
+    osc.connect(env); env.connect(getMaster());
     osc.type = 'triangle';
     osc.frequency.value = freq;
     env.gain.setValueAtTime(0, melodyTime);
     env.gain.linearRampToValueAtTime(0.10, melodyTime + 0.01);
     env.gain.exponentialRampToValueAtTime(0.001, melodyTime + dur * 0.85);
     osc.start(melodyTime);
-    osc.stop(melodyTime + dur);
+    osc.stop(melodyTime + dur + 0.01);
     nodes.push(osc);
     melodyTime += dur;
   });
 
-  // ベース
+  // ハーモニー（sine・小さめ）
+  BGM_HARMONY.forEach(([freq, beats]) => {
+    const dur = beats * BEAT;
+    const osc = ac.createOscillator();
+    const env = ac.createGain();
+    osc.connect(env); env.connect(getMaster());
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    env.gain.setValueAtTime(0, harmonyTime);
+    env.gain.linearRampToValueAtTime(0.04, harmonyTime + 0.015);
+    env.gain.exponentialRampToValueAtTime(0.001, harmonyTime + dur * 0.80);
+    osc.start(harmonyTime);
+    osc.stop(harmonyTime + dur + 0.01);
+    nodes.push(osc);
+    harmonyTime += dur;
+  });
+
+  // ベース（sine）
   BGM_BASS.forEach(([freq, beats]) => {
     const dur = beats * BEAT;
     const osc = ac.createOscillator();
     const env = ac.createGain();
-    osc.connect(env); env.connect(ac.destination);
+    osc.connect(env); env.connect(getMaster());
     osc.type = 'sine';
     osc.frequency.value = freq;
     env.gain.setValueAtTime(0, bassTime);
-    env.gain.linearRampToValueAtTime(0.07, bassTime + 0.02);
-    env.gain.exponentialRampToValueAtTime(0.001, bassTime + dur * 0.7);
+    env.gain.linearRampToValueAtTime(0.08, bassTime + 0.02);
+    env.gain.exponentialRampToValueAtTime(0.001, bassTime + dur * 0.70);
     osc.start(bassTime);
-    osc.stop(bassTime + dur);
+    osc.stop(bassTime + dur + 0.01);
     nodes.push(osc);
     bassTime += dur;
   });
 
+  // ドラム（16拍ループ × 2回）
+  const drumStart = ac.currentTime + 0.05;
+  for (let rep = 0; rep < 2; rep++) {
+    BGM_DRUMS.forEach(({ type, t }) => {
+      playDrum(type, drumStart + (rep * 16 + t) * BEAT, ac);
+    });
+  }
+
   bgmNodes = nodes;
 
-  // ループ：最後のノートが終わる頃に次をスケジュール
-  const loopDur = Math.max(melodyTime, bassTime) - ac.currentTime;
-  setTimeout(() => { if (bgmPlaying) scheduleBGM(); }, (loopDur - 0.1) * 1000);
+  const loopDur = Math.max(melodyTime, harmonyTime, bassTime) - ac.currentTime;
+  setTimeout(() => { if (bgmPlaying) scheduleBGM(); }, (loopDur - 0.15) * 1000);
 }
 
 
@@ -1006,10 +1185,10 @@ let muted = false;
 function toggleMute() {
   muted = !muted;
   document.getElementById('muteBtn').textContent = muted ? '🔇' : '🔊';
-  if (audioCtx) audioCtx.destination.channelInterpretation = 'discrete';
   if (muted) {
-    if (audioCtx) audioCtx.suspend();
+    if (masterGain) masterGain.gain.value = 0;
   } else {
+    if (masterGain) masterGain.gain.value = 0.75;
     if (audioCtx) audioCtx.resume();
   }
 }
@@ -1027,7 +1206,8 @@ function startGame() {
   updateHUD();
   state = 'playing';
   stopBGM();
-  startBGM();
+  sfxStart();
+  setTimeout(() => startBGM(), 350);
 }
 
 // ── 描画 ──
@@ -1184,6 +1364,7 @@ function update() {
   const stormInterval = Math.max(600, 1200 - level * 50);
   if (stormTimer % stormInterval === 0) {
     stormActive = true;
+    sfxStorm();
     setTimeout(() => { stormActive = false; }, 5000);
   }
 

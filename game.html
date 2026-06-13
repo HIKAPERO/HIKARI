@@ -415,6 +415,8 @@ function update() {
 
 function die() {
   state = 'dead';
+  stopBgm();
+  sfxDie();
   const isNewBest = score > 0 && score > best;
   if (isNewBest) best = score;
   document.getElementById('bestDisplay').textContent = best;
@@ -437,8 +439,11 @@ function startGame() {
   player.y = GROUND; player.vy = 0; player.jumps = 0;
   obstacles = [];
   particles = [];
+  _lastMilestone = -1;
   document.getElementById('scoreDisplay').textContent = '0';
   document.getElementById('overlay').style.display = 'none';
+  stopBgm();
+  startBgm();
 }
 
 // ── INPUT ──
@@ -458,10 +463,300 @@ canvas.addEventListener('touchstart', e => { e.preventDefault(); handleJump(); }
 
 document.getElementById('startBtn').addEventListener('click', startGame);
 
+// ── AUDIO ──
+let audioCtx = null;
+let bgmNodes = {};
+let bgmRunning = false;
+
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+
+// マスターゲイン
+function getMaster() {
+  const ctx = getAudioCtx();
+  if (!getMaster._node) {
+    getMaster._node = ctx.createGain();
+    getMaster._node.gain.value = 0.25;
+    getMaster._node.connect(ctx.destination);
+  }
+  return getMaster._node;
+}
+
+// 短い効果音ユーティリティ
+function playTone(freq, type, duration, gainVal, startFreq, isSweep) {
+  const ctx = getAudioCtx();
+  const osc = ctx.createOscillator();
+  const g   = ctx.createGain();
+  osc.type = type || 'square';
+  osc.frequency.setValueAtTime(startFreq || freq, ctx.currentTime);
+  if (isSweep) osc.frequency.exponentialRampToValueAtTime(freq, ctx.currentTime + duration);
+  g.gain.setValueAtTime(gainVal || 0.3, ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+  osc.connect(g); g.connect(getMaster());
+  osc.start(); osc.stop(ctx.currentTime + duration);
+}
+
+// ジャンプ音
+function sfxJump(isDouble) {
+  const f = isDouble ? 520 : 380;
+  playTone(f * 1.5, 'sine', 0.18, 0.4, f, true);
+}
+
+// ダイ音
+function sfxDie() {
+  const ctx = getAudioCtx();
+  // 下降スウィープ
+  playTone(80, 'sawtooth', 0.5, 0.5, 320, true);
+  // ノイズバースト
+  const bufSize = ctx.sampleRate * 0.15;
+  const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < bufSize; i++) data[i] = (Math.random()*2-1);
+  const src = ctx.createBufferSource();
+  src.buffer = buf;
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0.35, ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.25);
+  src.connect(g); g.connect(getMaster());
+  src.start();
+}
+
+// スコアマイルストーン音
+function sfxMilestone() {
+  [523, 659, 784, 1047].forEach((f, i) => {
+    const ctx = getAudioCtx();
+    const osc = ctx.createOscillator();
+    const g   = ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.value = f;
+    g.gain.setValueAtTime(0, ctx.currentTime + i*0.08);
+    g.gain.linearRampToValueAtTime(0.25, ctx.currentTime + i*0.08 + 0.04);
+    g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + i*0.08 + 0.2);
+    osc.connect(g); g.connect(getMaster());
+    osc.start(ctx.currentTime + i*0.08);
+    osc.stop(ctx.currentTime + i*0.08 + 0.25);
+  });
+}
+
+// ── PERCUSSION BGM ──
+// ゲームスピードに連動してBPMが上がるドラムループ
+// speed: 4(初期) → 4.5 → 5.0 … (score/150 ごとに +0.5)
+// BPM:   88(初期) → 100 → 112 → 124 → 136 → 148 → 160(上限)
+
+function getBpm() {
+  const level = Math.floor(score / 150); // speed段階と同じ
+  return Math.min(160, 88 + level * 12);
+}
+
+// ── 打楽器合成ユーティリティ ──
+function synthKick(t) {
+  const ctx = getAudioCtx();
+  const osc = ctx.createOscillator();
+  const g   = ctx.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(160, t);
+  osc.frequency.exponentialRampToValueAtTime(40, t + 0.08);
+  g.gain.setValueAtTime(0.9, t);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
+  osc.connect(g); g.connect(getMaster());
+  osc.start(t); osc.stop(t + 0.25);
+}
+
+function synthSnare(t) {
+  const ctx = getAudioCtx();
+  // トーン成分
+  const osc = ctx.createOscillator();
+  const gOsc = ctx.createGain();
+  osc.type = 'triangle';
+  osc.frequency.value = 220;
+  gOsc.gain.setValueAtTime(0.3, t);
+  gOsc.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
+  osc.connect(gOsc); gOsc.connect(getMaster());
+  osc.start(t); osc.stop(t + 0.15);
+  // ノイズ成分
+  const bufLen = Math.floor(ctx.sampleRate * 0.15);
+  const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+  const d = buf.getChannelData(0);
+  for (let i = 0; i < bufLen; i++) d[i] = Math.random() * 2 - 1;
+  const src = ctx.createBufferSource();
+  src.buffer = buf;
+  const gNoise = ctx.createGain();
+  gNoise.gain.setValueAtTime(0.5, t);
+  gNoise.gain.exponentialRampToValueAtTime(0.0001, t + 0.15);
+  src.connect(gNoise); gNoise.connect(getMaster());
+  src.start(t);
+}
+
+function synthHihat(t, open) {
+  const ctx = getAudioCtx();
+  const decay = open ? 0.18 : 0.06;
+  const bufLen = Math.floor(ctx.sampleRate * decay);
+  const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+  const d = buf.getChannelData(0);
+  for (let i = 0; i < bufLen; i++) d[i] = Math.random() * 2 - 1;
+  const src = ctx.createBufferSource();
+  src.buffer = buf;
+  // バンドパスで金属感
+  const bpf = ctx.createBiquadFilter();
+  bpf.type = 'bandpass';
+  bpf.frequency.value = 8000;
+  bpf.Q.value = 0.8;
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(open ? 0.25 : 0.18, t);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + decay);
+  src.connect(bpf); bpf.connect(g); g.connect(getMaster());
+  src.start(t);
+}
+
+function synthRim(t) {
+  const ctx = getAudioCtx();
+  const osc = ctx.createOscillator();
+  const g   = ctx.createGain();
+  osc.type  = 'square';
+  osc.frequency.value = 1600;
+  g.gain.setValueAtTime(0.22, t);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + 0.05);
+  osc.connect(g); g.connect(getMaster());
+  osc.start(t); osc.stop(t + 0.06);
+}
+
+// ── パターン定義（16ステップ, 1=hit） ──
+// level 0: 基本4つ打ち
+// level 1: 8分ハット追加
+// level 2: リムショット追加
+// level 3+: 細かいハット＋キック追加
+const PATTERNS = [
+  // [kick, snare, hihat(closed), hihat(open), rim]  各16step
+  { // lv0: シンプル4つ打ち
+    kick:   [1,0,0,0, 0,0,0,0, 1,0,0,0, 0,0,0,0],
+    snare:  [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
+    hh:     [1,0,0,0, 1,0,0,0, 1,0,0,0, 1,0,0,0],
+    hho:    [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,1,0,0],
+    rim:    [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0],
+  },
+  { // lv1: 8分ハット
+    kick:   [1,0,0,0, 0,0,0,0, 1,0,0,0, 0,0,0,0],
+    snare:  [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
+    hh:     [1,0,1,0, 1,0,1,0, 1,0,1,0, 1,0,1,0],
+    hho:    [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,1,0,0],
+    rim:    [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0],
+  },
+  { // lv2: リムショット追加＋キックシンコペ
+    kick:   [1,0,0,0, 0,0,1,0, 1,0,0,0, 0,1,0,0],
+    snare:  [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
+    hh:     [1,0,1,0, 1,0,1,0, 1,0,1,0, 1,0,1,0],
+    hho:    [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,1,0,0],
+    rim:    [0,0,0,0, 0,1,0,0, 0,0,0,0, 0,0,1,0],
+  },
+  { // lv3: 16分ハット＋キック強化
+    kick:   [1,0,0,0, 0,0,1,0, 1,0,0,1, 0,1,0,0],
+    snare:  [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
+    hh:     [1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1],
+    hho:    [0,0,0,0, 0,0,0,1, 0,0,0,0, 0,0,1,0],
+    rim:    [0,0,1,0, 0,1,0,0, 0,0,1,0, 0,1,0,1],
+  },
+  { // lv4+: 全力ビート
+    kick:   [1,0,1,0, 0,0,1,0, 1,0,0,1, 0,1,0,1],
+    snare:  [0,0,0,0, 1,0,0,1, 0,0,0,0, 1,0,1,0],
+    hh:     [1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1],
+    hho:    [0,0,0,1, 0,0,0,0, 0,1,0,0, 0,0,1,0],
+    rim:    [0,1,0,0, 1,0,1,0, 0,1,0,1, 0,0,1,0],
+  },
+];
+
+function getPattern() {
+  const level = Math.floor(score / 150);
+  return PATTERNS[Math.min(level, PATTERNS.length - 1)];
+}
+
+// ── スケジューラ ──
+let bgmLoopTimeout = null;
+const STEPS = 16;
+
+function scheduleBeat(startTime) {
+  if (!bgmRunning) return;
+  const ctx  = getAudioCtx();
+  const bpm  = getBpm();
+  const step = 60 / bpm / 4; // 16分音符1個の長さ(秒)
+  const pat  = getPattern();
+
+  for (let i = 0; i < STEPS; i++) {
+    const t = startTime + i * step;
+    if (pat.kick[i])  synthKick(t);
+    if (pat.snare[i]) synthSnare(t);
+    if (pat.hho[i])   synthHihat(t, true);
+    else if (pat.hh[i]) synthHihat(t, false);
+    if (pat.rim[i])   synthRim(t);
+  }
+
+  const loopLen = STEPS * step;
+  // 次ループをスコアに応じたBPMで再スケジュール（リアルタイム反映）
+  bgmLoopTimeout = setTimeout(() => {
+    if (bgmRunning) scheduleBeat(startTime + loopLen);
+  }, (loopLen - 0.05) * 1000);
+}
+
+function startBgm() {
+  if (bgmRunning) return;
+  bgmRunning = true;
+  const ctx = getAudioCtx();
+  if (ctx.state === 'suspended') ctx.resume();
+  scheduleBeat(ctx.currentTime + 0.05);
+}
+
+function stopBgm() {
+  bgmRunning = false;
+  if (bgmLoopTimeout) clearTimeout(bgmLoopTimeout);
+}
+
+// ── 音ボタン UI ──
+const muteBtn = document.createElement('button');
+muteBtn.textContent = '🔊';
+muteBtn.title = 'ミュート切替';
+muteBtn.style.cssText = `
+  position:fixed; top:12px; right:12px; z-index:100;
+  background:rgba(108,92,231,0.2); border:1px solid rgba(108,92,231,0.4);
+  color:#c9b8ff; font-size:18px; border-radius:8px;
+  width:36px; height:36px; cursor:pointer; line-height:1;
+  transition:background .2s;
+`;
+let muted = false;
+muteBtn.addEventListener('click', e => {
+  e.stopPropagation();
+  muted = !muted;
+  getMaster().gain.value = muted ? 0 : 0.25;
+  muteBtn.textContent = muted ? '🔇' : '🔊';
+});
+document.body.appendChild(muteBtn);
+
+// ── ジャンプ音パッチ ──
+const _origJump = player.jump.bind(player);
+player.jump = function() {
+  const before = this.jumps;
+  _origJump();
+  if (this.jumps > before) {
+    sfxJump(this.jumps === 2);
+  }
+};
+
 // ── LOOP ──
+let _lastMilestone = -1;
+
 function loop() {
   update();
   draw();
+
+  // スコアマイルストーン
+  if (state === 'playing') {
+    const m = Math.floor(score / 100);
+    if (m > 0 && m !== _lastMilestone) {
+      _lastMilestone = m;
+      sfxMilestone();
+    }
+  }
+
   requestAnimationFrame(loop);
 }
 
