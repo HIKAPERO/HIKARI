@@ -36,11 +36,7 @@
     --hero-text: #4030a0;
     --mode-icon: "🌙";
   }
-  /* FOUC防止：テーマをできるだけ早く適用 */
-  (function() {
-    const saved = localStorage.getItem('hikari-theme');
-    if (saved === 'light') document.documentElement.setAttribute('data-theme', 'light');
-  })();
+  html { scroll-behavior: smooth; }
   body { font-family: 'Segoe UI','Hiragino Sans','Meiryo',sans-serif; background: var(--bg0); color: var(--text); min-height: 100vh; transition: background .4s, color .4s; }
   body::before { content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
     background:
@@ -302,6 +298,13 @@
   .modal p { font-size:12px; color:var(--text-muted); line-height:1.7; margin-bottom:20px; }
   .modal-close { padding:8px 22px; background:var(--purple); color:#fff; border:none; border-radius:5px; font-size:11px; letter-spacing:1.5px; cursor:pointer; font-family:inherit; }
 </style>
+<!-- FOUC防止：テーマをできるだけ早く適用 -->
+<script>
+  (function() {
+    const saved = localStorage.getItem('hikari-theme');
+    if (saved === 'light') document.documentElement.setAttribute('data-theme', 'light');
+  })();
+</script>
 </head>
 <body>
 
