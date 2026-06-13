@@ -223,7 +223,7 @@ const GROUND = H - 40;
 
 // ── STATE ──
 let state = 'idle'; // idle | playing | dead
-let score = 0, best = 0, frame = 0, speed = 4;
+let score = 0, best = 0, frame = 0, speed = 4, _spawnDist = 0;
 
 // ── PLAYER ──
 const player = {
@@ -456,9 +456,15 @@ function update() {
 
   player.update();
 
-  // 障害物生成
-  const interval = Math.max(60, 100 - Math.floor(score/100)*3);
-  if (frame % interval === 0) spawnObstacle();
+  // 障害物生成（ピクセル距離ベースで間隔を一定に保つ）
+  // speed が上がっても画面上の見かけの間隔が変わらないよう、
+  // 「何px進んだら次を出す」で管理する
+  _spawnDist += speed;
+  const spawnInterval = Math.max(220, 380 - Math.floor(score / 100) * 8);
+  if (_spawnDist >= spawnInterval) {
+    _spawnDist = 0;
+    spawnObstacle();
+  }
 
   // 障害物更新
   obstacles.forEach(ob => ob.x -= speed);
@@ -510,7 +516,7 @@ function die() {
 
 function startGame() {
   state = 'playing';
-  frame = 0; score = 0; speed = 4;
+  frame = 0; score = 0; speed = 4; _spawnDist = 0;
   player.y = GROUND; player.vy = 0; player.jumps = 0;
   obstacles = [];
   particles = [];
