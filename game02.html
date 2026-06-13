@@ -60,7 +60,7 @@
       <div class="snow-deco">❄ ✦ ❄</div>
       <div class="ov-title" id="ovTitle">Sweet Stack</div>
       <div class="ov-sub" id="overlaySub">
-        飛んでくるスイーツに<br>
+       飛んでくるスイーツに<br>
         タイミングよくジャンプして乗ろう！<br>
         <span style="color:#4488bb;">タップ / スペース でジャンプ</span>
       </div>
@@ -100,115 +100,40 @@ const OFFSET_LIMIT=0.90;
 const INCOMING_DELAY=85;
 
 // ══════════════════════════════════════
-//  BGM — AudioContext.suspend/resume で確実にミュート
+//  オーディオ（MP3 BGM & 自作シンセ効果音）
 // ══════════════════════════════════════
 let muted=false, audioCtx=null;
-let bgmPlaying=false, bgmGeneration=0;
+let bgmPlaying=false;
+
+// MP3ファイルの読み込み設定
+const bgmAudio = new Audio('game02-m.mp3');
+bgmAudio.loop = true;
+bgmAudio.volume = 0.35; // ゲームバランスに合わせた音量（0.0～1.0で調整可能）
 
 function getAC(){
   if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
   return audioCtx;
 }
 
-const C4=261.63,E4=329.63,G4=392.00,A4=440.00,
-      C5=523.25,E5=659.25,G5=783.99,A5=880.00,
-      C3=130.81,G3=196.00,A3=220.00,F3=174.61;
-
-const MELODY_NOTES=[
-  [C5,0.18],[E5,0.18],[G5,0.18],[E5,0.18],
-  [C5,0.18],[G4,0.18],[A4,0.18],[C5,0.18],
-  [E5,0.18],[G5,0.18],[A5,0.18],[G5,0.18],
-  [E5,0.18],[C5,0.18],[G4,0.18],[E4,0.18],
-  [A4,0.18],[C5,0.18],[E5,0.18],[C5,0.18],
-  [A4,0.18],[E4,0.18],[G4,0.18],[A4,0.18],
-  [C5,0.18],[E5,0.18],[G5,0.18],[E5,0.18],
-  [C5,0.36],[G4,0.18],[E4,0.18],
-  [G4,0.18],[C5,0.18],[E5,0.18],[G5,0.18],
-  [E5,0.18],[C5,0.18],[A4,0.18],[G4,0.18],
-  [E4,0.18],[G4,0.18],[A4,0.18],[C5,0.18],
-  [E5,0.36],[G5,0.18],[E5,0.18],
-  [C5,0.18],[A4,0.18],[G4,0.18],[E4,0.18],
-  [G4,0.18],[A4,0.18],[C5,0.18],[E5,0.18],
-  [G5,0.54],[E5,0.18],
-  [C5,0.36],[0,0.18],[0,0.18],
-];
-const BASS_PATTERN=[C3,G3,A3,F3, C3,A3,F3,G3, C3,F3,G3,A3, C3,G3,F3,C3];
-
+// BGM再生
 function playBGM(){
   if(muted||bgmPlaying) return;
-  bgmPlaying=true; bgmGeneration++;
-  const myGen=bgmGeneration;
-  const ac=getAC();
-
-  function scheduleLoop(startTime){
-    if(!bgmPlaying||bgmGeneration!==myGen) return;
-    let t=startTime;
-    const beatLen=0.18;
-    MELODY_NOTES.forEach(([freq,dur])=>{
-      if(freq===0){t+=dur;return;}
-      const o=ac.createOscillator(),g=ac.createGain();
-      o.type='triangle'; o.frequency.value=freq;
-      g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(0.10,t+0.015);
-      g.gain.setValueAtTime(0.10,t+dur-0.03); g.gain.linearRampToValueAtTime(0,t+dur);
-      o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t+dur+0.01);
-      const o2=ac.createOscillator(),g2=ac.createGain();
-      o2.type='sine'; o2.frequency.value=freq*2;
-      g2.gain.setValueAtTime(0,t); g2.gain.linearRampToValueAtTime(0.03,t+0.01);
-      g2.gain.linearRampToValueAtTime(0,t+dur*0.5);
-      o2.connect(g2); g2.connect(ac.destination); o2.start(t); o2.stop(t+dur+0.01);
-      t+=dur;
-    });
-    let bt=startTime;
-    BASS_PATTERN.forEach(freq=>{
-      const ob=ac.createOscillator(),gb=ac.createGain();
-      ob.type='sine'; ob.frequency.value=freq;
-      gb.gain.setValueAtTime(0,bt); gb.gain.linearRampToValueAtTime(0.07,bt+0.02);
-      gb.gain.exponentialRampToValueAtTime(0.001,bt+beatLen*4-0.02);
-      ob.connect(gb); gb.connect(ac.destination); ob.start(bt); ob.stop(bt+beatLen*4);
-      bt+=beatLen*4;
-    });
-    const totalDur=MELODY_NOTES.reduce((s,[,d])=>s+d,0);
-    for(let i=0;i<Math.floor(totalDur/beatLen);i++){
-      const ht=startTime+i*beatLen;
-      scheduleNoise(ac,ht,0.04,4000,0.025);
-      if(i%2===0) scheduleKick(ac,ht);
-    }
-    setTimeout(()=>{
-      if(bgmPlaying&&bgmGeneration===myGen) scheduleLoop(ac.currentTime+0.05);
-    }, totalDur*1000-80);
-  }
-  scheduleLoop(ac.currentTime+0.05);
+  bgmPlaying=true;
+  bgmAudio.muted=false;
+  bgmAudio.play().catch(e => {
+    console.log("ブラウザの自動再生ブロック対策:", e);
+    bgmPlaying=false;
+  });
 }
 
-function scheduleNoise(ac,t,dur,freq,vol){
-  try{
-    const bufSize=Math.floor(ac.sampleRate*dur);
-    const buf=ac.createBuffer(1,bufSize,ac.sampleRate);
-    const d=buf.getChannelData(0);
-    for(let i=0;i<bufSize;i++) d[i]=(Math.random()*2-1);
-    const src=ac.createBufferSource(); src.buffer=buf;
-    const filt=ac.createBiquadFilter(); filt.type='highpass'; filt.frequency.value=freq;
-    const g=ac.createGain(); g.gain.setValueAtTime(vol,t); g.gain.exponentialRampToValueAtTime(0.001,t+dur);
-    src.connect(filt); filt.connect(g); g.connect(ac.destination); src.start(t); src.stop(t+dur+0.01);
-  }catch(e){}
-}
-function scheduleKick(ac,t){
-  try{
-    const o=ac.createOscillator(),g=ac.createGain();
-    o.type='sine'; o.frequency.setValueAtTime(120,t); o.frequency.exponentialRampToValueAtTime(40,t+0.08);
-    g.gain.setValueAtTime(0.18,t); g.gain.exponentialRampToValueAtTime(0.001,t+0.12);
-    o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t+0.13);
-  }catch(e){}
-}
-
+// BGM停止
 function stopBGM(){
-  bgmPlaying=false; bgmGeneration++;
-  if(audioCtx){
-    try{ audioCtx.close(); }catch(e){}
-    audioCtx=null;
-  }
+  bgmPlaying=false;
+  bgmAudio.pause();
+  bgmAudio.currentTime = 0; // 曲の最初に戻す
 }
 
+// 効果音用のピコピコ音生成発振器（そのまま維持）
 function beep(freq,dur,type='sine',vol=0.18){
   if(muted) return;
   try{
@@ -221,6 +146,7 @@ function beep(freq,dur,type='sine',vol=0.18){
     o.start(); o.stop(ac.currentTime+dur);
   }catch(e){}
 }
+
 function sfxJump(){ beep(520,0.08,'sine',0.13); setTimeout(()=>beep(660,0.07,'sine',0.10),50); }
 function sfxLand(){ beep(600,0.07,'triangle',0.18); setTimeout(()=>beep(760,0.07,'triangle',0.13),55); }
 function sfxHit(){
@@ -238,9 +164,11 @@ function sfxMiss(){
   setTimeout(()=>beep(280,0.15,'triangle',0.12),100);
 }
 
+// ミュート切り替えボタン（MP3と効果音の両方をスマートに制御）
 function toggleMute(){
   muted=!muted;
   document.getElementById('muteBtn').textContent=muted?'🔇':'🔊';
+  bgmAudio.muted = muted;
   if(muted){
     stopBGM();
   } else {
@@ -636,10 +564,9 @@ function checkSideCollision(){
 //  更新
 // ══════════════════════════════════════
 function update(){
-  // ★ state が 'playing' でも 'gameover' でもなければ何もしない（'idle' 時用）
   if(state!=='playing' && state!=='gameover') return;
 
-  // ★ ゲームオーバー時（'gameover'）は、パーティクルの更新処理のみを行ってリターンする
+  // ゲームオーバー状態の時は、エフェクトの更新のみを行って即終了（フリーズ回避）
   if(state==='gameover'){
     updateParticles();
     return;
@@ -772,7 +699,7 @@ function startGame(){
   score=0; frame=0; particles=[]; incoming=null; incomingTimer=0;
   nextDir=(Math.random()>0.5)?1:-1; cameraY=0; gameoverReason='';
   initPlatforms(); princess.reset(); updateHUD(); state='playing';
-  stopBGM(); playBGM();
+  playBGM();
 }
 
 // ══════════════════════════════════════
