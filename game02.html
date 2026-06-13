@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>🍰 Sweet Stack Princess</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', 'Hiragino Sans', 'Meiryo', sans-serif;
+    background: #a8d8f0; color: #446688;
+    height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    overflow: hidden; user-select: none; touch-action: none;
+  }
+  .game-wrap { display:flex; flex-direction:column; align-items:center; gap:8px; z-index:1; }
+  .game-title { font-size:17px; font-weight:700; letter-spacing:4px; color:#fff;
+    text-shadow:0 1px 8px rgba(100,160,220,0.5); }
+  .hud { display:flex; gap:20px; font-size:11px; letter-spacing:2px; color:#6699bb; align-items:center; }
+  .hud span { color:#fff; font-weight:700; font-size:14px; text-shadow:0 1px 4px rgba(100,160,220,0.4); }
+  #gameCanvas { border-radius:14px; display:block; cursor:pointer; }
+  .hint { font-size:10px; color:rgba(255,255,255,0.35); letter-spacing:2px; }
+  .canvas-wrap { position:relative; }
+  #overlay {
+    position:absolute; top:0; left:0; width:100%; height:100%;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+    background:rgba(180,220,245,0.82); backdrop-filter:blur(6px);
+    border-radius:14px; z-index:10;
+  }
+  .ov-title { font-size:26px; font-weight:700; letter-spacing:4px; color:#fff;
+    text-shadow:0 2px 12px rgba(100,160,220,0.6); }
+  .ov-sub { font-size:12px; color:#557799; letter-spacing:1px; text-align:center; line-height:2.1; }
+  .ov-score { font-size:18px; color:#3366aa; letter-spacing:2px; font-weight:700; }
+  .ov-best  { font-size:12px; color:#7799bb; letter-spacing:2px; }
+  .start-btn {
+    padding:12px 38px; background:linear-gradient(135deg,#88bbee,#cc99dd);
+    color:#fff; border:none; border-radius:30px;
+    font-size:14px; letter-spacing:2px; cursor:pointer;
+    font-family:inherit; font-weight:700;
+    transition:transform .15s,opacity .15s; margin-top:6px;
+    box-shadow:0 4px 18px rgba(100,160,220,0.45);
+  }
+  .start-btn:hover { transform:translateY(-2px) scale(1.04); }
+  .snow-deco { font-size:20px; letter-spacing:10px; opacity:0.5; }
+</style>
+</head>
+<body>
+<div class="game-wrap">
+  <div class="game-title">❄️ SWEET STACK PRINCESS</div>
+  <div class="hud">
+    <div>SCORE <span id="scoreDisplay">0</span></div>
+    <div>BEST  <span id="bestDisplay">0</span></div>
+    <button onclick="toggleMute()" id="muteBtn"
+      style="background:rgba(255,255,255,0.3);border:0.5px solid rgba(255,255,255,0.5);
+             border-radius:6px;color:#fff;font-size:13px;padding:3px 10px;cursor:pointer;">🔊</button>
+  </div>
+  <div class="canvas-wrap">
+    <canvas id="gameCanvas"></canvas>
+    <div id="overlay">
+      <div class="snow-deco">❄ ✦ ❄</div>
+      <div class="ov-title" id="ovTitle">Sweet Stack</div>
+      <div class="ov-sub" id="overlaySub">
+        左右から飛んでくるスイーツに<br>
+        タイミングよくジャンプして乗ろう！<br>
+        <span style="color:#4488bb;">タップ / スペース でジャンプ</span>
+      </div>
+      <div class="ov-score" id="ovScore" style="display:none;"></div>
+      <div class="ov-best"  id="ovBest"  style="display:none;"></div>
+      <button class="start-btn" id="startBtn">はじめる ✦</button>
+    </div>
+  </div>
+  <div class="hint">タップ / SPACE でジャンプ</div>
+</div>
+
+<script>
+// ══════════════════════════════════════
+//  キャンバス
+// ══════════════════════════════════════
+const GW=300, GH=500;
+const canvas=document.getElementById('gameCanvas');
+const ctx=canvas.getContext('2d');
+
+function resizeCanvas(){
+  const maxH=window.innerHeight-110, maxW=window.innerWidth-16;
+  const scale=Math.min(maxW/GW, maxH/GH, 1.6);
+  canvas.width=Math.floor(GW*scale); canvas.height=Math.floor(GH*scale);
+}
+resizeCanvas();
+window.addEventListener('resize',resizeCanvas);
+function sx(v){ return v*canvas.width/GW; }
+function sy(v){ return v*canvas.height/GH; }
+
+// ══════════════════════════════════════
+//  定数
+// ══════════════════════════════════════
+const GRAVITY=0.55, JUMP_V=-12.5;
+const SWEET_H=38, SWEET_W_BASE=100;
+const PW=20, PH=38;          // プリンセス当たり判定
+const OFFSET_LIMIT=0.90;
+const INCOMING_DELAY=85;
+
+// ══════════════════════════════════════
+//  BGM — AudioContext.suspend/resume で確実にミュート
+// ══════════════════════════════════════
+let muted=false, audioCtx=null;
+let bgmPlaying=false, bgmGeneration=0;
+
+function getAC(){
+  if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+  return audioCtx;
+}
+
+const C4=261.63,E4=329.63,G4=392.00,A4=440.00,
+      C5=523.25,E5=659.25,G5=783.99,A5=880.00,
+      C3=130.81,G3=196.00,A3=220.00,F3=174.61;
+
+const MELODY_NOTES=[
+  [C5,0.18],[E5,0.18],[G5,0.18],[E5,0.18],
+  [C5,0.18],[G4,0.18],[A4,0.18],[C5,0.18],
+  [E5,0.18],[G5,0.18],[A5,0.18],[G5,0.18],
+  [E5,0.18],[C5,0.18],[G4,0.18],[E4,0.18],
+  [A4,0.18],[C5,0.18],[E5,0.18],[C5,0.18],
+  [A4,0.18],[E4,0.18],[G4,0.18],[A4,0.18],
+  [C5,0.18],[E5,0.18],[G5,0.18],[E5,0.18],
+  [C5,0.36],[G4,0.18],[E4,0.18],
+  [G4,0.18],[C5,0.18],[E5,0.18],[G5,0.18],
+  [E5,0.18],[C5,0.18],[A4,0.18],[G4,0.18],
+  [E4,0.18],[G4,0.18],[A4,0.18],[C5,0.18],
+  [E5,0.36],[G5,0.18],[E5,0.18],
+  [C5,0.18],[A4,0.18],[G4,0.18],[E4,0.18],
+  [G4,0.18],[A4,0.18],[C5,0.18],[E5,0.18],
+  [G5,0.54],[E5,0.18],
+  [C5,0.36],[0,0.18],[0,0.18],
+];
+const BASS_PATTERN=[C3,G3,A3,F3, C3,A3,F3,G3, C3,F3,G3,A3, C3,G3,F3,C3];
+
+function playBGM(){
+  if(muted||bgmPlaying) return;
+  bgmPlaying=true; bgmGeneration++;
+  const myGen=bgmGeneration;
+  const ac=getAC();
+
+  function scheduleLoop(startTime){
+    if(!bgmPlaying||bgmGeneration!==myGen) return;
+    let t=startTime;
+    const beatLen=0.18;
+    MELODY_NOTES.forEach(([freq,dur])=>{
+      if(freq===0){t+=dur;return;}
+      const o=ac.createOscillator(),g=ac.createGain();
+      o.type='triangle'; o.frequency.value=freq;
+      g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(0.10,t+0.015);
+      g.gain.setValueAtTime(0.10,t+dur-0.03); g.gain.linearRampToValueAtTime(0,t+dur);
+      o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t+dur+0.01);
+      const o2=ac.createOscillator(),g2=ac.createGain();
+      o2.type='sine'; o2.frequency.value=freq*2;
+      g2.gain.setValueAtTime(0,t); g2.gain.linearRampToValueAtTime(0.03,t+0.01);
+      g2.gain.linearRampToValueAtTime(0,t+dur*0.5);
+      o2.connect(g2); g2.connect(ac.destination); o2.start(t); o2.stop(t+dur+0.01);
+      t+=dur;
+    });
+    let bt=startTime;
+    BASS_PATTERN.forEach(freq=>{
+      const ob=ac.createOscillator(),gb=ac.createGain();
+      ob.type='sine'; ob.frequency.value=freq;
+      gb.gain.setValueAtTime(0,bt); gb.gain.linearRampToValueAtTime(0.07,bt+0.02);
+      gb.gain.exponentialRampToValueAtTime(0.001,bt+beatLen*4-0.02);
+      ob.connect(gb); gb.connect(ac.destination); ob.start(bt); ob.stop(bt+beatLen*4);
+      bt+=beatLen*4;
+    });
+    const totalDur=MELODY_NOTES.reduce((s,[,d])=>s+d,0);
+    for(let i=0;i<Math.floor(totalDur/beatLen);i++){
+      const ht=startTime+i*beatLen;
+      scheduleNoise(ac,ht,0.04,4000,0.025);
+      if(i%2===0) scheduleKick(ac,ht);
+    }
+    setTimeout(()=>{
+      if(bgmPlaying&&bgmGeneration===myGen) scheduleLoop(ac.currentTime+0.05);
+    }, totalDur*1000-80);
+  }
+  scheduleLoop(ac.currentTime+0.05);
+}
+
+function scheduleNoise(ac,t,dur,freq,vol){
+  try{
+    const bufSize=Math.floor(ac.sampleRate*dur);
+    const buf=ac.createBuffer(1,bufSize,ac.sampleRate);
+    const d=buf.getChannelData(0);
+    for(let i=0;i<bufSize;i++) d[i]=(Math.random()*2-1);
+    const src=ac.createBufferSource(); src.buffer=buf;
+    const filt=ac.createBiquadFilter(); filt.type='highpass'; filt.frequency.value=freq;
+    const g=ac.createGain(); g.gain.setValueAtTime(vol,t); g.gain.exponentialRampToValueAtTime(0.001,t+dur);
+    src.connect(filt); filt.connect(g); g.connect(ac.destination); src.start(t); src.stop(t+dur+0.01);
+  }catch(e){}
+}
+function scheduleKick(ac,t){
+  try{
+    const o=ac.createOscillator(),g=ac.createGain();
+    o.type='sine'; o.frequency.setValueAtTime(120,t); o.frequency.exponentialRampToValueAtTime(40,t+0.08);
+    g.gain.setValueAtTime(0.18,t); g.gain.exponentialRampToValueAtTime(0.001,t+0.12);
+    o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t+0.13);
+  }catch(e){}
+}
+
+// ★ stopBGM: AudioContext ごと閉じて完全リセット
+//   suspend() だけでは「再開時に古いスケジュール済みノードが復活」する問題が残るため
+//   close() して audioCtx を null に戻す。次の再生時に新しい AC を作る。
+function stopBGM(){
+  bgmPlaying=false; bgmGeneration++;
+  if(audioCtx){
+    try{ audioCtx.close(); }catch(e){}
+    audioCtx=null;
+  }
+}
+
+function beep(freq,dur,type='sine',vol=0.18){
+  if(muted) return;
+  try{
+    const ac=getAC();
+    const o=ac.createOscillator(),g=ac.createGain();
+    o.connect(g); g.connect(ac.destination);
+    o.type=type; o.frequency.value=freq;
+    g.gain.setValueAtTime(vol,ac.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+dur);
+    o.start(); o.stop(ac.currentTime+dur);
+  }catch(e){}
+}
+function sfxJump(){ beep(520,0.08,'sine',0.13); setTimeout(()=>beep(660,0.07,'sine',0.10),50); }
+function sfxLand(){ beep(600,0.07,'triangle',0.18); setTimeout(()=>beep(760,0.07,'triangle',0.13),55); }
+function sfxHit(){
+  beep(220,0.15,'sawtooth',0.2);
+  setTimeout(()=>beep(180,0.2,'sawtooth',0.15),80);
+  setTimeout(()=>beep(140,0.25,'sawtooth',0.10),180);
+}
+function sfxOver(){
+  beep(300,0.15,'sawtooth',0.22);
+  setTimeout(()=>beep(250,0.15,'sawtooth',0.18),160);
+  setTimeout(()=>beep(200,0.3,'sawtooth',0.14),320);
+}
+function sfxMiss(){
+  beep(350,0.1,'triangle',0.15);
+  setTimeout(()=>beep(280,0.15,'triangle',0.12),100);
+}
+
+// ★ toggleMute: AudioContext の suspend/resume で確実に制御
+function toggleMute(){
+  muted=!muted;
+  document.getElementById('muteBtn').textContent=muted?'🔇':'🔊';
+  if(muted){
+    stopBGM();   // AudioContext ごと閉じて完全停止
+  } else {
+    if(state==='playing') playBGM();   // 新しい AC で再生
+  }
+}
+
+// ══════════════════════════════════════
+//  スイーツ種類
+// ══════════════════════════════════════
+const SWEETS=[
+  {emoji:'🍰',color:'#f5a0b8',dark:'#c0507a'},
+  {emoji:'🧁',color:'#ffccaa',dark:'#cc7744'},
+  {emoji:'🍮',color:'#ffdd80',dark:'#bb8820'},
+  {emoji:'🎂',color:'#f0a8d0',dark:'#b05080'},
+  {emoji:'🍩',color:'#ddaaff',dark:'#8844aa'},
+  {emoji:'🧇',color:'#ffcc88',dark:'#aa7730'},
+];
+
+// ══════════════════════════════════════
+//  ゲーム状態
+// ══════════════════════════════════════
+let state='idle';
+let score=0,best=0,frame=0;
+let particles=[];
+let snowflakes=initSnow();
+let cameraY=0;
+let platform=[];
+let incoming=null;
+let incomingTimer=0;
+let nextDir=1;
+let gameoverReason='';
+
+// ══════════════════════════════════════
+//  プリンセス
+// ══════════════════════════════════════
+const princess={
+  x:GW/2, y:0, vy:0, vx:0,
+  onGround:false, standingOn:null,
+  jumpCooldown:0, dead:false,
+  sad:false,   // ★ ゲームオーバー時の悲しい表情フラグ
+
+  reset(){
+    const base=platform[platform.length-1];
+    this.x=base.x+base.w/2; this.y=base.y-PH;
+    this.vy=0; this.vx=0;
+    this.onGround=true; this.standingOn=platform.length-1;
+    this.jumpCooldown=0; this.dead=false; this.sad=false;
+  },
+
+  jump(){
+    if(!this.onGround||this.jumpCooldown>0) return false;
+    this.vy=JUMP_V; this.onGround=false; this.standingOn=null;
+    this.jumpCooldown=6;
+    sfxJump(); return true;
+  },
+
+  // 物理 + 積み済みスタックへの着地
+  update(){
+    if(this.jumpCooldown>0) this.jumpCooldown--;
+    if(!this.onGround){
+      this.vy+=GRAVITY; this.y+=this.vy; this.x+=this.vx; this.vx*=0.94;
+      // 下降中のみ着地チェック
+      if(this.vy>0){
+        const feet=this.y+PH, prevFeet=feet-this.vy, half=PW*0.45;
+        for(let i=platform.length-1;i>=0;i--){
+          const p=platform[i];
+          if(this.x+half<=p.x||this.x-half>=p.x+p.w) continue;
+          if(prevFeet<=p.y&&feet>=p.y){
+            this.y=p.y-PH; this.vy=0; this.vx=0;
+            this.onGround=true; this.standingOn=i;
+            sfxLand();
+            if(i===platform.length-1&&!p.scored){
+              p.scored=true;
+              const pts=10+Math.floor(score/100)*2;
+              score+=pts; if(score>best) best=score; updateHUD();
+              spawnScoreText(this.x,this.y-10,'+'+pts);
+            }
+            break;
+          }
+        }
+      }
+    } else {
+      const p=platform[this.standingOn];
+      if(!p){ this.onGround=false; this.standingOn=null; }
+    }
+    if(this.y-cameraY>GH+60) this.dead=true;
+  },
+
+  draw(camY){
+    const px=sx(this.x-PW/2), py=sy(this.y-camY);
+    const pw=sx(PW), ph=sy(PH);
+    const sad=this.sad;
+
+    // スカート
+    ctx.save();
+    const sg=ctx.createLinearGradient(px,py+ph*0.4,px,py+ph);
+    sg.addColorStop(0,'#a8d8ff'); sg.addColorStop(1,'#4477bb');
+    ctx.fillStyle=sg;
+    ctx.beginPath();
+    ctx.moveTo(px+pw*0.42,py+ph*0.38);
+    ctx.bezierCurveTo(px-pw*0.15,py+ph*0.6,px-pw*0.25,py+ph,px+pw*0.5,py+ph);
+    ctx.bezierCurveTo(px+pw*0.75,py+ph,px+pw*1.15,py+ph*0.6,px+pw*0.58,py+ph*0.38);
+    ctx.closePath(); ctx.fill();
+    ctx.restore();
+
+    // コルセット
+    ctx.save(); ctx.fillStyle='#1a3580';
+    ctx.beginPath(); ctx.roundRect(px+pw*0.28,py+ph*0.28,pw*0.44,ph*0.16,sy(2)); ctx.fill();
+    ctx.restore();
+
+    // 腕
+    if(sad){
+      ctx.save(); ctx.strokeStyle='#ffe8d0'; ctx.lineWidth=sx(3); ctx.lineCap='round';
+      ctx.beginPath(); ctx.moveTo(px+pw*0.28,py+ph*0.32); ctx.lineTo(px+pw*0.14,py+ph*0.58); ctx.stroke(); ctx.restore();
+      ctx.save(); ctx.strokeStyle='#ffe8d0'; ctx.lineWidth=sx(3); ctx.lineCap='round';
+      ctx.beginPath(); ctx.moveTo(px+pw*0.72,py+ph*0.32); ctx.lineTo(px+pw*0.86,py+ph*0.58); ctx.stroke(); ctx.restore();
+    } else {
+      ctx.save(); ctx.strokeStyle='#ffe8d0'; ctx.lineWidth=sx(3); ctx.lineCap='round';
+      ctx.beginPath(); ctx.moveTo(px+pw*0.28,py+ph*0.32); ctx.lineTo(px+pw*0.06,py+ph*0.5); ctx.stroke(); ctx.restore();
+      ctx.save(); ctx.strokeStyle='#ffe8d0'; ctx.lineWidth=sx(3); ctx.lineCap='round';
+      ctx.beginPath(); ctx.moveTo(px+pw*0.72,py+ph*0.32); ctx.lineTo(px+pw*0.94,py+ph*0.5); ctx.stroke(); ctx.restore();
+    }
+
+    // 顔
+    ctx.save(); ctx.fillStyle='#ffe8d0';
+    ctx.beginPath(); ctx.arc(px+pw*0.5,py+ph*0.17,pw*0.32,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+
+    if(sad){
+      // 頬
+      ctx.save(); ctx.fillStyle='rgba(255,100,120,0.3)';
+      ctx.beginPath(); ctx.ellipse(px+pw*0.25,py+ph*0.22,pw*0.12,ph*0.04,0,0,Math.PI*2); ctx.fill(); ctx.restore();
+      ctx.save(); ctx.fillStyle='rgba(255,100,120,0.3)';
+      ctx.beginPath(); ctx.ellipse(px+pw*0.75,py+ph*0.22,pw*0.12,ph*0.04,0,0,Math.PI*2); ctx.fill(); ctx.restore();
+      // 左目
+      ctx.save(); ctx.fillStyle='#2040a0';
+      ctx.translate(px+pw*0.38,py+ph*0.15); ctx.rotate(-0.4);
+      ctx.beginPath(); ctx.ellipse(0,0,pw*0.07,ph*0.05,0,0,Math.PI*2); ctx.fill(); ctx.restore();
+      // 右目
+      ctx.save(); ctx.fillStyle='#2040a0';
+      ctx.translate(px+pw*0.62,py+ph*0.15); ctx.rotate(0.4);
+      ctx.beginPath(); ctx.ellipse(0,0,pw*0.07,ph*0.05,0,0,Math.PI*2); ctx.fill(); ctx.restore();
+      // ハイライト
+      ctx.save(); ctx.fillStyle='white';
+      ctx.beginPath(); ctx.arc(px+pw*0.40,py+ph*0.13,pw*0.022,0,Math.PI*2); ctx.fill(); ctx.restore();
+      ctx.save(); ctx.fillStyle='white';
+      ctx.beginPath(); ctx.arc(px+pw*0.64,py+ph*0.13,pw*0.022,0,Math.PI*2); ctx.fill(); ctx.restore();
+      // への字口
+      ctx.save(); ctx.strokeStyle='#cc6680'; ctx.lineWidth=sx(1.2);
+      ctx.beginPath(); ctx.arc(px+pw*0.5,py+ph*0.28,pw*0.09,Math.PI+0.3,Math.PI*2-0.3); ctx.stroke(); ctx.restore();
+    } else {
+      // 頬
+      ctx.save(); ctx.fillStyle='rgba(255,160,180,0.4)';
+      ctx.beginPath(); ctx.ellipse(px+pw*0.28,py+ph*0.2,pw*0.1,ph*0.035,0,0,Math.PI*2); ctx.fill(); ctx.restore();
+      ctx.save(); ctx.fillStyle='rgba(255,160,180,0.4)';
+      ctx.beginPath(); ctx.ellipse(px+pw*0.72,py+ph*0.2,pw*0.1,ph*0.035,0,0,Math.PI*2); ctx.fill(); ctx.restore();
+      // 目
+      ctx.save(); ctx.fillStyle='#2040a0';
+      ctx.beginPath(); ctx.ellipse(px+pw*0.38,py+ph*0.15,pw*0.07,ph*0.055,0,0,Math.PI*2); ctx.fill(); ctx.restore();
+      ctx.save(); ctx.fillStyle='#2040a0';
+      ctx.beginPath(); ctx.ellipse(px+pw*0.62,py+ph*0.15,pw*0.07,ph*0.055,0,0,Math.PI*2); ctx.fill(); ctx.restore();
+      // ハイライト
+      ctx.save(); ctx.fillStyle='white';
+      ctx.beginPath(); ctx.arc(px+pw*0.4,py+ph*0.14,pw*0.025,0,Math.PI*2); ctx.fill(); ctx.restore();
+      ctx.save(); ctx.fillStyle='white';
+      ctx.beginPath(); ctx.arc(px+pw*0.64,py+ph*0.14,pw*0.025,0,Math.PI*2); ctx.fill(); ctx.restore();
+      // 口
+      ctx.save(); ctx.strokeStyle='#cc6680'; ctx.lineWidth=sx(1);
+      ctx.beginPath(); ctx.arc(px+pw*0.5,py+ph*0.2,pw*0.09,0.2,Math.PI-0.2); ctx.stroke(); ctx.restore();
+    }
+
+    // 後ろ髪
+    ctx.save(); ctx.fillStyle='#ffe080';
+    ctx.beginPath(); ctx.ellipse(px+pw*0.5,py+ph*0.08,pw*0.35,ph*0.15,0,Math.PI,Math.PI*2); ctx.closePath(); ctx.fill();
+    ctx.restore();
+
+    // 三つ編み
+    ctx.save(); ctx.strokeStyle='#ffcc40'; ctx.lineWidth=sx(3.5); ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(px+pw*0.18,py+ph*0.12); ctx.bezierCurveTo(px+pw*0.05,py+ph*0.28,px+pw*0.1,py+ph*0.42,px+pw*0.18,py+ph*0.52); ctx.stroke(); ctx.restore();
+    ctx.save(); ctx.strokeStyle='#ffcc40'; ctx.lineWidth=sx(3.5); ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(px+pw*0.82,py+ph*0.12); ctx.bezierCurveTo(px+pw*0.95,py+ph*0.28,px+pw*0.9,py+ph*0.42,px+pw*0.82,py+ph*0.52); ctx.stroke(); ctx.restore();
+
+    // 前髪
+    ctx.save(); ctx.fillStyle='#ffdd60';
+    ctx.beginPath();
+    ctx.moveTo(px+pw*0.2,py+ph*0.06);
+    ctx.bezierCurveTo(px+pw*0.22,py-ph*0.02,px+pw*0.38,py-ph*0.04,px+pw*0.5,py+ph*0.02);
+    ctx.bezierCurveTo(px+pw*0.62,py-ph*0.04,px+pw*0.78,py-ph*0.02,px+pw*0.8,py+ph*0.06);
+    ctx.lineTo(px+pw*0.8,py+ph*0.15);
+    ctx.bezierCurveTo(px+pw*0.65,py+ph*0.1,px+pw*0.35,py+ph*0.1,px+pw*0.2,py+ph*0.15);
+    ctx.closePath(); ctx.fill();
+    ctx.restore();
+
+    // 王冠
+    const crx=px+pw*0.5, cry=py-ph*0.04, crw=pw*0.44, crTop=ph*0.1;
+    // 本体
+    ctx.save(); ctx.fillStyle='#ffd700';
+    if(sad){ ctx.translate(crx,cry); ctx.rotate(0.35); ctx.translate(-crx,-cry); }
+    ctx.beginPath();
+    ctx.moveTo(crx-crw/2,cry); ctx.lineTo(crx-crw/2,cry-crTop);
+    ctx.lineTo(crx-crw/6,cry-crTop*0.5); ctx.lineTo(crx,cry-crTop*1.4);
+    ctx.lineTo(crx+crw/6,cry-crTop*0.5); ctx.lineTo(crx+crw/2,cry-crTop);
+    ctx.lineTo(crx+crw/2,cry); ctx.closePath(); ctx.fill();
+    ctx.restore();
+    // 輪郭
+    ctx.save(); ctx.strokeStyle='#cc9900'; ctx.lineWidth=sx(0.5);
+    if(sad){ ctx.translate(crx,cry); ctx.rotate(0.35); ctx.translate(-crx,-cry); }
+    ctx.beginPath();
+    ctx.moveTo(crx-crw/2,cry); ctx.lineTo(crx-crw/2,cry-crTop);
+    ctx.lineTo(crx-crw/6,cry-crTop*0.5); ctx.lineTo(crx,cry-crTop*1.4);
+    ctx.lineTo(crx+crw/6,cry-crTop*0.5); ctx.lineTo(crx+crw/2,cry-crTop);
+    ctx.lineTo(crx+crw/2,cry); ctx.closePath(); ctx.stroke();
+    ctx.restore();
+    // 宝石
+    ctx.save(); ctx.fillStyle='#ff88cc';
+    if(sad){ ctx.translate(crx,cry); ctx.rotate(0.35); ctx.translate(-crx,-cry); }
+    ctx.beginPath(); ctx.arc(crx,cry-crTop*1.1,sx(2),0,Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+};
+
+// ══════════════════════════════════════
+//  スイーツ描画
+// ══════════════════════════════════════
+function drawSweet(p,camY){
+  const bx=sx(p.x),by=sy(p.y-camY),bw=sx(p.w),bh=sy(SWEET_H);
+  ctx.save();
+  const grad=ctx.createLinearGradient(bx,by,bx,by+bh);
+  grad.addColorStop(0,p.type.color); grad.addColorStop(1,p.type.dark);
+  ctx.fillStyle=grad;
+  ctx.beginPath(); ctx.roundRect(bx,by,bw,bh,sy(5)); ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,0.55)';
+  ctx.beginPath(); ctx.roundRect(bx,by,bw,sy(8),sy(5)); ctx.fill();
+  ctx.strokeStyle='rgba(0,0,0,0.1)'; ctx.lineWidth=sy(1);
+  ctx.beginPath(); ctx.moveTo(bx+sx(4),by+bh*0.55); ctx.lineTo(bx+bw-sx(4),by+bh*0.55); ctx.stroke();
+  ctx.font=`${sy(22)}px serif`; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(p.type.emoji,bx+bw/2,by+bh*0.62);
+  ctx.beginPath(); // パスをクリアして次の描画に影響させない
+  ctx.restore();
+}
+
+// ══════════════════════════════════════
+//  背景・城
+// ══════════════════════════════════════
+function drawBackground(camY){
+  const sky=ctx.createLinearGradient(0,0,0,canvas.height);
+  sky.addColorStop(0,'#b8e4f8'); sky.addColorStop(0.6,'#daf0fc'); sky.addColorStop(1,'#f0f8ff');
+  ctx.fillStyle=sky; ctx.fillRect(0,0,canvas.width,canvas.height);
+  drawCastle(camY);
+}
+function drawCastle(camY){
+  ctx.save(); ctx.fillStyle='rgba(160,200,230,0.35)';
+  const W=canvas.width, H=canvas.height;
+  const baseY=H*0.72-sy(camY*0.08*0.3);
+  function tower(x,w,h,tw,th){
+    ctx.fillRect(x-w/2,baseY-h,w,h);
+    const mw=tw/6;
+    for(let i=0;i<3;i++) ctx.fillRect(x-tw/2+i*mw*2,baseY-h-th,mw,th);
+    // 窓：シンプルな長方形（arcを使わない）
+    const wr=w*0.16, wh=w*0.28;
+    ctx.fillStyle='rgba(100,150,200,0.5)';
+    ctx.fillRect(x-wr, baseY-h*0.62, wr*2, wh);
+    ctx.fillStyle='rgba(160,200,230,0.35)';
+  }
+  tower(W*0.5,sx(44),sy(160),sx(50),sy(18));
+  ctx.beginPath(); ctx.moveTo(W*0.5-sx(22),baseY-sy(160)); ctx.lineTo(W*0.5,baseY-sy(210)); ctx.lineTo(W*0.5+sx(22),baseY-sy(160)); ctx.closePath(); ctx.fill();
+  tower(W*0.28,sx(28),sy(115),sx(32),sy(14));
+  ctx.beginPath(); ctx.moveTo(W*0.28-sx(14),baseY-sy(115)); ctx.lineTo(W*0.28,baseY-sy(148)); ctx.lineTo(W*0.28+sx(14),baseY-sy(115)); ctx.closePath(); ctx.fill();
+  tower(W*0.72,sx(28),sy(115),sx(32),sy(14));
+  ctx.beginPath(); ctx.moveTo(W*0.72-sx(14),baseY-sy(115)); ctx.lineTo(W*0.72,baseY-sy(148)); ctx.lineTo(W*0.72+sx(14),baseY-sy(115)); ctx.closePath(); ctx.fill();
+  tower(W*0.12,sx(18),sy(75),sx(22),sy(10));
+  ctx.beginPath(); ctx.moveTo(W*0.12-sx(9),baseY-sy(75)); ctx.lineTo(W*0.12,baseY-sy(98)); ctx.lineTo(W*0.12+sx(9),baseY-sy(75)); ctx.closePath(); ctx.fill();
+  tower(W*0.88,sx(18),sy(75),sx(22),sy(10));
+  ctx.beginPath(); ctx.moveTo(W*0.88-sx(9),baseY-sy(75)); ctx.lineTo(W*0.88,baseY-sy(98)); ctx.lineTo(W*0.88+sx(9),baseY-sy(75)); ctx.closePath(); ctx.fill();
+  ctx.fillRect(W*0.12+sx(9),baseY-sy(55),W*0.16-sx(9),sy(55));
+  ctx.fillRect(W*0.28+sx(14),baseY-sy(55),W*0.22-sx(14),sy(55));
+  ctx.fillRect(W*0.5+sx(22),baseY-sy(55),W*0.22-sx(14),sy(55));
+  ctx.fillRect(W*0.72+sx(14),baseY-sy(55),W*0.16-sx(9),sy(55));
+  [W*0.2,W*0.38,W*0.62,W*0.8].forEach(wx=>{
+    for(let i=-2;i<=2;i++) ctx.fillRect(wx+sx(i*7-3),baseY-sy(62),sx(6),sy(8));
+  });
+  ctx.fillRect(0,baseY,W,H-baseY);
+  ctx.restore();
+}
+
+// ══════════════════════════════════════
+//  雪
+// ══════════════════════════════════════
+function initSnow(){
+  const arr=[];
+  for(let i=0;i<40;i++) arr.push({
+    x:Math.random()*GW, y:Math.random()*GH,
+    r:0.6+Math.random()*2, spd:0.4+Math.random()*0.6,
+    drift:(Math.random()-0.5)*0.35, a:Math.random()*Math.PI*2
+  });
+  return arr;
+}
+function drawSnow(){
+  ctx.save();
+  snowflakes.forEach(s=>{
+    s.y+=s.spd; s.x+=s.drift+Math.sin(s.a)*0.3; s.a+=0.02;
+    if(s.y>GH+5){s.y=-5;s.x=Math.random()*GW;}
+    if(s.x>GW+5)s.x=-5; if(s.x<-5)s.x=GW+5;
+    ctx.fillStyle=`rgba(255,255,255,${0.5+s.r*0.1})`;
+    ctx.beginPath(); ctx.arc(sx(s.x),sy(s.y),sx(s.r),0,Math.PI*2); ctx.fill();
+  });
+  ctx.restore();
+}
+
+// ══════════════════════════════════════
+//  パーティクル
+// ══════════════════════════════════════
+function spawnParticles(gx,gy,color,n=8){
+  for(let i=0;i<n;i++){
+    const a=Math.random()*Math.PI*2, spd=1+Math.random()*2.5;
+    particles.push({gx,gy,vx:Math.cos(a)*spd,vy:Math.sin(a)*spd-1.5,life:1,color,r:2+Math.random()*3,text:null});
+  }
+}
+function spawnScoreText(gx,gy,txt){
+  particles.push({gx,gy,vx:0,vy:-1.2,life:1,color:'#3366cc',r:0,text:txt});
+}
+function updateParticles(){
+  particles.forEach(p=>{p.gx+=p.vx;p.gy+=p.vy;p.vy+=0.08;p.life-=0.026;});
+  particles=particles.filter(p=>p.life>0);
+}
+function drawParticles(camY){
+  ctx.save();
+  particles.forEach(p=>{
+    ctx.globalAlpha=Math.max(0,p.life);
+    if(p.text){
+      ctx.fillStyle=p.color; ctx.font=`bold ${sy(14)}px sans-serif`;
+      ctx.textAlign='center'; ctx.fillText(p.text,sx(p.gx),sy(p.gy-camY));
+    } else {
+      ctx.fillStyle=p.color;
+      ctx.beginPath(); ctx.arc(sx(p.gx),sy(p.gy-camY),sx(p.r),0,Math.PI*2); ctx.fill();
+    }
+  });
+  ctx.globalAlpha=1; ctx.restore();
+}
+
+function updateHUD(){
+  document.getElementById('scoreDisplay').textContent=score;
+  document.getElementById('bestDisplay').textContent=best;
+}
+
+// ══════════════════════════════════════
+//  プラットフォーム
+// ══════════════════════════════════════
+function initPlatforms(){
+  platform=[];
+  platform.push({x:GW/2-SWEET_W_BASE/2, y:GH*0.72, w:SWEET_W_BASE,
+    type:SWEETS[0], landed:true, scored:true, slideDir:0});
+}
+function spawnIncoming(){
+  const top=platform[platform.length-1];
+  const targetY=top.y-SWEET_H;
+  const w=Math.max(SWEET_W_BASE-platform.length*1.5,52);
+  const dir=nextDir; nextDir=-nextDir;
+  const startX=dir>0?GW+w:-w;
+  const speed=2.3+platform.length*0.07;
+  incoming={x:startX, y:targetY, w, vx:-dir*speed,
+    type:SWEETS[Math.floor(Math.random()*SWEETS.length)],
+    slideDir:dir, landed:false, scored:false};
+}
+
+// ══════════════════════════════════════
+//  ズレチェック
+// ══════════════════════════════════════
+function checkOffsetGameover(newX,newW){
+  if(platform.length<1) return false;
+  const prev=platform[platform.length-1];
+  return Math.abs((newX+newW/2)-(prev.x+prev.w/2)) > prev.w*OFFSET_LIMIT;
+}
+
+// ══════════════════════════════════════
+//  横衝突チェック
+//  incoming ケーキが胴体に当たったか判定。
+//  「上から乗る」との分離:
+//    下降中 かつ 足元がまだスイーツ上面より上 → 着地ロジックに任せる
+//    それ以外の重なりはすべて横衝突
+// ══════════════════════════════════════
+function checkSideCollision(){
+  if(!incoming || incoming.landed) return false;
+
+  // プリンセス胴体のAABB（王冠・スカート裾を除いた胴体中心部）
+  const pLeft  = princess.x - PW * 0.45;
+  const pRight = princess.x + PW * 0.45;
+  const pTop   = princess.y + PH * 0.05;   // 頭の上部
+  const pBot   = princess.y + PH * 0.95;   // 足元ほぼ全体
+
+  const sl=incoming.x, sr=incoming.x+incoming.w;
+  const st=incoming.y;
+
+  // 横に重なっていない
+  if(pRight<=sl || pLeft>=sr) return false;
+  // 縦に重なっていない
+  if(pBot<=st || pTop>=st+SWEET_H) return false;
+
+  // 重なっている → 下降中で足元がまだスイーツ上面より上なら着地扱いにする
+  if(princess.vy > 0 && princess.y+PH <= st+4) return false;
+
+  // それ以外はすべて衝突
+  return true;
+}
+
+// ══════════════════════════════════════
+//  更新
+// ══════════════════════════════════════
+function update(){
+  if(state!=='playing') return;
+  frame++;
+
+  // incoming を動かす
+  if(!incoming){
+    incomingTimer++;
+    if(incomingTimer>=INCOMING_DELAY){ incomingTimer=0; spawnIncoming(); }
+  } else {
+    incoming.x+=incoming.vx;
+    // 通り過ぎたらゲームオーバー
+    const passedLeft  = incoming.slideDir>0 && incoming.x+incoming.w<0;
+    const passedRight = incoming.slideDir<0 && incoming.x>GW;
+    if(passedLeft||passedRight){
+      gameoverReason='🎂 ジャンプし損ねた！';
+      sfxMiss();
+      spawnParticles(princess.x,princess.y+10,'#aaccff',10);
+      triggerGameover(); return;
+    }
+
+    // ★ 衝突チェックはincomingを動かした直後・物理更新の前に行う
+    if(checkSideCollision()){
+      gameoverReason='💥 ケーキにぶつかった！';
+      sfxHit();
+      spawnParticles(princess.x,princess.y+10,'#ffaaaa',14);
+      triggerGameover(); return;
+    }
+  }
+
+  // 物理 + 積み済みスタックへの着地
+  princess.update();
+
+  // incoming への着地
+  if(!princess.onGround && princess.vy>0 && incoming && !incoming.landed){
+    const feet=princess.y+PH, prevFeet=feet-princess.vy, half=PW*0.45;
+    if(
+      princess.x+half>incoming.x && princess.x-half<incoming.x+incoming.w &&
+      prevFeet<=incoming.y && feet>=incoming.y
+    ){
+      if(checkOffsetGameover(incoming.x,incoming.w)){
+        gameoverReason='🎂 ケーキが崩れた！';
+        sfxHit();
+        spawnParticles(princess.x,princess.y+10,'#ffddaa',14);
+        triggerGameover(); return;
+      }
+      incoming.landed=true;
+      princess.y=incoming.y-PH; princess.vy=0; princess.vx=0;
+      princess.onGround=true; princess.standingOn=platform.length;
+      platform.push({...incoming,landed:true,scored:true});
+      incoming=null; incomingTimer=0;
+      const pts=10+Math.floor(score/50);
+      score+=pts; if(score>best) best=score; updateHUD(); sfxLand();
+      spawnParticles(princess.x,princess.y,'#ffd0e8',12);
+      spawnScoreText(princess.x,princess.y-15,'+'+pts);
+    }
+  }
+
+  // カメラ
+  const targetCamY=princess.y-GH*0.55;
+  if(targetCamY<cameraY) cameraY+=(targetCamY-cameraY)*0.08;
+
+  if(princess.dead){ gameoverReason='💨 落下してしまった…'; triggerGameover(); return; }
+  if(!princess.onGround && princess.y-cameraY>GH*0.88){
+    gameoverReason='💨 落下してしまった…'; triggerGameover(); return;
+  }
+  updateParticles();
+}
+
+// ★ triggerGameover: 即座に sad フラグを立てて描画に反映、オーバーレイは少し後
+function triggerGameover(){
+  if(state==='gameover') return;
+  state='gameover';
+  princess.sad=true;    // ← 即座に悲しい表情
+  stopBGM(); sfxOver();
+  setTimeout(()=>showOverlay('gameover'), 900);
+}
+
+// ══════════════════════════════════════
+//  描画
+// ══════════════════════════════════════
+function draw(){
+  ctx.beginPath(); // フレーム開始時に必ずパスをリセット
+  const camY=cameraY;
+  drawBackground(camY); drawSnow();
+  for(let i=0;i<platform.length;i++){
+    const p=platform[i];
+    if(p.y-camY>GH+20||p.y-camY<-SWEET_H-10) continue;
+    drawSweet(p,camY);
+  }
+  if(incoming){
+    drawSweet(incoming,camY);
+  }
+  princess.draw(camY);
+  drawParticles(camY);
+  if(state==='playing'||state==='gameover'){
+    ctx.fillStyle='rgba(30,80,140,0.6)';
+    ctx.font=`bold ${sy(13)}px monospace`;
+    ctx.textAlign='left'; ctx.fillText('SCORE '+score,sx(10),sy(18));
+    ctx.textAlign='right'; ctx.fillText('×'+(platform.length-1),canvas.width-sx(10),sy(18));
+  }
+}
+
+// ══════════════════════════════════════
+//  オーバーレイ
+// ══════════════════════════════════════
+function showOverlay(type){
+  const ov=document.getElementById('overlay');
+  const sub=document.getElementById('overlaySub');
+  const sc=document.getElementById('ovScore');
+  const hi=document.getElementById('ovBest');
+  const btn=document.getElementById('startBtn');
+  const tit=document.getElementById('ovTitle');
+  ov.style.display='flex';
+  if(type==='gameover'){
+    tit.textContent='ゲームオーバー';
+    sub.textContent=gameoverReason;
+    sc.style.display='block'; sc.textContent='スコア: '+score;
+    hi.style.display='block'; hi.textContent='ベスト: '+best;
+    btn.textContent='もう一度 ✦';
+  } else {
+    tit.textContent='Sweet Stack';
+    sub.innerHTML='左右から飛んでくるスイーツに<br>タイミングよくジャンプして乗ろう！<br><span style="color:#4488bb;">タップ / スペース でジャンプ</span>';
+    sc.style.display='none'; hi.style.display='none';
+    btn.textContent='はじめる ✦';
+  }
+  btn.onclick=startGame;
+}
+
+// ══════════════════════════════════════
+//  ゲーム開始
+// ══════════════════════════════════════
+function startGame(){
+  document.getElementById('overlay').style.display='none';
+  score=0; frame=0; particles=[]; incoming=null; incomingTimer=0;
+  nextDir=(Math.random()>0.5)?1:-1; cameraY=0; gameoverReason='';
+  initPlatforms(); princess.reset(); updateHUD(); state='playing';
+  stopBGM(); playBGM();
+}
+
+// ══════════════════════════════════════
+//  入力
+// ══════════════════════════════════════
+function handleJump(){
+  if(state==='idle'){ startGame(); return; }
+  if(state!=='playing') return;
+  princess.jump();
+}
+document.addEventListener('keydown',e=>{
+  if(e.code==='Space'||e.code==='ArrowUp'){e.preventDefault();handleJump();}
+});
+canvas.addEventListener('click',handleJump);
+canvas.addEventListener('touchstart',e=>{e.preventDefault();handleJump();},{passive:false});
+
+// ══════════════════════════════════════
+//  メインループ
+// ══════════════════════════════════════
+function loop(){ update(); draw(); requestAnimationFrame(loop); }
+showOverlay('idle');
+loop();
+</script>
+</body>
+</html>
