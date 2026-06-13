@@ -201,9 +201,6 @@ function scheduleKick(ac,t){
   }catch(e){}
 }
 
-// ★ stopBGM: AudioContext ごと閉じて完全リセット
-//   suspend() だけでは「再開時に古いスケジュール済みノードが復活」する問題が残るため
-//   close() して audioCtx を null に戻す。次の再生時に新しい AC を作る。
 function stopBGM(){
   bgmPlaying=false; bgmGeneration++;
   if(audioCtx){
@@ -241,14 +238,13 @@ function sfxMiss(){
   setTimeout(()=>beep(280,0.15,'triangle',0.12),100);
 }
 
-// ★ toggleMute: AudioContext の suspend/resume で確実に制御
 function toggleMute(){
   muted=!muted;
   document.getElementById('muteBtn').textContent=muted?'🔇':'🔊';
   if(muted){
-    stopBGM();   // AudioContext ごと閉じて完全停止
+    stopBGM();
   } else {
-    if(state==='playing') playBGM();   // 新しい AC で再生
+    if(state==='playing') playBGM();
   }
 }
 
@@ -285,7 +281,7 @@ const princess={
   x:GW/2, y:0, vy:0, vx:0,
   onGround:false, standingOn:null,
   jumpCooldown:0, dead:false,
-  sad:false,   // ★ ゲームオーバー時の悲しい表情フラグ
+  sad:false,
 
   reset(){
     const base=platform[platform.length-1];
@@ -302,12 +298,10 @@ const princess={
     sfxJump(); return true;
   },
 
-  // 物理 + 積み済みスタックへの着地
   update(){
     if(this.jumpCooldown>0) this.jumpCooldown--;
     if(!this.onGround){
       this.vy+=GRAVITY; this.y+=this.vy; this.x+=this.vx; this.vx*=0.94;
-      // 下降中のみ着地チェック
       if(this.vy>0){
         const feet=this.y+PH, prevFeet=feet-this.vy, half=PW*0.45;
         for(let i=platform.length-1;i>=0;i--){
@@ -441,7 +435,6 @@ const princess={
 
     // 王冠
     const crx=px+pw*0.5, cry=py-ph*0.04, crw=pw*0.44, crTop=ph*0.1;
-    // 本体
     ctx.save(); ctx.fillStyle='#ffd700';
     if(sad){ ctx.translate(crx,cry); ctx.rotate(0.35); ctx.translate(-crx,-cry); }
     ctx.beginPath();
@@ -450,7 +443,6 @@ const princess={
     ctx.lineTo(crx+crw/6,cry-crTop*0.5); ctx.lineTo(crx+crw/2,cry-crTop);
     ctx.lineTo(crx+crw/2,cry); ctx.closePath(); ctx.fill();
     ctx.restore();
-    // 輪郭
     ctx.save(); ctx.strokeStyle='#cc9900'; ctx.lineWidth=sx(0.5);
     if(sad){ ctx.translate(crx,cry); ctx.rotate(0.35); ctx.translate(-crx,-cry); }
     ctx.beginPath();
@@ -459,10 +451,10 @@ const princess={
     ctx.lineTo(crx+crw/6,cry-crTop*0.5); ctx.lineTo(crx+crw/2,cry-crTop);
     ctx.lineTo(crx+crw/2,cry); ctx.closePath(); ctx.stroke();
     ctx.restore();
-    // 宝石
     ctx.save(); ctx.fillStyle='#ff88cc';
     if(sad){ ctx.translate(crx,cry); ctx.rotate(0.35); ctx.translate(-crx,-cry); }
-    ctx.beginPath(); ctx.arc(crx,cry-crTop*1.1,sx(2),0,Math.PI*2); ctx.fill();
+    ctx.beginPath();
+    ctx.arc(crx,cry-crTop*1.1,sx(2),0,Math.PI*2); ctx.fill();
     ctx.restore();
   }
 };
@@ -483,7 +475,7 @@ function drawSweet(p,camY){
   ctx.beginPath(); ctx.moveTo(bx+sx(4),by+bh*0.55); ctx.lineTo(bx+bw-sx(4),by+bh*0.55); ctx.stroke();
   ctx.font=`${sy(22)}px serif`; ctx.textAlign='center'; ctx.textBaseline='middle';
   ctx.fillText(p.type.emoji,bx+bw/2,by+bh*0.62);
-  ctx.beginPath(); // パスをクリアして次の描画に影響させない
+  ctx.beginPath();
   ctx.restore();
 }
 
@@ -504,7 +496,6 @@ function drawCastle(camY){
     ctx.fillRect(x-w/2,baseY-h,w,h);
     const mw=tw/6;
     for(let i=0;i<3;i++) ctx.fillRect(x-tw/2+i*mw*2,baseY-h-th,mw,th);
-    // 窓：シンプルな長方形（arcを使わない）
     const wr=w*0.16, wh=w*0.28;
     ctx.fillStyle='rgba(100,150,200,0.5)';
     ctx.fillRect(x-wr, baseY-h*0.62, wr*2, wh);
@@ -622,32 +613,22 @@ function checkOffsetGameover(newX,newW){
 
 // ══════════════════════════════════════
 //  横衝突チェック
-//  incoming ケーキが胴体に当たったか判定。
-//  「上から乗る」との分離:
-//    下降中 かつ 足元がまだスイーツ上面より上 → 着地ロジックに任せる
-//    それ以外の重なりはすべて横衝突
 // ══════════════════════════════════════
 function checkSideCollision(){
   if(!incoming || incoming.landed) return false;
 
-  // プリンセス胴体のAABB（王冠・スカート裾を除いた胴体中心部）
   const pLeft  = princess.x - PW * 0.45;
   const pRight = princess.x + PW * 0.45;
-  const pTop   = princess.y + PH * 0.05;   // 頭の上部
-  const pBot   = princess.y + PH * 0.95;   // 足元ほぼ全体
+  const pTop   = princess.y + PH * 0.05;
+  const pBot   = princess.y + PH * 0.95;
 
   const sl=incoming.x, sr=incoming.x+incoming.w;
   const st=incoming.y;
 
-  // 横に重なっていない
   if(pRight<=sl || pLeft>=sr) return false;
-  // 縦に重なっていない
   if(pBot<=st || pTop>=st+SWEET_H) return false;
-
-  // 重なっている → 下降中で足元がまだスイーツ上面より上なら着地扱いにする
   if(princess.vy > 0 && princess.y+PH <= st+4) return false;
 
-  // それ以外はすべて衝突
   return true;
 }
 
@@ -655,16 +636,22 @@ function checkSideCollision(){
 //  更新
 // ══════════════════════════════════════
 function update(){
-  if(state!=='playing') return;
+  // ★ state が 'playing' でも 'gameover' でもなければ何もしない（'idle' 時用）
+  if(state!=='playing' && state!=='gameover') return;
+
+  // ★ ゲームオーバー時（'gameover'）は、パーティクルの更新処理のみを行ってリターンする
+  if(state==='gameover'){
+    updateParticles();
+    return;
+  }
+
   frame++;
 
-  // incoming を動かす
   if(!incoming){
     incomingTimer++;
     if(incomingTimer>=INCOMING_DELAY){ incomingTimer=0; spawnIncoming(); }
   } else {
     incoming.x+=incoming.vx;
-    // 通り過ぎたらゲームオーバー
     const passedLeft  = incoming.slideDir>0 && incoming.x+incoming.w<0;
     const passedRight = incoming.slideDir<0 && incoming.x>GW;
     if(passedLeft||passedRight){
@@ -674,7 +661,6 @@ function update(){
       triggerGameover(); return;
     }
 
-    // ★ 衝突チェックはincomingを動かした直後・物理更新の前に行う
     if(checkSideCollision()){
       gameoverReason='💥 ケーキにぶつかった！';
       sfxHit();
@@ -683,10 +669,8 @@ function update(){
     }
   }
 
-  // 物理 + 積み済みスタックへの着地
   princess.update();
 
-  // incoming への着地
   if(!princess.onGround && princess.vy>0 && incoming && !incoming.landed){
     const feet=princess.y+PH, prevFeet=feet-princess.vy, half=PW*0.45;
     if(
@@ -711,7 +695,6 @@ function update(){
     }
   }
 
-  // カメラ
   const targetCamY=princess.y-GH*0.55;
   if(targetCamY<cameraY) cameraY+=(targetCamY-cameraY)*0.08;
 
@@ -722,11 +705,10 @@ function update(){
   updateParticles();
 }
 
-// ★ triggerGameover: 即座に sad フラグを立てて描画に反映、オーバーレイは少し後
 function triggerGameover(){
   if(state==='gameover') return;
   state='gameover';
-  princess.sad=true;    // ← 即座に悲しい表情
+  princess.sad=true;
   stopBGM(); sfxOver();
   setTimeout(()=>showOverlay('gameover'), 900);
 }
@@ -735,7 +717,7 @@ function triggerGameover(){
 //  描画
 // ══════════════════════════════════════
 function draw(){
-  ctx.beginPath(); // フレーム開始時に必ずパスをリセット
+  ctx.beginPath();
   const camY=cameraY;
   drawBackground(camY); drawSnow();
   for(let i=0;i<platform.length;i++){
