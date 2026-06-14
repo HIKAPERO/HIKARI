@@ -126,10 +126,80 @@
   /* TOAST */
   .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px); background:var(--accent); color:#fff; border-radius:20px; padding:12px 24px; font-size:13px; font-weight:800; z-index:300; transition:transform 0.3s cubic-bezier(.4,0,.2,1), opacity 0.3s; opacity:0; white-space:nowrap; box-shadow:0 4px 0 var(--accent-dark); letter-spacing:1px; }
   .toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
+
+  /* ── スマホ 9:16: CSSでコンパクト化 ── */
+  @media (max-width: 767px) {
+    html, body { height: 100%; overflow: hidden; }
+
+    /* body全体を9:16の高さに収める */
+    body { height: calc(100vw * 16 / 9); min-height: unset; }
+
+    /* ヘッダー詰め */
+    .header { padding: 6px 12px; }
+    .header-logo { font-size: 12px; }
+    .level-badge { padding: 2px 8px; font-size: 9px; }
+    .score-display { font-size: 12px; }
+
+    /* レイアウト詰め */
+    .game-wrap { padding: 8px 10px 10px; gap: 0; }
+    .panel-left { gap: 7px; }
+    .panel-right { gap: 7px; margin-top: 7px; }
+
+    /* カード詰め */
+    .card { padding: 10px 12px; border-radius: 18px; box-shadow: 0 4px 0 var(--accent-light); }
+    .card-label { font-size: 9px; margin-bottom: 6px; }
+
+    /* ターゲット */
+    .target-number { font-size: 36px; }
+    .target-unit { font-size: 11px; }
+
+    /* タイマー */
+    .timer-wrap { margin-top: 6px; }
+    .timer-bar-bg { height: 6px; margin-bottom: 3px; }
+    .timer-text { font-size: 10px; }
+
+    /* プログレスドット */
+    .progress-dots { margin-top: 6px; gap: 6px; }
+    .dot { width: 9px; height: 9px; }
+
+    /* ダイス */
+    .die { width: 52px; height: 52px; font-size: 22px; border-radius: 16px; box-shadow: 0 3px 0 var(--accent-light); }
+    .dice-grid { gap: 8px; }
+    .hint-text { font-size: 10px; margin-top: 6px; }
+
+    /* フォーミュラ */
+    .formula-display { min-height: 44px; padding: 8px 10px; gap: 4px; border-radius: 12px; }
+    .formula-token { font-size: 17px; padding: 2px 5px; }
+    .formula-cursor { height: 20px; }
+    .formula-result { font-size: 11px; padding: 5px 10px; margin-top: 5px; }
+
+    /* オペレーター */
+    .ops-grid { gap: 5px; }
+    .op-btn { padding: 9px 0; font-size: 18px; border-radius: 12px; box-shadow: 0 3px 0 var(--accent-light); }
+
+    /* アクションボタン */
+    .action-row { gap: 5px; }
+    .btn { padding: 9px; font-size: 11px; margin-top: 5px; border-radius: 12px; }
+    .btn-back, .btn-clear { box-shadow: 0 3px 0 var(--accent-light); }
+    .btn-submit { box-shadow: 0 4px 0 var(--accent-dark); }
+
+    /* スクリーン */
+    .screen { position: absolute; inset: 0; }
+    .screen-icon { font-size: 44px; margin-bottom: 10px; }
+    .screen-title { font-size: 18px; margin-bottom: 6px; }
+    .screen-sub { font-size: 12px; margin-bottom: 14px; }
+    .screen-score { font-size: 36px; }
+    .screen-btn { padding: 12px 32px; font-size: 12px; }
+
+    /* flash/toast */
+    .clear-flash { position: absolute; inset: 0; }
+    .toast { position: absolute; }
+  }
 </style>
 </head>
 <body>
 
+<div id="gameRoot">
 <div class="header">
   <div class="header-logo">🐾 SWEET PAW</div>
   <div class="header-right">
@@ -228,6 +298,7 @@
 
 <div class="clear-flash" id="clearFlash"></div>
 <div class="toast" id="toast"></div>
+</div><!-- /#gameRoot -->
 
 <script>
 // ─────────────────────────────────────────
@@ -855,5 +926,6 @@ showScreen('screenStart');
   $('btnRestart').addEventListener('click', () => soundOp());
 })();
 </script>
+
 </body>
 </html>
