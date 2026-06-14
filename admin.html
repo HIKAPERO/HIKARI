@@ -397,7 +397,7 @@
       <div class="field"><label>一言説明</label><input type="text" id="playDesc" placeholder="例：ジャンプして障害物を避けよう！"></div>
       <div class="field"><label>ファイル名（GitHubにアップしたHTMLファイル名）</label><input type="text" id="playFile" placeholder="例：game.html"></div>
       <div class="field"><label>サムネURL（画像・動画どちらでも可・任意）</label><input type="text" id="playThumb" placeholder="例：https://hikapero.github.io/HIKARI/thumb_game.png または .mp4"></div>
-      <div class="field"><label>BGMファイル名（GitHubにアップしたmp3ファイル名・任意）</label><input type="text" id="playBgm" placeholder="例：game-m.mp3"><div style="font-size:11px;color:var(--text-dim);margin-top:4px;">空欄の場合はゲーム内蔵の音声が使われます</div></div>
+      <div class="field"><label>BGM URL（mp3・任意）</label><input type="text" id="playBgm" placeholder="例：https://hikapero.github.io/HIKARI/bgm/mysong.mp3"></div>
       <div class="field"><label>表示順</label><input type="number" id="playOrder" value="1"></div>
       <button class="btn-add" onclick="addPlay()">登録する</button>
     </div>
@@ -683,14 +683,14 @@
           </div>
           <div style="flex:1;">
             <div style="font-size:13px;color:var(--text);">${esc(g.title)}</div>
-            <div style="font-size:10px;color:var(--text-dim);">${esc(g.filename||"")} ｜ 順: ${g.order||1}</div>
+            <div style="font-size:10px;color:var(--text-dim);">${esc(g.filename||"")} ｜ 順: ${g.order||1}${g.bgmUrl ? ' ｜ 🎵 BGMあり' : ''}</div>
           </div>
           <div class="btn-row">
             <button class="btn-edit">編集</button>
             <button class="btn-del">削除</button>
           </div>`;
         div.querySelector(".btn-edit").addEventListener("click", () =>
-          window._editPlay(d.id, g.title||"", g.desc||"", g.filename||"", g.thumbUrl||"", g.bgmFile||"", g.order||1)
+          window._editPlay(d.id, g.title||"", g.desc||"", g.filename||"", g.thumbUrl||"", g.bgmUrl||"", g.order||1)
         );
         div.querySelector(".btn-del").addEventListener("click", () => window._delDoc("plays", d.id));
         list.appendChild(div);
@@ -812,10 +812,10 @@
     const desc     = document.getElementById("playDesc").value.trim();
     const filename = document.getElementById("playFile").value.trim();
     const thumbUrl = document.getElementById("playThumb").value.trim();
-    const bgmFile  = document.getElementById("playBgm").value.trim();
+    const bgmUrl   = document.getElementById("playBgm").value.trim();
     const order    = Number(document.getElementById("playOrder").value)||1;
     if (!title || !filename) { alert("タイトルとファイル名は必須です"); return; }
-    await window._addDoc(window._collection(window._db,"plays"), { title, desc, filename, thumbUrl, bgmFile, order, createdAt:serverTimestamp() });
+    await window._addDoc(window._collection(window._db,"plays"), { title, desc, filename, thumbUrl, bgmUrl, order, createdAt:serverTimestamp() });
     ["playTitle","playDesc","playFile","playThumb","playBgm"].forEach(id => document.getElementById(id).value="");
     document.getElementById("playOrder").value = "1";
     showToast("🎮 ゲームを登録しました！");
@@ -1176,14 +1176,14 @@
     document.getElementById("editModal").classList.add("open");
   };
 
-  window._editPlay = (id, title, desc, filename, thumbUrl, bgmFile, order) => {
+  window._editPlay = (id, title, desc, filename, thumbUrl, bgmUrl, order) => {
     document.getElementById("editModalTitle").textContent = "ミニゲームを編集";
     document.getElementById("editModalBody").innerHTML = `
       <div class="field"><label>ゲームタイトル</label><input id="e_ptitle" value="${title}" placeholder="例：HIKARI RUN!"></div>
       <div class="field"><label>一言説明</label><input id="e_pdesc" value="${desc}" placeholder="例：ジャンプして障害物を避けよう！"></div>
       <div class="field"><label>ファイル名</label><input id="e_pfile" value="${filename}" placeholder="例：game.html"></div>
       <div class="field"><label>サムネURL（画像・動画どちらでも可・任意）</label><input id="e_pthumb" value="${thumbUrl}" placeholder="例：https://hikapero.github.io/HIKARI/thumb_game.png または .mp4"></div>
-      <div class="field"><label>BGMファイル名（任意）</label><input id="e_pbgm" value="${bgmFile||''}" placeholder="例：game-m.mp3"><div style="font-size:11px;color:var(--text-dim);margin-top:4px;">空欄の場合はゲーム内蔵の音声が使われます</div></div>
+      <div class="field"><label>BGM URL（mp3・任意）</label><input id="e_pbgm" value="${bgmUrl}" placeholder="例：https://hikapero.github.io/HIKARI/bgm/mysong.mp3"></div>
       <div class="field"><label>表示順</label><input id="e_porder" type="number" value="${order}"></div>`;
     window._editAction = async () => {
       await window._updateDoc(window._doc(window._db,"plays",id), {
@@ -1191,7 +1191,7 @@
         desc:     document.getElementById("e_pdesc").value.trim(),
         filename: document.getElementById("e_pfile").value.trim(),
         thumbUrl: document.getElementById("e_pthumb").value.trim(),
-        bgmFile:  document.getElementById("e_pbgm").value.trim(),
+        bgmUrl:   document.getElementById("e_pbgm").value.trim(),
         order:    Number(document.getElementById("e_porder").value)||1,
       });
       showToast("更新しました！");
