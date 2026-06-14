@@ -686,6 +686,174 @@ $('btnStart').addEventListener('click', () => {
 
 if (hiScore > 0) $('hiScoreStart').textContent = `ハイスコア: ${hiScore.toLocaleString()} 🐾`;
 showScreen('screenStart');
+
+// ─────────────────────────────────────────
+// BGM — ?bgm=URL パラメータから自動再生
+// ─────────────────────────────────────────
+(function() {
+  const params = new URLSearchParams(location.search);
+  const bgmUrl = params.get('bgm');
+  if (!bgmUrl) return;
+
+  const audio = new Audio();
+  audio.src = bgmUrl;
+  audio.loop = true;
+  audio.volume = 0.4;
+
+  // スタートボタンを押したタイミングで再生（ブラウザのAutoplay制限対策）
+  let started = false;
+  function startBgm() {
+    if (started) return;
+    started = true;
+    audio.play().catch(() => {});
+  }
+  $('btnStart').addEventListener('click', startBgm, { once: true });
+})();
+
+// ─────────────────────────────────────────
+// SOUND — Web Audio かわいい効果音
+// ─────────────────────────────────────────
+(function() {
+  let actx = null;
+  function getCtx() {
+    if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+    if (actx.state === 'suspended') actx.resume();
+    return actx;
+  }
+
+  // ぷにっ音（ダイスタップ）
+  function soundDie() {
+    const c = getCtx();
+    const o = c.createOscillator(), g = c.createGain();
+    o.connect(g); g.connect(c.destination);
+    o.type = 'sine';
+    o.frequency.setValueAtTime(600, c.currentTime);
+    o.frequency.exponentialRampToValueAtTime(900, c.currentTime + 0.06);
+    o.frequency.exponentialRampToValueAtTime(700, c.currentTime + 0.12);
+    g.gain.setValueAtTime(0, c.currentTime);
+    g.gain.linearRampToValueAtTime(0.18, c.currentTime + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.18);
+    o.start(c.currentTime); o.stop(c.currentTime + 0.2);
+  }
+
+  // ポコッ音（演算子・括弧ボタン）
+  function soundOp() {
+    const c = getCtx();
+    const o = c.createOscillator(), g = c.createGain();
+    o.connect(g); g.connect(c.destination);
+    o.type = 'triangle';
+    o.frequency.setValueAtTime(400, c.currentTime);
+    o.frequency.exponentialRampToValueAtTime(300, c.currentTime + 0.08);
+    g.gain.setValueAtTime(0.12, c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.1);
+    o.start(c.currentTime); o.stop(c.currentTime + 0.12);
+  }
+
+  // キュン音（もどす）
+  function soundBack() {
+    const c = getCtx();
+    const o = c.createOscillator(), g = c.createGain();
+    o.connect(g); g.connect(c.destination);
+    o.type = 'sine';
+    o.frequency.setValueAtTime(500, c.currentTime);
+    o.frequency.exponentialRampToValueAtTime(300, c.currentTime + 0.1);
+    g.gain.setValueAtTime(0.1, c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.12);
+    o.start(c.currentTime); o.stop(c.currentTime + 0.14);
+  }
+
+  // きらきら音（正解！）
+  function soundClear() {
+    const c = getCtx();
+    [523, 659, 784, 1046].forEach((freq, i) => {
+      const o = c.createOscillator(), g = c.createGain();
+      o.connect(g); g.connect(c.destination);
+      o.type = 'sine';
+      o.frequency.value = freq;
+      const t = c.currentTime + i * 0.08;
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.18, t + 0.03);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+      o.start(t); o.stop(t + 0.35);
+    });
+  }
+
+  // ショボン音（タイムアップ）
+  function soundTimeout() {
+    const c = getCtx();
+    [400, 320, 260].forEach((freq, i) => {
+      const o = c.createOscillator(), g = c.createGain();
+      o.connect(g); g.connect(c.destination);
+      o.type = 'triangle';
+      o.frequency.value = freq;
+      const t = c.currentTime + i * 0.12;
+      g.gain.setValueAtTime(0.12, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+      o.start(t); o.stop(t + 0.2);
+    });
+  }
+
+  // レベルアップ音（ファンファーレ）
+  function soundLevelUp() {
+    const c = getCtx();
+    [523, 659, 784, 659, 1046].forEach((freq, i) => {
+      const o = c.createOscillator(), g = c.createGain();
+      o.connect(g); g.connect(c.destination);
+      o.type = 'sine';
+      o.frequency.value = freq;
+      const t = c.currentTime + i * 0.1;
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.2, t + 0.03);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+      o.start(t); o.stop(t + 0.28);
+    });
+  }
+
+  // ── イベントに音を紐付け ──
+
+  // ダイスクリック音（grid委譲）
+  $('diceGrid').addEventListener('click', e => {
+    if (e.target.classList.contains('die') && !e.target.classList.contains('used')) soundDie();
+  });
+
+  // 演算子・括弧ボタン
+  document.querySelectorAll('.op-btn').forEach(btn => {
+    btn.addEventListener('click', () => { if (gameActive) soundOp(); });
+  });
+
+  // もどす・クリア
+  $('btnBack').addEventListener('click', () => { if (gameActive) soundBack(); });
+  $('btnClear').addEventListener('click', () => { if (gameActive) soundBack(); });
+
+  // 答え合わせボタン：押した瞬間にポコッ、正解なら直後にきらきら
+  $('btnSubmit').addEventListener('click', () => {
+    if ($('btnSubmit').disabled) return;
+    soundOp(); // 押した瞬間
+    // 正解判定は submit ハンドラが走った直後（screenClear が表示される）を MutationObserver で検知
+  });
+
+  // screenClear が表示されたら正解音 or レベルアップ音
+  const observerClear = new MutationObserver(() => {
+    if ($('screenClear').classList.contains('show')) {
+      // qInLevel はこの時点ですでにインクリメント済み
+      if (qInLevel === 0) soundLevelUp(); // 3問クリアでリセットされた直後 = レベルアップ
+      else soundClear();
+    }
+  });
+  observerClear.observe($('screenClear'), { attributes: true, attributeFilter: ['class'] });
+
+  // screenTimeout が表示されたらショボン音
+  const observerTimeout = new MutationObserver(() => {
+    if ($('screenTimeout').classList.contains('show')) soundTimeout();
+  });
+  observerTimeout.observe($('screenTimeout'), { attributes: true, attributeFilter: ['class'] });
+
+  // 各種画面ボタン
+  $('btnStart').addEventListener('click', () => soundOp());
+  $('btnNextQ').addEventListener('click', () => soundOp());
+  $('btnRetry').addEventListener('click', () => soundOp());
+  $('btnRestart').addEventListener('click', () => soundOp());
+})();
 </script>
 </body>
 </html>
