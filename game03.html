@@ -95,13 +95,12 @@
     display: none;
     position: fixed;
     z-index: 9999;
-    top: 50%;
-    right: 16px;
-    transform: translateY(-50%);
-    pointer-events: auto;
+    bottom: 24px;
+    right: 24px;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
+    pointer-events: auto;
   }
   #joyBase {
     width: 110px; height: 110px; border-radius: 50%;
@@ -728,7 +727,8 @@ function startGame() {
   state = 'playing';
   startAudioBGM();
   // タッチデバイスならコントロールを表示
-  if (touchControls) {
+  const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+  if (isTouch) {
     document.getElementById('touchLeft').style.display  = 'block';
     document.getElementById('touchRight').style.display = 'flex';
   }
@@ -1044,25 +1044,20 @@ function roundRect(ctx, x, y, w, h, r) {
 
 // ── PC/スマホ環境検知・ボタン出し分け・コントロールガイド切り替え ──
 function initDynamicControlsGuide() {
-  const isTouch = touchControls ||
-    ((('ontouchstart' in window) || (navigator.maxTouchPoints > 0))
-    && /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent));
+  // タッチ対応PC誤検知を防ぐためUserAgentも併用
+  const isTouch = (('ontouchstart' in window) || (navigator.maxTouchPoints > 0))
+    && /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
 
   if (isTouch) {
     if(document.getElementById('guideMove'))  document.getElementById('guideMove').textContent  = "左下ジョイスティック";
     if(document.getElementById('guideShoot')) document.getElementById('guideShoot').textContent = "右下 [SHOT] ボタン長押し";
-    if(document.getElementById('guidePower')) document.getElementById('guidePower').textContent = "下部メーターをタップ";
+    if(document.getElementById('guidePower')) document.getElementById('guidePower').textContent = "右側メーターをタップ";
     // エントリー画面: 通常スタート非表示、全画面ボタン表示
     if(document.getElementById('startBtn'))      document.getElementById('startBtn').style.display      = "none";
     if(document.getElementById('fullScreenBtn')) document.getElementById('fullScreenBtn').style.display = "inline-block";
-    // タッチコントロールはエントリー画面では非表示（ゲーム開始時に表示する）
-    document.getElementById('touchLeft').style.display  = 'none';
-    document.getElementById('touchRight').style.display = 'none';
-    // touchRight は flex コンテナなので表示時は 'flex' を使う（startGame内で設定）
+    // タッチUIの表示/非表示はここでは触らない（startGame/showOverlayに任せる）
   } else {
     if(document.getElementById('fullScreenBtn')) document.getElementById('fullScreenBtn').style.display = "none";
-    document.getElementById('touchLeft').style.display  = 'none';
-    document.getElementById('touchRight').style.display = 'none';
   }
 }
 initDynamicControlsGuide();
