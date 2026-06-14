@@ -695,12 +695,13 @@
         </div>`;
       card.appendChild(thumb);
 
-      // HIKARIのコメント（画像の直下）
+      // コメント（HIKARI or ぺろちゃん）
       if (data.comment) {
         const commentDiv = document.createElement("div");
         commentDiv.className = "gallery-comment";
+        const commentLabel = data.commentOwner === "pero" ? "🐱 ぺろちゃん" : "✦ HIKARI";
         commentDiv.innerHTML = `
-          <div class="hikari-label">✦ HIKARI</div>
+          <div class="hikari-label">${commentLabel}</div>
           <div class="hikari-text">${esc(data.comment)}</div>`;
         card.appendChild(commentDiv);
       }

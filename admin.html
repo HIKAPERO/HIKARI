@@ -228,7 +228,14 @@
         <div style="font-size:11px; color:var(--text-dim); margin-top:6px;" id="galleryUrlPreview">↑「発行する」を押すとファイル名が自動で決まるよ</div>
         <input type="hidden" id="galleryUrl">
       </div>
-      <div class="field"><label>HIKARIのコメント</label><textarea id="galleryComment" placeholder="この作品へのコメントを書こう！"></textarea></div>
+      <div class="field">
+        <label>コメント投稿者</label>
+        <select id="galleryCommentOwner" style="background:var(--bg2);border:0.5px solid var(--border);border-radius:7px;padding:10px 14px;font-size:13px;color:var(--text);outline:none;width:100%;font-family:inherit;">
+          <option value="hikari">⭐ HIKARI</option>
+          <option value="pero">🐱 ぺろちゃん</option>
+        </select>
+      </div>
+      <div class="field"><label>コメント</label><textarea id="galleryComment" placeholder="この作品へのコメントを書こう！"></textarea></div>
       <button class="btn-add" onclick="addGallery()">追加する</button>
     </div>
     <div class="gallery-list" id="galleryList">
@@ -397,7 +404,6 @@
       <div class="field"><label>一言説明</label><input type="text" id="playDesc" placeholder="例：ジャンプして障害物を避けよう！"></div>
       <div class="field"><label>ファイル名（GitHubにアップしたHTMLファイル名）</label><input type="text" id="playFile" placeholder="例：game.html"></div>
       <div class="field"><label>サムネURL（画像・動画どちらでも可・任意）</label><input type="text" id="playThumb" placeholder="例：https://hikapero.github.io/HIKARI/thumb_game.png または .mp4"></div>
-      <div class="field"><label>BGM URL（mp3・任意）</label><input type="text" id="playBgm" placeholder="例：https://hikapero.github.io/HIKARI/bgm/mysong.mp3"></div>
       <div class="field"><label>表示順</label><input type="number" id="playOrder" value="1"></div>
       <button class="btn-add" onclick="addPlay()">登録する</button>
     </div>
@@ -511,18 +517,34 @@
       if (snap.empty) { list.innerHTML = '<div class="empty-note">まだ作品がありません</div>'; return; }
       snap.forEach(d => {
         const data = d.data();
+        // 投稿日フォーマット
+        let dateStr = "";
+        if (data.createdAt) {
+          try {
+            const dt = data.createdAt.toDate();
+            dateStr = dt.toLocaleDateString("ja-JP", { year:"numeric", month:"2-digit", day:"2-digit" });
+          } catch(e) {}
+        }
+        // コメント投稿者ラベル
+        const commentOwnerLabel = data.commentOwner === "pero" ? "🐱 ぺろちゃん" : "⭐ HIKARI";
         const div = document.createElement("div");
         div.className = "gallery-row";
         div.innerHTML = `
           ${data.imageUrl ? `<img src="${esc(data.imageUrl)}" alt="">` : `<div style="width:52px;height:52px;background:var(--bg3);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🎨</div>`}
           <div class="gallery-row-info">
             <div class="gallery-row-title">${esc(data.title)}</div>
-            <div class="gallery-row-sub">by ${esc(data.author)}</div>
+            <div class="gallery-row-sub">by ${esc(data.author)}${dateStr ? " ｜ " + dateStr : ""}${data.comment ? " ｜ " + commentOwnerLabel : ""}</div>
           </div>
           <div class="btn-row">
-            <button class="btn-edit" onclick="window._editGallery('${d.id}', ${JSON.stringify(esc(data.title))}, ${JSON.stringify(esc(data.author))}, ${JSON.stringify(esc(data.imageUrl||''))}, ${JSON.stringify(esc(data.comment||''))})">編集</button>
-            <button class="btn-del" onclick="window._delDoc('gallery','${d.id}')">削除</button>
+            <button class="btn-edit">編集</button>
+            <button class="btn-del">削除</button>
           </div>`;
+        div.querySelector(".btn-edit").addEventListener("click", () =>
+          window._editGallery(d.id, data.title||"", data.author||"", data.imageUrl||"", data.comment||"", data.commentOwner||"hikari")
+        );
+        div.querySelector(".btn-del").addEventListener("click", () =>
+          window._delDoc("gallery", d.id)
+        );
         list.appendChild(div);
       });
     });
@@ -683,14 +705,14 @@
           </div>
           <div style="flex:1;">
             <div style="font-size:13px;color:var(--text);">${esc(g.title)}</div>
-            <div style="font-size:10px;color:var(--text-dim);">${esc(g.filename||"")} ｜ 順: ${g.order||1}${g.bgmUrl ? ' ｜ 🎵 BGMあり' : ''}</div>
+            <div style="font-size:10px;color:var(--text-dim);">${esc(g.filename||"")} ｜ 順: ${g.order||1}</div>
           </div>
           <div class="btn-row">
             <button class="btn-edit">編集</button>
             <button class="btn-del">削除</button>
           </div>`;
         div.querySelector(".btn-edit").addEventListener("click", () =>
-          window._editPlay(d.id, g.title||"", g.desc||"", g.filename||"", g.thumbUrl||"", g.bgmUrl||"", g.order||1)
+          window._editPlay(d.id, g.title||"", g.desc||"", g.filename||"", g.thumbUrl||"", g.order||1)
         );
         div.querySelector(".btn-del").addEventListener("click", () => window._delDoc("plays", d.id));
         list.appendChild(div);
@@ -812,11 +834,10 @@
     const desc     = document.getElementById("playDesc").value.trim();
     const filename = document.getElementById("playFile").value.trim();
     const thumbUrl = document.getElementById("playThumb").value.trim();
-    const bgmUrl   = document.getElementById("playBgm").value.trim();
     const order    = Number(document.getElementById("playOrder").value)||1;
     if (!title || !filename) { alert("タイトルとファイル名は必須です"); return; }
-    await window._addDoc(window._collection(window._db,"plays"), { title, desc, filename, thumbUrl, bgmUrl, order, createdAt:serverTimestamp() });
-    ["playTitle","playDesc","playFile","playThumb","playBgm"].forEach(id => document.getElementById(id).value="");
+    await window._addDoc(window._collection(window._db,"plays"), { title, desc, filename, thumbUrl, order, createdAt:serverTimestamp() });
+    ["playTitle","playDesc","playFile","playThumb"].forEach(id => document.getElementById(id).value="");
     document.getElementById("playOrder").value = "1";
     showToast("🎮 ゲームを登録しました！");
   };
@@ -858,10 +879,12 @@
     const fileName = document.getElementById("galleryUrl").value.trim();
     const imageUrl = fileName ? "https://hikapero.github.io/HIKARI/gallery/" + fileName + ".png" : "";
     const comment = document.getElementById("galleryComment").value.trim();
+    const commentOwner = document.getElementById("galleryCommentOwner").value;
     if (!title || !author) { alert("タイトルと投稿者名は必須です"); return; }
-    await window._addDoc(window._collection(window._db,"gallery"), { title, author, imageUrl, comment, createdAt:serverTimestamp() });
+    await window._addDoc(window._collection(window._db,"gallery"), { title, author, imageUrl, comment, commentOwner, createdAt:serverTimestamp() });
     ["galleryTitle","galleryAuthor","galleryComment"].forEach(id => document.getElementById(id).value="");
     document.getElementById("galleryUrl").value = "";
+    document.getElementById("galleryCommentOwner").value = "hikari";
     document.getElementById("galleryFileName").textContent = "—";
     document.getElementById("galleryUrlPreview").textContent = "↑「発行する」を押すとファイル名が自動で決まるよ";
     showToast("🎨 ギャラリーに追加しました！");
@@ -951,7 +974,8 @@
   // ── EDIT MODAL ──
   window._editAction = null;
 
-  window._editGallery = (id, title, author, imageUrl, comment) => {
+  window._editGallery = (id, title, author, imageUrl, comment, commentOwner) => {
+    commentOwner = commentOwner || "hikari";
     document.getElementById("editModalTitle").textContent = "作品を編集";
     document.getElementById("editModalBody").innerHTML = `
       <div class="field"><label>タイトル</label><input id="e_title" value="${title}"></div>
@@ -961,13 +985,21 @@
         <input id="e_url" value="${imageUrl.replace('https://hikapero.github.io/HIKARI/gallery/', '')}" placeholder="例：art01.png" oninput="document.getElementById('e_url_preview').textContent = 'https://hikapero.github.io/HIKARI/gallery/' + this.value">
         <div style="font-size:11px; color:var(--text-dim); margin-top:6px;" id="e_url_preview">https://hikapero.github.io/HIKARI/gallery/${imageUrl.replace('https://hikapero.github.io/HIKARI/gallery/', '')}</div>
       </div>
-      <div class="field"><label>HIKARIのコメント</label><textarea id="e_comment">${comment}</textarea></div>`;
+      <div class="field">
+        <label>コメント投稿者</label>
+        <select id="e_comment_owner" style="background:var(--bg2);border:0.5px solid var(--border);border-radius:7px;padding:10px 14px;font-size:13px;color:var(--text);outline:none;width:100%;font-family:inherit;">
+          <option value="hikari" ${commentOwner === 'pero' ? '' : 'selected'}>⭐ HIKARI</option>
+          <option value="pero" ${commentOwner === 'pero' ? 'selected' : ''}>🐱 ぺろちゃん</option>
+        </select>
+      </div>
+      <div class="field"><label>コメント</label><textarea id="e_comment">${comment}</textarea></div>`;
     window._editAction = async () => {
       await window._updateDoc(window._doc(window._db,"gallery",id), {
         title: document.getElementById("e_title").value.trim(),
         author: document.getElementById("e_author").value.trim(),
         imageUrl: document.getElementById("e_url").value.trim() ? "https://hikapero.github.io/HIKARI/gallery/" + document.getElementById("e_url").value.trim() : "",
         comment: document.getElementById("e_comment").value.trim(),
+        commentOwner: document.getElementById("e_comment_owner").value,
       });
       showToast("更新しました！");
     };
@@ -1176,14 +1208,13 @@
     document.getElementById("editModal").classList.add("open");
   };
 
-  window._editPlay = (id, title, desc, filename, thumbUrl, bgmUrl, order) => {
+  window._editPlay = (id, title, desc, filename, thumbUrl, order) => {
     document.getElementById("editModalTitle").textContent = "ミニゲームを編集";
     document.getElementById("editModalBody").innerHTML = `
       <div class="field"><label>ゲームタイトル</label><input id="e_ptitle" value="${title}" placeholder="例：HIKARI RUN!"></div>
       <div class="field"><label>一言説明</label><input id="e_pdesc" value="${desc}" placeholder="例：ジャンプして障害物を避けよう！"></div>
       <div class="field"><label>ファイル名</label><input id="e_pfile" value="${filename}" placeholder="例：game.html"></div>
       <div class="field"><label>サムネURL（画像・動画どちらでも可・任意）</label><input id="e_pthumb" value="${thumbUrl}" placeholder="例：https://hikapero.github.io/HIKARI/thumb_game.png または .mp4"></div>
-      <div class="field"><label>BGM URL（mp3・任意）</label><input id="e_pbgm" value="${bgmUrl}" placeholder="例：https://hikapero.github.io/HIKARI/bgm/mysong.mp3"></div>
       <div class="field"><label>表示順</label><input id="e_porder" type="number" value="${order}"></div>`;
     window._editAction = async () => {
       await window._updateDoc(window._doc(window._db,"plays",id), {
@@ -1191,7 +1222,6 @@
         desc:     document.getElementById("e_pdesc").value.trim(),
         filename: document.getElementById("e_pfile").value.trim(),
         thumbUrl: document.getElementById("e_pthumb").value.trim(),
-        bgmUrl:   document.getElementById("e_pbgm").value.trim(),
         order:    Number(document.getElementById("e_porder").value)||1,
       });
       showToast("更新しました！");
