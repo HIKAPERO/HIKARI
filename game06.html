@@ -1050,55 +1050,29 @@ ${c.gogyoText}
 各項目は3〜5文で書いてね。小学生〜中学生でも読めるやさしい言葉で、専門用語は使わないで。でもちゃんとその人の命式に合った具体的な内容にしてね。`;
 
   try {
+    // ストリーミングなし・一括受信
     const res = await fetch('https://hikari-ai.peropero-wahaha.workers.dev', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
         max_tokens: 2000,
-        stream: true,
+        stream: false,
         messages: [{ role: 'user', content: prompt }]
       })
     });
 
     if (!res.ok) throw new Error('API error');
 
+    const data = await res.json();
+    const fullText = data?.content?.[0]?.text || '';
+
+    if (!fullText) throw new Error('empty response');
+
     inner.innerHTML = `<div class="ai-advice-text" id="aiText"></div>`;
     const textEl = document.getElementById('aiText');
-    // カーソル用span
-    textEl.innerHTML = '<span></span>';
-    const cursor = textEl.querySelector('span');
-
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder();
-    let fullText = '';
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      const chunk = decoder.decode(value);
-      const lines = chunk.split('\n');
-      for (const line of lines) {
-        if (!line.startsWith('data: ')) continue;
-        const data = line.slice(6).trim();
-        if (data === '[DONE]') continue;
-        try {
-          const json = JSON.parse(data);
-          if (json.type === 'content_block_delta' && json.delta?.text) {
-            fullText += json.delta.text;
-            // カーソルの前にテキストを挿入
-            textEl.firstChild && textEl.firstChild.nodeType === 3
-              ? (textEl.firstChild.textContent = fullText)
-              : textEl.insertBefore(document.createTextNode(fullText), cursor);
-            if (textEl.childNodes[0]?.nodeType === 3) textEl.childNodes[0].textContent = fullText;
-          }
-        } catch(e) {}
-      }
-    }
-
-    // 完了したらカーソル削除、再生成ボタン追加
-    cursor?.remove();
     textEl.textContent = fullText;
+
     const regenBtn = document.createElement('button');
     regenBtn.className = 'ai-regen';
     regenBtn.textContent = '↺ もう一度アドバイスをもらう';
