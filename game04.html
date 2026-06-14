@@ -5,92 +5,687 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>SWEET PAW PUZZLE</title>
 <style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --bg0: #fff5f7; /* ふわふわピンクの背景 */
+    --bg0: #fff5f7;
     --bg1: #ffffff;
-    --accent: #ff85a2; /* スクイーズピンク */
+    --bg2: #fff0f3;
+    --accent: #ff85a2;
     --accent-light: #ffd1dc;
+    --accent-dark: #d96d88;
+    --accent-dim: rgba(255,133,162,0.12);
     --yellow: #ffde59;
+    --yellow-dark: #e6b800;
+    --green: #5dd98a;
+    --red: #ff6b8a;
     --text: #7d6b6b;
-    --shadow: rgba(255, 133, 162, 0.2);
+    --text-muted: #b09898;
+    --text-dim: #d0b8b8;
+    --shadow: rgba(255,133,162,0.25);
   }
-  *, *::before, *::after { box-sizing: border-box; }
-  body { 
-    background: var(--bg0); color: var(--text); 
-    font-family: 'Helvetica Neue', Arial, 'Hiragino Sans', sans-serif;
-    margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh;
-  }
+  html, body { height:100%; font-family:'Helvetica Neue',Arial,'Hiragino Sans',sans-serif; background:var(--bg0); color:var(--text); overflow-x:hidden; }
+  body { display:flex; flex-direction:column; min-height:100vh; }
 
-  /* ぷっくりカードスタイル */
-  .card { 
-    background: var(--bg1); border-radius: 30px; 
-    padding: 24px; margin: 10px; width: 90%; max-width: 400px;
-    box-shadow: 0 10px 0 #ffd1dc; border: 4px solid var(--accent-light);
-  }
+  /* HEADER */
+  .header { display:flex; align-items:center; justify-content:space-between; padding:12px 20px; background:var(--bg1); border-bottom:3px solid var(--accent-light); position:sticky; top:0; z-index:50; flex-shrink:0; }
+  .header-logo { font-size:14px; letter-spacing:3px; color:var(--accent); font-weight:800; }
+  .header-right { display:flex; align-items:center; gap:12px; }
+  .level-badge { font-size:10px; letter-spacing:2px; color:var(--accent); background:var(--accent-dim); border:2px solid var(--accent-light); border-radius:20px; padding:4px 12px; font-weight:700; }
+  .score-display { font-size:14px; font-weight:800; color:var(--accent-dark); letter-spacing:1px; font-variant-numeric:tabular-nums; }
 
-  /* 肉球ダイス */
-  .die {
-    width: 70px; height: 70px; border-radius: 25px;
-    background: #fff; border: 4px solid var(--accent-light);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 28px; font-weight: 800; color: var(--accent);
-    cursor: pointer; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 6px 0 var(--accent-light);
+  /* LAYOUT */
+  .game-wrap { flex:1; display:flex; flex-direction:column; align-items:center; padding:16px 14px 32px; gap:0; }
+  @media(min-width:768px) {
+    .game-wrap { flex-direction:row; align-items:flex-start; justify-content:center; gap:20px; padding:28px 36px; max-width:1000px; margin:0 auto; width:100%; }
   }
-  .die:active { transform: scale(0.85) translateY(4px); }
-  .die.used { opacity: 0.3; transform: scale(0.9); }
+  .panel-left { width:100%; display:flex; flex-direction:column; gap:14px; }
+  @media(min-width:768px) { .panel-left { width:320px; flex-shrink:0; } }
+  .panel-right { width:100%; display:flex; flex-direction:column; gap:14px; margin-top:14px; }
+  @media(min-width:768px) { .panel-right { flex:1; margin-top:0; max-width:460px; } }
 
-  /* ぷっくりボタン */
-  .btn {
-    background: var(--accent); color: white; border: none;
-    padding: 15px; border-radius: 20px; font-weight: bold;
-    width: 100%; cursor: pointer; transition: 0.2s;
-    box-shadow: 0 6px 0 #d96d88;
-  }
-  .btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #d96d88; }
-  
-  .game-wrap { width: 100%; display: flex; flex-direction: column; align-items: center; padding: 20px; }
-  .dice-grid { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin: 20px 0; }
-  
-  .target-display { font-size: 48px; font-weight: 900; color: var(--accent); text-align: center; }
-  .screen { display:none; position:fixed; inset:0; background:rgba(255,245,247,0.95); z-index:100; align-items:center; justify-content:center; }
-  .screen.show { display:flex; flex-direction:column; }
+  /* CARD */
+  .card { background:var(--bg1); border-radius:28px; padding:18px 20px; box-shadow:0 8px 0 var(--accent-light); border:3px solid var(--accent-light); }
+  .card-label { font-size:10px; letter-spacing:3px; color:var(--accent); margin-bottom:10px; font-weight:700; }
+
+  /* TARGET */
+  .target-row { display:flex; align-items:baseline; gap:10px; }
+  .target-number { font-size:56px; font-weight:900; color:var(--accent); line-height:1; font-variant-numeric:tabular-nums; }
+  .target-unit { font-size:13px; color:var(--text-muted); letter-spacing:2px; font-weight:600; }
+
+  /* TIMER */
+  .timer-wrap { margin-top:12px; }
+  .timer-bar-bg { height:8px; background:var(--accent-light); border-radius:99px; overflow:hidden; margin-bottom:6px; }
+  .timer-bar-fill { height:100%; border-radius:99px; background:var(--accent); transition:width 1s linear, background 0.5s; }
+  .timer-bar-fill.warn { background:var(--yellow); }
+  .timer-bar-fill.danger { background:var(--red); }
+  .timer-text { font-size:12px; color:var(--text-muted); letter-spacing:1px; font-variant-numeric:tabular-nums; font-weight:600; }
+
+  /* PROGRESS DOTS */
+  .progress-dots { display:flex; gap:8px; margin-top:12px; }
+  .dot { width:12px; height:12px; border-radius:50%; background:var(--accent-light); border:2px solid var(--accent-light); transition:all 0.3s; }
+  .dot.done { background:var(--accent); border-color:var(--accent); }
+  .dot.current { background:var(--bg1); border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-dim); }
+
+  /* DICE */
+  .dice-grid { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
+  .die { width:70px; height:70px; border-radius:22px; background:var(--bg1); border:3px solid var(--accent-light); display:flex; align-items:center; justify-content:center; font-size:28px; font-weight:900; color:var(--accent); cursor:pointer; transition:transform 0.15s cubic-bezier(0.175,0.885,0.32,1.275), border-color 0.15s, box-shadow 0.15s; user-select:none; font-variant-numeric:tabular-nums; box-shadow:0 5px 0 var(--accent-light); }
+  .die:hover { border-color:var(--accent); transform:translateY(-3px); box-shadow:0 8px 0 var(--accent-light); }
+  .die:active { transform:scale(0.88) translateY(4px); box-shadow:0 2px 0 var(--accent-light); }
+  .die.used { opacity:0.3; cursor:not-allowed; pointer-events:none; transform:scale(0.9); box-shadow:none; }
+  .hint-text { font-size:11px; color:var(--text-muted); line-height:1.6; margin-top:12px; font-weight:600; }
+
+  /* FORMULA */
+  .formula-display { min-height:64px; background:var(--bg0); border:3px solid var(--accent-light); border-radius:18px; padding:12px 16px; display:flex; align-items:center; flex-wrap:wrap; gap:6px; }
+  .formula-token { font-size:22px; font-weight:800; color:var(--accent); font-variant-numeric:tabular-nums; padding:3px 8px; border-radius:10px; background:var(--accent-dim); border:2px solid var(--accent-light); }
+  .formula-token.op { color:var(--accent-dark); background:rgba(255,133,162,0.08); border-color:var(--accent-light); font-size:18px; }
+  .formula-token.paren { color:var(--text-muted); background:transparent; border-color:transparent; font-size:22px; }
+  .formula-cursor { width:3px; height:28px; background:var(--accent); border-radius:2px; animation:blink 1s step-end infinite; }
+  @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
+  .formula-result { font-size:13px; font-weight:700; padding:8px 14px; border-radius:12px; margin-top:8px; text-align:center; font-variant-numeric:tabular-nums; }
+  .formula-result.neutral { color:var(--text-muted); background:transparent; }
+  .formula-result.correct { color:#2d8a52; background:rgba(93,217,138,0.15); border:2px solid rgba(93,217,138,0.4); }
+  .formula-result.wrong   { color:var(--red); background:rgba(255,107,138,0.1); border:2px solid rgba(255,107,138,0.3); }
+
+  /* OPERATORS */
+  .ops-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+  .op-btn { padding:14px 0; border-radius:16px; background:var(--bg1); border:3px solid var(--accent-light); color:var(--accent-dark); font-size:22px; font-weight:800; cursor:pointer; transition:transform 0.15s cubic-bezier(0.175,0.885,0.32,1.275), box-shadow 0.15s; user-select:none; font-family:inherit; box-shadow:0 5px 0 var(--accent-light); }
+  .op-btn:hover { transform:translateY(-2px); box-shadow:0 7px 0 var(--accent-light); }
+  .op-btn:active { transform:translateY(3px); box-shadow:0 2px 0 var(--accent-light); }
+  .op-btn.paren-btn { color:var(--text-muted); font-size:18px; }
+
+  /* ACTION BUTTONS */
+  .action-row { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .btn { padding:14px; border-radius:18px; font-size:12px; font-weight:800; letter-spacing:1px; cursor:pointer; border:none; font-family:inherit; transition:transform 0.15s, box-shadow 0.15s; user-select:none; width:100%; margin-top:8px; }
+  .btn:active { transform:translateY(4px); }
+  .btn-back  { background:var(--bg1); color:var(--text-muted); border:3px solid var(--accent-light); box-shadow:0 5px 0 var(--accent-light); }
+  .btn-back:active { box-shadow:0 2px 0 var(--accent-light); }
+  .btn-clear { background:var(--bg1); color:var(--red); border:3px solid rgba(255,107,138,0.3); box-shadow:0 5px 0 rgba(255,107,138,0.2); }
+  .btn-clear:active { box-shadow:0 2px 0 rgba(255,107,138,0.2); }
+  .btn-submit { background:var(--accent); color:#fff; box-shadow:0 6px 0 var(--accent-dark); letter-spacing:2px; }
+  .btn-submit:active { box-shadow:0 2px 0 var(--accent-dark); }
+  .btn-submit:disabled { opacity:0.35; cursor:not-allowed; }
+
+  /* SCREENS */
+  .screen { display:none; position:fixed; inset:0; background:rgba(255,245,247,0.96); backdrop-filter:blur(12px); z-index:200; align-items:center; justify-content:center; flex-direction:column; text-align:center; padding:32px; gap:0; }
+  .screen.show { display:flex; }
+  .screen-icon { font-size:64px; margin-bottom:16px; }
+  .screen-title { font-size:24px; font-weight:900; color:var(--accent); letter-spacing:3px; margin-bottom:8px; }
+  .screen-sub { font-size:13px; color:var(--text-muted); line-height:1.8; margin-bottom:22px; font-weight:600; }
+  .screen-score { font-size:48px; font-weight:900; color:var(--accent); margin-bottom:4px; font-variant-numeric:tabular-nums; }
+  .screen-score-label { font-size:10px; letter-spacing:3px; color:var(--text-muted); margin-bottom:8px; font-weight:700; }
+  .screen-hi { font-size:12px; color:var(--accent-dark); margin-bottom:20px; letter-spacing:1px; font-weight:700; }
+  .answer-box { margin-bottom:20px; padding:14px 22px; background:var(--accent-dim); border:2px solid var(--accent-light); border-radius:18px; font-size:14px; color:var(--accent-dark); line-height:2; display:none; max-width:320px; font-weight:700; }
+  .answer-label { font-size:10px; letter-spacing:2px; color:var(--accent); margin-bottom:4px; font-weight:800; }
+  .screen-btn { padding:16px 44px; border-radius:20px; font-size:13px; font-weight:800; letter-spacing:2px; cursor:pointer; border:none; font-family:inherit; background:var(--accent); color:#fff; box-shadow:0 6px 0 var(--accent-dark); transition:transform 0.15s, box-shadow 0.15s; }
+  .screen-btn:active { transform:translateY(4px); box-shadow:0 2px 0 var(--accent-dark); }
+
+  /* FLASH */
+  .clear-flash { position:fixed; inset:0; background:rgba(255,133,162,0.18); pointer-events:none; opacity:0; z-index:100; transition:opacity 0.3s; }
+  .clear-flash.show { opacity:1; }
+
+  /* TOAST */
+  .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px); background:var(--accent); color:#fff; border-radius:20px; padding:12px 24px; font-size:13px; font-weight:800; z-index:300; transition:transform 0.3s cubic-bezier(.4,0,.2,1), opacity 0.3s; opacity:0; white-space:nowrap; box-shadow:0 4px 0 var(--accent-dark); letter-spacing:1px; }
+  .toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
 </style>
 </head>
 <body>
 
-<div class="game-wrap">
-  <div class="card">
-    <div style="font-size:12px; letter-spacing:2px; color:var(--accent);">— TARGET SWEET —</div>
-    <div class="target-display" id="targetNum">--</div>
-  </div>
-
-  <div class="card">
-    <div class="dice-grid" id="diceGrid"></div>
-  </div>
-
-  <div class="card">
-    <button class="btn" id="btnSubmit">ぷにっと答え合わせ！</button>
+<div class="header">
+  <div class="header-logo">🐾 SWEET PAW</div>
+  <div class="header-right">
+    <div class="level-badge" id="levelBadge">LEVEL 1</div>
+    <div class="score-display" id="scoreDisplay">0</div>
   </div>
 </div>
 
+<div class="game-wrap">
+  <div class="panel-left">
+    <div class="card">
+      <div class="card-label">🎯 TARGET SWEET</div>
+      <div class="target-row">
+        <div class="target-number" id="targetNum">—</div>
+        <div class="target-unit">を作れ！</div>
+      </div>
+      <div class="timer-wrap">
+        <div class="timer-bar-bg"><div class="timer-bar-fill" id="timerBar" style="width:100%"></div></div>
+        <div class="timer-text" id="timerText">— 秒</div>
+      </div>
+      <div class="progress-dots" id="progressDots"></div>
+    </div>
+    <div class="card">
+      <div class="card-label">🎲 DICE　<span style="font-size:9px;color:var(--text-dim);">タップして使う</span></div>
+      <div class="dice-grid" id="diceGrid"></div>
+      <div class="hint-text" id="hintText">ダイスをタップして数式に追加しよう🐾</div>
+    </div>
+  </div>
+
+  <div class="panel-right">
+    <div class="card">
+      <div class="card-label">✏️ FORMULA</div>
+      <div class="formula-display" id="formulaDisplay"><div class="formula-cursor"></div></div>
+      <div class="formula-result neutral" id="formulaResult">数式を入力してね</div>
+    </div>
+    <div class="card">
+      <div class="card-label">🔢 OPERATORS</div>
+      <div class="ops-grid" id="opsGrid">
+        <button class="op-btn" data-op="+">＋</button>
+        <button class="op-btn" data-op="-">－</button>
+        <button class="op-btn" data-op="*">×</button>
+        <button class="op-btn" data-op="/">÷</button>
+        <button class="op-btn paren-btn" data-op="(" id="parenOpen">(</button>
+        <button class="op-btn paren-btn" data-op=")" id="parenClose">)</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="action-row">
+        <button class="btn btn-back" id="btnBack" style="margin-top:0;">← もどす</button>
+        <button class="btn btn-clear" id="btnClear" style="margin-top:0;">クリア</button>
+      </div>
+      <button class="btn btn-submit" id="btnSubmit" disabled>ぷにっと答え合わせ！🐾</button>
+    </div>
+  </div>
+</div>
+
+<!-- SCREENS -->
+<div class="screen" id="screenStart">
+  <div class="screen-icon">🐾</div>
+  <div class="screen-title">SWEET PAW PUZZLE</div>
+  <div class="screen-sub">ダイスの出目を<br>数式に組み立てて<br>ターゲットを作れ！</div>
+  <button class="screen-btn" id="btnStart">はじめる 🎲</button>
+  <div style="margin-top:16px;font-size:11px;color:var(--text-dim);letter-spacing:1px;font-weight:700;" id="hiScoreStart"></div>
+</div>
+
+<div class="screen" id="screenClear">
+  <div class="screen-icon" id="clearIcon">🌸</div>
+  <div class="screen-title" id="clearTitle">CLEAR!</div>
+  <div class="screen-sub" id="clearSub"></div>
+  <button class="screen-btn" id="btnNextQ">次の問題へ ▶</button>
+</div>
+
+<div class="screen" id="screenTimeout">
+  <div class="screen-icon">⏰</div>
+  <div class="screen-title">TIME UP!</div>
+  <div class="screen-sub">惜しかった！<br>もう一度挑戦しよう🐾</div>
+  <div class="answer-box" id="timeoutAnswer">
+    <div class="answer-label">— 正解例 —</div>
+    <div id="timeoutAnswerText"></div>
+  </div>
+  <button class="screen-btn" id="btnRetry">もう一度！</button>
+</div>
+
+<div class="screen" id="screenGameover">
+  <div class="screen-icon">🌈</div>
+  <div class="screen-title">GAME OVER</div>
+  <div class="screen-score" id="goScore">0</div>
+  <div class="screen-score-label">TOTAL SCORE</div>
+  <div class="screen-hi" id="goHi"></div>
+  <div class="answer-box" id="gameoverAnswer">
+    <div class="answer-label">— 最後の問題の正解例 —</div>
+    <div id="gameoverAnswerText"></div>
+  </div>
+  <button class="screen-btn" id="btnRestart">もう一度あそぶ 🐾</button>
+</div>
+
+<div class="clear-flash" id="clearFlash"></div>
+<div class="toast" id="toast"></div>
+
 <script>
-  // 簡単なロジック
-  let diceValues = [1, 2, 3];
-  const grid = document.getElementById('diceGrid');
-  
-  function render() {
-    grid.innerHTML = '';
-    diceValues.forEach(v => {
-      const d = document.createElement('div');
-      d.className = 'die';
-      d.textContent = v;
-      d.onclick = () => alert('ぷにっ！');
-      grid.appendChild(d);
-    });
+// ─────────────────────────────────────────
+// CONFIG
+// ─────────────────────────────────────────
+const LEVELS = [
+  null,
+  { diceCount:2, diceFaces:6, ops:['+','-'],              targetMin:2,  targetMax:12,  time:60 },
+  { diceCount:2, diceFaces:6, ops:['+','-'],              targetMin:2,  targetMax:12,  time:60 },
+  { diceCount:2, diceFaces:6, ops:['+','-'],              targetMin:2,  targetMax:12,  time:60 },
+  { diceCount:3, diceFaces:6, ops:['+','-','*','/','('], targetMin:2,  targetMax:30,  time:75 },
+  { diceCount:3, diceFaces:6, ops:['+','-','*','/','('], targetMin:2,  targetMax:30,  time:75 },
+  { diceCount:3, diceFaces:6, ops:['+','-','*','/','('], targetMin:2,  targetMax:30,  time:75 },
+  { diceCount:4, diceFaces:6, ops:['+','-','*','/','('], targetMin:2,  targetMax:50,  time:90 },
+  { diceCount:4, diceFaces:6, ops:['+','-','*','/','('], targetMin:2,  targetMax:50,  time:90 },
+  { diceCount:4, diceFaces:6, ops:['+','-','*','/','('], targetMin:2,  targetMax:50,  time:90 },
+  { diceCount:4, diceFaces:8, ops:['+','-','*','/','('], targetMin:2, targetMax:100,  time:90 },
+];
+function cfg(lv) { return LEVELS[Math.min(lv, 10)] || LEVELS[10]; }
+
+// ─────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────
+let level = 1;
+let qInLevel = 0;
+let score = 0;
+let hiScore = parseInt(localStorage.getItem('sweetpaw_hi') || '0');
+let diceValues = [];
+let diceUsed = [];
+let formula = [];
+let timerID = null;
+let timeLeft = 60;
+let totalTime = 60;
+let gameActive = false;
+let timeoutCount = 0;
+let target = 0;
+
+const $ = id => document.getElementById(id);
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('show'));
+  if (id) $(id).classList.add('show');
+}
+
+function showToast(msg) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+// ─────────────────────────────────────────
+// SOLVER — 到達可能な全整数を列挙
+// ─────────────────────────────────────────
+function allPerms(arr) {
+  if (arr.length <= 1) return [arr.slice()];
+  const out = [];
+  arr.forEach((_, i) => {
+    const rest = arr.filter((__, j) => j !== i);
+    allPerms(rest).forEach(p => out.push([arr[i], ...p]));
+  });
+  return out;
+}
+
+function combineTree(vals, useDiv) {
+  if (vals.length === 1) return [vals[0]];
+  const ops = useDiv ? ['+','-','*','/'] : ['+','-'];
+  const out = [];
+  for (let i = 1; i < vals.length; i++) {
+    const lefts  = combineTree(vals.slice(0, i), useDiv);
+    const rights = combineTree(vals.slice(i),    useDiv);
+    for (const l of lefts) for (const r of rights) for (const op of ops) {
+      if (op === '+') out.push(l + r);
+      if (op === '-') out.push(l - r);
+      if (op === '*') out.push(l * r);
+      if (op === '/' && r !== 0) out.push(l / r);
+    }
   }
-  
-  render();
+  return out;
+}
+
+function reachableIntegers(nums, usedOps, useParen) {
+  const set = new Set();
+  const useDiv = usedOps.includes('/');
+  for (const perm of allPerms(nums)) {
+    const vals = combineTree(perm, useDiv);
+    for (const v of vals) {
+      if (Number.isFinite(v) && Number.isInteger(v) && v > 0) set.add(v);
+    }
+  }
+  return set;
+}
+
+// ─────────────────────────────────────────
+// SOLVER — 正解式を1つ返す
+// ─────────────────────────────────────────
+const OPSTR = {'+':'＋', '-':'－', '*':'×', '/':'÷'};
+const PREC  = {'+':1, '-':1, '*':2, '/':2};
+
+function combineExpr(items, useDiv) {
+  if (items.length === 1) return [{val: items[0].v, expr: String(items[0].v), prec: Infinity}];
+  const ops = useDiv ? ['+','-','*','/'] : ['+','-'];
+  const out = [];
+  for (let i = 1; i < items.length; i++) {
+    const lefts  = combineExpr(items.slice(0, i), useDiv);
+    const rights = combineExpr(items.slice(i),    useDiv);
+    for (const l of lefts) for (const r of rights) for (const op of ops) {
+      let val = null;
+      if (op === '+') val = l.val + r.val;
+      if (op === '-') val = l.val - r.val;
+      if (op === '*') val = l.val * r.val;
+      if (op === '/' && r.val !== 0) val = l.val / r.val;
+      if (val === null || !Number.isFinite(val)) continue;
+      const p = PREC[op];
+      const needL = l.prec < p;
+      const needR = r.prec < p || (r.prec === p && (op === '-' || op === '/'));
+      const le = needL ? `(${l.expr})` : l.expr;
+      const re = needR ? `(${r.expr})` : r.expr;
+      out.push({val, expr: `${le} ${OPSTR[op]} ${re}`, prec: p});
+    }
+  }
+  return out;
+}
+
+function findSolution(nums, tgt, ops) {
+  const useDiv = ops.includes('/');
+  for (const perm of allPerms(nums.map((v,i) => ({v,i})))) {
+    for (const {val, expr} of combineExpr(perm, useDiv)) {
+      if (Math.abs(val - tgt) < 1e-9 && Number.isInteger(Math.round(val))) return expr;
+    }
+  }
+  return null;
+}
+
+function showAnswer(textElId, boxElId) {
+  const ops = cfg(level).ops;
+  const sol = findSolution(diceValues, target, ops);
+  const textEl = $(textElId);
+  const boxEl  = $(boxElId);
+  if (sol) {
+    const jsExpr = sol.replace(/＋/g,'+').replace(/－/g,'-').replace(/×/g,'*').replace(/÷/g,'/');
+    let verified = false;
+    try {
+      const result = Function('"use strict";return(' + jsExpr + ')')();
+      verified = Math.abs(result - target) < 1e-9;
+    } catch(e) { verified = false; }
+    if (verified) {
+      textEl.textContent = `${sol} ＝ ${target}`;
+      boxEl.style.display = 'block';
+    } else {
+      boxEl.style.display = 'none';
+    }
+  } else {
+    boxEl.style.display = 'none';
+  }
+}
+
+// ─────────────────────────────────────────
+// DICE
+// ─────────────────────────────────────────
+function rollDice() {
+  const c = cfg(level);
+  diceValues = Array.from({length: c.diceCount}, () => Math.floor(Math.random() * c.diceFaces) + 1);
+  diceUsed   = Array(c.diceCount).fill(false);
+  renderDice();
+}
+
+function renderDice() {
+  const grid = $('diceGrid');
+  grid.innerHTML = '';
+  diceValues.forEach((v, i) => {
+    const die = document.createElement('div');
+    die.className = 'die' + (diceUsed[i] ? ' used' : '');
+    die.textContent = v;
+    die.addEventListener('click', () => {
+      if (!gameActive || diceUsed[i]) return;
+      diceUsed[i] = true;
+      formula.push({type:'num', value: v, diceIdx: i});
+      renderDice();
+      renderFormula();
+      updateHint();
+    });
+    grid.appendChild(die);
+  });
+}
+
+// ─────────────────────────────────────────
+// FORMULA
+// ─────────────────────────────────────────
+function renderFormula() {
+  const display = $('formulaDisplay');
+  display.innerHTML = '';
+  formula.forEach(tok => {
+    const span = document.createElement('span');
+    if (tok.type === 'num') {
+      span.className = 'formula-token';
+      span.textContent = tok.value;
+    } else if (tok.type === 'op') {
+      span.className = 'formula-token op';
+      span.textContent = OPSTR[tok.value] || tok.value;
+    } else {
+      span.className = 'formula-token paren';
+      span.textContent = tok.value;
+    }
+    display.appendChild(span);
+  });
+  const cursor = document.createElement('div');
+  cursor.className = 'formula-cursor';
+  display.appendChild(cursor);
+  evalFormula();
+}
+
+function safeEval(expr) {
+  if (!expr || !/^[\d\s\+\-\*\/\(\)\.]+$/.test(expr)) return null;
+  try { return Function('"use strict";return(' + expr + ')')(); } catch(e) { return null; }
+}
+
+function evalFormula() {
+  const resultEl = $('formulaResult');
+  const expr = formula.map(t => t.value).join(' ');
+  if (!expr) {
+    resultEl.className = 'formula-result neutral';
+    resultEl.textContent = '数式を入力してね';
+    $('btnSubmit').disabled = true;
+    return;
+  }
+  const val = safeEval(expr);
+  const allUsed = diceUsed.every(u => u);
+  if (val === null || !Number.isFinite(val)) {
+    resultEl.className = 'formula-result neutral';
+    resultEl.textContent = '式が途中だよ🐾';
+    $('btnSubmit').disabled = true;
+    return;
+  }
+  const rounded = Math.round(val * 1000) / 1000;
+  if (rounded === target && allUsed) {
+    resultEl.className = 'formula-result correct';
+    resultEl.textContent = `＝ ${rounded}　✓ やったー！`;
+    $('btnSubmit').disabled = false;
+  } else if (rounded === target && !allUsed) {
+    resultEl.className = 'formula-result wrong';
+    resultEl.textContent = `＝ ${rounded}　ダイスを全部使ってね！`;
+    $('btnSubmit').disabled = true;
+  } else {
+    resultEl.className = 'formula-result wrong';
+    resultEl.textContent = `＝ ${rounded}　（目標: ${target}）`;
+    $('btnSubmit').disabled = true;
+  }
+}
+
+// ─────────────────────────────────────────
+// OPERATORS
+// ─────────────────────────────────────────
+document.querySelectorAll('.op-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (!gameActive) return;
+    const op = btn.dataset.op;
+    formula.push(op === '(' || op === ')' ? {type:'paren', value:op} : {type:'op', value:op});
+    renderFormula();
+    updateHint();
+  });
+});
+
+$('btnBack').addEventListener('click', () => {
+  if (!gameActive || !formula.length) return;
+  const removed = formula.pop();
+  if (removed.type === 'num' && removed.diceIdx !== undefined) {
+    diceUsed[removed.diceIdx] = false;
+    renderDice();
+  }
+  renderFormula();
+  updateHint();
+});
+
+$('btnClear').addEventListener('click', () => {
+  if (!gameActive) return;
+  formula = [];
+  diceUsed.fill(false);
+  renderDice();
+  renderFormula();
+  updateHint();
+});
+
+// ─────────────────────────────────────────
+// SUBMIT
+// ─────────────────────────────────────────
+$('btnSubmit').addEventListener('click', () => {
+  if (!gameActive) return;
+  stopTimer();
+  gameActive = false;
+  const timeBonus  = Math.floor(timeLeft * 3);
+  const levelBonus = level * 10;
+  const gained = 100 + timeBonus + levelBonus;
+  score += gained;
+  updateScoreDisplay();
+  const flash = $('clearFlash');
+  flash.classList.add('show');
+  setTimeout(() => flash.classList.remove('show'), 400);
+  qInLevel++;
+  $('clearIcon').textContent  = qInLevel >= 3 ? '🌟' : '🌸';
+  $('clearTitle').textContent = qInLevel >= 3 ? 'LEVEL UP! 🎉' : 'CLEAR! ✨';
+  $('clearSub').textContent   = `+${gained} pts（タイムボーナス +${timeBonus}）`;
+  updateDots();
+  showScreen('screenClear');
+});
+
+$('btnNextQ').addEventListener('click', () => {
+  if (qInLevel >= 3) { level++; qInLevel = 0; showToast(`🌟 LEVEL ${level} スタート！`); }
+  timeoutCount = 0;
+  showScreen(null);
+  startQuestion();
+});
+
+// ─────────────────────────────────────────
+// TIMER
+// ─────────────────────────────────────────
+function stopTimer() {
+  clearInterval(timerID);
+  timerID = null;
+}
+
+function startTimer() {
+  stopTimer();
+  const c = cfg(level);
+  totalTime = c.time;
+  timeLeft  = totalTime;
+  updateTimerUI();
+  timerID = setInterval(() => {
+    timeLeft--;
+    updateTimerUI();
+    if (timeLeft <= 0) {
+      stopTimer();
+      gameActive = false;
+      onTimeout();
+    }
+  }, 1000);
+}
+
+function updateTimerUI() {
+  const pct = timeLeft / totalTime * 100;
+  const bar = $('timerBar');
+  bar.style.width = pct + '%';
+  bar.className = 'timer-bar-fill' + (pct < 25 ? ' danger' : pct < 50 ? ' warn' : '');
+  $('timerText').textContent = `${timeLeft} 秒`;
+}
+
+function onTimeout() {
+  timeoutCount++;
+  showAnswer('timeoutAnswerText', 'timeoutAnswer');
+  if (timeoutCount >= 3) { onGameOver(); return; }
+  showScreen('screenTimeout');
+}
+
+$('btnRetry').addEventListener('click', () => {
+  showScreen(null);
+  startQuestion();
+});
+
+// ─────────────────────────────────────────
+// GAME OVER
+// ─────────────────────────────────────────
+function onGameOver() {
+  if (score > hiScore) {
+    hiScore = score;
+    localStorage.setItem('sweetpaw_hi', hiScore);
+  }
+  $('goScore').textContent = score.toLocaleString();
+  $('goHi').textContent    = `ハイスコア: ${hiScore.toLocaleString()} 🐾`;
+  showAnswer('gameoverAnswerText', 'gameoverAnswer');
+  showScreen('screenGameover');
+}
+
+$('btnRestart').addEventListener('click', () => {
+  level = 1; qInLevel = 0; score = 0; timeoutCount = 0;
+  updateScoreDisplay();
+  showScreen(null);
+  startQuestion();
+});
+
+// ─────────────────────────────────────────
+// PROGRESS DOTS
+// ─────────────────────────────────────────
+function updateDots() {
+  const dots = $('progressDots');
+  dots.innerHTML = '';
+  for (let i = 0; i < 3; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i < qInLevel ? ' done' : i === qInLevel ? ' current' : '');
+    dots.appendChild(d);
+  }
+}
+
+// ─────────────────────────────────────────
+// HINT
+// ─────────────────────────────────────────
+function updateHint() {
+  const allUsed = diceUsed.every(u => u);
+  const last = formula[formula.length - 1];
+  let hint = '';
+  if (!formula.length)                        hint = 'ダイスをタップして数式に追加しよう🐾';
+  else if (!allUsed && last?.type === 'num')  hint = '演算子を選んでね（＋ － × ÷）';
+  else if (!allUsed && last?.type === 'op')   hint = '次のダイスをタップしよう';
+  else if (allUsed)                           hint = 'ダイスを全部使ったよ！答え合わせしてみて🌸';
+  $('hintText').textContent = hint;
+}
+
+// ─────────────────────────────────────────
+// TARGET
+// ─────────────────────────────────────────
+function pickTarget() {
+  const c = cfg(level);
+  const useParen = c.ops.includes('(');
+  const reachable = reachableIntegers(diceValues, c.ops, useParen);
+  const candidates = [...reachable].filter(v => v >= c.targetMin && v <= c.targetMax);
+  let pool = candidates.length > 0 ? candidates : [...reachable];
+  if (level >= 4 && pool.length > 4) {
+    const sorted = pool.slice().sort((a,b) => a-b);
+    pool = sorted.slice(Math.floor(sorted.length * 0.25));
+  }
+  target = pool[Math.floor(Math.random() * pool.length)] || diceValues[0];
+  $('targetNum').textContent = target;
+}
+
+// ─────────────────────────────────────────
+// START QUESTION
+// ─────────────────────────────────────────
+function startQuestion() {
+  formula    = [];
+  diceUsed   = [];
+  gameActive = true;
+  rollDice();
+  pickTarget();
+  renderFormula();
+  updateDots();
+  updateHint();
+  const hasParen = cfg(level).ops.includes('(');
+  $('parenOpen').style.display  = hasParen ? '' : 'none';
+  $('parenClose').style.display = hasParen ? '' : 'none';
+  $('levelBadge').textContent   = `LEVEL ${level}`;
+  startTimer();
+}
+
+function updateScoreDisplay() {
+  $('scoreDisplay').textContent = score.toLocaleString();
+}
+
+// ─────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────
+$('btnStart').addEventListener('click', () => {
+  level = 1; qInLevel = 0; score = 0; timeoutCount = 0;
+  updateScoreDisplay();
+  showScreen(null);
+  startQuestion();
+});
+
+if (hiScore > 0) $('hiScoreStart').textContent = `ハイスコア: ${hiScore.toLocaleString()} 🐾`;
+showScreen('screenStart');
 </script>
 </body>
 </html>
