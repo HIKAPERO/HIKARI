@@ -117,11 +117,48 @@
   .start-btn:hover { background: #7d6ef0; transform: translateY(-2px); }
 
   .canvas-wrap { position: relative; }
+  /* ── スマホ用ボタン・タッチUI ── */
+  .mobile-fs-btn {
+    background: linear-gradient(135deg, #00b4db, #0083b0); color: #fff;
+    padding: 10px 28px; border: none; border-radius: 8px;
+    font-size: 13px; letter-spacing: 2px; cursor: pointer; font-family: inherit;
+    font-weight: 700; transition: background .2s, transform .15s; margin-top: 6px;
+    touch-action: auto; -webkit-tap-highlight-color: rgba(0,180,219,0.3);
+  }
+  .mobile-fs-btn:hover { background: linear-gradient(135deg,#00c6ff,#0072ff); transform: translateY(-2px); }
+  .gameover-replay-btn {
+    background: #6c5ce7; color: #fff; padding: 10px 28px; border: none; border-radius: 8px;
+    font-size: 13px; letter-spacing: 2px; cursor: pointer; font-family: inherit;
+    font-weight: 700; margin-top: 6px; touch-action: auto;
+    transition: background .2s, transform .15s;
+  }
+  .gameover-replay-btn:hover { background: #7d6ef0; transform: translateY(-2px); }
+  .gameover-exit-btn {
+    background: rgba(80,75,110,0.7); color: #9d86f5;
+    border: 1px solid rgba(108,92,231,0.4); padding: 10px 28px; border-radius: 8px;
+    font-size: 13px; letter-spacing: 2px; cursor: pointer; font-family: inherit;
+    font-weight: 700; margin-top: 4px; touch-action: auto;
+    transition: background .2s, transform .15s;
+  }
+  .gameover-exit-btn:hover { background: rgba(100,95,140,0.8); color: #c9b8ff; transform: translateY(-2px); }
+  #overlay { touch-action: auto; }
+  .start-btn { touch-action: auto; }
+  /* ジャンプボタン */
+  #jumpBtn {
+    display: none; position: fixed; z-index: 9999;
+    bottom: 28px; right: 28px;
+    width: 90px; height: 90px; border-radius: 50%;
+    background: rgba(108,92,231,0.25); border: 2px solid rgba(108,92,231,0.65);
+    align-items: center; justify-content: center;
+    font-size: 28px; user-select: none; pointer-events: auto;
+    transition: background 0.1s;
+  }
+  #jumpBtn.pressed { background: rgba(108,92,231,0.70); }
 </style>
 </head>
 <body>
 
-<div class="game-wrap">
+<div class="game-wrap" id="stageContainer">
   <div class="game-title">HIKARI RUN!</div>
   <div class="score-row">
     <div>SCORE <span id="scoreDisplay">0</span></div>
@@ -134,10 +171,14 @@
       <div class="overlay-title">HIKARI RUN!</div>
       <div class="overlay-sub">スペース・タップ・クリックでジャンプ！</div>
       <button class="start-btn" id="startBtn">スタート ▶</button>
+      <button class="mobile-fs-btn" id="fullScreenBtn" style="display:none;">📱 全画面でプレイ</button>
     </div>
   </div>
 
-  <div class="hint">SPACE / TAP / CLICK でジャンプ  ダブルジャンプもできるよ！</div>
+  <div class="hint" id="hintText">SPACE / TAP / CLICK でジャンプ　　ダブルジャンプもできるよ！</div>
+
+  <!-- スマホ用ジャンプボタン（stageContainer内・フルスクリーンに追従） -->
+  <div id="jumpBtn">🚀</div>
 </div>
 
 <script>
@@ -422,18 +463,39 @@ function die() {
   document.getElementById('bestDisplay').textContent = best;
 
   const overlay = document.getElementById('overlay');
-  overlay.innerHTML = `
-    <div class="overlay-title">GAME OVER</div>
-    <div class="overlay-score">SCORE: ${score}</div>
-    ${isNewBest ? '<div style="font-size:11px;color:#f0c040;letter-spacing:2px;">★ NEW BEST!</div>' : ''}
-    <button class="start-btn" id="startBtn">もう一度 ▶</button>
-  `;
-  overlay.style.display = 'flex';
-  document.getElementById('startBtn').addEventListener('click', startGame, { once: true });
+  hideJumpBtn();
+  if (isMobileDevice()) {
+    overlay.innerHTML = `
+      <div class="overlay-title">GAME OVER</div>
+      <div class="overlay-score">SCORE: ${score}</div>
+      ${isNewBest ? '<div style="font-size:11px;color:#f0c040;letter-spacing:2px;">★ NEW BEST!</div>' : ''}
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:8px;">
+        <button class="gameover-replay-btn" id="replayBtn">もう一度 ▶</button>
+        <button class="gameover-exit-btn"   id="exitBtn">ゲームを終了する</button>
+      </div>
+    `;
+    overlay.style.display = 'flex';
+    const rb = document.getElementById('replayBtn');
+    const eb = document.getElementById('exitBtn');
+    rb.addEventListener('click', () => { touchControls = true; startGame(); });
+    rb.addEventListener('touchend', e => { e.preventDefault(); touchControls = true; startGame(); });
+    eb.addEventListener('click', exitToEntry);
+    eb.addEventListener('touchend', e => { e.preventDefault(); exitToEntry(); });
+  } else {
+    overlay.innerHTML = `
+      <div class="overlay-title">GAME OVER</div>
+      <div class="overlay-score">SCORE: ${score}</div>
+      ${isNewBest ? '<div style="font-size:11px;color:#f0c040;letter-spacing:2px;">★ NEW BEST!</div>' : ''}
+      <button class="start-btn" id="startBtn">もう一度 ▶</button>
+    `;
+    overlay.style.display = 'flex';
+    document.getElementById('startBtn').addEventListener('click', startGame, { once: true });
+  }
 }
 
 function startGame() {
   state = 'playing';
+  if (touchControls) showJumpBtn();
   frame = 0; score = 0; speed = 4;
   player.y = GROUND; player.vy = 0; player.jumps = 0;
   obstacles = [];
@@ -457,28 +519,110 @@ document.addEventListener('keydown', e => {
     handleJump();
   }
 });
+// ── スマホ判定 ──
+function isMobileDevice() {
+  return (('ontouchstart' in window) || (navigator.maxTouchPoints > 0))
+    && /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+}
+
+// ── タッチUI 表示/非表示 ──
+let touchControls = false;
+function showJumpBtn() {
+  document.getElementById('jumpBtn').style.display = 'flex';
+}
+function hideJumpBtn() {
+  document.getElementById('jumpBtn').style.display = 'none';
+}
+
+// ── エントリー画面初期化 ──
+function initEntryScreen() {
+  if (isMobileDevice()) {
+    document.getElementById('startBtn').style.display     = 'none';
+    document.getElementById('fullScreenBtn').style.display = 'inline-block';
+    document.getElementById('hintText').style.display     = 'none';
+  }
+}
+initEntryScreen();
+
+// ── 全画面＋横向きでゲーム開始 ──
+function startWithFullscreen() {
+  const container = document.getElementById('stageContainer');
+  const reqFS = container.requestFullscreen || container.webkitRequestFullscreen
+              || container.mozRequestFullScreen || container.msRequestFullscreen;
+  if (reqFS) {
+    reqFS.call(container).then(() => {
+      if (screen.orientation && screen.orientation.lock)
+        screen.orientation.lock('landscape').catch(() => {});
+    }).catch(() => {});
+  }
+  touchControls = true;
+  startGame();
+}
+
+// ── ゲームを終了する（フルスクリーン解除→エントリー画面へ） ──
+function exitToEntry() {
+  if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock();
+  const exitFS = document.exitFullscreen || document.webkitExitFullscreen
+               || document.mozCancelFullScreen || document.msExitFullscreen;
+  if (exitFS && (document.fullscreenElement || document.webkitFullscreenElement))
+    exitFS.call(document).catch(() => {});
+
+  state = 'idle';
+  hideJumpBtn();
+
+  const ov = document.getElementById('overlay');
+  ov.style.display = 'flex';
+  ov.innerHTML = `
+    <div class="overlay-title">HIKARI RUN!</div>
+    <div class="overlay-sub">スペース・タップ・クリックでジャンプ！</div>
+    <button class="mobile-fs-btn" id="fullScreenBtn">📱 全画面でプレイ</button>
+  `;
+  document.getElementById('fullScreenBtn').addEventListener('click', startWithFullscreen);
+  document.getElementById('fullScreenBtn').addEventListener('touchend', e => { e.preventDefault(); startWithFullscreen(); });
+}
+
+// ── ジャンプボタン ──
+const jumpBtn = document.getElementById('jumpBtn');
+let jumpTouchId = null;
+jumpBtn.addEventListener('touchstart', e => {
+  e.preventDefault();
+  if (jumpTouchId !== null) return;
+  jumpTouchId = e.changedTouches[0].identifier;
+  jumpBtn.classList.add('pressed');
+  handleJump();
+}, { passive: false });
+jumpBtn.addEventListener('touchend', e => {
+  e.preventDefault();
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    if (e.changedTouches[i].identifier === jumpTouchId) {
+      jumpTouchId = null;
+      jumpBtn.classList.remove('pressed');
+    }
+  }
+}, { passive: false });
+
+// fullScreenBtn イベント登録
+const _fsBtn = document.getElementById('fullScreenBtn');
+if (_fsBtn) {
+  _fsBtn.addEventListener('click', startWithFullscreen);
+  _fsBtn.addEventListener('touchend', e => { e.preventDefault(); startWithFullscreen(); });
+}
+
 canvas.addEventListener('click', handleJump);
 canvas.addEventListener('touchstart', e => { e.preventDefault(); handleJump(); }, { passive: false });
-
 document.getElementById('startBtn').addEventListener('click', startGame);
 
 // ── AUDIO ──
 let audioCtx = null;
-let bgmSourceNode = null;
-let bgmGainNode = null;
+let bgmNodes = {};
 let bgmRunning = false;
-
-// キャッシュ対策用のクエリ付きMP3オーディオインスタンス
-const bgmAudio = new Audio('game-m.mp3?v=' + Date.now());
-bgmAudio.loop = true;
-bgmAudio.crossOrigin = "anonymous";
 
 function getAudioCtx() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   return audioCtx;
 }
 
-// マスターゲイン（SE全体の調整用）
+// マスターゲイン
 function getMaster() {
   const ctx = getAudioCtx();
   if (!getMaster._node) {
@@ -512,8 +656,9 @@ function sfxJump(isDouble) {
 // ダイ音
 function sfxDie() {
   const ctx = getAudioCtx();
+  // 下降スウィープ
   playTone(80, 'sawtooth', 0.5, 0.5, 320, true);
-  
+  // ノイズバースト
   const bufSize = ctx.sampleRate * 0.15;
   const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
   const data = buf.getChannelData(0);
@@ -544,41 +689,175 @@ function sfxMilestone() {
   });
 }
 
-// ── MP3 BGM WEB AUDIO SYSTEM ──
-function initBgmRouting() {
+// ── PERCUSSION BGM ──
+// ゲームスピードに連動してBPMが上がるドラムループ
+// speed: 4(初期) → 4.5 → 5.0 … (score/150 ごとに +0.5)
+// BPM:   88(初期) → 100 → 112 → 124 → 136 → 148 → 160(上限)
+
+function getBpm() {
+  const level = Math.floor(score / 150); // speed段階と同じ
+  return Math.min(160, 88 + level * 12);
+}
+
+// ── 打楽器合成ユーティリティ ──
+function synthKick(t) {
   const ctx = getAudioCtx();
-  if (!bgmSourceNode) {
-    bgmSourceNode = ctx.createMediaElementSource(bgmAudio);
-    bgmGainNode = ctx.createGain();
-    
-    // MP3 ➔ 音量制限ノード ➔ スピーカーへとルーティング
-    bgmSourceNode.connect(bgmGainNode);
-    bgmGainNode.connect(ctx.destination);
+  const osc = ctx.createOscillator();
+  const g   = ctx.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(160, t);
+  osc.frequency.exponentialRampToValueAtTime(40, t + 0.08);
+  g.gain.setValueAtTime(0.9, t);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
+  osc.connect(g); g.connect(getMaster());
+  osc.start(t); osc.stop(t + 0.25);
+}
+
+function synthSnare(t) {
+  const ctx = getAudioCtx();
+  // トーン成分
+  const osc = ctx.createOscillator();
+  const gOsc = ctx.createGain();
+  osc.type = 'triangle';
+  osc.frequency.value = 220;
+  gOsc.gain.setValueAtTime(0.3, t);
+  gOsc.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
+  osc.connect(gOsc); gOsc.connect(getMaster());
+  osc.start(t); osc.stop(t + 0.15);
+  // ノイズ成分
+  const bufLen = Math.floor(ctx.sampleRate * 0.15);
+  const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+  const d = buf.getChannelData(0);
+  for (let i = 0; i < bufLen; i++) d[i] = Math.random() * 2 - 1;
+  const src = ctx.createBufferSource();
+  src.buffer = buf;
+  const gNoise = ctx.createGain();
+  gNoise.gain.setValueAtTime(0.5, t);
+  gNoise.gain.exponentialRampToValueAtTime(0.0001, t + 0.15);
+  src.connect(gNoise); gNoise.connect(getMaster());
+  src.start(t);
+}
+
+function synthHihat(t, open) {
+  const ctx = getAudioCtx();
+  const decay = open ? 0.18 : 0.06;
+  const bufLen = Math.floor(ctx.sampleRate * decay);
+  const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+  const d = buf.getChannelData(0);
+  for (let i = 0; i < bufLen; i++) d[i] = Math.random() * 2 - 1;
+  const src = ctx.createBufferSource();
+  src.buffer = buf;
+  // バンドパスで金属感
+  const bpf = ctx.createBiquadFilter();
+  bpf.type = 'bandpass';
+  bpf.frequency.value = 8000;
+  bpf.Q.value = 0.8;
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(open ? 0.25 : 0.18, t);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + decay);
+  src.connect(bpf); bpf.connect(g); g.connect(getMaster());
+  src.start(t);
+}
+
+function synthRim(t) {
+  const ctx = getAudioCtx();
+  const osc = ctx.createOscillator();
+  const g   = ctx.createGain();
+  osc.type  = 'square';
+  osc.frequency.value = 1600;
+  g.gain.setValueAtTime(0.22, t);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + 0.05);
+  osc.connect(g); g.connect(getMaster());
+  osc.start(t); osc.stop(t + 0.06);
+}
+
+// ── パターン定義（16ステップ, 1=hit） ──
+// level 0: 基本4つ打ち
+// level 1: 8分ハット追加
+// level 2: リムショット追加
+// level 3+: 細かいハット＋キック追加
+const PATTERNS = [
+  // [kick, snare, hihat(closed), hihat(open), rim]  各16step
+  { // lv0: シンプル4つ打ち
+    kick:   [1,0,0,0, 0,0,0,0, 1,0,0,0, 0,0,0,0],
+    snare:  [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
+    hh:     [1,0,0,0, 1,0,0,0, 1,0,0,0, 1,0,0,0],
+    hho:    [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,1,0,0],
+    rim:    [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0],
+  },
+  { // lv1: 8分ハット
+    kick:   [1,0,0,0, 0,0,0,0, 1,0,0,0, 0,0,0,0],
+    snare:  [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
+    hh:     [1,0,1,0, 1,0,1,0, 1,0,1,0, 1,0,1,0],
+    hho:    [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,1,0,0],
+    rim:    [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0],
+  },
+  { // lv2: リムショット追加＋キックシンコペ
+    kick:   [1,0,0,0, 0,0,1,0, 1,0,0,0, 0,1,0,0],
+    snare:  [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
+    hh:     [1,0,1,0, 1,0,1,0, 1,0,1,0, 1,0,1,0],
+    hho:    [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,1,0,0],
+    rim:    [0,0,0,0, 0,1,0,0, 0,0,0,0, 0,0,1,0],
+  },
+  { // lv3: 16分ハット＋キック強化
+    kick:   [1,0,0,0, 0,0,1,0, 1,0,0,1, 0,1,0,0],
+    snare:  [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
+    hh:     [1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1],
+    hho:    [0,0,0,0, 0,0,0,1, 0,0,0,0, 0,0,1,0],
+    rim:    [0,0,1,0, 0,1,0,0, 0,0,1,0, 0,1,0,1],
+  },
+  { // lv4+: 全力ビート
+    kick:   [1,0,1,0, 0,0,1,0, 1,0,0,1, 0,1,0,1],
+    snare:  [0,0,0,0, 1,0,0,1, 0,0,0,0, 1,0,1,0],
+    hh:     [1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1],
+    hho:    [0,0,0,1, 0,0,0,0, 0,1,0,0, 0,0,1,0],
+    rim:    [0,1,0,0, 1,0,1,0, 0,1,0,1, 0,0,1,0],
+  },
+];
+
+function getPattern() {
+  const level = Math.floor(score / 150);
+  return PATTERNS[Math.min(level, PATTERNS.length - 1)];
+}
+
+// ── スケジューラ ──
+let bgmLoopTimeout = null;
+const STEPS = 16;
+
+function scheduleBeat(startTime) {
+  if (!bgmRunning) return;
+  const ctx  = getAudioCtx();
+  const bpm  = getBpm();
+  const step = 60 / bpm / 4; // 16分音符1個の長さ(秒)
+  const pat  = getPattern();
+
+  for (let i = 0; i < STEPS; i++) {
+    const t = startTime + i * step;
+    if (pat.kick[i])  synthKick(t);
+    if (pat.snare[i]) synthSnare(t);
+    if (pat.hho[i])   synthHihat(t, true);
+    else if (pat.hh[i]) synthHihat(t, false);
+    if (pat.rim[i])   synthRim(t);
   }
+
+  const loopLen = STEPS * step;
+  // 次ループをスコアに応じたBPMで再スケジュール（リアルタイム反映）
+  bgmLoopTimeout = setTimeout(() => {
+    if (bgmRunning) scheduleBeat(startTime + loopLen);
+  }, (loopLen - 0.05) * 1000);
 }
 
 function startBgm() {
   if (bgmRunning) return;
   bgmRunning = true;
-  
   const ctx = getAudioCtx();
   if (ctx.state === 'suspended') ctx.resume();
-  
-  initBgmRouting();
-  
-  // ★スマホの爆音ガードを突破して音量を【0.75】に強制固定
-  bgmGainNode.gain.setValueAtTime(muted ? 0 : 0.75, ctx.currentTime);
-  
-  bgmAudio.play().catch(e => {
-    console.log("自動再生ブロック制限:", e);
-    bgmRunning = false;
-  });
+  scheduleBeat(ctx.currentTime + 0.05);
 }
 
 function stopBgm() {
   bgmRunning = false;
-  bgmAudio.pause();
-  bgmAudio.currentTime = 0;
+  if (bgmLoopTimeout) clearTimeout(bgmLoopTimeout);
 }
 
 // ── 音ボタン UI ──
@@ -596,13 +875,7 @@ let muted = false;
 muteBtn.addEventListener('click', e => {
   e.stopPropagation();
   muted = !muted;
-  
-  // 効果音(マスター)とBGM(ゲインノード)の両方を一括制御
-  getMaster().gain.setValueAtTime(muted ? 0 : 0.25, getAudioCtx().currentTime);
-  if (bgmGainNode) {
-    bgmGainNode.gain.setValueAtTime(muted ? 0 : 0.75, getAudioCtx().currentTime);
-  }
-  
+  getMaster().gain.value = muted ? 0 : 0.25;
   muteBtn.textContent = muted ? '🔇' : '🔊';
 });
 document.body.appendChild(muteBtn);
@@ -624,6 +897,7 @@ function loop() {
   update();
   draw();
 
+  // スコアマイルストーン
   if (state === 'playing') {
     const m = Math.floor(score / 100);
     if (m > 0 && m !== _lastMilestone) {
