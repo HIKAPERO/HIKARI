@@ -82,7 +82,11 @@ body>*{position:relative;z-index:1;}
 .gogyo-pct{font-size:11px;color:var(--text2);text-align:right;}
 
 /* ── セクションタブ ── */
-.result-tabs{display:flex;gap:0;border-bottom:0.5px solid var(--border2);margin-bottom:20px;overflow-x:auto;}
+.result-tabs{display:flex;gap:0;border-bottom:0.5px solid var(--border2);margin-bottom:20px;overflow-x:auto;scrollbar-width:thin;scrollbar-color:var(--border2) transparent;}
+.result-tabs::-webkit-scrollbar{height:3px;}
+.result-tabs::-webkit-scrollbar-track{background:transparent;}
+.result-tabs::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px;}
+.result-tabs::-webkit-scrollbar-thumb:hover{background:var(--gold);}
 .rtab{font-size:10px;letter-spacing:2px;color:var(--text3);padding:10px 14px;background:none;border:none;cursor:pointer;white-space:nowrap;font-family:inherit;border-bottom:2px solid transparent;transition:color .2s,border-color .2s;}
 .rtab:hover{color:var(--text2);}
 .rtab.active{color:var(--gold2);border-bottom-color:var(--gold);}
