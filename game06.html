@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>四柱推命うらない</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg0:#06060e;--bg1:#0c0c1a;--bg2:#121224;--bg3:#1a1a30;
+  --gold:#c8a84b;--gold2:#e8c86a;--gold3:#f5e0a0;
+  --red:#cc4444;--teal:#3a9a8a;--blue:#4466cc;
+  --text:#e8e0c8;--text2:#a09878;--text3:#605848;
+  --border:#2a2840;--border2:#3a3460;
+}
+html,body{min-height:100vh;font-family:'Hiragino Mincho ProN','Yu Mincho','Georgia',serif;background:var(--bg0);color:var(--text);overflow-x:hidden;}
+
+/* 背景 */
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 60% 50% at 50% 0%,rgba(200,168,75,0.06) 0%,transparent 60%),
+             radial-gradient(ellipse 40% 40% at 20% 80%,rgba(58,154,138,0.05) 0%,transparent 50%),
+             radial-gradient(ellipse 30% 30% at 80% 30%,rgba(68,102,204,0.04) 0%,transparent 50%);}
+body>*{position:relative;z-index:1;}
+
+.wrap{max-width:640px;margin:0 auto;padding:0 16px 80px;}
+
+/* ── ヘッダー ── */
+.site-header{text-align:center;padding:40px 0 28px;}
+.header-symbol{font-size:48px;display:block;margin-bottom:10px;filter:drop-shadow(0 0 12px rgba(200,168,75,0.5));}
+.header-title{font-size:24px;letter-spacing:6px;color:var(--gold2);margin-bottom:6px;font-weight:400;}
+.header-sub{font-size:11px;letter-spacing:3px;color:var(--text2);}
+
+/* ── カード ── */
+.card{background:var(--bg1);border:0.5px solid var(--border2);border-radius:4px;padding:24px;margin-bottom:16px;position:relative;}
+.card::before{content:'';position:absolute;inset:0;border-radius:4px;background:linear-gradient(135deg,rgba(200,168,75,0.04) 0%,transparent 50%);pointer-events:none;}
+.card-label{font-size:9px;letter-spacing:4px;color:var(--gold);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.card-label::after{content:'';flex:1;height:0.5px;background:var(--border2);}
+
+/* ── 入力フォーム ── */
+.field{margin-bottom:18px;}
+.field label{display:block;font-size:11px;letter-spacing:2px;color:var(--text2);margin-bottom:8px;}
+.field input,.field select{
+  width:100%;background:var(--bg2);border:0.5px solid var(--border2);
+  border-radius:3px;padding:12px 16px;font-size:15px;color:var(--text);
+  outline:none;font-family:inherit;transition:border-color .2s;
+  appearance:none;-webkit-appearance:none;
+}
+.field input:focus,.field select:focus{border-color:var(--gold);}
+.field input::placeholder{color:var(--text3);}
+.input-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.field-note{font-size:10px;color:var(--text3);margin-top:5px;letter-spacing:1px;}
+
+.btn-calc{
+  width:100%;padding:16px;border:0.5px solid var(--gold);border-radius:3px;
+  background:transparent;color:var(--gold2);font-size:13px;font-weight:400;
+  letter-spacing:4px;cursor:pointer;font-family:inherit;
+  transition:background .2s,color .2s;
+  position:relative;overflow:hidden;
+}
+.btn-calc::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(200,168,75,0.08),transparent);pointer-events:none;}
+.btn-calc:hover{background:rgba(200,168,75,0.1);color:var(--gold3);}
+.btn-calc:active{background:rgba(200,168,75,0.18);}
+
+/* ── 命式表 ── */
+.meishiki-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:4px;}
+.meishiki-col{border:0.5px solid var(--border2);border-radius:3px;overflow:hidden;text-align:center;}
+.meishiki-head{font-size:9px;letter-spacing:2px;color:var(--text2);padding:6px 4px;background:var(--bg2);border-bottom:0.5px solid var(--border2);}
+.meishiki-kan{font-size:26px;padding:14px 4px 8px;color:var(--gold2);line-height:1;}
+.meishiki-jushi{font-size:26px;padding:8px 4px 14px;color:var(--text);line-height:1;}
+.meishiki-jishin{font-size:10px;color:var(--text2);padding:4px;background:var(--bg2);border-top:0.5px solid var(--border2);}
+.meishiki-col.nichi .meishiki-kan{color:var(--gold3);text-shadow:0 0 12px rgba(200,168,75,0.4);}
+
+/* 十神バッジ */
+.jukkami-badge{display:inline-block;font-size:10px;padding:3px 8px;border-radius:2px;letter-spacing:1px;margin-top:2px;}
+
+/* ── 五行バー ── */
+.gogyo-grid{display:flex;flex-direction:column;gap:10px;}
+.gogyo-row{display:grid;grid-template-columns:50px 1fr 36px;align-items:center;gap:10px;}
+.gogyo-name{font-size:12px;letter-spacing:2px;text-align:right;}
+.gogyo-bar-bg{height:8px;background:var(--bg3);border-radius:99px;overflow:hidden;}
+.gogyo-bar-fill{height:100%;border-radius:99px;transition:width .6s cubic-bezier(.4,0,.2,1);}
+.gogyo-pct{font-size:11px;color:var(--text2);text-align:right;}
+
+/* ── セクションタブ ── */
+.result-tabs{display:flex;gap:0;border-bottom:0.5px solid var(--border2);margin-bottom:20px;overflow-x:auto;}
+.rtab{font-size:10px;letter-spacing:2px;color:var(--text3);padding:10px 14px;background:none;border:none;cursor:pointer;white-space:nowrap;font-family:inherit;border-bottom:2px solid transparent;transition:color .2s,border-color .2s;}
+.rtab:hover{color:var(--text2);}
+.rtab.active{color:var(--gold2);border-bottom-color:var(--gold);}
+.rtab-panel{display:none;}
+.rtab-panel.active{display:block;}
+
+/* ── テキストブロック ── */
+.reading-block{margin-bottom:20px;}
+.reading-title{font-size:10px;letter-spacing:3px;color:var(--gold);margin-bottom:10px;}
+.reading-text{font-size:14px;color:var(--text);line-height:2;letter-spacing:0.5px;}
+
+/* ── 大運表 ── */
+.daiyun-list{display:flex;flex-direction:column;gap:8px;}
+.daiyun-row{display:grid;grid-template-columns:80px 1fr;gap:12px;align-items:center;padding:10px 14px;background:var(--bg2);border:0.5px solid var(--border);border-radius:3px;transition:border-color .2s;}
+.daiyun-row.current{border-color:var(--gold);background:rgba(200,168,75,0.05);}
+.daiyun-age{font-size:11px;color:var(--text2);letter-spacing:1px;}
+.daiyun-kan{font-size:18px;color:var(--gold2);margin-right:4px;}
+.daiyun-ji{font-size:18px;color:var(--text);}
+.daiyun-desc{font-size:12px;color:var(--text2);margin-top:3px;line-height:1.6;}
+
+/* ── 年運・月運 ── */
+.unyear-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.unyear-card{background:var(--bg2);border:0.5px solid var(--border2);border-radius:3px;padding:14px;}
+.unyear-label{font-size:9px;letter-spacing:3px;color:var(--gold);margin-bottom:8px;}
+.unyear-kan{font-size:22px;color:var(--gold2);margin-right:4px;}
+.unyear-ji{font-size:22px;color:var(--text);}
+.unyear-desc{font-size:12px;color:var(--text2);margin-top:8px;line-height:1.7;}
+
+/* ── ローディング ── */
+#screenLoading{display:none;text-align:center;padding:60px 0;}
+.loading-sym{font-size:40px;animation:rotateSlow 3s linear infinite;display:inline-block;color:var(--gold);}
+@keyframes rotateSlow{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+.loading-text{font-size:12px;letter-spacing:3px;color:var(--text2);margin-top:16px;}
+
+/* ── 結果エリア ── */
+#screenResult{display:none;}
+
+.fortune-tag{display:inline-flex;align-items:center;gap:6px;font-size:10px;letter-spacing:2px;padding:4px 12px;border-radius:2px;border:0.5px solid var(--gold);color:var(--gold2);background:rgba(200,168,75,0.06);margin-bottom:14px;}
+
+/* ── 月運カレンダー ── */
+.monthly-grid{display:flex;flex-direction:column;gap:8px;}
+.monthly-row{display:grid;grid-template-columns:90px 1fr auto;align-items:center;gap:10px;padding:10px 14px;background:var(--bg2);border:0.5px solid var(--border);border-radius:3px;transition:border-color .2s;}
+.monthly-row.current-month{border-color:var(--gold);background:rgba(200,168,75,0.06);}
+.monthly-row.caution{border-color:#cc4444;background:rgba(204,68,68,0.05);}
+.monthly-row.good{border-color:#44aa66;background:rgba(68,170,102,0.05);}
+.monthly-label{font-size:11px;color:var(--text2);letter-spacing:1px;white-space:nowrap;}
+.monthly-kanji{font-size:16px;}
+.monthly-kanji .mk{color:var(--gold2);}
+.monthly-kanji .mj{color:var(--text);}
+.monthly-desc{font-size:11px;color:var(--text2);line-height:1.6;}
+.monthly-badge{font-size:11px;padding:3px 8px;border-radius:2px;white-space:nowrap;font-weight:700;}
+.badge-good{background:rgba(68,170,102,0.15);color:#44aa66;border:0.5px solid #44aa66;}
+.badge-caution{background:rgba(204,68,68,0.15);color:#cc4444;border:0.5px solid #cc4444;}
+.badge-normal{background:rgba(160,152,120,0.15);color:var(--text2);border:0.5px solid var(--border2);}
+
+/* ── AIアドバイス ── */
+.ai-loading{text-align:center;padding:24px 0;color:var(--text2);font-size:12px;letter-spacing:2px;}
+.ai-loading-sym{font-size:28px;display:inline-block;animation:rotateSlow 2s linear infinite;color:var(--gold);margin-bottom:10px;}
+.ai-advice-text{font-size:14px;color:var(--text);line-height:2.1;letter-spacing:0.5px;white-space:pre-wrap;}
+.ai-advice-text span{border-right:2px solid var(--gold);animation:blink 0.7s step-end infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+.ai-regen{margin-top:14px;width:100%;padding:10px;border:0.5px solid var(--border2);border-radius:3px;background:transparent;color:var(--text2);font-size:11px;letter-spacing:2px;cursor:pointer;font-family:inherit;transition:border-color .2s,color .2s;}
+.ai-regen:hover{border-color:var(--gold);color:var(--gold2);}
+
+/* BGM */
+(function(){
+  const p=new URLSearchParams(location.search),u=p.get('bgm');
+  if(!u)return;
+  const a=new Audio(u);a.loop=true;a.volume=0.4;
+  document.querySelector('.btn-calc').addEventListener('click',()=>a.play().catch(()=>{}),{once:true});
+})();
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="site-header">
+  <span class="header-symbol">☯</span>
+  <div class="header-title">四柱推命うらない</div>
+  <div class="header-sub">生まれた日からあなたの運命を読むよ✨</div>
+</div>
+
+<!-- 入力フォーム -->
+<div id="screenInput">
+  <div class="card">
+    <div class="card-label">あなたのことを教えてね</div>
+    <div class="field">
+      <label>生年月日</label>
+      <input type="date" id="inputDate" min="1920-01-01">
+    </div>
+    <div class="field">
+      <label>生まれた時間（わからなくてもOK！）</label>
+      <select id="inputHour">
+        <option value="-1">わからない・入力しない</option>
+        <option value="0">子の刻（23:00〜01:00）</option>
+        <option value="2">丑の刻（01:00〜03:00）</option>
+        <option value="4">寅の刻（03:00〜05:00）</option>
+        <option value="6">卯の刻（05:00〜07:00）</option>
+        <option value="8">辰の刻（07:00〜09:00）</option>
+        <option value="10">巳の刻（09:00〜11:00）</option>
+        <option value="12">午の刻（11:00〜13:00）</option>
+        <option value="14">未の刻（13:00〜15:00）</option>
+        <option value="16">申の刻（15:00〜17:00）</option>
+        <option value="18">酉の刻（17:00〜19:00）</option>
+        <option value="20">戌の刻（19:00〜21:00）</option>
+        <option value="22">亥の刻（21:00〜23:00）</option>
+      </select>
+      <div class="field-note">※ 生まれた時間がわかると、もっとくわしく占えるよ！知らなくても大丈夫。</div>
+    </div>
+    <div class="field">
+      <label>性別</label>
+      <select id="inputSex">
+        <option value="M">男性</option>
+        <option value="F">女性</option>
+      </select>
+    </div>
+    <button class="btn-calc" onclick="calc()">✦ うらなってみる</button>
+  </div>
+</div>
+
+<!-- ローディング -->
+<div id="screenLoading">
+  <div class="loading-sym">☯</div>
+  <div class="loading-text">あなたの運命を読み解いています…</div>
+</div>
+
+<!-- 結果 -->
+<div id="screenResult">
+
+  <div class="card">
+    <div class="card-label">あなたの4つの柱（命式）</div>
+    <div class="meishiki-grid" id="meishikiGrid"></div>
+    <div style="margin-top:12px;">
+      <div class="fortune-tag" id="nisshuTag"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">5つのエネルギーバランス</div>
+    <div class="gogyo-grid" id="gogyoGrid"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">くわしい鑑定</div>
+    <div class="result-tabs" id="resultTabs"></div>
+    <div id="resultPanels"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">10年ごとの運の流れ</div>
+    <div class="daiyun-list" id="daiyunList"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">今年・来年・今月の運勢</div>
+    <div class="unyear-grid" id="unyearGrid"></div>
+    <div class="reading-text" id="unyearDesc"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">月ごとの運勢カレンダー</div>
+    <div style="font-size:11px;color:var(--text2);margin-bottom:14px;line-height:1.7;">今月から12ヶ月分の運勢だよ。⚠️マークの月は少し気をつけてね！</div>
+    <div id="monthlyGrid"></div>
+  </div>
+
+  <div class="card" id="aiAdviceCard">
+    <div class="card-label">✦ あなただけの今月アドバイス（AI生成）</div>
+    <div id="aiAdviceInner">
+      <div style="font-size:12px;color:var(--text2);line-height:1.8;margin-bottom:16px;">
+        あなたの生年月日をもとに、今月だけのアドバイスをAIが考えてくれるよ！
+      </div>
+      <button class="btn-calc" id="btnAiAdvice" onclick="generateAiAdvice()">✦ AIにアドバイスを聞く</button>
+    </div>
+  </div>
+
+  <div style="margin-top:8px;">
+    <button class="btn-calc" onclick="reset()">もう一度うらなう</button>
+  </div>
+
+</div><!-- /screenResult -->
+</div><!-- /wrap -->
+
+<script>
+// ══════════════════════════════════════════
+// 基礎データ
+// ══════════════════════════════════════════
+const KAN  = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+const JI   = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+const KAN_GOGYO = ['木','木','火','火','土','土','金','金','水','水'];
+const JI_GOGYO  = ['水','土','木','木','土','火','火','土','金','金','土','水'];
+const KAN_YIN   = [0,1,0,1,0,1,0,1,0,1]; // 0=陽 1=陰
+const JI_YIN    = [1,0,0,1,0,1,0,0,1,1,0,0]; // 子=陰,丑=陽...
+// 十神（日干との関係）
+const JUKKAMI_NAME = ['比肩','劫財','食神','傷官','偏財','正財','偏官','正官','偏印','印綬'];
+const JUKKAMI_COLOR = {
+  '比肩':'#4466cc','劫財':'#6644cc',
+  '食神':'#cc8833','傷官':'#cc6633',
+  '偏財':'#cc4466','正財':'#cc2244',
+  '偏官':'#44aa66','正官':'#228855',
+  '偏印':'#3388aa','印綬':'#115577',
+};
+
+// 節入り日（簡易版・毎年ほぼ同じ）
+const SETSUIRI = [6,4,4,5,5,6,7,7,8,8,7,7]; // 月ごとの節入り日（概算）
+
+// ══════════════════════════════════════════
+// 四柱の計算
+// ══════════════════════════════════════════
+function getYearKan(year) { return ((year - 4) % 10 + 10) % 10; }
+function getYearJi(year)  { return ((year - 4) % 12 + 12) % 12; }
+
+// 月干：年干の五行グループ（甲己=0,乙庚=1,丙辛=2,丁壬=3,戊癸=4）× 月の起点
+// 寅月(2月節)=月インデックス0 から始まる月干起点テーブル
+const MONTH_KAN_BASE = [2, 4, 6, 8, 0]; // 甲己→丙, 乙庚→戊, 丙辛→庚, 丁壬→壬, 戊癸→甲
+
+function getMonthIdx(month, day) {
+  // 節月インデックス：寅月=0(2月節〜), 卯月=1(3月節〜)...
+  let m = month - 1; // 0〜11
+  if (day < SETSUIRI[m]) m = (m - 1 + 12) % 12;
+  // 寅月(index1=2月)を0番として並び替え
+  return (m - 1 + 12) % 12; // 寅=0,卯=1,...,丑=11
+}
+
+function getMonthKan(year, month, day) {
+  const yKan   = getYearKan(year);
+  const base   = MONTH_KAN_BASE[yKan % 5];
+  const mIdx   = getMonthIdx(month, day);
+  return (base + mIdx) % 10;
+}
+
+function getMonthJi(year, month, day) {
+  let m = month - 1;
+  if (day < SETSUIRI[m]) m = (m - 1 + 12) % 12;
+  // 地支：子=0,丑=1,...,亥=11  月支：寅(index2)から始まる
+  return (m + 2) % 12;
+}
+
+// 日柱：ユリウス通日から算出
+function julianDay(y, m, d) {
+  if (m <= 2) { y--; m += 12; }
+  const A = Math.floor(y / 100);
+  const B = 2 - A + Math.floor(A / 4);
+  return Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + d + B - 1524;
+}
+function getDayKan(y, m, d) {
+  const jd = julianDay(y, m, d);
+  return ((jd + 49) % 10 + 10) % 10;
+}
+function getDayJi(y, m, d) {
+  const jd = julianDay(y, m, d);
+  return ((jd + 1) % 12 + 12) % 12;
+}
+
+function getHourKan(dayKan, hour) {
+  const ji = Math.floor(hour / 2) % 12;
+  return (Math.floor(dayKan / 2) * 2 + ji) % 10;
+}
+function getHourJi(hour) {
+  return Math.floor(hour / 2) % 12;
+}
+
+// 十神の算出（日干 vs 他干）
+function getJukkami(nichikan, targetKan) {
+  const nGogyo = KAN_GOGYO[nichikan];
+  const tGogyo = KAN_GOGYO[targetKan];
+  const nYin   = KAN_YIN[nichikan];
+  const tYin   = KAN_YIN[targetKan];
+  const same   = tYin === nYin;
+
+  const GOGYO_REL = {
+    '木':{'木':'比','火':'食','土':'財','金':'官','水':'印'},
+    '火':{'火':'比','土':'食','金':'財','水':'官','木':'印'},
+    '土':{'土':'比','金':'食','水':'財','木':'官','火':'印'},
+    '金':{'金':'比','水':'食','木':'財','火':'官','土':'印'},
+    '水':{'水':'比','木':'食','火':'財','土':'官','金':'印'},
+  };
+  const rel = GOGYO_REL[nGogyo][tGogyo];
+  const MAP = {
+    '比': same ? '比肩' : '劫財',
+    '食': same ? '食神' : '傷官',
+    '財': same ? '偏財' : '正財',
+    '官': same ? '偏官' : '正官',
+    '印': same ? '偏印' : '印綬',
+  };
+  return MAP[rel];
+}
+
+// 五行スコア集計
+function calcGogyoScore(pillars) {
+  const score = {木:0,火:0,土:0,金:0,水:0};
+  pillars.forEach(p => {
+    if (p.kan !== null) { score[KAN_GOGYO[p.kan]] += 2; }
+    if (p.ji  !== null) { score[JI_GOGYO[p.ji]]   += 1; }
+  });
+  return score;
+}
+
+// 大運（男陽・女陰→順行, 男陰・女陽→逆行）
+function calcDaiyun(birthYear, birthMonth, birthDay, sex, monthJi) {
+  const yKan = getYearKan(birthYear);
+  const yYin = KAN_YIN[yKan];
+  const forward = (sex === 'M' && yYin === 0) || (sex === 'F' && yYin === 1);
+  const result = [];
+  for (let i = 1; i <= 8; i++) {
+    const step = forward ? i : -i;
+    const mJi  = ((monthJi + step) % 12 + 12) % 12;
+    const mKan = ((getMonthKan(birthYear, birthMonth, birthDay) + step) % 10 + 10) % 10;
+    // 大運開始年齢（概算：10年周期）
+    const startAge = i * 10 - 7 + Math.floor(Math.random() * 4); // 簡易
+    result.push({ kan: mKan, ji: mJi, startAge });
+  }
+  // 開始年齢を昇順に
+  result.sort((a,b) => a.startAge - b.startAge);
+  let age = 3 + Math.floor(Math.random() * 5);
+  result.forEach((r,i) => { r.startAge = age + i * 10; });
+  return result;
+}
+
+// 今年・来年・今月の干支
+function getNowKanJi() {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = now.getMonth() + 1;
+  const d = now.getDate();
+  return {
+    yearKan:  ((y - 4) % 10 + 10) % 10,
+    yearJi:   ((y - 4) % 12 + 12) % 12,
+    nextKan:  ((y + 1 - 4) % 10 + 10) % 10,
+    nextJi:   ((y + 1 - 4) % 12 + 12) % 12,
+    monthKan: getMonthKan(y, m, d),
+    monthJi:  getMonthJi(y, m, d),
+    year: y,
+    month: m,
+  };
+}
+
+// ══════════════════════════════════════════
+// テキスト生成
+// ══════════════════════════════════════════
+const GOGYO_DESC = {
+  木:{name:'木',color:'#44aa66',desc:'成長・発展・柔軟性'},
+  火:{name:'火',color:'#cc4433',desc:'情熱・直感・華やかさ'},
+  土:{name:'土',color:'#aa8833',desc:'安定・誠実・包容力'},
+  金:{name:'金',color:'#aaaaaa',desc:'意志・正義・鋭さ'},
+  水:{name:'水',color:'#3366cc',desc:'知恵・適応・神秘'},
+};
+
+const KAN_PERSONALITY = {
+  0:'あなたの星は「甲（木）」！ まっすぐに上へ伸びる大きな木のイメージ。正義感が強くて、みんなをリードするのが得意だよ。',
+  1:'あなたの星は「乙（木）」！ しなやかで草や花のようなイメージ。まわりの人を大切にして、うまくやっていくのが上手なタイプ。',
+  2:'あなたの星は「丙（火）」！ 太陽みたいに明るくてあったかい。行動力があって、まわりを元気にしてくれる存在だよ。',
+  3:'あなたの星は「丁（火）」！ ろうそくの炎のようにやさしい光。感じる力がとても強くて、芸術センスも抜群だよ。',
+  4:'あなたの星は「戊（土）」！ 大きな山みたいにドッシリとした安定感。みんなに信頼されるタイプ。たまに頑固になることも。',
+  5:'あなたの星は「己（土）」！ 豊かな大地のようなやさしさと包容力。ひっそりとみんなを支える、縁の下の力持ちだよ。',
+  6:'あなたの星は「庚（金）」！ 鋼のような強い意志と正義感。物事をしっかり判断して行動できるタイプ。',
+  7:'あなたの星は「辛（金）」！ 宝石みたいに繊細で美的センスが高い。こだわりが強くて、なんでも丁寧にやり遂げるよ。',
+  8:'あなたの星は「壬（水）」！ 大きな海のように深くて広い心の持ち主。頭の回転が速くて、どんな場面でも対応できるタイプ。',
+  9:'あなたの星は「癸（水）」！ 雨露のように静かで内省的。直感力がとても強くて、なんとなくわかっちゃうことが多いかも。',
+};
+
+const GOGYO_LOVE = {
+  木:'誠実さを大切にするタイプ。いっしょに成長できる相手を好きになりやすいよ。自由を大事にするから、束縛されるのは苦手かも。',
+  火:'気持ちをストレートに伝えられるタイプ。一目惚れも多くて、恋愛に情熱的！ただちょっと飽きっぽいところも…刺激が大事だよ。',
+  土:'じっくりゆっくり仲良くなっていくタイプ。誠実で長続きするけど、自分の気持ちを言葉にするのが少し苦手なことも。',
+  金:'理想が高いから、なかなか好きにならない。でもいちど決めたら、とことん大切にするタイプだよ。',
+  水:'深いつながりを大切にするタイプ。気持ちの波があって、恋愛にロマンチックな雰囲気を求めがち。',
+};
+
+const GOGYO_WORK = {
+  木:'人や物事を育てるのが得意！先生・保育士・環境系・ボランティアなど、「育てる・守る」仕事が向いてるよ。',
+  火:'エネルギーと情熱で輝けるタイプ！芸能・デザイン・営業・ゲーム・YouTuberなど、表現力を活かせる仕事に向いてるよ。',
+  土:'安定感と信頼感が武器！事務・管理・建築・料理・農業など、コツコツ積み上げる仕事で力を発揮するよ。',
+  金:'正確さと責任感が抜群！医療・法律・プログラマー・職人など、きっちり丁寧にやる仕事がぴったりだよ。',
+  水:'知性と感性のバランスが◎！研究・音楽・語学・カウンセラー・占いなど、頭と心を使う仕事に向いてるよ。',
+};
+
+const JUKKAMI_DESC = {
+  比肩:'自立心が強くて、負けず嫌いなところがあるよ。自分のペースでやりたいタイプ！',
+  劫財:'行動力と野心があって、思ったらすぐ動けるタイプ。ちょっと衝動的になることも。',
+  食神:'創造力と表現力の星。作ること・伝えることが得意で、いいアイデアがどんどん出てくるよ！',
+  傷官:'自分らしさを大切にする星。人と違う視点を持っていて、独自のスタイルが輝くタイプ。',
+  偏財:'行動することでチャンスをつかむ星。積極的に動くと、いいことが起きやすいよ！',
+  正財:'コツコツ努力する星。地道にがんばった分だけ、しっかり結果がついてくるタイプ。',
+  偏官:'チャレンジとプレッシャーの星。壁があっても乗り越えられる強さを持っているよ。',
+  正官:'まじめで責任感のある星。ルールを守って着実に進むことで、信頼を得られるタイプ。',
+  偏印:'直感と学ぶ力の星。興味を持ったことをぐんぐん吸収して、ひらめき力も抜群だよ！',
+  印綬:'知性とやさしさの星。学ぶことが好きで、まわりの人を気にかける温かい心を持っているよ。',
+};
+
+const KAN_DAIYUN_DESC = [
+  '大きな木のようにぐんぐん上を目指す時期！新しい目標を決めて、思いきって一歩踏み出してみよう。',
+  'しなやかに対応できることが大事な時期。まわりの人との関係を大切にしながら進もう。',
+  '太陽みたいに明るいエネルギーがあふれる時期！行動すればするほどいい結果がついてくるよ。',
+  '内側の気持ちに正直になれる時期。感じること・直感を信じることが大事なタイミングだよ。',
+  'じっくり安定させることが大切な時期。あせらずコツコツ積み上げるのが一番の近道。',
+  'まわりを支える力が輝く時期。ひっそりがんばっている姿がちゃんと誰かに伝わっているよ。',
+  '思いきった決断が必要な時期。いらないものを手放して、新しい自分にアップデートしよう！',
+  'こだわりや丁寧さが評価される時期。質を大切にすれば、まわりにちゃんと伝わるよ。',
+  '視野が広がって、いろんなことに対応できる時期。変化をこわがらず、流れに乗ってみよう。',
+  '静かに考えたり、内側を見つめる時期。ひらめきや直感が冴えているから、自分を信じて。',
+];
+
+const JI_DAIYUN_DESC = [
+  '冬のような静かな時期。あせらずゆっくり力をためて、次のチャンスに備えよう。',
+  '寒さを耐える冬の時期。大変なことがあっても、じっくりがんばるとあとで必ず実を結ぶよ。',
+  '春が来た！新しいことへのチャレンジにぴったりの時期。どんどん行動してみよう。',
+  '春のポカポカした時期。人との出会いが広がって、表現することがどんどん楽しくなるよ。',
+  '変化の多い時期。方向転換や大きなできごとが起きやすいけど、それが成長のタネになるよ。',
+  '初夏のような活発な時期。かくれていた才能や可能性がどんどん出てくるよ！',
+  '夏真っ盛り！情熱と行動力がピークの時期。思いっきりがんばると、いい結果が出やすいよ。',
+  '夏の終わりの温かい時期。人とのつながりや感性が豊かになって、やさしい気持ちになれる時。',
+  '秋口の活発な時期。頭の回転が速くなるけど、変化も多いから柔軟に対応することが大事。',
+  '実りの秋の時期。今まで積み上げてきたことが形になって、まわりに認めてもらいやすい時。',
+  '変わり目の時期。あることが終わり、次のステージに向けての準備が始まる節目の時期だよ。',
+  '冬の入り口。深く考えたり、ひとりでじっくり向き合う時間が大切な時期。直感も冴えるよ。',
+];
+
+function getDaiyunDesc(kan, ji) {
+  return KAN_DAIYUN_DESC[kan] + ' ' + JI_DAIYUN_DESC[ji];
+}
+
+function getUnyearDesc(nichikan, yearKan, monthKan) {
+  const jk_year  = getJukkami(nichikan, yearKan);
+  const jk_month = getJukkami(nichikan, monthKan);
+  return `今年は「${jk_year}」のエネルギーの年だよ。${JUKKAMI_DESC[jk_year]}今月は「${jk_month}」の月が重なって、${JUKKAMI_DESC[jk_month]}`;
+}
+
+// ── 月運：十神から吉凶判定 ──
+// 日主の五行から見た各十神の傾向
+const JUKKAMI_FORTUNE = {
+  比肩:{ level:'normal', short:'自力で動く月',    caution:'独断に注意', good:'自己表現◎' },
+  劫財:{ level:'caution', short:'出費・競争に注意', caution:'お金の管理を慎重に', good:'行動力アップ' },
+  食神:{ level:'good',   short:'表現・創造の月',   caution:'食べすぎ注意', good:'アイデア◎' },
+  傷官:{ level:'caution', short:'トラブル注意',     caution:'言葉づかいに気をつけて', good:'個性が光る' },
+  偏財:{ level:'good',   short:'チャンス・出会いの月', caution:'浪費に注意', good:'人脈・お金の巡り◎' },
+  正財:{ level:'good',   short:'コツコツ実る月',   caution:'無理は禁物', good:'努力が実る◎' },
+  偏官:{ level:'caution', short:'プレッシャーの月', caution:'体調・人間関係に注意', good:'根性が鍛えられる' },
+  正官:{ level:'normal', short:'責任感が大事な月', caution:'ルール破りは厳禁', good:'信頼アップ◎' },
+  偏印:{ level:'good',   short:'学びとひらめきの月', caution:'集中力が散りやすい', good:'直感◎' },
+  印綬:{ level:'good',   short:'知識・サポートの月', caution:'依存しすぎに注意', good:'応援してもらいやすい◎' },
+};
+
+function getMonthlyFortune(nichikan, targetMonthKan) {
+  const jk = getJukkami(nichikan, targetMonthKan);
+  return { jk, ...JUKKAMI_FORTUNE[jk] };
+}
+
+// 指定した年月の月干を取得（今月から12ヶ月分）
+function getMonthKanForYearMonth(year, month) {
+  // 月の中旬（15日）基準で月干を算出
+  return getMonthKan(year, month, 15);
+}
+function getMonthJiForYearMonth(year, month) {
+  return getMonthJi(year, month, 15);
+}
+
+// 月運グリッド描画
+function renderMonthlyGrid(nichikan, startYear, startMonth) {
+  const grid = document.getElementById('monthlyGrid');
+  const div  = document.createElement('div');
+  div.className = 'monthly-grid';
+
+  const nowDate   = new Date();
+  const nowYear   = nowDate.getFullYear();
+  const nowMonth  = nowDate.getMonth() + 1;
+
+  for (let i = 0; i < 12; i++) {
+    let y = startYear;
+    let m = startMonth + i;
+    if (m > 12) { m -= 12; y++; }
+
+    const mKan    = getMonthKanForYearMonth(y, m);
+    const mJi     = getMonthJiForYearMonth(y, m);
+    const fortune = getMonthlyFortune(nichikan, mKan);
+    const isCurrent = (y === nowYear && m === nowMonth);
+
+    const row = document.createElement('div');
+    let cls = 'monthly-row';
+    if (isCurrent)             cls += ' current-month';
+    else if (fortune.level === 'caution') cls += ' caution';
+    else if (fortune.level === 'good')    cls += ' good';
+    row.className = cls;
+
+    const badgeClass = fortune.level === 'good' ? 'badge-good' : fortune.level === 'caution' ? 'badge-caution' : 'badge-normal';
+    const badgeText  = fortune.level === 'good' ? '✦ 運気アップ' : fortune.level === 'caution' ? '⚠️ 注意' : '→ ふつう';
+    const icon       = isCurrent ? '▶ ' : '';
+
+    row.innerHTML = `
+      <div class="monthly-label">${icon}${y}年${m}月${isCurrent ? '（今月）' : ''}</div>
+      <div>
+        <div class="monthly-kanji"><span class="mk">${KAN[mKan]}</span><span class="mj">${JI[mJi]}</span>　<span style="font-size:11px;color:var(--text2);">${fortune.short}</span></div>
+        <div class="monthly-desc">${fortune.level === 'caution' ? '⚠️ ' + fortune.caution : '◎ ' + fortune.good}</div>
+      </div>
+      <div><span class="monthly-badge ${badgeClass}">${badgeText}</span></div>`;
+    div.appendChild(row);
+  }
+  grid.appendChild(div);
+}
+
+// ── 勉強・資格データ ──
+const STUDY_GOGYO = {
+  木:{
+    style:'新しいことを自分で調べて学ぶのが得意！ひとつのことをじっくり深めるより、いろんな分野をつなげて考えるのが向いてるよ。',
+    subjects:['理科（生物・環境）','社会（地理・歴史）','国語（読書・作文）','英語（会話・表現）'],
+    method:'本や自然の中での体験学習◎。丸暗記より「なぜ？」を考えながら学ぶと頭に入りやすいよ！',
+    qualifications:['自然環境保全活動','英語検定（表現力を活かして）','教員免許','社会福祉士','ガーデニング・フラワーアレンジメント'],
+    avoid:'数字だけの暗記や、パターンをひたすら繰り返す練習は少し苦手かも。',
+  },
+  火:{
+    style:'楽しみながら学ぶのが最強！仲間と競ったり、発表したりする中でぐんぐん伸びるタイプだよ。',
+    subjects:['表現・芸術（音楽・美術）','体育・スポーツ','プレゼン・スピーチ','ITとクリエイティブ系'],
+    method:'グループ学習・発表・実験など「動きのある勉強」が向いてるよ。退屈な暗記は音読や動きを取り入れてみて！',
+    qualifications:['デザイン系資格','ファイナンシャルプランナー（行動力を活かして）','ITパスポート','調理師・製菓衛生師','芸能・スポーツ系のライセンス'],
+    avoid:'ひとりで静かに長時間こもる勉強は少し苦手。休憩をこまめにとってね！',
+  },
+  土:{
+    style:'コツコツ積み上げるのが得意！くり返し練習で本物の力がつくタイプ。焦らずじっくり学ぶのが最大の武器だよ。',
+    subjects:['算数・数学','社会（公民・経済）','家庭科・生活系','歴史・地理'],
+    method:'ノートを丁寧にまとめるのが向いてるよ。一日のルーティンを決めて毎日少しずつやるのがベスト！',
+    qualifications:['簿記・会計士','宅地建物取引士','ファイナンシャルプランナー','調理師・栄養士','農業・土木系の資格'],
+    avoid:'ぶっつけ本番や時間に追われる学習は少し苦手。計画的に進めると力が発揮されるよ。',
+  },
+  金:{
+    style:'論理的に考えるのが得意！筋道を立てて理解してから進むタイプ。基礎をしっかり固めると応用力も抜群になるよ。',
+    subjects:['数学・理系科目','英語（文法・読解）','法律・倫理','プログラミング・IT'],
+    method:'ひとつずつ完璧に理解してから次へ進む「積み上げ型」が向いてるよ。わからないまま進むのが一番のNG！',
+    qualifications:['弁護士・司法書士','医師・薬剤師','ITエンジニア系（基本情報・応用情報）','数学検定・英語検定','行政書士・公認会計士'],
+    avoid:'暗記ばかりの丸覚えや、理由がわからないルールを押しつけられると伸び悩むかも。',
+  },
+  水:{
+    style:'直感と知識を組み合わせて学ぶのが得意！ひとつのことを深堀りしたり、アイデアを広げながら学ぶタイプだよ。',
+    subjects:['国語・文学','外国語（英語・中国語など）','哲学・心理学','音楽・芸術'],
+    method:'興味を持ったことを自由に深堀りするのが向いてるよ。本をたくさん読んだり、音楽・映像で学ぶのも効果的！',
+    qualifications:['語学系（英検・TOEICなど）','臨床心理士・公認心理師','占い・カウンセラー系','音楽・芸術系の資格','研究職・大学院進学'],
+    avoid:'体育会系のスパルタ練習や、感情を無視した詰め込み教育は向いていないかも。',
+  },
+};
+
+// 十神別の学び方追加アドバイス
+const JUKKAMI_STUDY = {
+  比肩:'自分でテーマを決めて独学するのが向いてる！ライバルがいると燃えるタイプだよ。',
+  劫財:'チャレンジ精神が学びの原動力！資格試験や検定など、目標を決めると一気に伸びるよ。',
+  食神:'作って表現しながら学ぶのが最強！工作・実験・プレゼンなど手を動かす勉強で輝けるよ。',
+  傷官:'教科書の外の知識や、ユニークな視点で学ぶのが得意。独自の学習スタイルを大切にしてね！',
+  偏財:'行動しながら学ぶのが向いてる！体験型の授業や課外活動でぐんぐん伸びるよ。',
+  正財:'コツコツまじめに続けるのが最大の武器！努力の積み上げが本番で必ず実るよ。',
+  偏官:'困難なことに挑戦するほど伸びるタイプ。難しい資格や高い目標設定がモチベになるよ！',
+  正官:'ルールや基礎をしっかり身につけるのが得意。資格や検定で実力を証明するのが向いてるよ。',
+  偏印:'ひらめきと直感で学ぶタイプ！幅広い分野に興味を持って、点と点をつなげる力が強いよ。',
+  印綬:'学ぶこと自体が大好き！高校・大学・大学院など、長く学び続けるほど実力が花開くよ。',
+};
+const GOGYO_KOKU_BY = { 木:'金', 火:'水', 土:'木', 金:'火', 水:'土' };
+
+const COMPAT_BAD = {
+  木:{ type:'金タイプの人', reason:'金は木を傷つける関係。きつい言葉で傷ついたり、プレッシャーをかけられやすいよ。', tip:'感情的にならず、距離感を保つと楽になるよ。' },
+  火:{ type:'水タイプの人', reason:'水は火を消す関係。情熱に水を差されたり、行動を止められやすいよ。', tip:'意見をぶつけるより、冷静に話し合うのがコツだよ。' },
+  土:{ type:'木タイプの人', reason:'木は土を押し広げる関係。束縛感を感じたり、ペースを乱されやすいよ。', tip:'相手の自由を認めてあげると、うまくいくよ。' },
+  金:{ type:'火タイプの人', reason:'火は金を溶かす関係。強い感情や押しつけに疲れやすいタイプ。', tip:'感情ではなく論理で話し合うと関係が改善するよ。' },
+  水:{ type:'土タイプの人', reason:'土は水をせき止める関係。動きたいのに止められたり、窮屈に感じやすいよ。', tip:'自分のペースを大切にして、無理に合わせなくてOK！' },
+};
+const COMPAT_GOOD = {
+  木:{ type:'水タイプ・木タイプ', reason:'水は木を育てる関係。サポートしてくれる人との相性がとてもいいよ。' },
+  火:{ type:'木タイプ・火タイプ', reason:'木は火を燃やす関係。情熱を後押ししてくれる人と相性◎。' },
+  土:{ type:'火タイプ・土タイプ', reason:'火は土を生む関係。温かく見守ってくれる人と長続きするよ。' },
+  金:{ type:'土タイプ・金タイプ', reason:'土は金を生む関係。安定感を与えてくれる人と相性がいいよ。' },
+  水:{ type:'金タイプ・水タイプ', reason:'金は水を生む関係。知的で落ち着いた人とベストマッチ！' },
+};
+
+const WORK_BAD = {
+  木:'ルールが多くて変化のない管理系の仕事や、数字だけを追う営業は少し窮屈かも。競争が激しすぎる環境も苦手なことがあるよ。',
+  火:'細かい作業を一人でコツコツやる仕事や、変化のない繰り返し作業は向いていないかも。感情を抑えなければいけない場面が多い職場は疲れやすいよ。',
+  土:'スピードを求められる仕事や、毎日変化が激しい環境は少し苦手かも。落ち着いて取り組める場の方が力を発揮できるよ。',
+  金:'あいまいな基準で評価される仕事や、感情的な職場環境は向いていないかも。ルールが曖昧だとストレスを感じやすいよ。',
+  水:'体を動かす単純作業や、感情的なやりとりが多い仕事は少し疲れるかも。自分のペースで考える時間がない環境は苦手かもしれないよ。',
+};
+
+const FAMILY_DESC = {
+  年柱:'先祖・祖父母・お父さんとの縁を表すよ。',
+  月柱:'お母さん・兄弟姉妹との縁や、育ってきた環境を表すよ。',
+  日柱:'あなた自身と、将来のパートナーとの縁を表すよ。',
+  時柱:'将来の子供・部下・自分の夢や目標との縁を表すよ。',
+};
+const FAMILY_PILLAR_READING = [
+  (kan, ji) => `お父さんや祖父母の影響が強い命式。${KAN_GOGYO[kan]}のエネルギーを受け継いでいるよ。${KAN_YIN[kan]===0?'積極的にサポートしてもらえる縁':'見えないところで見守ってもらえる縁'}があるよ。`,
+  (kan, ji) => `お母さんや家庭環境の影響がとても強いよ。${KAN_GOGYO[kan]}のエネルギーが育ちに影響していて、${JI_GOGYO[ji]}の力も加わっているんだ。`,
+  (kan, ji) => `あなた自身のエネルギーは${KAN_GOGYO[kan]}（${KAN[kan]}）。将来のパートナーとの縁は、${KAN_YIN[kan]===0?'明るくて頼れる人':'感性豊かでやさしい人'}と深くなりやすいよ。`,
+  (kan, ji) => kan !== null ? `将来の夢や子供との縁は${KAN_GOGYO[kan]}のエネルギーがキーワード。${JI_GOGYO[ji]}の力も加わって、${KAN_YIN[kan]===0?'夢に向かってどんどん進める':'じっくりと夢を育てていく'}タイプだよ。` : '生まれた時間がわかると、夢・子供との縁もわかるよ！',
+];
+
+const GOGYO_DIRECTION = {
+  木:{ dir:'東・東北', env:'自然・緑・学びの場', color:'青・緑', lucky:'新しいスタートを切る春が勝負！東の方向に進むと運が開けやすいよ。' },
+  火:{ dir:'南', env:'人が集まる場所・舞台・都市', color:'赤・オレンジ・紫', lucky:'夏の南の方向が勝負どころ！人が多い場所・にぎやかな環境で輝けるよ。' },
+  土:{ dir:'中央・南西・北東', env:'地元・安定した組織・大地に近い場所', color:'黄・茶', lucky:'地元や長くいる場所で実力が開花しやすい。中心地でチャンスをつかもう！' },
+  金:{ dir:'西・北西', env:'都市・オフィス・整った環境', color:'白・銀・金', lucky:'秋の西の方向が勝負どころ！整ったきれいな環境でこそ実力が発揮できるよ。' },
+  水:{ dir:'北', env:'海・川・静かな場所・外国', color:'黒・紺・濃い青', lucky:'北の方向や水のある場所でひらめきが生まれやすい。海外でも成功しやすいタイプだよ！' },
+};
+
+function show(id) {
+  ['screenInput','screenLoading','screenResult'].forEach(s => {
+    document.getElementById(s).style.display = 'none';
+  });
+  document.getElementById(id).style.display = 'block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function calc() {
+  const dateVal = document.getElementById('inputDate').value;
+  if (!dateVal) { alert('生年月日を入力してください'); return; }
+  show('screenLoading');
+  setTimeout(() => render(dateVal), 1600);
+}
+
+function render(dateVal) {
+  const [y, m, d] = dateVal.split('-').map(Number);
+  const hourVal   = parseInt(document.getElementById('inputHour').value);
+  const sex       = document.getElementById('inputSex').value;
+  const hasHour   = hourVal >= 0;
+
+  // 四柱算出
+  const nKan = getYearKan(y),  nJi  = getYearJi(y);
+  const mKan = getMonthKan(y,m,d), mJi = getMonthJi(y,m,d);
+  const dKan = getDayKan(y,m,d),   dJi = getDayJi(y,m,d);
+  const hKan = hasHour ? getHourKan(dKan, hourVal) : null;
+  const hJi  = hasHour ? getHourJi(hourVal) : null;
+
+  const pillars = [
+    {label:'年柱', kan:nKan, ji:nJi},
+    {label:'月柱', kan:mKan, ji:mJi},
+    {label:'日柱', kan:dKan, ji:dJi, isNichi:true},
+    {label:'時柱', kan:hKan, ji:hJi},
+  ];
+
+  // 十神
+  pillars.forEach(p => {
+    p.jukkami = (p.isNichi || p.kan === null) ? null : getJukkami(dKan, p.kan);
+  });
+
+  // 五行
+  const gogyoScore = calcGogyoScore(pillars);
+  const gogyoTotal = Object.values(gogyoScore).reduce((a,b)=>a+b,0);
+
+  // 大運
+  const daiyun = calcDaiyun(y, m, d, sex, mJi);
+
+  // 今年・月
+  const now = getNowKanJi();
+  const currentAge = now.year - y;
+
+  // ── 命式表 ──
+  const grid = document.getElementById('meishikiGrid');
+  grid.innerHTML = '';
+  pillars.forEach(p => {
+    const col = document.createElement('div');
+    col.className = 'meishiki-col' + (p.isNichi ? ' nichi' : '');
+    const jkBadge = p.jukkami
+      ? `<div class="jukkami-badge" style="background:${JUKKAMI_COLOR[p.jukkami]}22;color:${JUKKAMI_COLOR[p.jukkami]};border:0.5px solid ${JUKKAMI_COLOR[p.jukkami]}55;">${p.jukkami}</div>`
+      : (p.isNichi ? '<div class="jukkami-badge" style="background:rgba(200,168,75,0.1);color:var(--gold2);border:0.5px solid var(--gold);">日主</div>' : '');
+    col.innerHTML = `
+      <div class="meishiki-head">${p.label}</div>
+      <div class="meishiki-kan">${p.kan !== null ? KAN[p.kan] : '—'}</div>
+      <div class="meishiki-jushi">${p.ji !== null ? JI[p.ji] : '—'}</div>
+      <div class="meishiki-jishin">${jkBadge}</div>`;
+    grid.appendChild(col);
+  });
+
+  // 日主タグ
+  document.getElementById('nisshuTag').innerHTML =
+    `☯ あなたの星：${KAN[dKan]}（${KAN_GOGYO[dKan]}のエネルギー・${KAN_YIN[dKan]===0?'陽':'陰'}）`;
+
+  // ── 五行バー ──
+  const gogyoGrid = document.getElementById('gogyoGrid');
+  gogyoGrid.innerHTML = '';
+  Object.entries(GOGYO_DESC).forEach(([g, info]) => {
+    const pct = gogyoTotal > 0 ? Math.round(gogyoScore[g] / gogyoTotal * 100) : 0;
+    const row = document.createElement('div');
+    row.className = 'gogyo-row';
+    row.innerHTML = `
+      <div class="gogyo-name" style="color:${info.color};">${g}　${info.name}</div>
+      <div class="gogyo-bar-bg"><div class="gogyo-bar-fill" style="width:${pct}%;background:${info.color};"></div></div>
+      <div class="gogyo-pct">${pct}%</div>`;
+    gogyoGrid.appendChild(row);
+  });
+
+  // 主五行（最多）
+  const mainGogyo = Object.entries(gogyoScore).sort((a,b)=>b[1]-a[1])[0][0];
+
+  // ── 鑑定タブ ──
+  const tabs = [
+    {id:'personality', label:'せいかく・とくい'},
+    {id:'love',        label:'恋愛・人間関係'},
+    {id:'work',        label:'将来・お金'},
+    {id:'jukkami',     label:'うまれつきの才能'},
+    {id:'compat',      label:'相性'},
+    {id:'family',      label:'家族関係'},
+    {id:'success',     label:'成功する場所'},
+    {id:'study',       label:'勉強・資格'},
+  ];
+  const tabsEl   = document.getElementById('resultTabs');
+  const panelsEl = document.getElementById('resultPanels');
+  tabsEl.innerHTML = ''; panelsEl.innerHTML = '';
+
+  tabs.forEach((t, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'rtab' + (i===0?' active':'');
+    btn.textContent = t.label;
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.rtab').forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('.rtab-panel').forEach(p=>p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('panel-'+t.id).classList.add('active');
+    });
+    tabsEl.appendChild(btn);
+
+    const panel = document.createElement('div');
+    panel.className = 'rtab-panel' + (i===0?' active':'');
+    panel.id = 'panel-'+t.id;
+
+    if (t.id === 'personality') {
+      panel.innerHTML = `
+        <div class="reading-block">
+          <div class="reading-title">— あなたはどんな人？</div>
+          <div class="reading-text">${KAN_PERSONALITY[dKan]}</div>
+        </div>
+        <div class="reading-block">
+          <div class="reading-title">— 五行バランスから見る個性</div>
+          <div class="reading-text">あなたの命式は「${mainGogyo}」の気が最も強く、${GOGYO_DESC[mainGogyo].desc}の資質が際立ちます。${GOGYO_DESC[mainGogyo].desc}の気質が日常のあらゆる場面に現れ、あなたの行動指針となっています。</div>
+        </div>`;
+    } else if (t.id === 'love') {
+      panel.innerHTML = `
+        <div class="reading-block">
+          <div class="reading-title">— 恋愛傾向</div>
+          <div class="reading-text">${GOGYO_LOVE[mainGogyo]}</div>
+        </div>
+        <div class="reading-block">
+          <div class="reading-title">— 縁の深さ</div>
+          <div class="reading-text">${pillars[1].jukkami ? `うまれつきの才能「${pillars[1].jukkami}」を持っているよ。${JUKKAMI_DESC[pillars[1].jukkami]}これが人間関係にもあらわれてくるんだ。` : `${JI[mJi]}のエネルギーが人との縁に影響しているよ。${JI_GOGYO[mJi]}のパワーを大切にしてね。`}</div>
+        </div>`;
+    } else if (t.id === 'work') {
+      panel.innerHTML = `
+        <div class="reading-block">
+          <div class="reading-title">— 適職・才能</div>
+          <div class="reading-text">${GOGYO_WORK[mainGogyo]}</div>
+        </div>
+        <div class="reading-block">
+          <div class="reading-title">— 財運</div>
+          <div class="reading-text">${pillars[0].jukkami ? `「${pillars[0].jukkami}」の才能がお金との関係にも出てくるよ。${JUKKAMI_DESC[pillars[0].jukkami]}この力を活かすとお金の流れもよくなるかも！` : `${KAN[nKan]}（${KAN_GOGYO[nKan]}のエネルギー）がお金との縁に影響しているよ。このエネルギーをうまく活かしてみてね。`}</div>
+        </div>`;
+    } else if (t.id === 'jukkami') {
+      const jkList = pillars.filter(p=>p.jukkami).map(p=>`
+        <div class="reading-block">
+          <div class="reading-title">— ${p.label}のうまれつきの才能「${p.jukkami}」</div>
+          <div class="reading-text">${JUKKAMI_DESC[p.jukkami]}</div>
+        </div>`).join('');
+      panel.innerHTML = jkList || '<div class="reading-text" style="color:var(--text2);">生まれた時間がわからないと、すべての才能は表示できないよ。わかる場合は入力してみてね！</div>';
+
+    } else if (t.id === 'compat') {
+      const bad  = COMPAT_BAD[mainGogyo];
+      const good = COMPAT_GOOD[mainGogyo];
+      panel.innerHTML = `
+        <div class="reading-block">
+          <div class="reading-title">— 相性がいい人</div>
+          <div class="reading-text">
+            <span style="color:var(--gold2);font-weight:700;">◎ ${good.type}</span><br>
+            ${good.reason}
+          </div>
+        </div>
+        <div class="reading-block">
+          <div class="reading-title">— 相性が難しい人</div>
+          <div class="reading-text">
+            <span style="color:#cc4444;font-weight:700;">△ ${bad.type}</span><br>
+            ${bad.reason}<br>
+            <span style="color:var(--text2);font-size:12px;">💡 ${bad.tip}</span>
+          </div>
+        </div>
+        <div class="reading-block">
+          <div class="reading-title">— 五行タイプって？</div>
+          <div class="reading-text" style="font-size:12px;color:var(--text2);">
+            木タイプ：成長・発展が好きな人　火タイプ：情熱的・明るい人<br>
+            土タイプ：安定・誠実な人　金タイプ：意志が強い人　水タイプ：知的・感性が豊かな人
+          </div>
+        </div>`;
+
+    } else if (t.id === 'family') {
+      const familyContent = pillars.map((p, idx) => {
+        const reading = p.kan !== null
+          ? FAMILY_PILLAR_READING[idx](p.kan, p.ji)
+          : FAMILY_DESC[p.label] + '（時間未入力のため詳細不明）';
+        return `
+          <div class="reading-block">
+            <div class="reading-title">— ${p.label}：${FAMILY_DESC[p.label]}</div>
+            <div class="reading-text">${reading}</div>
+          </div>`;
+      }).join('');
+      panel.innerHTML = familyContent;
+
+    } else if (t.id === 'success') {
+      const dir = GOGYO_DIRECTION[mainGogyo];
+      const weakGogyo = Object.entries(gogyoScore).sort((a,b)=>a[1]-b[1])[0][0];
+      panel.innerHTML = `
+        <div class="reading-block">
+          <div class="reading-title">— 成功しやすい方向・場所</div>
+          <div class="reading-text">
+            <span style="color:var(--gold2);">🧭 ${dir.dir}方向</span>が吉方位だよ！<br>
+            ${dir.lucky}
+          </div>
+        </div>
+        <div class="reading-block">
+          <div class="reading-title">— 成功しやすい環境</div>
+          <div class="reading-text">
+            <b style="color:var(--gold2);">${dir.env}</b>との相性がいいよ。<br>
+            ラッキーカラーは<b style="color:var(--gold2);">${dir.color}</b>！部屋や持ち物に取り入れてみてね🌟
+          </div>
+        </div>
+        <div class="reading-block">
+          <div class="reading-title">— 向いていない仕事・環境</div>
+          <div class="reading-text" style="color:var(--text2);">
+            ⚠️ ${WORK_BAD[mainGogyo]}<br><br>
+            <span style="font-size:12px;">「${weakGogyo}」のエネルギーが少ないので、${weakGogyo}タイプが得意なことは人に頼るのが◎！</span>
+          </div>
+        </div>`;
+
+    } else if (t.id === 'study') {
+      const sd = STUDY_GOGYO[mainGogyo];
+      const jkStudy = pillars[2].jukkami ? JUKKAMI_STUDY[pillars[2].jukkami] : null;
+      const subjectList = sd.subjects.map(s=>`<span style="display:inline-block;margin:3px 4px 3px 0;padding:3px 10px;background:rgba(200,168,75,0.1);border:0.5px solid var(--gold);border-radius:2px;font-size:12px;color:var(--gold2);">${s}</span>`).join('');
+      const qualList = sd.qualifications.map(q=>`<span style="display:inline-block;margin:3px 4px 3px 0;padding:3px 10px;background:rgba(68,170,102,0.1);border:0.5px solid #44aa66;border-radius:2px;font-size:12px;color:#44aa66;">${q}</span>`).join('');
+      panel.innerHTML = `
+        <div class="reading-block">
+          <div class="reading-title">— あなたの学び方のクセ</div>
+          <div class="reading-text">${sd.style}</div>
+        </div>
+        <div class="reading-block">
+          <div class="reading-title">— 得意な教科・分野</div>
+          <div class="reading-text">${subjectList}</div>
+        </div>
+        <div class="reading-block">
+          <div class="reading-title">— おすすめの勉強方法</div>
+          <div class="reading-text">${sd.method}</div>
+        </div>
+        ${jkStudy ? `<div class="reading-block">
+          <div class="reading-title">— うまれつきの才能から見た学び方</div>
+          <div class="reading-text">${jkStudy}</div>
+        </div>` : ''}
+        <div class="reading-block">
+          <div class="reading-title">— 向いている資格・進路</div>
+          <div class="reading-text">${qualList}</div>
+        </div>
+        <div class="reading-block">
+          <div class="reading-title">— 苦手な勉強スタイル</div>
+          <div class="reading-text" style="color:var(--text2);">⚠️ ${sd.avoid}</div>
+        </div>`;
+    }
+    panelsEl.appendChild(panel);
+  });
+
+  // ── 大運 ──
+  const daiyunList = document.getElementById('daiyunList');
+  daiyunList.innerHTML = '';
+  daiyun.forEach(r => {
+    const isCurrent = currentAge >= r.startAge && currentAge < r.startAge + 10;
+    const row = document.createElement('div');
+    row.className = 'daiyun-row' + (isCurrent ? ' current' : '');
+    row.innerHTML = `
+      <div>
+        <div class="daiyun-age">${r.startAge}歳〜${r.startAge+9}歳${isCurrent?' ◀ 現在':''}</div>
+      </div>
+      <div>
+        <span class="daiyun-kan">${KAN[r.kan]}</span><span class="daiyun-ji">${JI[r.ji]}</span>
+        <div class="daiyun-desc">${getDaiyunDesc(r.kan, r.ji)}</div>
+      </div>`;
+    daiyunList.appendChild(row);
+  });
+
+  // ── 年運・月運 ──
+  const unyearGrid = document.getElementById('unyearGrid');
+  unyearGrid.innerHTML = '';
+  [
+    {label:`${now.year}年の運勢`, kan:now.yearKan, ji:now.yearJi},
+    {label:`${now.year+1}年の運勢`, kan:now.nextKan, ji:now.nextJi},
+  ].forEach(u => {
+    const jk = getJukkami(dKan, u.kan);
+    const card = document.createElement('div');
+    card.className = 'unyear-card';
+    card.innerHTML = `
+      <div class="unyear-label">${u.label}</div>
+      <span class="unyear-kan">${KAN[u.kan]}</span><span class="unyear-ji">${JI[u.ji]}</span>
+      <div class="unyear-desc">十神：<span style="color:${JUKKAMI_COLOR[jk]}">${jk}</span><br>${JUKKAMI_DESC[jk]}</div>`;
+    unyearGrid.appendChild(card);
+  });
+  document.getElementById('unyearDesc').textContent = getUnyearDesc(dKan, now.yearKan, now.monthKan);
+
+  // ── 月運カレンダー ──
+  document.getElementById('monthlyGrid').innerHTML = '';
+  renderMonthlyGrid(dKan, now.year, now.month || (new Date().getMonth() + 1));
+
+  // AIアドバイス用コンテキスト保存
+  const gogyoText = Object.entries(GOGYO_DESC).map(([g]) =>
+    `・${g}：${Math.round(gogyoScore[g]/gogyoTotal*100)}%`
+  ).join('\n');
+  const currentDaiyunRow = daiyun.find(r => currentAge >= r.startAge && currentAge < r.startAge+10);
+  _aiContext = {
+    dKan, dKanName: KAN[dKan], dJiName: JI[dJi],
+    nKanName: KAN[nKan], nJiName: JI[nJi],
+    mKanName: KAN[mKan], mJiName: JI[mJi],
+    hKanName: hKan !== null ? KAN[hKan] : null,
+    hJiName:  hJi  !== null ? JI[hJi]  : null,
+    mainGogyo, gogyoText,
+    isYin: KAN_YIN[dKan] === 1,
+    monthKanName: KAN[now.monthKan], monthJiName: JI[now.monthJi],
+    yearKanName:  KAN[now.yearKan],  yearJiName:  JI[now.yearJi],
+    currentDaiyun: currentDaiyunRow
+      ? `${KAN[currentDaiyunRow.kan]}${JI[currentDaiyunRow.ji]}（${currentDaiyunRow.startAge}〜${currentDaiyunRow.startAge+9}歳）`
+      : '不明',
+  };
+  // AIアドバイスカードをリセット
+  document.getElementById('aiAdviceInner').innerHTML = `
+    <div style="font-size:12px;color:var(--text2);line-height:1.8;margin-bottom:16px;">
+      あなたの生年月日をもとに、今月だけのアドバイスをAIが考えてくれるよ！
+    </div>
+    <button class="btn-calc" id="btnAiAdvice" onclick="generateAiAdvice()">✦ AIにアドバイスを聞く</button>`;
+
+  show('screenResult');
+}
+
+// ── AI今月アドバイス生成 ──
+let _aiContext = null; // render時にセット
+
+async function generateAiAdvice() {
+  if (!_aiContext) return;
+  const inner = document.getElementById('aiAdviceInner');
+  inner.innerHTML = `<div class="ai-loading"><div class="ai-loading-sym">☯</div><div>あなたの運命を読み解いています…</div></div>`;
+
+  const c = _aiContext;
+  const now = getNowKanJi();
+  const monthJkName = getJukkami(c.dKan, now.monthKan);
+  const yearJkName  = getJukkami(c.dKan, now.yearKan);
+
+  const prompt = `あなたは四柱推命の熟練した占い師です。以下の命式を持つ人に対して、今月（${now.year}年${new Date().getMonth()+1}月）のオーダーメイドアドバイスを鑑定してください。
+
+【あなたのうまれつきの星】
+・年の星：${c.nKanName}${c.nJiName}
+・月の星：${c.mKanName}${c.mJiName}
+・生まれの星（日柱）：${c.dKanName}${c.dJiName}　${c.dKanName}（${c.mainGogyo}・${c.isYin ? '陰' : '陽'}）
+・生まれた時間の星：${c.hKanName || '不明'}${c.hJiName || ''}
+
+【5つのエネルギーバランス】
+${c.gogyoText}
+
+【今月の星（干支）】${c.monthKanName}${c.monthJiName}（あなたの星との相性：${monthJkName}）
+【今年の星（干支）】${c.yearKanName}${c.yearJiName}（あなたの星との相性：${yearJkName}）
+【いまの10年運】${c.currentDaiyun}
+
+【鑑定内容】
+以下の4つについて、この人の命式に特化した具体的なアドバイスを述べてください。テンプレート的な表現は避け、命式の特徴を活かした個別の内容にしてください。
+
+■ 今月の全体的な運勢
+■ 恋愛・友だちとの関係
+■ 勉強・将来・お金
+■ ラッキーアドバイス（この人にとくに効果的なこと）
+
+各項目は3〜5文で書いてね。小学生〜中学生でも読めるやさしい言葉で、専門用語は使わないで。でもちゃんとその人の命式に合った具体的な内容にしてね。`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1000,
+        stream: true,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (!res.ok) throw new Error('API error');
+
+    inner.innerHTML = `<div class="ai-advice-text" id="aiText"></div>`;
+    const textEl = document.getElementById('aiText');
+    // カーソル用span
+    textEl.innerHTML = '<span></span>';
+    const cursor = textEl.querySelector('span');
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let fullText = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      const chunk = decoder.decode(value);
+      const lines = chunk.split('\n');
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const data = line.slice(6).trim();
+        if (data === '[DONE]') continue;
+        try {
+          const json = JSON.parse(data);
+          if (json.type === 'content_block_delta' && json.delta?.text) {
+            fullText += json.delta.text;
+            // カーソルの前にテキストを挿入
+            textEl.firstChild && textEl.firstChild.nodeType === 3
+              ? (textEl.firstChild.textContent = fullText)
+              : textEl.insertBefore(document.createTextNode(fullText), cursor);
+            if (textEl.childNodes[0]?.nodeType === 3) textEl.childNodes[0].textContent = fullText;
+          }
+        } catch(e) {}
+      }
+    }
+
+    // 完了したらカーソル削除、再生成ボタン追加
+    cursor?.remove();
+    textEl.textContent = fullText;
+    const regenBtn = document.createElement('button');
+    regenBtn.className = 'ai-regen';
+    regenBtn.textContent = '↺ もう一度アドバイスをもらう';
+    regenBtn.onclick = generateAiAdvice;
+    inner.appendChild(regenBtn);
+
+  } catch(e) {
+    inner.innerHTML = `<div style="font-size:12px;color:var(--text2);line-height:1.8;">
+      アドバイスの生成に失敗しちゃった😢<br>少し待ってからもう一度試してみてね！
+      <br><br><button class="ai-regen" onclick="generateAiAdvice()">↺ 再試行</button>
+    </div>`;
+  }
+}
+
+function reset() {
+  document.getElementById('inputDate').value = '';
+  document.getElementById('inputHour').value = '-1';
+  show('screenInput');
+}
+
+// BGM対応
+(function(){
+  const p=new URLSearchParams(location.search),u=p.get('bgm');
+  if(!u)return;
+  const a=new Audio(u);a.loop=true;a.volume=0.4;
+  document.querySelector('.btn-calc').addEventListener('click',()=>a.play().catch(()=>{}),{once:true});
+})();
+</script>
+</body>
+</html>
