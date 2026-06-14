@@ -105,6 +105,52 @@
     margin-top: 6px;
   }
   .start-btn:hover { background: #ffb840; transform: translateY(-2px); }
+
+  /* ── スマホ用タッチコントロールエリア（canvasの下） ── */
+  #touchControlArea {
+    display: none;               /* スマホ時のみ表示 */
+    width: 480px;
+    max-width: 100%;
+    height: 140px;
+    position: relative;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    margin-top: 4px;
+    background: rgba(10,10,26,0.6);
+    border: 0.5px solid rgba(100,180,255,0.15);
+    border-radius: 12px;
+    touch-action: none;
+  }
+  /* ジョイスティック */
+  #joyBase {
+    width: 110px; height: 110px; border-radius: 50%;
+    background: rgba(255,200,50,0.10);
+    border: 2px solid rgba(255,200,50,0.35);
+    position: relative; flex-shrink: 0;
+  }
+  #joyKnob {
+    width: 46px; height: 46px; border-radius: 50%;
+    background: rgba(255,200,50,0.55);
+    border: 2px solid rgba(255,224,138,0.8);
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  /* フラップボタン */
+  #flapBtn {
+    width: 100px; height: 100px; border-radius: 50%;
+    background: rgba(255,200,50,0.18);
+    border: 2px solid rgba(255,200,50,0.60);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px; user-select: none; flex-shrink: 0;
+    transition: background 0.1s;
+  }
+  #flapBtn.pressed { background: rgba(255,200,50,0.60); }
+
+  /* スマホ検知時：hintを非表示 */
+  @media (pointer: coarse) {
+    /* 必要に応じて追加スタイル */
+  }
 </style>
 </head>
 <body>
@@ -129,7 +175,13 @@
       <button class="start-btn" id="startBtn">スタート ▶</button>
     </div>
   </div>
-  <div class="hint">W / SPACE でフラップ上昇　　A / D で左右移動　　S で急降下　　敵より高い位置から当たると勝ち！</div>
+  <div class="hint" id="hintText">W / SPACE でフラップ上昇　　A / D で左右移動　　S で急降下　　敵より高い位置から当たると勝ち！</div>
+
+  <!-- スマホ用タッチコントロール（canvasの下の空きエリア） -->
+  <div id="touchControlArea">
+    <div id="joyBase"><div id="joyKnob"></div></div>
+    <div id="flapBtn">🐥</div>
+  </div>
 </div>
 
 <script>
@@ -1456,10 +1508,99 @@ function applyKeyInput() {
   if (state !== 'playing' || player.dead || player.drowning > 0) return;
   const MOVE_FORCE = 0.45;
   const MAX_VX     = 3.5;
-  if (keys['KeyA'] || keys['ArrowLeft'])  player.vx = Math.max(player.vx - MOVE_FORCE, -MAX_VX);
-  if (keys['KeyD'] || keys['ArrowRight']) player.vx = Math.min(player.vx + MOVE_FORCE,  MAX_VX);
-  if (keys['KeyS'] || keys['ArrowDown'])  player.vy = Math.min(player.vy + 1.2, 5); // 急降下
+  if (keys['KeyA'] || keys['ArrowLeft']  || (joystick.active && joystick.moveX < -0.2))
+    player.vx = Math.max(player.vx - MOVE_FORCE, -MAX_VX);
+  if (keys['KeyD'] || keys['ArrowRight'] || (joystick.active && joystick.moveX >  0.2))
+    player.vx = Math.min(player.vx + MOVE_FORCE,  MAX_VX);
+  if (keys['KeyS'] || keys['ArrowDown']  || (joystick.active && joystick.moveY >  0.5))
+    player.vy = Math.min(player.vy + 1.2, 5); // 急降下
 }
+
+// ── スマホ判定 ──
+function isMobileDevice() {
+  return (('ontouchstart' in window) || (navigator.maxTouchPoints > 0))
+    && /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+}
+
+// ── タッチコントロール変数 ──
+let touchControls = false;
+let joystick = { active: false, startX: 0, startY: 0, moveX: 0, moveY: 0 };
+let joyTouchId = null;
+const JOY_MAX = 44;
+
+// ── スマホ時の初期化 ──
+function initMobile() {
+  if (!isMobileDevice()) return;
+  touchControls = true;
+  // タッチコントロールエリアを表示
+  document.getElementById('touchControlArea').style.display = 'flex';
+  // PCヒントを非表示
+  document.getElementById('hintText').style.display = 'none';
+}
+initMobile();
+
+// ── ジョイスティック ──
+const joyBase = document.getElementById('joyBase');
+const joyKnob = document.getElementById('joyKnob');
+
+joyBase.addEventListener('touchstart', e => {
+  e.preventDefault();
+  if (joyTouchId !== null) return;
+  const t = e.changedTouches[0];
+  joyTouchId = t.identifier;
+  joystick.active = true;
+  joystick.startX = t.clientX; joystick.startY = t.clientY;
+  joystick.moveX = 0; joystick.moveY = 0;
+}, { passive: false });
+
+joyBase.addEventListener('touchmove', e => {
+  e.preventDefault();
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    const t = e.changedTouches[i];
+    if (t.identifier !== joyTouchId) continue;
+    const dx = t.clientX - joystick.startX;
+    const dy = t.clientY - joystick.startY;
+    const dist = Math.hypot(dx, dy);
+    const clamped = Math.min(dist, JOY_MAX);
+    const angle = Math.atan2(dy, dx);
+    joystick.moveX = Math.cos(angle) * (clamped / JOY_MAX);
+    joystick.moveY = Math.sin(angle) * (clamped / JOY_MAX);
+    joyKnob.style.transform =
+      `translate(calc(-50% + ${Math.cos(angle)*clamped}px), calc(-50% + ${Math.sin(angle)*clamped}px))`;
+  }
+}, { passive: false });
+
+joyBase.addEventListener('touchend', e => {
+  e.preventDefault();
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    if (e.changedTouches[i].identifier === joyTouchId) {
+      joyTouchId = null;
+      joystick.active = false;
+      joystick.moveX = 0; joystick.moveY = 0;
+      joyKnob.style.transform = 'translate(-50%, -50%)';
+    }
+  }
+}, { passive: false });
+
+// ── フラップボタン ──
+const flapBtn = document.getElementById('flapBtn');
+let flapTouchId = null;
+flapBtn.addEventListener('touchstart', e => {
+  e.preventDefault();
+  if (flapTouchId !== null) return;
+  flapTouchId = e.changedTouches[0].identifier;
+  flapBtn.classList.add('pressed');
+  handleFlap();
+}, { passive: false });
+flapBtn.addEventListener('touchend', e => {
+  e.preventDefault();
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    if (e.changedTouches[i].identifier === flapTouchId) {
+      flapTouchId = null;
+      flapBtn.classList.remove('pressed');
+    }
+  }
+}, { passive: false });
 
 canvas.addEventListener('click', handleFlap);
 canvas.addEventListener('touchstart', e => { e.preventDefault(); handleFlap(); }, { passive: false });
