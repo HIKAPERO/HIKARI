@@ -654,6 +654,9 @@ function draw() {
 function showOverlay(type) {
   const ov = document.getElementById('overlay');
   ov.style.display = 'flex';
+  // ゲームオーバー中はタッチコントロールを隠す
+  document.getElementById('touchLeft').style.display  = 'none';
+  document.getElementById('touchRight').style.display = 'none';
   if (type === 'gameover') {
     const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
     if (isMobile) {
@@ -684,7 +687,14 @@ function startGame() {
   player.reset(); updateMeterUI();
   state = 'playing';
   startAudioBGM();
-}
+  // スマホならタッチコントロールを表示
+  const isTouch = (('ontouchstart' in window) || (navigator.maxTouchPoints > 0))
+    && /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+  if (isTouch) {
+    document.getElementById('touchLeft').style.display  = 'block';
+    document.getElementById('touchRight').style.display = 'block';
+  }
+}}
 
 // ── ★【新規追加】スマホ専用の強制フルスクリーン＆横向きロック起動処理 ──
 function startWithFullscreen() {
@@ -735,6 +745,9 @@ function exitGame() {
   score = 0; frame = 0; capsuleCount = 0; boss = null;
   enemies = []; playerBullets = []; enemyBullets = []; capsules = []; particles = [];
   player.reset(); updateMeterUI();
+  // タッチコントロールを非表示
+  document.getElementById('touchLeft').style.display  = 'none';
+  document.getElementById('touchRight').style.display = 'none';
 
   const ov = document.getElementById('overlay');
   ov.style.display = 'flex';
@@ -980,9 +993,9 @@ function initDynamicControlsGuide() {
     // エントリー画面: 通常スタート非表示、全画面ボタン表示
     if(document.getElementById('startBtn'))      document.getElementById('startBtn').style.display      = "none";
     if(document.getElementById('fullScreenBtn')) document.getElementById('fullScreenBtn').style.display = "inline-block";
-    // タッチコントロール表示
-    document.getElementById('touchLeft').style.display  = 'block';
-    document.getElementById('touchRight').style.display = 'block';
+    // タッチコントロールはエントリー画面では非表示（ゲーム開始時に表示する）
+    document.getElementById('touchLeft').style.display  = 'none';
+    document.getElementById('touchRight').style.display = 'none';
   } else {
     if(document.getElementById('fullScreenBtn')) document.getElementById('fullScreenBtn').style.display = "none";
     document.getElementById('touchLeft').style.display  = 'none';
