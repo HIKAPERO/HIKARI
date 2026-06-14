@@ -1050,7 +1050,7 @@ ${c.gogyoText}
 各項目は3〜5文で書いてね。小学生〜中学生でも読めるやさしい言葉で、専門用語は使わないで。でもちゃんとその人の命式に合った具体的な内容にしてね。`;
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('https://hikari-ai.peropero-wahaha.workers.dev', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
