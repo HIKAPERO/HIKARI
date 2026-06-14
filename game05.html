@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ゆめかわMBTI診断</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --pink:    #ffb3c6;
+  --pink2:   #ff85a2;
+  --pink3:   #d96d88;
+  --lavender:#c9b8ff;
+  --mint:    #b8f0e0;
+  --yellow:  #fff0a0;
+  --peach:   #ffd6b0;
+  --sky:     #b8e0ff;
+  --bg:      #fff5f9;
+  --bg2:     #ffffff;
+  --text:    #6b4f5e;
+  --text2:   #a07898;
+  --shadow:  rgba(255,133,162,0.18);
+}
+html, body { min-height: 100vh; font-family: 'Hiragino Sans', 'Meiryo', 'Helvetica Neue', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+
+/* ── 背景の浮かぶ星 ── */
+body::before {
+  content: '✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦';
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  font-size: 14px; color: rgba(255,179,198,0.25);
+  display: flex; align-items: center; justify-content: center;
+  letter-spacing: 28px; line-height: 3.2; flex-wrap: wrap;
+  word-break: break-all; padding: 0 20px;
+}
+
+.wrap { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; padding: 0 16px 60px; }
+
+/* ── タイトル画面 ── */
+#screenTitle { text-align: center; padding: 48px 0 32px; }
+.title-icon { font-size: 64px; margin-bottom: 12px; display: block; animation: float 3s ease-in-out infinite; }
+@keyframes float { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);} }
+.title-main { font-size: 28px; font-weight: 800; color: var(--pink2); letter-spacing: 2px; margin-bottom: 6px; }
+.title-sub  { font-size: 13px; color: var(--text2); letter-spacing: 1px; margin-bottom: 32px; line-height: 1.7; }
+.title-card {
+  background: var(--bg2); border-radius: 28px; padding: 22px 24px;
+  box-shadow: 0 8px 0 #ffd1dc, 0 0 0 3px #ffe0ec;
+  margin-bottom: 24px; text-align: left;
+}
+.title-card-head { font-size: 11px; letter-spacing: 2px; color: var(--pink2); font-weight: 700; margin-bottom: 10px; }
+.title-card-body { font-size: 13px; color: var(--text2); line-height: 1.8; }
+.btn-start {
+  width: 100%; padding: 18px; border-radius: 22px; border: none;
+  background: linear-gradient(135deg, var(--pink) 0%, var(--pink2) 100%);
+  color: #fff; font-size: 16px; font-weight: 800; letter-spacing: 2px;
+  cursor: pointer; box-shadow: 0 6px 0 var(--pink3);
+  transition: transform .15s, box-shadow .15s;
+}
+.btn-start:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--pink3); }
+
+/* ── 質問画面 ── */
+#screenQuestion { display: none; padding: 24px 0; }
+.progress-wrap { margin-bottom: 20px; }
+.progress-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--text2); margin-bottom: 8px; font-weight: 700; letter-spacing: 1px; }
+.progress-bar-bg { height: 10px; background: #ffe0ec; border-radius: 99px; overflow: hidden; }
+.progress-bar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--pink) 0%, var(--lavender) 100%); transition: width .4s cubic-bezier(.4,0,.2,1); }
+.q-card {
+  background: var(--bg2); border-radius: 28px; padding: 28px 24px;
+  box-shadow: 0 8px 0 #ffd1dc, 0 0 0 3px #ffe0ec;
+  margin-bottom: 20px;
+}
+.q-tag { display: inline-block; font-size: 10px; letter-spacing: 2px; color: var(--pink2); background: #ffe8f0; border-radius: 20px; padding: 4px 12px; margin-bottom: 14px; font-weight: 700; }
+.q-text { font-size: 17px; font-weight: 700; color: var(--text); line-height: 1.65; }
+
+.choices { display: flex; flex-direction: column; gap: 10px; }
+.choice-btn {
+  width: 100%; padding: 16px 20px; border-radius: 18px; border: 2.5px solid #ffe0ec;
+  background: var(--bg2); color: var(--text); font-size: 14px; font-weight: 600;
+  cursor: pointer; text-align: left; line-height: 1.5;
+  transition: border-color .15s, background .15s, transform .12s;
+  font-family: inherit;
+}
+.choice-btn:hover { border-color: var(--pink2); background: #fff5f8; transform: translateX(4px); }
+.choice-btn:active { transform: scale(0.97); }
+.choice-btn.selected { border-color: var(--pink2); background: linear-gradient(135deg, #fff0f5 0%, #f8f0ff 100%); }
+
+/* ── ローディング ── */
+#screenLoading { display: none; text-align: center; padding: 80px 0; }
+.loading-icon { font-size: 52px; animation: spin 1.2s linear infinite; display: inline-block; margin-bottom: 16px; }
+@keyframes spin { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+.loading-text { font-size: 14px; color: var(--text2); font-weight: 600; }
+
+/* ── 結果画面 ── */
+#screenResult { display: none; padding: 28px 0; }
+.result-header { text-align: center; margin-bottom: 24px; }
+.result-type-badge {
+  display: inline-block; font-size: 42px; font-weight: 900;
+  letter-spacing: 4px; color: var(--pink2);
+  background: linear-gradient(135deg, #fff0f5, #f3eeff);
+  border-radius: 20px; padding: 16px 32px;
+  box-shadow: 0 6px 0 #ffd1dc, 0 0 0 3px #ffe0ec;
+  margin-bottom: 14px;
+}
+.result-name { font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+.result-tagline { font-size: 13px; color: var(--text2); line-height: 1.7; }
+
+.result-card {
+  background: var(--bg2); border-radius: 24px; padding: 22px 22px;
+  box-shadow: 0 6px 0 #ffd1dc, 0 0 0 3px #ffe0ec;
+  margin-bottom: 16px;
+}
+.result-card-title { font-size: 11px; letter-spacing: 2px; color: var(--pink2); font-weight: 700; margin-bottom: 14px; }
+.result-desc { font-size: 14px; color: var(--text); line-height: 1.8; }
+
+/* 4軸バー */
+.axis-list { display: flex; flex-direction: column; gap: 14px; }
+.axis-row { }
+.axis-labels { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; margin-bottom: 5px; }
+.axis-bar-bg { height: 12px; background: #ffe8f0; border-radius: 99px; overflow: hidden; position: relative; }
+.axis-bar-fill { height: 100%; border-radius: 99px; transition: width .6s cubic-bezier(.4,0,.2,1); }
+.axis-pct { font-size: 11px; color: var(--text2); text-align: right; margin-top: 3px; }
+
+/* 強み・弱み */
+.traits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.trait-pill {
+  padding: 10px 14px; border-radius: 14px; font-size: 12px; font-weight: 700;
+  text-align: center; line-height: 1.4;
+}
+.trait-plus  { background: #e8fff4; color: #2d8a52; }
+.trait-minus { background: #fff0f5; color: #d96d88; }
+
+/* 相性 */
+.compat-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.compat-pill {
+  padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 800;
+  letter-spacing: 1px;
+}
+.compat-best { background: linear-gradient(135deg, #ffe8f0, #f3eeff); color: var(--pink2); border: 2px solid #ffd1dc; }
+.compat-good { background: #f0f8ff; color: #5599cc; border: 2px solid #c8e8ff; }
+.compat-hard { background: #fff8e8; color: #cc8833; border: 2px solid #ffe8b0; }
+
+/* リトライ */
+.btn-retry {
+  width: 100%; padding: 16px; border-radius: 22px; border: none;
+  background: linear-gradient(135deg, var(--lavender) 0%, var(--pink) 100%);
+  color: #fff; font-size: 15px; font-weight: 800; letter-spacing: 2px;
+  cursor: pointer; box-shadow: 0 6px 0 #a090d8;
+  transition: transform .15s, box-shadow .15s; margin-top: 8px;
+  font-family: inherit;
+}
+.btn-retry:active { transform: translateY(4px); box-shadow: 0 2px 0 #a090d8; }
+
+.screen { transition: opacity .3s; }
+
+.btn-share-gen { width:100%; padding:15px; border-radius:18px; border:2.5px solid #ffd1dc; background:#fff0f5; color:var(--pink2); font-size:14px; font-weight:800; cursor:pointer; font-family:inherit; transition:background .15s,transform .12s; }
+.btn-share-gen:hover { background:#ffe0ec; transform:translateY(-2px); }
+.btn-share-dl  { width:100%; padding:15px; border-radius:18px; border:none; background:linear-gradient(135deg,#b8f0e0,#b8e0ff); color:#2a7a6a; font-size:14px; font-weight:800; cursor:pointer; font-family:inherit; transition:transform .12s; }
+.btn-share-dl:hover { transform:translateY(-2px); }
+.btn-share-x   { width:100%; padding:15px; border-radius:18px; border:none; background:#000; color:#fff; font-size:14px; font-weight:800; cursor:pointer; font-family:inherit; transition:transform .12s; }
+.btn-share-x:hover { transform:translateY(-2px); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- タイトル -->
+<div id="screenTitle">
+  <span class="title-icon">🌸</span>
+  <div class="title-main">ゆめかわMBTI診断</div>
+  <div class="title-sub">32の質問であなたの個性を発見しよう✨<br>正直に答えるほど精度が上がるよ！</div>
+  <div class="title-card">
+    <div class="title-card-head">🌈 MBTIって？</div>
+    <div class="title-card-body">
+      MBTIは4つの軸で16タイプに分類する性格診断。<br>
+      <b>E/I</b> 外向き・内向き　<b>S/N</b> 現実・直感<br>
+      <b>T/F</b> 論理・感情　<b>J/P</b> 計画・柔軟<br>
+      の組み合わせで、あなたらしさが見えてくるよ！
+    </div>
+  </div>
+  <button class="btn-start" onclick="startQuiz()">診断スタート ✦</button>
+</div>
+
+<!-- 質問 -->
+<div id="screenQuestion">
+  <div class="progress-wrap">
+    <div class="progress-label">
+      <span id="qLabel">Q1 / 32</span>
+      <span id="qPct">0%</span>
+    </div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill" style="width:0%"></div></div>
+  </div>
+  <div class="q-card">
+    <div class="q-tag" id="qTag">E / I</div>
+    <div class="q-text" id="qText"></div>
+  </div>
+  <div class="choices" id="choices"></div>
+</div>
+
+<!-- ローディング -->
+<div id="screenLoading">
+  <div class="loading-icon">✦</div>
+  <div class="loading-text">診断中… あなたのタイプを分析してるよ🌸</div>
+</div>
+
+<!-- 結果 -->
+<div id="screenResult">
+  <div class="result-header">
+    <div class="result-type-badge" id="resultType">INFP</div>
+    <div class="result-name" id="resultName"></div>
+    <div class="result-tagline" id="resultTagline"></div>
+  </div>
+
+  <div class="result-card">
+    <div class="result-card-title">✦ あなたはどんな人？</div>
+    <div class="result-desc" id="resultDesc"></div>
+  </div>
+
+  <div class="result-card">
+    <div class="result-card-title">📊 4つの軸スコア</div>
+    <div class="axis-list" id="axisList"></div>
+  </div>
+
+  <div class="result-card">
+    <div class="result-card-title">💫 強み ＆ 成長ポイント</div>
+    <div class="traits-grid" id="traitsList"></div>
+  </div>
+
+  <div class="result-card">
+    <div class="result-card-title">💕 相性のいいタイプ</div>
+    <div class="compat-row" id="compatList"></div>
+  </div>
+
+  <!-- シェアエリア -->
+  <div class="result-card" id="shareCard">
+    <div class="result-card-title">📸 結果をシェアしよう</div>
+    <canvas id="shareCanvas" style="display:none;"></canvas>
+    <img id="sharePreview" style="width:100%;border-radius:16px;display:none;margin-bottom:14px;" alt="結果カード">
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <button class="btn-share-gen" id="btnGenImg" onclick="generateImage()">🎨 画像を作る</button>
+      <!-- スマホ：Web Share API -->
+      <button class="btn-share-dl btn-share-native" id="btnNativeShare" onclick="nativeShare()" style="display:none;">📤 画像をシェアする（Xなど）</button>
+      <!-- PC：ダウンロード＋案内 -->
+      <div id="pcShareWrap" style="display:none;">
+        <div style="font-size:12px;color:var(--text2);background:#fff8f0;border:2px solid #ffd1dc;border-radius:14px;padding:12px 14px;margin-bottom:10px;line-height:1.7;">
+          📎 画像を保存してから、Xの投稿画面で添付してね！
+        </div>
+        <button class="btn-share-dl" id="btnDl" onclick="downloadImage()">⬇️ 画像を保存する</button>
+        <button class="btn-share-x"  id="btnX"  onclick="shareToX()" style="margin-top:10px;">✕ Xにポストする</button>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-retry" onclick="retry()">もう一度やってみる ✦</button>
+</div>
+
+</div><!-- /wrap -->
+<script>
+// ── 質問データ (32問, 各軸8問) ──
+const QUESTIONS = [
+  // E/I × 8
+  {axis:'EI', q:'週末に友達と大人数で集まると、エネルギーがチャージされる気がする。', a:['そう思う','どちらかといえばそう','どちらかといえば違う','そう思わない'], w:[3,1,-1,-3]},
+  {axis:'EI', q:'初めて会う人とも、わりとすぐに打ち解けて話せるほうだ。', a:['そう思う','どちらかといえばそう','どちらかといえば違う','そう思わない'], w:[3,1,-1,-3]},
+  {axis:'EI', q:'にぎやかなパーティーより、少人数でゆっくり話す方が好きだ。', a:['そう思う','どちらかといえばそう','どちらかといえば違う','そう思わない'], w:[-3,-1,1,3]},
+  {axis:'EI', q:'考えをまとめるとき、声に出して誰かと話した方がスッキリする。', a:['そう思う','どちらかといえばそう','どちらかといえば違う','そう思わない'], w:[3,1,-1,-3]},
+  {axis:'EI', q:'長い時間ひとりでいると、だんだん元気がなくなってくる。', a:['そう思う','どちらかといえばそう','どちらかといえば違う','そう思わない'], w:[3,1,-1,-3]},
+  {axis:'EI', q:'自分の気持ちや考えを、あまり積極的に外に出そうとは思わない。', a:['そう思う','どちらかといえばそう','どちらかといえば違う','そう思わない'], w:[-3,-1,1,3]},
+  {axis:'EI', q:'グループの中では、会話をリードする役回りになることが多い。', a:['そう思う','どちらかといえばそう','どちらかといえば違う','そう思わない'], w:[3,1,-1,-3]},
+  {axis:'EI', q:'ひとりで過ごす時間が、心をリセットする大切な時間だと感じる。', a:['そう思う','どちらかといえばそう','どちらかといえば違う','そう思わない'], w:[-3,-1,1,3]},
+  // S/N × 8
+  {axis:'SN', q:'物事を考えるとき、「もしもこうだったら？」という空想をよくする。', a:['そう思う','どちらかといえばそう','どちらかといえば違う','そう思わない'], w:[3,1,-1,-3]},
+  {axis:'SN', q:'「なんとなくこうなりそう」という直感が当たることが多い。', a:['そう思う','どちらかといえばそう','どちらかといえば違う','そう思わない'], w:[3,1,-1,-3]},
+  {axis:'SN', q:'事実やデータ、経験に基づいて判断することを大切にしている。', a:['そう思う','どちらかといえばそう','どちらかといえば違う','そう思わない'], w:[-3,-1,1,3]},
+  {axis:'SN', q:'物事の「意味」や「つながり」を探るのが好きだ。', a:['そう思う','どちらかといえばそう','どちらかといえば違う','そう思わない'], w:[3,1,-1,-3]},
+  {axis:'SN', q:'具体的で実用的なことの方が、抽象的な話より興味を持てる。', a:['そう思う','どちらかといえばそう','どちらかといえば違う','そう思わない'], w:[-3,-1,1,3]},
+  {axis:'SN', q:'将来の可能性や夢を語るのが楽しくて、ついつい話し込んでしまう。', a:['そう思う','どちらかといえばそう','どちらかといえば違う','そう思わない'], w:[3,1,-1,-3]},
+  {axis:'SN', q:'細かいところまでしっかり確認してから動くタイプだ。', a:['そう思う','どちらかといえばそう','どちらかといえば違う','そう思わない'], w:[-3,-1,1,3]},
+  {axis:'SN', q:'ひとつのことを深く考えているうち、まったく別のアイデアが浮かんでくる。', a:['そう思う','どちらかといえばそう','どちらかといえば違う','そう思わない'], w:[3,1,-1,-3]},
+  // T/F × 8
+  {axis:'TF', q:'誰かに相談されたとき、共感するよりもまず解決策を提案したくなる。', a:['そう思う','どちらかといえばそう','どちらかといえば違う','そう思わない'], w:[-3,-1,1,3]},
+  {axis:'TF', q:'物事の正しさよりも、関わる人の気持ちを優先することが多い。', a:['そう思う','どちらかといえばそう','どちらかといえば違う','そう思わない'], w:[3,1,-1,-3]},
+  {axis:'TF', q:'批判や反論は、感情に関係なく事実として受け止められる。', a:['そう思う','どちらかといえばそう','どちらかといえば違う','そう思わない'], w:[-3,-1,1,3]},
+  {axis:'TF', q:'誰かが傷ついているとき、まず寄り添いたいと強く思う。', a:['そう思う','どちらかといえばそう','どちらかといえば違う','そう思わない'], w:[3,1,-1,-3]},
+  {axis:'TF', q:'議論するとき、自分の感情はなるべく切り離して話せる。', a:['そう思う','どちらかといえばそう','どちらかといえば違う','そう思わない'], w:[-3,-1,1,3]},
+  {axis:'TF', q:'映画や本で登場人物に感情移入して、泣いてしまうことがある。', a:['そう思う','どちらかといえばそう','どちらかといえば違う','そう思わない'], w:[3,1,-1,-3]},
+  {axis:'TF', q:'不公平な扱いを見ると、感情より先に「論理的におかしい」と感じる。', a:['そう思う','どちらかといえばそう','どちらかといえば違う','そう思わない'], w:[-3,-1,1,3]},
+  {axis:'TF', q:'人間関係の「空気」や「雰囲気」に敏感で、すぐに察してしまう。', a:['そう思う','どちらかといえばそう','どちらかといえば違う','そう思わない'], w:[3,1,-1,-3]},
+  // J/P × 8
+  {axis:'JP', q:'やるべきことはリストを作って、順番通りに片付けるのが好きだ。', a:['そう思う','どちらかといえばそう','どちらかといえば違う','そう思わない'], w:[-3,-1,1,3]},
+  {axis:'JP', q:'予定は直前まで決めずに、その日の気分で動くことが多い。', a:['そう思う','どちらかといえばそう','どちらかといえば違う','そう思わない'], w:[3,1,-1,-3]},
+  {axis:'JP', q:'締め切りが決まっていると、計画的に動けて安心する。', a:['そう思う','どちらかといえばそう','どちらかといえば違う','そう思わない'], w:[-3,-1,1,3]},
+  {axis:'JP', q:'新しいことが起きたとき、計画を変更するのは苦ではない。', a:['そう思う','どちらかといえばそう','どちらかといえば違う','そう思わない'], w:[3,1,-1,-3]},
+  {axis:'JP', q:'旅行は行き先や宿をしっかり決めてから出発したい。', a:['そう思う','どちらかといえばそう','どちらかといえば違う','そう思わない'], w:[-3,-1,1,3]},
+  {axis:'JP', q:'ひとつのことが終わっていなくても、別のことに気持ちが向いてしまう。', a:['そう思う','どちらかといえばそう','どちらかといえば違う','そう思わない'], w:[3,1,-1,-3]},
+  {axis:'JP', q:'「決める」ことよりも「まだ考えている」状態の方が気持ちが楽だ。', a:['そう思う','どちらかといえばそう','どちらかといえば違う','そう思わない'], w:[3,1,-1,-3]},
+  {axis:'JP', q:'部屋や持ち物が整理されていないと、落ち着いて作業できない。', a:['そう思う','どちらかといえばそう','どちらかといえば違う','そう思わない'], w:[-3,-1,1,3]},
+];
+
+// ── 16タイプデータ ──
+const TYPES = {
+  INTJ:{name:'建築家',tagline:'戦略的で独立心が強い、静かなる天才タイプ✨',desc:'鋭い直感と論理で、長期的なビジョンを描くのが得意。口数は少なめでも、頭の中は常に動いてる。目標に向かって一直線で、妥協を嫌うストイックな面も。計画を立てて動くのが好きで、無駄を嫌う合理主義者。', strengths:['先を読む力が高い','決断力がある','独学が得意','完璧主義的な集中力'], weaknesses:['感情表現が苦手','頑固になりがち','他人の感情を見落とす','完璧を求めすぎる'], best:['ENFP','ENTP'], good:['INFP','INFJ'], hard:['ESFP','ESTP']},
+  INTP:{name:'論理学者',tagline:'知識の海を泳ぎ続ける、思考の旅人🔭',desc:'「なぜ？」を止められない知的好奇心の塊。理論と分析が大好きで、難しい問題ほど燃える。感情より論理を優先しがちで、周りからはとっつきにくく見えることも。でも実は深いところに温かさが眠ってる。', strengths:['分析力が高い','創造的な思考','客観的な判断','深い集中力'], weaknesses:['先延ばし癖がある','感情表現が苦手','説明が複雑になる','実行が後回しになる'], best:['ENTJ','ESTJ'], good:['INFJ','INTJ'], hard:['ESFJ','ENFJ']},
+  ENTJ:{name:'指揮官',tagline:'生まれながらのリーダー、道を切り開く存在👑',desc:'カリスマ的なリーダーシップで周りを引っ張っていく。効率と結果を何より大切にして、高い目標に向かってまっしぐら。時に強引に見えることもあるけど、本人は常にチームの成功を願ってる。', strengths:['強いリーダーシップ','戦略的思考','決断が速い','高い目標設定'], weaknesses:['感情を軽視しがち','支配的になることがある','せっかち','弱さを見せるのが苦手'], best:['INTP','INFP'], good:['ENTP','INTJ'], hard:['ISFP','INFP']},
+  ENTP:{name:'討論者',tagline:'アイデアが止まらない！知的ゲームの申し子⚡',desc:'ブレインストームが大好きで、常識に疑問を投げかけるのが得意。反論されるほど燃えるタイプで、議論をゲーム感覚で楽しめる。斬新な発想は群を抜くが、飽き性で実行が追いつかないことも。', strengths:['発想力が豊か','議論が得意','柔軟な思考','知的好奇心が旺盛'], weaknesses:['飽き性','細かい作業が苦手','約束を忘れがち','人の感情に鈍感なことがある'], best:['INTJ','INFJ'], good:['ENTJ','ENTP'], hard:['ISFJ','ISTJ']},
+  INFJ:{name:'提唱者',tagline:'静かな信念を持つ、世界を変えたいひと🌙',desc:'深い洞察力と理想主義を持つ稀有なタイプ。人の心を読む力が高く、誰に対しても温かく接する。一方で自分の内面は見せにくく、ひとりの時間で心のバランスを保つ。大きな夢と小さな思いやりの両方を持ってる。', strengths:['共感力が高い','洞察力が鋭い','創造的なビジョン','誠実で信頼できる'], weaknesses:['燃え尽き症候群になりやすい','完璧主義','意見を押し込めがち','批判に傷つきやすい'], best:['ENTP','ENFP'], good:['INTJ','INFP'], hard:['ESTP','ESFP']},
+  INFP:{name:'仲介者',tagline:'感情豊かな詩人、自分だけの世界を持つひと🌸',desc:'価値観と感情を大切にする、心のやさしいロマンチスト。人の痛みに寄り添う力が特別に高く、傷ついた人の側にいたいと思う。想像の世界が豊かで、創作や表現が得意。でも傷つきやすいから、心を守るための殻もある。', strengths:['共感力が深い','創造力がある','価値観がしっかりしている','誠実で誠意がある'], weaknesses:['傷つきやすい','理想主義すぎる','決断が遅い','現実逃避しがち'], best:['ENFJ','ENTJ'], good:['INFJ','ISFP'], hard:['ESTJ','ENTJ']},
+  ENFJ:{name:'主人公',tagline:'みんなのヒーロー！人を輝かせる天才💫',desc:'他人の可能性を見抜いて、その人の最高の姿を引き出すのが得意。カリスマ的な魅力で自然と人が集まってくる。人の役に立つことに幸せを感じ、チームをまとめる力も抜群。でも自分自身のケアを忘れがち。', strengths:['コミュニケーション力が高い','人を励ます力','統率力','情熱的'], weaknesses:['自己犠牲しすぎる','批判に敏感','他人の問題を抱え込む','優柔不断な面も'], best:['INFP','ISFP'], good:['ENFP','INFJ'], hard:['INTP','ISTP']},
+  ENFP:{name:'広報運動家',tagline:'自由と可能性を愛する、キラキラスパーク✨',desc:'好奇心旺盛で情熱的、生きることを心から楽しめるタイプ。人との出会いに興奮し、あらゆる可能性を探り続ける。「今この瞬間」を大切にしながら、大きな夢も忘れない。ただ集中力が続かなくて悩むことも。', strengths:['エネルギッシュで明るい','共感力が高い','創造性豊か','人を惹きつける魅力'], weaknesses:['集中力が続かない','感情的になりすぎる','細かいことが苦手','飽き性'], best:['INTJ','INFJ'], good:['INFP','ENFJ'], hard:['ISTJ','ESTJ']},
+  ISTJ:{name:'管理者',tagline:'信頼と責任感のかたまり、縁の下の力持ち🏛️',desc:'約束を守ることを何より大切にする、誠実で堅実なタイプ。伝統や規則を尊重し、コツコツと仕事をこなす。感情より事実で動くため冷たく見えることもあるが、身近な人を大切に守る温かさを持っている。', strengths:['責任感が強い','几帳面で信頼できる','実行力がある','冷静な判断力'], weaknesses:['変化への適応が遅い','融通が利きにくい','感情表現が苦手','新しいことに慎重すぎる'], best:['ESFP','ESTP'], good:['ISFJ','ESTJ'], hard:['ENFP','ENTP']},
+  ISFJ:{name:'擁護者',tagline:'縁の下の力持ち、愛情を行動で示すひと🌷',desc:'周りの人を支えることに喜びを感じる、思いやりの塊。静かに、でも着実に、大切な人のために動き続ける。変化より安定を好み、誰かの役に立てている実感が原動力。自分より他人を優先しすぎて疲れることも。', strengths:['思いやりが深い','細かいことに気が付く','忍耐強い','信頼性が高い'], weaknesses:['ノーと言えない','自分を後回しにしがち','変化への抵抗','批判を引きずる'], best:['ESTP','ESFP'], good:['ISTJ','ISFP'], hard:['ENTP','ENFP']},
+  ESTJ:{name:'幹部',tagline:'組織のバックボーン！秩序を守るリアリスト⚙️',desc:'実直で責任感が強く、組織や集団をしっかりまとめるタイプ。ルールと効率を重視し、決めたことは必ず実行する。感情より現実を優先するので厳しく見えることもあるが、身近な人への責任感は人一倍。', strengths:['組織力が高い','責任感が強い','実行力がある','明確な判断力'], weaknesses:['融通が利きにくい','感情を見落とす','変化に抵抗','頑固になりやすい'], best:['ISFP','ISTP'], good:['ISTJ','ESFJ'], hard:['INFP','ENFP']},
+  ESFJ:{name:'領事',tagline:'みんなの太陽！あたたかさで輪を作る存在☀️',desc:'人のために動くことが大好きで、場の雰囲気を明るくするムードメーカー。誰かが困っていたら放っておけず、自然と手を差し伸べる。承認を大切にするため批判には傷つきやすいが、その分人を褒めることも忘れない。', strengths:['社交性が高い','思いやりが深い','場をまとめる力','実行力と計画性'], weaknesses:['批判に敏感','自分の意見を言いにくい','変化が苦手','他人の目が気になる'], best:['ISFP','ISTP'], good:['ESFP','ISFJ'], hard:['INTP','ISTP']},
+  ISTP:{name:'巨匠',tagline:'クールな職人、手を動かして世界を理解するひと🔧',desc:'観察力と分析力に優れ、実際にやってみることで理解を深めるタイプ。無駄話は苦手だが、問題解決の場では頼もしい存在感を放つ。感情より事実で動き、自由と独立を好む。ひとり時間で充電するタイプ。', strengths:['問題解決能力が高い','冷静な判断力','器用で実践的','観察力が鋭い'], weaknesses:['感情表現が苦手','長期計画が苦手','飽き性','気まぐれに見える'], best:['ESFJ','ESTJ'], good:['ESTP','ISFP'], hard:['ENFJ','ESFJ']},
+  ISFP:{name:'冒険家',tagline:'感性豊かな芸術家、今この瞬間を生きるひと🎨',desc:'美しいものや心に響くものに敏感な、感性の人。押し付けがましくなく、自分のペースで静かに生きる。協調性があり優しいが、自分の価値観は絶対に曲げない芯の強さも持っている。自由を愛し、束縛を嫌う。', strengths:['感受性が豊か','柔軟で適応力がある','思いやりがある','芸術的センス'], weaknesses:['計画性が低い','批判に傷つきやすい','自己表現が苦手','未来より今重視'], best:['ENFJ','ESFJ'], good:['ISFJ','INFP'], hard:['ENTJ','ESTJ']},
+  ESTP:{name:'起業家',tagline:'行動力の塊！今ここを全力で生きるエネルギー⚡',desc:'考えるより先に動く！リスクを恐れず飛び込み、その場その場で最善策を見つける天才。社交的でエネルギッシュ、みんなを巻き込む力がある。ルールや計画に縛られるのが苦手で、自由に動ける環境が大好き。', strengths:['行動力が高い','即断即決','社交的で魅力的','問題への対応が速い'], weaknesses:['長期計画が苦手','感情を軽視しがち','飽き性','衝動的'], best:['ISFJ','ISTJ'], good:['ISTP','ESFP'], hard:['INFJ','INTJ']},
+  ESFP:{name:'エンターテイナー',tagline:'生きること自体がショー！世界中を笑顔にするひと🎉',desc:'どこへ行っても場が明るくなる、太陽みたいな存在。その場の空気を読む力が高く、みんなが楽しめるように自然と動ける。計画より直感、理論より経験で動くタイプ。楽しいことへの嗅覚はピカイチ！', strengths:['明るく社交的','その場対応力が高い','人を楽しませる力','実践的な行動力'], weaknesses:['長期計画が苦手','感情的になりやすい','集中力が続かない','批判に弱い'], best:['ISTJ','ISFJ'], good:['ESTP','ESFJ'], hard:['INTJ','INFJ']},
+};
+
+// 軸の色
+const AXIS_COLORS = {
+  E:'#ffb3c6', I:'#c9b8ff',
+  S:'#b8e0ff', N:'#ffd6b0',
+  T:'#b8f0e0', F:'#ffb3c6',
+  J:'#fff0a0', P:'#ffd6b0',
+};
+
+// ── ステート ──
+let current = 0;
+let scores  = {EI:0, SN:0, TF:0, JP:0};
+
+function show(id) {
+  ['screenTitle','screenQuestion','screenLoading','screenResult'].forEach(s => {
+    document.getElementById(s).style.display = 'none';
+  });
+  document.getElementById(id).style.display = 'block';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function startQuiz() {
+  current = 0;
+  scores  = {EI:0, SN:0, TF:0, JP:0};
+  show('screenQuestion');
+  renderQ();
+}
+
+function renderQ() {
+  const q   = QUESTIONS[current];
+  const pct = Math.round(current / QUESTIONS.length * 100);
+  document.getElementById('qLabel').textContent = `Q${current+1} / ${QUESTIONS.length}`;
+  document.getElementById('qPct').textContent   = `${pct}%`;
+  document.getElementById('progressFill').style.width = pct + '%';
+
+  const tagMap = {EI:'🌿 E / I　外向き・内向き', SN:'🌙 S / N　現実・直感', TF:'💕 T / F　論理・感情', JP:'⭐ J / P　計画・柔軟'};
+  document.getElementById('qTag').textContent  = tagMap[q.axis];
+  document.getElementById('qText').textContent = q.q;
+
+  const choices = document.getElementById('choices');
+  choices.innerHTML = '';
+  q.a.forEach((label, i) => {
+    const btn = document.createElement('button');
+    btn.className   = 'choice-btn';
+    btn.textContent = label;
+    btn.addEventListener('click', () => answer(i));
+    choices.appendChild(btn);
+  });
+}
+
+function answer(idx) {
+  const q = QUESTIONS[current];
+  scores[q.axis] += q.w[idx];
+  current++;
+  if (current >= QUESTIONS.length) {
+    showLoading();
+  } else {
+    renderQ();
+  }
+}
+
+function showLoading() {
+  show('screenLoading');
+  setTimeout(showResult, 1800);
+}
+
+function showResult() {
+  // タイプ判定
+  const E = scores.EI > 0;
+  const N = scores.SN > 0;
+  const F = scores.TF > 0;
+  const P = scores.JP > 0;
+  const type = (E?'E':'I') + (N?'N':'S') + (F?'F':'T') + (P?'P':'J');
+  const data = TYPES[type];
+
+  document.getElementById('resultType').textContent    = type;
+  document.getElementById('resultName').textContent    = `✦ ${data.name}`;
+  document.getElementById('resultTagline').textContent = data.tagline;
+  document.getElementById('resultDesc').textContent    = data.desc;
+
+  // 4軸バー
+  const maxScore = 24; // 8問 × 最大3点
+  const axes = [
+    {l1:'E 外向き', l2:'I 内向き', score:scores.EI, pos:'E', neg:'I', c1:AXIS_COLORS.E, c2:AXIS_COLORS.I},
+    {l1:'N 直感',   l2:'S 現実',   score:scores.SN, pos:'N', neg:'S', c1:AXIS_COLORS.N, c2:AXIS_COLORS.S},
+    {l1:'F 感情',   l2:'T 論理',   score:scores.TF, pos:'F', neg:'T', c1:AXIS_COLORS.F, c2:AXIS_COLORS.T},
+    {l1:'P 柔軟',   l2:'J 計画',   score:scores.JP, pos:'P', neg:'J', c1:AXIS_COLORS.P, c2:AXIS_COLORS.J},
+  ];
+  const axisList = document.getElementById('axisList');
+  axisList.innerHTML = '';
+  axes.forEach(ax => {
+    const pct     = Math.round((Math.abs(ax.score) / maxScore) * 100);
+    const isPos   = ax.score >= 0;
+    const winner  = isPos ? ax.l1 : ax.l2;
+    const color   = isPos ? ax.c1 : ax.c2;
+    const div = document.createElement('div');
+    div.className = 'axis-row';
+    div.innerHTML = `
+      <div class="axis-labels"><span>${ax.l1}</span><span>${ax.l2}</span></div>
+      <div class="axis-bar-bg">
+        <div class="axis-bar-fill" style="width:${pct}%;background:${color};${!isPos?'margin-left:auto':''}"></div>
+      </div>
+      <div class="axis-pct">${winner} ${pct}%</div>`;
+    axisList.appendChild(div);
+  });
+
+  // 強み・弱み
+  const traitsList = document.getElementById('traitsList');
+  traitsList.innerHTML = '';
+  data.strengths.forEach(s => {
+    const d = document.createElement('div');
+    d.className = 'trait-pill trait-plus';
+    d.textContent = '✦ ' + s;
+    traitsList.appendChild(d);
+  });
+  data.weaknesses.forEach(s => {
+    const d = document.createElement('div');
+    d.className = 'trait-pill trait-minus';
+    d.textContent = '▵ ' + s;
+    traitsList.appendChild(d);
+  });
+
+  // 相性
+  const compatList = document.getElementById('compatList');
+  compatList.innerHTML = '';
+  data.best.forEach(t => {
+    const d = document.createElement('div');
+    d.className = 'compat-pill compat-best';
+    d.textContent = `💕 ${t}`;
+    compatList.appendChild(d);
+  });
+  data.good.forEach(t => {
+    const d = document.createElement('div');
+    d.className = 'compat-pill compat-good';
+    d.textContent = `✦ ${t}`;
+    compatList.appendChild(d);
+  });
+  data.hard.forEach(t => {
+    const d = document.createElement('div');
+    d.className = 'compat-pill compat-hard';
+    d.textContent = `△ ${t}`;
+    compatList.appendChild(d);
+  });
+
+
+  // シェア用データ保存
+  _shareType    = type;
+  _shareName    = data.name;
+  _shareTagline = data.tagline;
+  _shareAxes    = [scores.EI, scores.SN, scores.TF, scores.JP];
+  // シェアボタンリセット
+  document.getElementById('sharePreview').style.display = 'none';
+  document.getElementById('btnDl').style.display = 'none';
+  document.getElementById('btnX').style.display  = 'none';
+  document.getElementById('btnGenImg').textContent = '🎨 画像を作る';
+
+  show('screenResult');
+}
+
+
+// ── Canvas でシェア画像生成 ──
+let _shareType = '', _shareName = '', _shareTagline = '', _shareAxes = [];
+
+function generateImage() {
+  const canvas = document.getElementById('shareCanvas');
+  const W = 900, H = 900;
+  canvas.width  = W;
+  canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  // 背景グラデーション
+  const bg = ctx.createLinearGradient(0, 0, W, H);
+  bg.addColorStop(0,   '#fff0f9');
+  bg.addColorStop(0.5, '#f8f0ff');
+  bg.addColorStop(1,   '#f0f8ff');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  // 背景の星
+  ctx.fillStyle = 'rgba(255,179,198,0.18)';
+  ctx.font = '18px serif';
+  const stars = ['✦','✧'];
+  for (let i = 0; i < 40; i++) {
+    const x = (i * 137.5) % W;
+    const y = (i * 83.7)  % H;
+    ctx.fillText(stars[i % 2], x, y);
+  }
+
+  // 上部ピンクライン
+  ctx.fillStyle = '#ffb3c6';
+  ctx.fillRect(0, 0, W, 8);
+
+  // タイプバッジ
+  roundRect(ctx, W/2 - 170, 42, 340, 110, 28, '#fff', '#ffd1dc', 4);
+  ctx.fillStyle = '#ff85a2';
+  ctx.font      = 'bold 76px Helvetica Neue, Arial, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(_shareType, W/2, 128);
+
+  // 名前
+  ctx.fillStyle = '#6b4f5e';
+  ctx.font      = 'bold 28px Helvetica Neue, Arial, sans-serif';
+  ctx.fillText(_shareName, W/2, 196);
+
+  // タグライン
+  ctx.fillStyle = '#a07898';
+  ctx.font      = '20px Helvetica Neue, Arial, sans-serif';
+  wrapText(ctx, _shareTagline, W/2, 234, 700, 28);
+
+  // 区切り
+  ctx.strokeStyle = '#ffd1dc';
+  ctx.lineWidth   = 2;
+  ctx.beginPath(); ctx.moveTo(60, 290); ctx.lineTo(W-60, 290); ctx.stroke();
+
+  // 4軸バー
+  const maxScore = 24;
+  const barLabels = [
+    {l1:'E 外向き', l2:'I 内向き', score:_shareAxes[0], c:'#ffb3c6'},
+    {l1:'N 直感',   l2:'S 現実',   score:_shareAxes[1], c:'#ffd6b0'},
+    {l1:'F 感情',   l2:'T 論理',   score:_shareAxes[2], c:'#ffb3c6'},
+    {l1:'P 柔軟',   l2:'J 計画',   score:_shareAxes[3], c:'#fff0a0'},
+  ];
+  const barX = 70, barW = W - 140, barH = 20, barGap = 78;
+  barLabels.forEach((ax, i) => {
+    const y    = 316 + i * barGap;
+    const pct  = Math.abs(ax.score) / maxScore;
+    const isPos = ax.score >= 0;
+    const winner = isPos ? ax.l1 : ax.l2;
+
+    ctx.fillStyle = '#a07898'; ctx.font = '17px Helvetica Neue, Arial, sans-serif'; ctx.textAlign = 'left';
+    ctx.fillText(ax.l1, barX, y);
+    ctx.textAlign = 'right';
+    ctx.fillText(ax.l2, barX + barW, y);
+
+    roundRect(ctx, barX, y + 8, barW, barH, 10, '#ffe0ec');
+
+    const fillW = barW * pct;
+    const fillX = isPos ? barX : barX + barW - fillW;
+    roundRect(ctx, fillX, y + 8, fillW, barH, 10, ax.c);
+
+    ctx.fillStyle = '#6b4f5e'; ctx.font = 'bold 15px Helvetica Neue, Arial, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(`${winner}  ${Math.round(pct * 100)}%`, barX + barW/2, y + barH + 24);
+  });
+
+  // 下部タグ
+  roundRect(ctx, 60, H - 96, W - 120, 58, 18, 'rgba(255,240,245,0.9)', '#ffd1dc', 2);
+  ctx.fillStyle = '#ff85a2'; ctx.font = 'bold 18px Helvetica Neue, Arial, sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('ゆめかわMBTI診断  hikapero.github.io/HIKARI/', W/2, H - 58);
+
+  // プレビュー表示
+  const img = document.getElementById('sharePreview');
+  img.src = canvas.toDataURL('image/png');
+  img.style.display = 'block';
+
+  // スマホ / PC で出し分け
+  const canNative = !!navigator.share && !!navigator.canShare;
+  if (canNative) {
+    document.getElementById('btnNativeShare').style.display = 'block';
+    document.getElementById('pcShareWrap').style.display    = 'none';
+  } else {
+    document.getElementById('btnNativeShare').style.display = 'none';
+    document.getElementById('pcShareWrap').style.display    = 'block';
+  }
+  document.getElementById('btnGenImg').textContent = '🔄 画像を作り直す';
+}
+
+async function nativeShare() {
+  const canvas = document.getElementById('shareCanvas');
+  const shareText = `私のMBTIタイプは【${_shareType} ${_shareName}】でした！\n${_shareTagline}\n\nあなたも試してみてね🌸 HIKARIサイトの PLAYメニュー から見つけてね！\nhttps://hikapero.github.io/HIKARI/\n\n#MBTI #ゆめかわMBTI診断`;
+
+  canvas.toBlob(async (blob) => {
+    const file = new File([blob], `MBTI_${_shareType}.png`, { type: 'image/png' });
+    try {
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], text: shareText });
+      } else {
+        // ファイル共有非対応なら画像なしでテキストだけ共有
+        await navigator.share({ text: shareText });
+      }
+    } catch(e) {
+      if (e.name !== 'AbortError') {
+        // フォールバック：ダウンロード
+        downloadImage();
+      }
+    }
+  }, 'image/png');
+}
+
+function roundRect(ctx, x, y, w, h, r, fill, stroke, sw) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+  if (fill)   { ctx.fillStyle   = fill; ctx.fill(); }
+  if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = sw || 1; ctx.stroke(); }
+}
+
+function wrapText(ctx, text, x, y, maxW, lineH) {
+  const words = text.split('');
+  let line = '';
+  let cy   = y;
+  for (const ch of words) {
+    const test = line + ch;
+    if (ctx.measureText(test).width > maxW && line) {
+      ctx.fillText(line, x, cy);
+      line = ch; cy += lineH;
+    } else { line = test; }
+  }
+  ctx.fillText(line, x, cy);
+}
+
+function downloadImage() {
+  const canvas = document.getElementById('shareCanvas');
+  const a = document.createElement('a');
+  a.download = `MBTI_${_shareType}.png`;
+  a.href     = canvas.toDataURL('image/png');
+  a.click();
+}
+
+function shareToX() {
+  const text = `私のMBTIタイプは【${_shareType} ${_shareName}】でした！\n${_shareTagline}\n\nあなたも試してみてね🌸 HIKARIサイトの PLAYメニュー から見つけてね！\nhttps://hikapero.github.io/HIKARI/\n\n#MBTI #ゆめかわMBTI診断`;
+  const url  = `https://x.com/intent/tweet?text=${encodeURIComponent(text)}`;
+  window.open(url, '_blank');
+}
+
+function retry() {
+  show('screenTitle');
+}
+
+// BGM対応
+(function() {
+  const params = new URLSearchParams(location.search);
+  const bgmUrl = params.get('bgm');
+  if (!bgmUrl) return;
+  const audio = new Audio(bgmUrl);
+  audio.loop = true; audio.volume = 0.4;
+  document.querySelector('.btn-start').addEventListener('click', () => audio.play().catch(()=>{}), {once:true});
+})();
+</script>
+</body>
+</html>
