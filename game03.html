@@ -80,40 +80,68 @@
 
   .hint { font-size: 10px; color: #444; letter-spacing: 1px; text-align: center; margin-top: 2px; }
 
-  /* ── スマホ用 固定タッチコントロール（画面両端下部） ── */
-  #touchLeft, #touchRight {
+  /* ── スマホ用 固定タッチコントロール ── */
+  /* 左下：ジョイスティック */
+  #touchLeft {
     display: none;
     position: fixed;
     z-index: 9999;
-    bottom: 28px;
+    bottom: 32px;
+    left: 24px;
     pointer-events: auto;
   }
-  #touchLeft  { left:  22px; }
-  #touchRight { right: 22px; }
+  /* 右側：パワーアップ縦列 ＋ SHOTボタン */
+  #touchRight {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    top: 50%;
+    right: 16px;
+    transform: translateY(-50%);
+    pointer-events: auto;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
   #joyBase {
-    width: 104px; height: 104px; border-radius: 50%;
+    width: 110px; height: 110px; border-radius: 50%;
     background: rgba(108,92,231,0.12);
-    border: 2px solid rgba(108,92,231,0.35);
+    border: 2px solid rgba(108,92,231,0.40);
     position: relative;
   }
   #joyKnob {
-    width: 44px; height: 44px; border-radius: 50%;
-    background: rgba(108,92,231,0.55);
-    border: 1.5px solid rgba(168,139,255,0.7);
+    width: 46px; height: 46px; border-radius: 50%;
+    background: rgba(108,92,231,0.60);
+    border: 2px solid rgba(168,139,255,0.8);
     position: absolute;
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
   }
-  #shotBtn {
-    width: 92px; height: 92px; border-radius: 50%;
-    background: rgba(108,92,231,0.25);
-    border: 2px solid rgba(108,92,231,0.55);
+  /* パワーアップ縦ボタン */
+  .pup-btn {
+    width: 72px; height: 32px; border-radius: 6px;
+    background: rgba(17,17,30,0.85);
+    border: 1px solid rgba(108,92,231,0.45);
+    color: #6c5ce7; font-size: 9px; font-weight: bold; letter-spacing: 0.5px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 13px; font-weight: bold; color: #c9b8ff; letter-spacing: 1px;
-    user-select: none;
+    user-select: none; cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+  }
+  .pup-btn.lit   { color: #00ffff; border-color: #00ffff; background: rgba(0,60,80,0.85);
+                   animation: blink 0.4s infinite alternate; }
+  .pup-btn.active { color: #fff; background: rgba(50,30,120,0.9); border-color: #a78bff; }
+  /* SHOTボタン */
+  #shotBtn {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: rgba(108,92,231,0.25);
+    border: 2px solid rgba(108,92,231,0.6);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: bold; color: #c9b8ff; letter-spacing: 1px;
+    user-select: none; margin-top: 4px;
     transition: background 0.1s;
   }
-  #shotBtn.pressed { background: rgba(108,92,231,0.7); }
+  #shotBtn.pressed { background: rgba(108,92,231,0.75); }
 </style>
 </head>
 <body>
@@ -173,6 +201,11 @@
   <div id="joyBase"><div id="joyKnob"></div></div>
 </div>
 <div id="touchRight">
+  <div class="pup-btn" id="tbCell0">SPEED</div>
+  <div class="pup-btn" id="tbCell1">MISSILE</div>
+  <div class="pup-btn" id="tbCell2">LASER</div>
+  <div class="pup-btn" id="tbCell3">OPTION</div>
+  <div class="pup-btn" id="tbCell4">BARRIER</div>
   <div id="shotBtn">SHOT</div>
 </div>
 
@@ -339,8 +372,14 @@ function updateMeterUI() {
   for (let i = 0; i < 5; i++) {
     const cell = document.getElementById(`cell${i}`);
     cell.className = 'meter-cell';
+    const tb = document.getElementById(`tbCell${i}`);
+    if (tb) tb.className = 'pup-btn';
     if (capsuleCount > 0 && i === capsuleCount - 1) {
       cell.classList.add('triggerable');
+      if (tb) tb.classList.add('lit');
+    } else if (capsuleCount > 0 && i < capsuleCount - 1) {
+      cell.classList.add('active');
+      if (tb) tb.classList.add('active');
     }
   }
 }
@@ -689,10 +728,10 @@ function startGame() {
   player.reset(); updateMeterUI();
   state = 'playing';
   startAudioBGM();
-  // タッチデバイスならコントロールを表示（touchControls は最初のタッチで true になる）
+  // タッチデバイスならコントロールを表示
   if (touchControls) {
     document.getElementById('touchLeft').style.display  = 'block';
-    document.getElementById('touchRight').style.display = 'block';
+    document.getElementById('touchRight').style.display = 'flex';
   }
 }
 
@@ -909,12 +948,10 @@ document.getElementById('powerMeter').addEventListener('click', () => {
   if (state === 'playing') triggerPowerUp();
 });
 
-// ── タッチデバイス検知：最初のタッチで touchControls を有効化しゲームUIを即表示 ──
+// ── タッチデバイス検知：最初のタッチで touchControls を有効化 ──
 window.addEventListener('touchstart', () => {
   if (touchControls) return;
   touchControls = true;
-  // エントリー画面ではタッチUIは不要（ゲーム開始時に表示する）
-  // ただし initDynamicControlsGuide を再実行してボタン出し分けを確定させる
   initDynamicControlsGuide();
 }, { once: true, passive: true });
 
@@ -966,6 +1003,17 @@ joyBase.addEventListener('touchend', e => {
   }
 }, { passive: false });
 
+// パワーアップ縦ボタンのタッチ
+for (let i = 0; i < 5; i++) {
+  const tb = document.getElementById(`tbCell${i}`);
+  if (tb) {
+    tb.addEventListener('touchstart', e => {
+      e.preventDefault();
+      if (state === 'playing') triggerPowerUp();
+    }, { passive: false });
+  }
+}
+
 shotBtn.addEventListener('touchstart', e => {
   e.preventDefault();
   touchControls = true;
@@ -1011,6 +1059,7 @@ function initDynamicControlsGuide() {
     // タッチコントロールはエントリー画面では非表示（ゲーム開始時に表示する）
     document.getElementById('touchLeft').style.display  = 'none';
     document.getElementById('touchRight').style.display = 'none';
+    // touchRight は flex コンテナなので表示時は 'flex' を使う（startGame内で設定）
   } else {
     if(document.getElementById('fullScreenBtn')) document.getElementById('fullScreenBtn').style.display = "none";
     document.getElementById('touchLeft').style.display  = 'none';
