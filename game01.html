@@ -105,63 +105,11 @@
     margin-top: 6px;
   }
   .start-btn:hover { background: #ffb840; transform: translateY(-2px); }
-  /* スマホ用 全画面ボタン */
-  .mobile-fs-btn {
-    background: linear-gradient(135deg, #00b4db, #0083b0);
-    color: #fff; padding: 10px 28px; border: none; border-radius: 8px;
-    font-size: 13px; letter-spacing: 2px; cursor: pointer; font-family: inherit;
-    font-weight: 700; transition: background .2s, transform .15s; margin-top: 6px;
-    touch-action: auto; -webkit-tap-highlight-color: rgba(0,180,219,0.3);
-  }
-  .mobile-fs-btn:hover { background: linear-gradient(135deg,#00c6ff,#0072ff); transform: translateY(-2px); }
-  /* ゲームオーバー用ボタン */
-  .gameover-btn {
-    padding: 10px 28px; border: none; border-radius: 8px;
-    font-size: 13px; letter-spacing: 2px; cursor: pointer; font-family: inherit;
-    font-weight: 700; transition: background .2s, transform .15s; margin-top: 4px;
-    touch-action: auto; -webkit-tap-highlight-color: rgba(232,160,32,0.3);
-  }
-  .replay-btn  { background: #e8a020; color: #1a0a00; }
-  .replay-btn:hover  { background: #ffb840; transform: translateY(-2px); }
-  .exit-btn    { background: rgba(80,75,110,0.7); color: #9d86f5; border: 1px solid rgba(108,92,231,0.4); }
-  .exit-btn:hover    { background: rgba(100,95,140,0.8); color: #c9b8ff; transform: translateY(-2px); }
-  /* overlay タッチ有効化 */
-  #overlay { touch-action: auto; }
-  .start-btn { touch-action: auto; }
-  /* ── スマホ用タッチコントロール ── */
-  #touchLeft {
-    display: none; position: fixed; z-index: 9999;
-    bottom: 32px; left: 24px; pointer-events: auto;
-  }
-  #touchRight {
-    display: none; position: fixed; z-index: 9999;
-    bottom: 24px; right: 24px;
-    flex-direction: column; align-items: center; gap: 10px;
-    pointer-events: auto;
-  }
-  #joyBase {
-    width: 110px; height: 110px; border-radius: 50%;
-    background: rgba(255,200,50,0.10); border: 2px solid rgba(255,200,50,0.40);
-    position: relative;
-  }
-  #joyKnob {
-    width: 46px; height: 46px; border-radius: 50%;
-    background: rgba(255,200,50,0.55); border: 2px solid rgba(255,224,138,0.8);
-    position: absolute; top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-  }
-  #flapBtn {
-    width: 86px; height: 86px; border-radius: 50%;
-    background: rgba(255,200,50,0.20); border: 2px solid rgba(255,200,50,0.65);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 30px; user-select: none; transition: background 0.1s;
-  }
-  #flapBtn.pressed { background: rgba(255,200,50,0.60); }
 </style>
 </head>
 <body>
 
-<div class="game-wrap" id="stageContainer">
+<div class="game-wrap">
   <div class="game-title">🐥 BALLOON FIGHT</div>
   <div class="hud">
     <div>SCORE <span id="scoreDisplay">0</span></div>
@@ -179,14 +127,9 @@
         敵の風船をつぶして倒そう！
       </div>
       <button class="start-btn" id="startBtn">スタート ▶</button>
-      <button class="mobile-fs-btn" id="fullScreenBtn" style="display:none;">📱 全画面でプレイ</button>
     </div>
   </div>
-  <div class="hint" id="hintText">W / SPACE でフラップ上昇　　A / D で左右移動　　S で急降下　　敵より高い位置から当たると勝ち！</div>
-
-  <!-- スマホ用タッチコントロール（stageContainer内・フルスクリーンに追従） -->
-  <div id="touchLeft"><div id="joyBase"><div id="joyKnob"></div></div></div>
-  <div id="touchRight"><div id="flapBtn">🐥</div></div>
+  <div class="hint">W / SPACE でフラップ上昇　　A / D で左右移動　　S で急降下　　敵より高い位置から当たると勝ち！</div>
 </div>
 
 <script>
@@ -878,25 +821,13 @@ let crabs = [new Crab(), new Crab()];
 function showOverlay(type) {
   const overlay = document.getElementById('overlay');
   if (type === 'gameover') {
+    overlay.innerHTML = `
+      <div class="overlay-title">GAME OVER</div>
+      <div class="overlay-score">SCORE: ${score}</div>
+      ${score >= best && score > 0 ? '<div style="font-size:11px;color:#ffe08a;letter-spacing:2px;">★ NEW BEST!</div>' : ''}
+      <button class="start-btn" id="startBtn">もう一度 ▶</button>`;
     if (score > best) best = score;
     updateHUD();
-    hideTouchUI();
-    if (isMobileDevice()) {
-      overlay.innerHTML = `
-        <div class="overlay-title">GAME OVER</div>
-        <div class="overlay-score">SCORE: ${score}</div>
-        ${score > 0 ? '<div style="font-size:11px;color:#ffe08a;letter-spacing:2px;">★ NEW BEST!</div>' : ''}
-        <div style="display:flex;gap:14px;margin-top:8px;">
-          <button class="gameover-btn replay-btn" id="replayBtn">再出撃 🐥</button>
-          <button class="gameover-btn exit-btn"   id="exitBtn">ゲームを終了する</button>
-        </div>`;
-    } else {
-      overlay.innerHTML = `
-        <div class="overlay-title">GAME OVER</div>
-        <div class="overlay-score">SCORE: ${score}</div>
-        ${score > 0 ? '<div style="font-size:11px;color:#ffe08a;letter-spacing:2px;">★ NEW BEST!</div>' : ''}
-        <button class="start-btn" id="startBtn">もう一度 ▶</button>`;
-    }
   } else if (type === 'gameclear') {
     const isNewBest = score > best;
     if (isNewBest) best = score;
@@ -916,20 +847,7 @@ function showOverlay(type) {
     return;
   }
   overlay.style.display = 'flex';
-  if (isMobileDevice() && type === 'gameover') {
-    const rb = document.getElementById('replayBtn');
-    const eb = document.getElementById('exitBtn');
-    if (rb) {
-      rb.addEventListener('click', () => { touchControls = true; startGame(); });
-      rb.addEventListener('touchend', e => { e.preventDefault(); touchControls = true; startGame(); });
-    }
-    if (eb) {
-      eb.addEventListener('click', exitToEntry);
-      eb.addEventListener('touchend', e => { e.preventDefault(); exitToEntry(); });
-    }
-  } else if (document.getElementById('startBtn')) {
-    document.getElementById('startBtn').addEventListener('click', startGame, { once: true });
-  }
+  document.getElementById('startBtn').addEventListener('click', startGame, { once: true });
 }
 
 // ── サウンドエンジン ──
@@ -1278,7 +1196,6 @@ function toggleMute() {
 // ── ゲームスタート ──
 function startGame() {
   document.getElementById('overlay').style.display = 'none';
-  if (touchControls) showTouchUI();
   score = 0; lives = 3; level = 1; frame = 0;
   stormActive = false; stormTimer = 0;
   player.reset();
@@ -1534,167 +1451,19 @@ document.addEventListener('keydown', e => {
 });
 document.addEventListener('keyup', e => { keys[e.code] = false; });
 
-// ── スマホ判定ユーティリティ ──
-function isMobileDevice() {
-  return (('ontouchstart' in window) || (navigator.maxTouchPoints > 0))
-    && /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
-}
-
-// ── タッチコントロール変数 ──
-let touchControls = false;
-let joystick = { active: false, startX: 0, startY: 0, moveX: 0, moveY: 0 };
-let joyTouchId = null;
-const JOY_MAX = 42;
-
-// ── タッチUI 表示/非表示 ──
-function showTouchUI() {
-  document.getElementById('touchLeft').style.display  = 'block';
-  document.getElementById('touchRight').style.display = 'flex';
-}
-function hideTouchUI() {
-  document.getElementById('touchLeft').style.display  = 'none';
-  document.getElementById('touchRight').style.display = 'none';
-}
-
-// ── エントリー画面の初期化（スマホ判定） ──
-function initEntryScreen() {
-  if (isMobileDevice()) {
-    document.getElementById('startBtn').style.display    = 'none';
-    document.getElementById('fullScreenBtn').style.display = 'inline-block';
-    document.getElementById('hintText').style.display    = 'none';
-  }
-}
-initEntryScreen();
-
-// ── 全画面＋横向きでゲーム開始 ──
-function startWithFullscreen() {
-  const container = document.getElementById('stageContainer');
-  const reqFS = container.requestFullscreen || container.webkitRequestFullscreen
-              || container.mozRequestFullScreen || container.msRequestFullscreen;
-  if (reqFS) {
-    reqFS.call(container).then(() => {
-      if (screen.orientation && screen.orientation.lock)
-        screen.orientation.lock('landscape').catch(() => {});
-    }).catch(() => {});
-  }
-  touchControls = true;
-  startGame();
-}
-
-// ── ゲームを終了する（フルスクリーン・横向き解除→エントリー画面へ） ──
-function exitToEntry() {
-  if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock();
-  const exitFS = document.exitFullscreen || document.webkitExitFullscreen
-               || document.mozCancelFullScreen || document.msExitFullscreen;
-  if (exitFS && (document.fullscreenElement || document.webkitFullscreenElement))
-    exitFS.call(document).catch(() => {});
-
-  stopBGM();
-  state = 'idle';
-  hideTouchUI();
-
-  const ov = document.getElementById('overlay');
-  ov.style.display = 'flex';
-  ov.innerHTML = `
-    <div class="overlay-title">🎈 BALLOON FIGHT</div>
-    <div class="overlay-sub">
-      W / SPACE でフラップして上昇！<br>
-      A / D で左右移動　S で急降下<br>
-      敵の風船をつぶして倒そう！
-    </div>
-    <button class="start-btn" id="startBtn" style="display:none;">スタート ▶</button>
-    <button class="mobile-fs-btn" id="fullScreenBtn">📱 全画面でプレイ</button>
-  `;
-  document.getElementById('fullScreenBtn').addEventListener('click', startWithFullscreen);
-  document.getElementById('fullScreenBtn').addEventListener('touchend', e => { e.preventDefault(); startWithFullscreen(); });
-}
-
-// ── ジョイスティック ──
-const joyBase = document.getElementById('joyBase');
-const joyKnob = document.getElementById('joyKnob');
-
-joyBase.addEventListener('touchstart', e => {
-  e.preventDefault(); touchControls = true;
-  if (joyTouchId !== null) return;
-  const t = e.changedTouches[0];
-  joyTouchId = t.identifier;
-  joystick.active = true;
-  joystick.startX = t.clientX; joystick.startY = t.clientY;
-  joystick.moveX = 0; joystick.moveY = 0;
-}, { passive: false });
-
-joyBase.addEventListener('touchmove', e => {
-  e.preventDefault();
-  for (let i = 0; i < e.changedTouches.length; i++) {
-    const t = e.changedTouches[i];
-    if (t.identifier !== joyTouchId) continue;
-    const dx = t.clientX - joystick.startX;
-    const dy = t.clientY - joystick.startY;
-    const dist = Math.hypot(dx, dy);
-    const clamped = Math.min(dist, JOY_MAX);
-    const angle = Math.atan2(dy, dx);
-    joystick.moveX = Math.cos(angle) * (clamped / JOY_MAX);
-    joystick.moveY = Math.sin(angle) * (clamped / JOY_MAX);
-    joyKnob.style.transform = `translate(calc(-50% + ${Math.cos(angle)*clamped}px), calc(-50% + ${Math.sin(angle)*clamped}px))`;
-  }
-}, { passive: false });
-
-joyBase.addEventListener('touchend', e => {
-  e.preventDefault();
-  for (let i = 0; i < e.changedTouches.length; i++) {
-    if (e.changedTouches[i].identifier === joyTouchId) {
-      joyTouchId = null;
-      joystick.active = false;
-      joystick.moveX = 0; joystick.moveY = 0;
-      joyKnob.style.transform = 'translate(-50%, -50%)';
-    }
-  }
-}, { passive: false });
-
-// ── フラップボタン ──
-const flapBtn = document.getElementById('flapBtn');
-let flapTouchId = null;
-flapBtn.addEventListener('touchstart', e => {
-  e.preventDefault(); touchControls = true;
-  if (flapTouchId !== null) return;
-  flapTouchId = e.changedTouches[0].identifier;
-  flapBtn.classList.add('pressed');
-  handleFlap();
-}, { passive: false });
-flapBtn.addEventListener('touchend', e => {
-  e.preventDefault();
-  for (let i = 0; i < e.changedTouches.length; i++) {
-    if (e.changedTouches[i].identifier === flapTouchId) {
-      flapTouchId = null;
-      flapBtn.classList.remove('pressed');
-    }
-  }
-}, { passive: false });
-
 // update()内でWASD連続入力を反映
 function applyKeyInput() {
   if (state !== 'playing' || player.dead || player.drowning > 0) return;
   const MOVE_FORCE = 0.45;
   const MAX_VX     = 3.5;
-  if (keys['KeyA'] || keys['ArrowLeft']  || (joystick.active && joystick.moveX < -0.2))
-    player.vx = Math.max(player.vx - MOVE_FORCE, -MAX_VX);
-  if (keys['KeyD'] || keys['ArrowRight'] || (joystick.active && joystick.moveX >  0.2))
-    player.vx = Math.min(player.vx + MOVE_FORCE,  MAX_VX);
-  if (keys['KeyS'] || keys['ArrowDown']  || (joystick.active && joystick.moveY >  0.5))
-    player.vy = Math.min(player.vy + 1.2, 5); // 急降下
+  if (keys['KeyA'] || keys['ArrowLeft'])  player.vx = Math.max(player.vx - MOVE_FORCE, -MAX_VX);
+  if (keys['KeyD'] || keys['ArrowRight']) player.vx = Math.min(player.vx + MOVE_FORCE,  MAX_VX);
+  if (keys['KeyS'] || keys['ArrowDown'])  player.vy = Math.min(player.vy + 1.2, 5); // 急降下
 }
 
 canvas.addEventListener('click', handleFlap);
-// canvas touchstart はジョイスティック/flapBtnで代替（エントリー画面のみcanvasタップ可）
-canvas.addEventListener('touchstart', e => {
-  if (state !== 'playing') { e.preventDefault(); handleFlap(); }
-}, { passive: false });
+canvas.addEventListener('touchstart', e => { e.preventDefault(); handleFlap(); }, { passive: false });
 document.getElementById('startBtn').addEventListener('click', startGame, { once: true });
-const _fsBtn = document.getElementById('fullScreenBtn');
-if (_fsBtn) {
-  _fsBtn.addEventListener('click', startWithFullscreen);
-  _fsBtn.addEventListener('touchend', e => { e.preventDefault(); startWithFullscreen(); });
-}
 
 loop();
 </script>
