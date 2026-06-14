@@ -75,10 +75,43 @@
   .start-btn:hover { background: #7d6ef0; transform: translateY(-2px); }
   .mobile-fs-btn { background: linear-gradient(135deg, #00b4db, #0083b0); }
   .mobile-fs-btn:hover { background: linear-gradient(135deg, #00c6ff, #0072ff); }
-  .return-btn { background: rgba(80, 75, 110, 0.6); border: 1px solid rgba(108,92,231,0.4); color: #9d86f5; }
-  .return-btn:hover { background: rgba(100, 95, 140, 0.7); color: #c9b8ff; transform: translateY(-2px); }
 
   .hint { font-size: 10px; color: #444; letter-spacing: 1px; text-align: center; margin-top: 2px; }
+
+  /* ── スマホ用 固定タッチコントロール（画面両端下部） ── */
+  #touchLeft, #touchRight {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    bottom: 28px;
+    pointer-events: auto;
+  }
+  #touchLeft  { left:  22px; }
+  #touchRight { right: 22px; }
+  #joyBase {
+    width: 104px; height: 104px; border-radius: 50%;
+    background: rgba(108,92,231,0.12);
+    border: 2px solid rgba(108,92,231,0.35);
+    position: relative;
+  }
+  #joyKnob {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: rgba(108,92,231,0.55);
+    border: 1.5px solid rgba(168,139,255,0.7);
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  #shotBtn {
+    width: 92px; height: 92px; border-radius: 50%;
+    background: rgba(108,92,231,0.25);
+    border: 2px solid rgba(108,92,231,0.55);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: bold; color: #c9b8ff; letter-spacing: 1px;
+    user-select: none;
+    transition: background 0.1s;
+  }
+  #shotBtn.pressed { background: rgba(108,92,231,0.7); }
 </style>
 </head>
 <body>
@@ -133,6 +166,14 @@
   </div>
 </div>
 
+<!-- ── スマホ用タッチコントロール（固定HTML要素） ── -->
+<div id="touchLeft">
+  <div id="joyBase"><div id="joyKnob"></div></div>
+</div>
+<div id="touchRight">
+  <div id="shotBtn">SHOT</div>
+</div>
+
 <script>
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -151,8 +192,8 @@ let particles = [];
 let stars = Array.from({length: 35}, () => ({ x: Math.random()*W, y: Math.random()*H, speed: Math.random()*1.5 + 0.5 }));
 
 let touchControls = false;
-let joystick = { active: false, startX: 0, startY: 0, curX: 0, curY: 0, moveX: 0, moveY: 0 };
-let shootButton = { x: W - 60, y: H - 60, r: 30, active: false };
+let joystick = { active: false, startX: 0, startY: 0, moveX: 0, moveY: 0 };
+let shootHeld = false;
 
 let boss = null;
 const BOSS_TRIGGER_SCORE = 1500; 
@@ -481,11 +522,6 @@ function update() {
     spawnExplosion(player.x + player.w/2, player.y + player.h/2, '#00ffff', 25);
     sfxExplodeBig();
     
-    // ★ フルスクリーンを解除するバグ防止安全処理
-    if (document.fullscreenElement) {
-      document.exitFullscreen().catch(e => console.log(e));
-    }
-    
     setTimeout(() => showOverlay('gameover'), 1000);
   };
 
@@ -508,7 +544,7 @@ function update() {
     }
   });
 
-  if (frame % 8 === 0 && (keys['Space'] || shootButton.active)) {
+  if (frame % 8 === 0 && (keys['Space'] || shootHeld)) {
     player.shoot();
   }
 
@@ -613,39 +649,34 @@ function draw() {
     ctx.restore();
   });
 
-  if (touchControls) {
-    if (joystick.active) {
-      ctx.strokeStyle = 'rgba(108,92,231,0.25)'; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.arc(joystick.startX, joystick.startY, 45, 0, Math.PI*2); ctx.stroke();
-      ctx.fillStyle = 'rgba(108,92,231,0.4)';
-      ctx.beginPath(); ctx.arc(joystick.curX, joystick.curY, 16, 0, Math.PI*2); ctx.fill();
-    }
-    ctx.fillStyle = shootButton.active ? 'rgba(108,92,231,0.6)' : 'rgba(108,92,231,0.25)';
-    ctx.strokeStyle = 'rgba(108,92,231,0.5)'; ctx.lineWidth = 1.5;
-    ctx.beginPath(); ctx.arc(shootButton.x, shootButton.y, shootButton.r, 0, Math.PI*2); ctx.fill(); ctx.stroke();
-    ctx.fillStyle = '#fff'; ctx.font = '10px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText("SHOT", shootButton.x, shootButton.y);
-  }
 }
 
 function showOverlay(type) {
   const ov = document.getElementById('overlay');
   ov.style.display = 'flex';
   if (type === 'gameover') {
-    ov.innerHTML = `
-      <div class="overlay-title">GAME OVER</div>
-      <div class="overlay-score" style="color:#ff3366;">SCORE: ${score}</div>
-      <div class="btn-group">
-        <button class="start-btn return-btn" id="returnBaseBtn" style="display:none;" onclick="location.reload()">🏠 基地へ帰還</button>
-        <button class="start-btn mobile-fs-btn" id="fullScreenBtnOver" style="display:none;" onclick="startWithFullscreen()">📱 全画面で再出撃</button>
-        <button class="start-btn" onclick="startGame()">再出撃 🚀</button>
-      </div>
-    `;
+    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+    if (isMobile) {
+      ov.innerHTML = `
+        <div class="overlay-title">GAME OVER</div>
+        <div class="overlay-score" style="color:#ff3366; font-size:14px; letter-spacing:2px;">SCORE: ${score}</div>
+        <div class="btn-group">
+          <button class="start-btn mobile-fs-btn" onclick="restartWithFullscreen()">再出撃 🚀</button>
+          <button class="start-btn return-btn" onclick="exitGame()">ゲームを終了する</button>
+        </div>
+      `;
+    } else {
+      ov.innerHTML = `
+        <div class="overlay-title">GAME OVER</div>
+        <div class="overlay-score" style="color:#ff3366; font-size:14px; letter-spacing:2px;">SCORE: ${score}</div>
+        <div class="btn-group">
+          <button class="start-btn" onclick="startGame()">再出撃 🚀</button>
+        </div>
+      `;
+    }
     if (score > best) { best = score; document.getElementById('bestDisplay').textContent = best; }
-    initDynamicControlsGuide(); // ゲームオーバー時もボタンの出し分けを再判定
   }
 }
-
 function startGame() {
   document.getElementById('overlay').style.display = 'none';
   score = 0; frame = 0; capsuleCount = 0; boss = null;
@@ -675,6 +706,49 @@ function startWithFullscreen() {
   
   // そのままゲームをロード開始
   startGame();
+}
+
+// ── ゲームオーバー後の再出撃（フルスクリーン・横向き維持） ──
+function restartWithFullscreen() {
+  if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+    const container = document.getElementById('stageContainer');
+    const requestFS = container.requestFullscreen || container.webkitRequestFullscreen;
+    if (requestFS) requestFS.call(container).catch(() => {});
+  }
+  if (screen.orientation && screen.orientation.lock) {
+    screen.orientation.lock('landscape').catch(() => {});
+  }
+  startGame();
+}
+
+// ── ゲームを終了する（フルスクリーン＆向きロック解除、エントリー画面へ） ──
+function exitGame() {
+  if (screen.orientation && screen.orientation.unlock) {
+    screen.orientation.unlock();
+  }
+  const exitFS = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
+  if (exitFS && (document.fullscreenElement || document.webkitFullscreenElement)) {
+    exitFS.call(document).catch(() => {});
+  }
+  state = 'idle';
+  stopAudioBGM();
+  score = 0; frame = 0; capsuleCount = 0; boss = null;
+  enemies = []; playerBullets = []; enemyBullets = []; capsules = []; particles = [];
+  player.reset(); updateMeterUI();
+
+  const ov = document.getElementById('overlay');
+  ov.style.display = 'flex';
+  ov.innerHTML = `
+    <div class="overlay-title">NEO GLADIUS</div>
+    <div class="overlay-sub">
+      スコア1500に到達すると巨大戦艦『ビッグコア』が襲来！<br>
+      スマホの方は「全画面でプレイ」を押すと、アドレスバーのない横画面無双モードに突入します！
+    </div>
+    <div class="btn-group">
+      <button class="start-btn" id="startBtn" onclick="startGame()" style="display:none;">通常スタート ▶</button>
+      <button class="start-btn mobile-fs-btn" id="fullScreenBtn" onclick="startWithFullscreen()">📱 全画面でプレイ</button>
+    </div>
+  `;
 }
 
 // ── オーディオ処理 ──
@@ -807,92 +881,81 @@ window.addEventListener('keydown', e => {
   }
 });
 window.addEventListener('keyup', e => { keys[e.code] = false; });
-document.getElementById('startBtn').addEventListener('click', startGame);
-document.getElementById('fullScreenBtn').addEventListener('click', startWithFullscreen);
+const _startBtnEl = document.getElementById('startBtn');
+if (_startBtnEl) _startBtnEl.addEventListener('click', startGame);
+const _fsBtnEl = document.getElementById('fullScreenBtn');
+if (_fsBtnEl) _fsBtnEl.addEventListener('click', startWithFullscreen);
 
 document.getElementById('powerMeter').addEventListener('click', () => {
   if (state === 'playing') triggerPowerUp();
 });
 
-// ── スマホ用仮想ジョイスティック制御 ──
-function updateCanvasOffset() {
-  shootButton.x = W - 55;
-  shootButton.y = H - 55;
-}
+// ── スマホ用 HTML固定タッチコントロール ──
+const joyBase = document.getElementById('joyBase');
+const joyKnob = document.getElementById('joyKnob');
+const shotBtn  = document.getElementById('shotBtn');
+let joyTouchId  = null;
+let shotTouchId = null;
+const JOY_MAX = 40;
 
-canvas.addEventListener('touchstart', e => {
+joyBase.addEventListener('touchstart', e => {
+  e.preventDefault();
   touchControls = true;
-  updateCanvasOffset();
-  const rect = canvas.getBoundingClientRect();
-  const scaleX = W / rect.width;
-  const scaleY = H / rect.height;
-
-  for (let i = 0; i < e.touches.length; i++) {
-    const t = e.touches[i];
-    const tx = (t.clientX - rect.left) * scaleX;
-    const ty = (t.clientY - rect.top) * scaleY;
-
-    if (Math.hypot(tx - shootButton.x, ty - shootButton.y) < shootButton.r + 10) {
-      shootButton.active = true;
-      if (state === 'playing') player.shoot();
-    }
-    else if (tx < W / 2 && !joystick.active) {
-      joystick.active = true;
-      joystick.startX = tx; joystick.startY = ty;
-      joystick.curX = tx; joystick.curY = ty;
-      joystick.moveX = 0; joystick.moveY = 0;
-    }
-  }
+  if (joyTouchId !== null) return;
+  const t = e.changedTouches[0];
+  joyTouchId = t.identifier;
+  joystick.active = true;
+  joystick.startX = t.clientX; joystick.startY = t.clientY;
+  joystick.moveX  = 0;         joystick.moveY  = 0;
 }, { passive: false });
 
-canvas.addEventListener('touchmove', e => {
+joyBase.addEventListener('touchmove', e => {
+  e.preventDefault();
   if (state !== 'playing') return;
-  const rect = canvas.getBoundingClientRect();
-  const scaleX = W / rect.width;
-  const scaleY = H / rect.height;
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    const t = e.changedTouches[i];
+    if (t.identifier !== joyTouchId) continue;
+    const dx = t.clientX - joystick.startX;
+    const dy = t.clientY - joystick.startY;
+    const dist = Math.hypot(dx, dy);
+    const clamped = Math.min(dist, JOY_MAX);
+    const angle = Math.atan2(dy, dx);
+    joystick.moveX = Math.cos(angle) * (clamped / JOY_MAX);
+    joystick.moveY = Math.sin(angle) * (clamped / JOY_MAX);
+    joyKnob.style.transform = `translate(calc(-50% + ${Math.cos(angle)*clamped}px), calc(-50% + ${Math.sin(angle)*clamped}px))`;
+  }
+}, { passive: false });
 
-  for (let i = 0; i < e.touches.length; i++) {
-    const t = e.touches[i];
-    const tx = (t.clientX - rect.left) * scaleX;
-    const ty = (t.clientY - rect.top) * scaleY;
-
-    if (joystick.active && tx < W / 2) {
-      const dx = tx - joystick.startX;
-      const dy = ty - joystick.startY;
-      const dist = Math.hypot(dx, dy);
-      const maxDist = 35;
-
-      if (dist > maxDist) {
-        joystick.curX = joystick.startX + (dx / dist) * maxDist;
-        joystick.curY = joystick.startY + (dy / dist) * maxDist;
-      } else {
-        joystick.curX = tx; joystick.curY = ty;
-      }
-      joystick.moveX = (joystick.curX - joystick.startX) / maxDist;
-      joystick.moveY = (joystick.curY - joystick.startY) / maxDist;
+joyBase.addEventListener('touchend', e => {
+  e.preventDefault();
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    if (e.changedTouches[i].identifier === joyTouchId) {
+      joyTouchId = null;
+      joystick.active = false;
+      joystick.moveX = 0; joystick.moveY = 0;
+      joyKnob.style.transform = 'translate(-50%, -50%)';
     }
   }
 }, { passive: false });
 
-canvas.addEventListener('touchend', e => {
-  let shootStillTouched = false;
-  let joyStillTouched = false;
-  const rect = canvas.getBoundingClientRect();
-  const scaleX = W / rect.width;
-  const scaleY = H / rect.height;
+shotBtn.addEventListener('touchstart', e => {
+  e.preventDefault();
+  touchControls = true;
+  if (shotTouchId !== null) return;
+  shotTouchId = e.changedTouches[0].identifier;
+  shootHeld = true;
+  shotBtn.classList.add('pressed');
+  if (state === 'playing') player.shoot();
+}, { passive: false });
 
-  for (let i = 0; i < e.touches.length; i++) {
-    const t = e.touches[i];
-    const tx = (t.clientX - rect.left) * scaleX;
-    const ty = (t.clientY - rect.top) * scaleY;
-    if (Math.hypot(tx - shootButton.x, ty - shootButton.y) < shootButton.r + 10) shootStillTouched = true;
-    if (tx < W / 2) joyStillTouched = true;
-  }
-
-  if (!shootStillTouched) shootButton.active = false;
-  if (!joyStillTouched) {
-    joystick.active = false;
-    joystick.moveX = 0; joystick.moveY = 0;
+shotBtn.addEventListener('touchend', e => {
+  e.preventDefault();
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    if (e.changedTouches[i].identifier === shotTouchId) {
+      shotTouchId = null;
+      shootHeld = false;
+      shotBtn.classList.remove('pressed');
+    }
   }
 }, { passive: false });
 
@@ -904,24 +967,26 @@ function roundRect(ctx, x, y, w, h, r) {
   ctx.quadraticCurveTo(x, y, x+r, y); ctx.closePath();
 }
 
-// ── ★ PC/スマホの環境検知・ボタン出し分け・ガイド切り替え処理 ──
+// ── PC/スマホ環境検知・ボタン出し分け・コントロールガイド切り替え ──
 function initDynamicControlsGuide() {
   const isTouch = (
     ('ontouchstart' in window) || (navigator.maxTouchPoints > 0)
   ) && /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
-  
+
   if (isTouch) {
-    // スマホ用表示への最適化
-    document.getElementById('guideMove').textContent = "左画面スワイプ (仮想スティック)";
-    document.getElementById('guideShoot').textContent = "右下 [SHOT] ボタン長押し";
-    document.getElementById('guidePower').textContent = "下部メーターを直接タップ";
-    
-    // 通常ボタンを隠し、シアン色の「全画面でプレイ」ボタンを出現させる
+    if(document.getElementById('guideMove'))  document.getElementById('guideMove').textContent  = "左下ジョイスティック";
+    if(document.getElementById('guideShoot')) document.getElementById('guideShoot').textContent = "右下 [SHOT] ボタン長押し";
+    if(document.getElementById('guidePower')) document.getElementById('guidePower').textContent = "下部メーターをタップ";
+    // エントリー画面: 通常スタート非表示、全画面ボタン表示
+    if(document.getElementById('startBtn'))      document.getElementById('startBtn').style.display      = "none";
     if(document.getElementById('fullScreenBtn')) document.getElementById('fullScreenBtn').style.display = "inline-block";
-    if(document.getElementById('fullScreenBtnOver')) document.getElementById('fullScreenBtnOver').style.display = "inline-block";
-    if(document.getElementById('returnBaseBtn')) document.getElementById('returnBaseBtn').style.display = "inline-block";
+    // タッチコントロール表示
+    document.getElementById('touchLeft').style.display  = 'block';
+    document.getElementById('touchRight').style.display = 'block';
   } else {
     if(document.getElementById('fullScreenBtn')) document.getElementById('fullScreenBtn').style.display = "none";
+    document.getElementById('touchLeft').style.display  = 'none';
+    document.getElementById('touchRight').style.display = 'none';
   }
 }
 initDynamicControlsGuide();
