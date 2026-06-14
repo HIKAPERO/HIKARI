@@ -284,13 +284,32 @@ function allPerms(arr) {
   return out;
 }
 
-function combine(vals, useDiv) {
+// 括弧なし：左から順に演算（演算子優先度なし、純粋に左→右）
+function combineLinear(vals, ops) {
+  // vals を左から順に ops で繋いだ値を全列挙
+  // 例: [a,b,c] ops[+,-,*,/] → a op1 b op2 c を全パターン
+  if (vals.length === 1) return [vals[0]];
+  const out = [];
+  for (const op of ops) {
+    const rest = combineLinear(vals.slice(1), ops);
+    for (const r of rest) {
+      if (op === '+') out.push(vals[0] + r);
+      if (op === '-') out.push(vals[0] - r);
+      if (op === '*') out.push(vals[0] * r);
+      if (op === '/' && r !== 0) out.push(vals[0] / r);
+    }
+  }
+  return out;
+}
+
+// 括弧あり：ツリー全探索（既存ロジック）
+function combineTree(vals, useDiv) {
   if (vals.length === 1) return [vals[0]];
   const ops = useDiv ? ['+','-','*','/'] : ['+','-'];
   const out = [];
   for (let i = 1; i < vals.length; i++) {
-    const lefts  = combine(vals.slice(0, i), useDiv);
-    const rights = combine(vals.slice(i),    useDiv);
+    const lefts  = combineTree(vals.slice(0, i), useDiv);
+    const rights = combineTree(vals.slice(i),    useDiv);
     for (const l of lefts) for (const r of rights) for (const op of ops) {
       if (op === '+') out.push(l + r);
       if (op === '-') out.push(l - r);
@@ -301,10 +320,13 @@ function combine(vals, useDiv) {
   return out;
 }
 
-function reachableIntegers(nums, useDiv) {
+function reachableIntegers(nums, usedOps, useParen) {
   const set = new Set();
+  const useDiv = usedOps.includes('/');
+  const ops = usedOps.filter(o => o !== '(');
   for (const perm of allPerms(nums)) {
-    for (const v of combine(perm, useDiv)) {
+    const vals = useParen ? combineTree(perm, useDiv) : combineLinear(perm, ops);
+    for (const v of vals) {
       if (Number.isFinite(v) && Number.isInteger(v) && v > 0) set.add(v);
     }
   }
@@ -315,9 +337,13 @@ function reachableIntegers(nums, useDiv) {
 // SOLVER — 正解式を1つ返す
 // ─────────────────────────────────────────
 const OPSTR = {'+':'＋', '-':'－', '*':'×', '/':'÷'};
+// prec: 演算子の優先度（低いほど先に括弧が必要）
+const PREC = {'+':1, '-':1, '*':2, '/':2};
 
+// 各ノードは {val, expr, prec} を持つ
+// prec: このノードのトップレベル演算子の優先度（葉はInfinity）
 function combineExpr(items, useDiv) {
-  if (items.length === 1) return [{val: items[0].v, expr: String(items[0].v)}];
+  if (items.length === 1) return [{val: items[0].v, expr: String(items[0].v), prec: Infinity}];
   const ops = useDiv ? ['+','-','*','/'] : ['+','-'];
   const out = [];
   for (let i = 1; i < items.length; i++) {
@@ -330,33 +356,83 @@ function combineExpr(items, useDiv) {
       if (op === '*') val = l.val * r.val;
       if (op === '/' && r.val !== 0) val = l.val / r.val;
       if (val === null || !Number.isFinite(val)) continue;
-      const needL = (op==='*'||op==='/') && /[＋－]/.test(l.expr);
-      const needR = ((op==='*'||op==='/') && /[＋－]/.test(r.expr)) || (op==='-' && /[＋－]/.test(r.expr));
+      const p = PREC[op];
+      // 左辺: 自分より優先度が低い演算子が根なら括弧が必要
+      const needL = l.prec < p;
+      // 右辺: 同優先度でも - / は右結合で変わるので括弧が必要
+      const needR = r.prec < p || (r.prec === p && (op === '-' || op === '/'));
       const le = needL ? `(${l.expr})` : l.expr;
       const re = needR ? `(${r.expr})` : r.expr;
-      out.push({val, expr: `${le} ${OPSTR[op]} ${re}`});
+      out.push({val, expr: `${le} ${OPSTR[op]} ${re}`, prec: p});
     }
   }
   return out;
 }
 
-function findSolution(nums, tgt, useDiv) {
-  for (const perm of allPerms(nums.map((v,i) => ({v,i})))) {
-    for (const {val, expr} of combineExpr(perm, useDiv)) {
-      if (Math.abs(val - tgt) < 1e-9 && Number.isInteger(Math.round(val))) return expr;
+function findSolution(nums, tgt, ops) {
+  const useParen = ops.includes('(');
+  const useDiv   = ops.includes('/');
+
+  if (useParen) {
+    // 括弧ありモード：ツリー全探索
+    for (const perm of allPerms(nums.map((v,i) => ({v,i})))) {
+      for (const {val, expr} of combineExpr(perm, useDiv)) {
+        if (Math.abs(val - tgt) < 1e-9 && Number.isInteger(Math.round(val))) return expr;
+      }
     }
+    return null;
+  } else {
+    // 括弧なしモード：左→右の線形計算のみ
+    const opList = ops.filter(o => o !== '(');
+    for (const perm of allPerms(nums)) {
+      // opList の全組み合わせを試す（perm.length-1 個の演算子）
+      const opCount = perm.length - 1;
+      function tryOps(idx, current, chosen) {
+        if (idx === opCount) {
+          // chosen の演算子で左から順に計算
+          let val = perm[0];
+          for (let k = 0; k < opCount; k++) {
+            const op = chosen[k], r = perm[k+1];
+            if (op==='+') val += r;
+            else if (op==='-') val -= r;
+            else if (op==='*') val *= r;
+            else if (op==='/' && r!==0) val /= r;
+            else return;
+          }
+          if (Math.abs(val - tgt) < 1e-9 && Number.isInteger(Math.round(val))) {
+            // 式文字列を組み立てる
+            let expr = String(perm[0]);
+            for (let k = 0; k < opCount; k++) expr += ` ${OPSTR[chosen[k]]} ${perm[k+1]}`;
+            throw {found: expr};
+          }
+          return;
+        }
+        for (const op of opList) tryOps(idx+1, current, [...chosen, op]);
+      }
+      try { tryOps(0, null, []); } catch(e) { if (e.found) return e.found; }
+    }
+    return null;
   }
-  return null;
 }
 
 function showAnswer(textElId, boxElId) {
-  const useDiv = cfg(level).ops.includes('/');
-  const sol = findSolution(diceValues, target, useDiv);
+  const ops = cfg(level).ops;
+  const sol = findSolution(diceValues, target, ops);
   const textEl = $(textElId);
   const boxEl  = $(boxElId);
   if (sol) {
-    textEl.textContent = `${sol} ＝ ${target}`;
-    boxEl.style.display = 'block';
+    const jsExpr = sol.replace(/＋/g,'+').replace(/－/g,'-').replace(/×/g,'*').replace(/÷/g,'/');
+    let verified = false;
+    try {
+      const result = Function('"use strict";return(' + jsExpr + ')')();
+      verified = Math.abs(result - target) < 1e-9;
+    } catch(e) { verified = false; }
+    if (verified) {
+      textEl.textContent = `${sol} ＝ ${target}`;
+      boxEl.style.display = 'block';
+    } else {
+      boxEl.style.display = 'none';
+    }
   } else {
     boxEl.style.display = 'none';
   }
@@ -619,8 +695,8 @@ function updateHint() {
 // ─────────────────────────────────────────
 function pickTarget() {
   const c = cfg(level);
-  const useDiv = c.ops.includes('/');
-  const reachable = reachableIntegers(diceValues, useDiv);
+  const useParen = c.ops.includes('(');
+  const reachable = reachableIntegers(diceValues, c.ops, useParen);
   const candidates = [...reachable].filter(v => v >= c.targetMin && v <= c.targetMax);
   let pool = candidates.length > 0 ? candidates : [...reachable];
   if (level >= 4 && pool.length > 4) {
