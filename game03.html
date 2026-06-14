@@ -689,10 +689,8 @@ function startGame() {
   player.reset(); updateMeterUI();
   state = 'playing';
   startAudioBGM();
-  // スマホならタッチコントロールを表示
-  const isTouch = (('ontouchstart' in window) || (navigator.maxTouchPoints > 0))
-    && /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
-  if (isTouch) {
+  // タッチデバイスならコントロールを表示（touchControls は最初のタッチで true になる）
+  if (touchControls) {
     document.getElementById('touchLeft').style.display  = 'block';
     document.getElementById('touchRight').style.display = 'block';
   }
@@ -911,6 +909,15 @@ document.getElementById('powerMeter').addEventListener('click', () => {
   if (state === 'playing') triggerPowerUp();
 });
 
+// ── タッチデバイス検知：最初のタッチで touchControls を有効化しゲームUIを即表示 ──
+window.addEventListener('touchstart', () => {
+  if (touchControls) return;
+  touchControls = true;
+  // エントリー画面ではタッチUIは不要（ゲーム開始時に表示する）
+  // ただし initDynamicControlsGuide を再実行してボタン出し分けを確定させる
+  initDynamicControlsGuide();
+}, { once: true, passive: true });
+
 // ── スマホ用 HTML固定タッチコントロール ──
 const joyBase = document.getElementById('joyBase');
 const joyKnob = document.getElementById('joyKnob');
@@ -990,9 +997,9 @@ function roundRect(ctx, x, y, w, h, r) {
 
 // ── PC/スマホ環境検知・ボタン出し分け・コントロールガイド切り替え ──
 function initDynamicControlsGuide() {
-  const isTouch = (
-    ('ontouchstart' in window) || (navigator.maxTouchPoints > 0)
-  ) && /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+  const isTouch = touchControls ||
+    ((('ontouchstart' in window) || (navigator.maxTouchPoints > 0))
+    && /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent));
 
   if (isTouch) {
     if(document.getElementById('guideMove'))  document.getElementById('guideMove').textContent  = "左下ジョイスティック";
