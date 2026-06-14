@@ -62,6 +62,7 @@
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
     background: rgba(8,8,15,0.85); backdrop-filter: blur(4px); border-radius: 12px; z-index: 10;
+    touch-action: auto;
   }
   .overlay-title { font-size: 22px; font-weight: 700; letter-spacing: 4px; color: #c9b8ff; }
   .overlay-sub { font-size: 11px; color: #777; letter-spacing: 1px; text-align: center; line-height: 1.6; }
@@ -71,6 +72,7 @@
   .start-btn {
     padding: 10px 24px; background: #6c5ce7; color: #fff; border: none; border-radius: 8px;
     font-size: 13px; letter-spacing: 2px; cursor: pointer; font-family: inherit; transition: all .2s;
+    touch-action: auto; -webkit-tap-highlight-color: rgba(108,92,231,0.3);
   }
   .start-btn:hover { background: #7d6ef0; transform: translateY(-2px); }
   .mobile-fs-btn { background: linear-gradient(135deg, #00b4db, #0083b0); }
@@ -895,9 +897,15 @@ window.addEventListener('keydown', e => {
 });
 window.addEventListener('keyup', e => { keys[e.code] = false; });
 const _startBtnEl = document.getElementById('startBtn');
-if (_startBtnEl) _startBtnEl.addEventListener('click', startGame);
+if (_startBtnEl) {
+  _startBtnEl.addEventListener('click', startGame);
+  _startBtnEl.addEventListener('touchend', e => { e.preventDefault(); startGame(); });
+}
 const _fsBtnEl = document.getElementById('fullScreenBtn');
-if (_fsBtnEl) _fsBtnEl.addEventListener('click', startWithFullscreen);
+if (_fsBtnEl) {
+  _fsBtnEl.addEventListener('click', startWithFullscreen);
+  _fsBtnEl.addEventListener('touchend', e => { e.preventDefault(); startWithFullscreen(); });
+}
 
 document.getElementById('powerMeter').addEventListener('click', () => {
   if (state === 'playing') triggerPowerUp();
