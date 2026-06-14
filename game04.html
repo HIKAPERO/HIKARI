@@ -224,16 +224,16 @@
 // ─────────────────────────────────────────
 const LEVELS = [
   null,
-  { diceCount:2, diceFaces:6, ops:['+','-'],         targetMin:2,  targetMax:12,  time:60 },
-  { diceCount:2, diceFaces:6, ops:['+','-'],         targetMin:2,  targetMax:12,  time:60 },
-  { diceCount:2, diceFaces:6, ops:['+','-'],         targetMin:2,  targetMax:12,  time:60 },
-  { diceCount:3, diceFaces:6, ops:['+','-','*','/'], targetMin:2,  targetMax:30,  time:75 },
-  { diceCount:3, diceFaces:6, ops:['+','-','*','/'], targetMin:2,  targetMax:30,  time:75 },
-  { diceCount:3, diceFaces:6, ops:['+','-','*','/'], targetMin:2,  targetMax:30,  time:75 },
-  { diceCount:4, diceFaces:6, ops:['+','-','*','/'], targetMin:2,  targetMax:50,  time:90 },
-  { diceCount:4, diceFaces:6, ops:['+','-','*','/'], targetMin:2,  targetMax:50,  time:90 },
-  { diceCount:4, diceFaces:6, ops:['+','-','*','/'], targetMin:2,  targetMax:50,  time:90 },
-  { diceCount:4, diceFaces:8, ops:['+','-','*','/','('], targetMin:2, targetMax:100, time:90 },
+  { diceCount:2, diceFaces:6, ops:['+','-'],              targetMin:2,  targetMax:12,  time:60 },
+  { diceCount:2, diceFaces:6, ops:['+','-'],              targetMin:2,  targetMax:12,  time:60 },
+  { diceCount:2, diceFaces:6, ops:['+','-'],              targetMin:2,  targetMax:12,  time:60 },
+  { diceCount:3, diceFaces:6, ops:['+','-','*','/','('], targetMin:2,  targetMax:30,  time:75 },
+  { diceCount:3, diceFaces:6, ops:['+','-','*','/','('], targetMin:2,  targetMax:30,  time:75 },
+  { diceCount:3, diceFaces:6, ops:['+','-','*','/','('], targetMin:2,  targetMax:30,  time:75 },
+  { diceCount:4, diceFaces:6, ops:['+','-','*','/','('], targetMin:2,  targetMax:50,  time:90 },
+  { diceCount:4, diceFaces:6, ops:['+','-','*','/','('], targetMin:2,  targetMax:50,  time:90 },
+  { diceCount:4, diceFaces:6, ops:['+','-','*','/','('], targetMin:2,  targetMax:50,  time:90 },
+  { diceCount:4, diceFaces:8, ops:['+','-','*','/','('], targetMin:2, targetMax:100,  time:90 },
 ];
 function cfg(lv) { return LEVELS[Math.min(lv, 10)] || LEVELS[10]; }
 
@@ -493,6 +493,8 @@ function renderFormula() {
   evalFormula();
 }
 
+// Lv1-3は +- のみなので優先度問題なし
+// Lv4以降は括弧が使えるので通常のJS評価で正しく計算できる
 function safeEval(expr) {
   if (!expr || !/^[\d\s\+\-\*\/\(\)\.]+$/.test(expr)) return null;
   try { return Function('"use strict";return(' + expr + ')')(); } catch(e) { return null; }
