@@ -763,7 +763,10 @@
         : '<span style="font-size:36px;opacity:0.5;">🎮</span>';
       const nb = isFirst ? '<span class="play-new-badge">NEW</span>' : "";
       card.innerHTML = `<div class="play-thumb">${th}${nb}</div><div class="play-info"><div class="play-name">${esc(g.title)}</div><div class="play-desc">${esc(g.desc||"")}</div></div><div class="play-btn">あそぶ ▶</div>`;
-      card.addEventListener("click", () => window.open("/HIKARI/" + esc(g.filename), "_blank"));
+      card.addEventListener("click", () => {
+      const url = "/HIKARI/" + esc(g.filename) + (g.bgmUrl ? "?bgm=" + encodeURIComponent(g.bgmUrl) : "");
+      window.open(url, "_blank");
+    });
       grid.appendChild(card);
       isFirst = false;
     });
