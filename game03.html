@@ -803,6 +803,18 @@ function exitGame() {
 }
 
 // ── オーディオ処理 ──
+
+// ── 外部BGM（URLパラメータ ?bgm=xxx.mp3）──
+const _bgmParam = new URLSearchParams(location.search).get('bgm');
+let _extBgmEl = null;
+if (_bgmParam) {
+  _extBgmEl = document.createElement('audio');
+  _extBgmEl.src = _bgmParam;
+  _extBgmEl.loop = true;
+  _extBgmEl.volume = 0.7;
+  document.body.appendChild(_extBgmEl);
+}
+
 let audioCtx = null;
 let bgmGainNode = null;
 let muted = false;
@@ -868,6 +880,12 @@ function sfxExplodeBig() {
 // ── BGM生成 ──
 let bgmTimer = null;
 function startAudioBGM() {
+  if (_extBgmEl) {
+    _extBgmEl.currentTime = 0;
+    _extBgmEl.volume = muted ? 0 : 0.7;
+    _extBgmEl.play().catch(()=>{});
+    return;
+  }
   if (bgmTimer) return;
   const ac = getAudioCtx();
   if (ac.state === 'suspended') ac.resume();
@@ -916,12 +934,20 @@ function startAudioBGM() {
 function deleteAudioBGM() {
   if (bgmTimer) { clearTimeout(bgmTimer); bgmTimer = null; }
 }
-function stopAudioBGM() { deleteAudioBGM(); }
+function stopAudioBGM() {
+  if (_extBgmEl) {
+    _extBgmEl.pause();
+    _extBgmEl.currentTime = 0;
+    return;
+  }
+  deleteAudioBGM();
+}
 
 function toggleMute() {
   muted = !muted;
   document.getElementById('muteBtn').textContent = muted ? '🔇' : '🔊';
   if (bgmGainNode) bgmGainNode.gain.setValueAtTime(muted ? 0 : 0.25, getAudioCtx().currentTime);
+  if (_extBgmEl) _extBgmEl.volume = muted ? 0 : 0.7;
 }
 
 // ── 入力イベント ──

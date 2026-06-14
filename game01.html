@@ -106,30 +106,27 @@
   }
   .start-btn:hover { background: #ffb840; transform: translateY(-2px); }
 
-  /* ── スマホ用スケーリング＆タッチコントロール ── */
-  #gameWrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-  }
+  /* ── スマホ用タッチコントロールエリア（canvasの下） ── */
   #touchControlArea {
-    display: none;
-    width: 100%;
-    height: 130px;
+    display: none;               /* スマホ時のみ表示 */
+    width: 480px;
+    max-width: 100%;
+    height: 140px;
+    position: relative;
     align-items: center;
     justify-content: space-between;
     padding: 0 20px;
-    margin-top: 0;
-    background: rgba(10,10,26,0.7);
-    border-top: 0.5px solid rgba(100,180,255,0.15);
+    margin-top: 4px;
+    background: rgba(10,10,26,0.6);
+    border: 0.5px solid rgba(100,180,255,0.15);
+    border-radius: 12px;
     touch-action: none;
-    flex-shrink: 0;
   }
+  /* ジョイスティック */
   #joyBase {
     width: 110px; height: 110px; border-radius: 50%;
     background: rgba(255,200,50,0.10);
-    border: 2px solid rgba(255,200,50,0.40);
+    border: 2px solid rgba(255,200,50,0.35);
     position: relative; flex-shrink: 0;
   }
   #joyKnob {
@@ -139,15 +136,21 @@
     position: absolute; top: 50%; left: 50%;
     transform: translate(-50%, -50%);
   }
+  /* フラップボタン */
   #flapBtn {
     width: 100px; height: 100px; border-radius: 50%;
     background: rgba(255,200,50,0.18);
-    border: 2px solid rgba(255,200,50,0.65);
+    border: 2px solid rgba(255,200,50,0.60);
     display: flex; align-items: center; justify-content: center;
     font-size: 36px; user-select: none; flex-shrink: 0;
     transition: background 0.1s;
   }
   #flapBtn.pressed { background: rgba(255,200,50,0.60); }
+
+  /* スマホ検知時：hintを非表示 */
+  @media (pointer: coarse) {
+    /* 必要に応じて追加スタイル */
+  }
 </style>
 </head>
 <body>
@@ -160,25 +163,24 @@
     <div>LIVES <span id="livesDisplay">🐥🐥🐥</span></div>
     <button id="muteBtn" onclick="toggleMute()" style="background:rgba(255,255,255,0.08);border:0.5px solid rgba(255,255,255,0.15);border-radius:6px;color:#aaa;font-size:13px;padding:3px 10px;cursor:pointer;letter-spacing:1px;">🔊</button>
   </div>
-  <div id="gameWrapper">
-    <div class="canvas-wrap">
-      <canvas id="gameCanvas" width="480" height="400"></canvas>
-      <div id="overlay">
-        <div class="overlay-title">🎈 BALLOON FIGHT</div>
-        <div class="overlay-sub">
-          W / SPACE でフラップして上昇！<br>
-          A / D で左右移動　S で急降下<br>
-          敵の風船をつぶして倒そう！
-        </div>
-        <button class="start-btn" id="startBtn">スタート ▶</button>
+  <div class="canvas-wrap">
+    <canvas id="gameCanvas" width="480" height="400"></canvas>
+    <div id="overlay">
+      <div class="overlay-title">🎈 BALLOON FIGHT</div>
+      <div class="overlay-sub">
+        W / SPACE でフラップして上昇！<br>
+        A / D で左右移動　S で急降下<br>
+        敵の風船をつぶして倒そう！
       </div>
+      <button class="start-btn" id="startBtn">スタート ▶</button>
     </div>
-    <div class="hint" id="hintText">W / SPACE でフラップ上昇　　A / D で左右移動　　S で急降下　　敵より高い位置から当たると勝ち！</div>
-    <!-- スマホ用タッチコントロール -->
-    <div id="touchControlArea">
-      <div id="joyBase"><div id="joyKnob"></div></div>
-      <div id="flapBtn">🐥</div>
-    </div>
+  </div>
+  <div class="hint" id="hintText">W / SPACE でフラップ上昇　　A / D で左右移動　　S で急降下　　敵より高い位置から当たると勝ち！</div>
+
+  <!-- スマホ用タッチコントロール（canvasの下の空きエリア） -->
+  <div id="touchControlArea">
+    <div id="joyBase"><div id="joyKnob"></div></div>
+    <div id="flapBtn">🐥</div>
   </div>
 </div>
 
@@ -901,6 +903,18 @@ function showOverlay(type) {
 }
 
 // ── サウンドエンジン ──
+
+// ── 外部BGM（URLパラメータ ?bgm=xxx.mp3）──
+const _bgmParam = new URLSearchParams(location.search).get('bgm');
+let _extBgmEl = null;
+if (_bgmParam) {
+  _extBgmEl = document.createElement('audio');
+  _extBgmEl.src = _bgmParam;
+  _extBgmEl.loop = true;
+  _extBgmEl.volume = 0.7;
+  document.body.appendChild(_extBgmEl);
+}
+
 let audioCtx = null;
 let bgmNodes = null; // BGMのノード群を管理
 let bgmPlaying = false;
@@ -1144,12 +1158,23 @@ function playDrum(type, t, ac) {
 }
 
 function startBGM() {
+  if (_extBgmEl) {
+    _extBgmEl.currentTime = 0;
+    _extBgmEl.volume = muted ? 0 : 0.7;
+    _extBgmEl.play().catch(()=>{});
+    return;
+  }
   if (bgmPlaying) return;
   bgmPlaying = true;
   scheduleBGM();
 }
 
 function stopBGM() {
+  if (_extBgmEl) {
+    _extBgmEl.pause();
+    _extBgmEl.currentTime = 0;
+    return;
+  }
   bgmPlaying = false;
   if (bgmNodes) {
     bgmNodes.forEach(n => { try { n.stop(); } catch(e){} });
@@ -1237,9 +1262,11 @@ function toggleMute() {
   document.getElementById('muteBtn').textContent = muted ? '🔇' : '🔊';
   if (muted) {
     if (masterGain) masterGain.gain.value = 0;
+    if (_extBgmEl) _extBgmEl.volume = 0;
   } else {
     if (masterGain) masterGain.gain.value = 0.75;
     if (audioCtx) audioCtx.resume();
+    if (_extBgmEl) _extBgmEl.volume = 0.7;
   }
 }
 
@@ -1526,28 +1553,13 @@ let joystick = { active: false, startX: 0, startY: 0, moveX: 0, moveY: 0 };
 let joyTouchId = null;
 const JOY_MAX = 44;
 
-// ── スマホ時：canvasをvwに合わせてスケール、コントロール表示 ──
+// ── スマホ時の初期化 ──
 function initMobile() {
   if (!isMobileDevice()) return;
   touchControls = true;
-
-  // canvasを画面幅に収まるようscaleで縮小
-  function applyScale() {
-    const vw = window.innerWidth;
-    const scale = Math.min(1, vw / 480);
-    const wrapper = document.getElementById('gameWrapper');
-    wrapper.style.transformOrigin = 'top center';
-    wrapper.style.transform = `scale(${scale})`;
-    // scaleで縮んだ分、親要素の高さを補正
-    const naturalH = wrapper.scrollHeight;
-    wrapper.style.marginBottom = `${(naturalH * scale - naturalH)}px`;
-  }
-  applyScale();
-  window.addEventListener('resize', applyScale);
-
-  // タッチコントロール表示
+  // タッチコントロールエリアを表示
   document.getElementById('touchControlArea').style.display = 'flex';
-  // PCヒント非表示
+  // PCヒントを非表示
   document.getElementById('hintText').style.display = 'none';
 }
 initMobile();

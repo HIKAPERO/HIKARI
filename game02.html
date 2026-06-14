@@ -100,56 +100,140 @@ const OFFSET_LIMIT=0.90;
 const INCOMING_DELAY=85;
 
 // ══════════════════════════════════════
-//  オーディオ（Web Audio APIによるMP3音量強制制御システム）
+//  BGM — AudioContext.suspend/resume で確実にミュート
 // ══════════════════════════════════════
-let muted=false, audioCtx=null;
-let bgmPlaying=false;
-let bgmSourceNode=null;
-let bgmGainNode=null;
 
-// MP3オブジェクトの作成（念のためキャッシュ対策にクエリを付与）
-const bgmAudio = new Audio('game02-m.mp3?v=' + Date.now());
-bgmAudio.loop = true;
-bgmAudio.crossOrigin = "anonymous"; // サーバー経由時のCORS対策
+// ── 外部BGM（URLパラメータ ?bgm=xxx.mp3）──
+const _bgmParam = new URLSearchParams(location.search).get('bgm');
+let _extBgmEl = null;
+if (_bgmParam) {
+  _extBgmEl = document.createElement('audio');
+  _extBgmEl.src = _bgmParam;
+  _extBgmEl.loop = true;
+  _extBgmEl.volume = 0.7;
+  document.body.appendChild(_extBgmEl);
+}
+
+let muted=false, audioCtx=null;
+let bgmPlaying=false, bgmGeneration=0;
 
 function getAC(){
-  if(!audioCtx) {
-    audioCtx=new (window.AudioContext||window.webkitAudioContext)();
-    
-    // ★スマホの音量無視を突破するWeb Audio APIルーティングの構築
-    bgmSourceNode = audioCtx.createMediaElementSource(bgmAudio);
-    bgmGainNode = audioCtx.createGain();
-    
-    // MP3音源 ➔ 音量コントローラー ➔ スピーカーへと接続
-    bgmSourceNode.connect(bgmGainNode);
-    bgmGainNode.connect(audioCtx.destination);
-  }
+  if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
   return audioCtx;
 }
 
-// BGM再生
+const C4=261.63,E4=329.63,G4=392.00,A4=440.00,
+      C5=523.25,E5=659.25,G5=783.99,A5=880.00,
+      C3=130.81,G3=196.00,A3=220.00,F3=174.61;
+
+const MELODY_NOTES=[
+  [C5,0.18],[E5,0.18],[G5,0.18],[E5,0.18],
+  [C5,0.18],[G4,0.18],[A4,0.18],[C5,0.18],
+  [E5,0.18],[G5,0.18],[A5,0.18],[G5,0.18],
+  [E5,0.18],[C5,0.18],[G4,0.18],[E4,0.18],
+  [A4,0.18],[C5,0.18],[E5,0.18],[C5,0.18],
+  [A4,0.18],[E4,0.18],[G4,0.18],[A4,0.18],
+  [C5,0.18],[E5,0.18],[G5,0.18],[E5,0.18],
+  [C5,0.36],[G4,0.18],[E4,0.18],
+  [G4,0.18],[C5,0.18],[E5,0.18],[G5,0.18],
+  [E5,0.18],[C5,0.18],[A4,0.18],[G4,0.18],
+  [E4,0.18],[G4,0.18],[A4,0.18],[C5,0.18],
+  [E5,0.36],[G5,0.18],[E5,0.18],
+  [C5,0.18],[A4,0.18],[G4,0.18],[E4,0.18],
+  [G4,0.18],[A4,0.18],[C5,0.18],[E5,0.18],
+  [G5,0.54],[E5,0.18],
+  [C5,0.36],[0,0.18],[0,0.18],
+];
+const BASS_PATTERN=[C3,G3,A3,F3, C3,A3,F3,G3, C3,F3,G3,A3, C3,G3,F3,C3];
+
 function playBGM(){
+  if(_extBgmEl){
+    _extBgmEl.volume = muted ? 0 : 0.7;
+    _extBgmEl.play().catch(()=>{});
+    return;
+  }
   if(muted||bgmPlaying) return;
-  bgmPlaying=true;
-  
-  const ac = getAC();
-  // ★音量1⃣
-  bgmGainNode.gain.setValueAtTime(0.75, ac.currentTime); 
-  
-  bgmAudio.play().catch(e => {
-    console.log("自動再生ブロック:", e);
-    bgmPlaying=false;
-  });
+  bgmPlaying=true; bgmGeneration++;
+  const myGen=bgmGeneration;
+  const ac=getAC();
+
+  function scheduleLoop(startTime){
+    if(!bgmPlaying||bgmGeneration!==myGen) return;
+    let t=startTime;
+    const beatLen=0.18;
+    MELODY_NOTES.forEach(([freq,dur])=>{
+      if(freq===0){t+=dur;return;}
+      const o=ac.createOscillator(),g=ac.createGain();
+      o.type='triangle'; o.frequency.value=freq;
+      g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(0.10,t+0.015);
+      g.gain.setValueAtTime(0.10,t+dur-0.03); g.gain.linearRampToValueAtTime(0,t+dur);
+      o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t+dur+0.01);
+      const o2=ac.createOscillator(),g2=ac.createGain();
+      o2.type='sine'; o2.frequency.value=freq*2;
+      g2.gain.setValueAtTime(0,t); g2.gain.linearRampToValueAtTime(0.03,t+0.01);
+      g2.gain.linearRampToValueAtTime(0,t+dur*0.5);
+      o2.connect(g2); g2.connect(ac.destination); o2.start(t); o2.stop(t+dur+0.01);
+      t+=dur;
+    });
+    let bt=startTime;
+    BASS_PATTERN.forEach(freq=>{
+      const ob=ac.createOscillator(),gb=ac.createGain();
+      ob.type='sine'; ob.frequency.value=freq;
+      gb.gain.setValueAtTime(0,bt); gb.gain.linearRampToValueAtTime(0.07,bt+0.02);
+      gb.gain.exponentialRampToValueAtTime(0.001,bt+beatLen*4-0.02);
+      ob.connect(gb); gb.connect(ac.destination); ob.start(bt); ob.stop(bt+beatLen*4);
+      bt+=beatLen*4;
+    });
+    const totalDur=MELODY_NOTES.reduce((s,[,d])=>s+d,0);
+    for(let i=0;i<Math.floor(totalDur/beatLen);i++){
+      const ht=startTime+i*beatLen;
+      scheduleNoise(ac,ht,0.04,4000,0.025);
+      if(i%2===0) scheduleKick(ac,ht);
+    }
+    setTimeout(()=>{
+      if(bgmPlaying&&bgmGeneration===myGen) scheduleLoop(ac.currentTime+0.05);
+    }, totalDur*1000-80);
+  }
+  scheduleLoop(ac.currentTime+0.05);
 }
 
-// BGM停止
+function scheduleNoise(ac,t,dur,freq,vol){
+  try{
+    const bufSize=Math.floor(ac.sampleRate*dur);
+    const buf=ac.createBuffer(1,bufSize,ac.sampleRate);
+    const d=buf.getChannelData(0);
+    for(let i=0;i<bufSize;i++) d[i]=(Math.random()*2-1);
+    const src=ac.createBufferSource(); src.buffer=buf;
+    const filt=ac.createBiquadFilter(); filt.type='highpass'; filt.frequency.value=freq;
+    const g=ac.createGain(); g.gain.setValueAtTime(vol,t); g.gain.exponentialRampToValueAtTime(0.001,t+dur);
+    src.connect(filt); filt.connect(g); g.connect(ac.destination); src.start(t); src.stop(t+dur+0.01);
+  }catch(e){}
+}
+function scheduleKick(ac,t){
+  try{
+    const o=ac.createOscillator(),g=ac.createGain();
+    o.type='sine'; o.frequency.setValueAtTime(120,t); o.frequency.exponentialRampToValueAtTime(40,t+0.08);
+    g.gain.setValueAtTime(0.18,t); g.gain.exponentialRampToValueAtTime(0.001,t+0.12);
+    o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t+0.13);
+  }catch(e){}
+}
+
+// ★ stopBGM: AudioContext ごと閉じて完全リセット
+//   suspend() だけでは「再開時に古いスケジュール済みノードが復活」する問題が残るため
+//   close() して audioCtx を null に戻す。次の再生時に新しい AC を作る。
 function stopBGM(){
-  bgmPlaying=false;
-  bgmAudio.pause();
-  bgmAudio.currentTime = 0;
+  if(_extBgmEl){
+    _extBgmEl.pause();
+    _extBgmEl.currentTime=0;
+    return;
+  }
+  bgmPlaying=false; bgmGeneration++;
+  if(audioCtx){
+    try{ audioCtx.close(); }catch(e){}
+    audioCtx=null;
+  }
 }
 
-// 自作シンセ効果音（BGMとは独立してクリアに鳴り響きます）
 function beep(freq,dur,type='sine',vol=0.18){
   if(muted) return;
   try{
@@ -162,7 +246,6 @@ function beep(freq,dur,type='sine',vol=0.18){
     o.start(); o.stop(ac.currentTime+dur);
   }catch(e){}
 }
-
 function sfxJump(){ beep(520,0.08,'sine',0.13); setTimeout(()=>beep(660,0.07,'sine',0.10),50); }
 function sfxLand(){ beep(600,0.07,'triangle',0.18); setTimeout(()=>beep(760,0.07,'triangle',0.13),55); }
 function sfxHit(){
@@ -180,18 +263,16 @@ function sfxMiss(){
   setTimeout(()=>beep(280,0.15,'triangle',0.12),100);
 }
 
-// ミュート切り替えボタンと★音量2⃣
+// ★ toggleMute: AudioContext の suspend/resume で確実に制御
 function toggleMute(){
   muted=!muted;
   document.getElementById('muteBtn').textContent=muted?'🔇':'🔊';
   if(muted){
-    if(bgmGainNode) bgmGainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-    stopBGM();
+    if(_extBgmEl) _extBgmEl.volume=0;
+    else stopBGM();   // AudioContext ごと閉じて完全停止
   } else {
-    if(state==='playing') {
-      playBGM();
-      if(bgmGainNode) bgmGainNode.gain.setValueAtTime(0.75, audioCtx.currentTime);
-    }
+    if(_extBgmEl){ _extBgmEl.volume=0.7; }
+    else if(state==='playing') playBGM();   // 新しい AC で再生
   }
 }
 
@@ -228,7 +309,7 @@ const princess={
   x:GW/2, y:0, vy:0, vx:0,
   onGround:false, standingOn:null,
   jumpCooldown:0, dead:false,
-  sad:false,
+  sad:false,   // ★ ゲームオーバー時の悲しい表情フラグ
 
   reset(){
     const base=platform[platform.length-1];
@@ -245,10 +326,12 @@ const princess={
     sfxJump(); return true;
   },
 
+  // 物理 + 積み済みスタックへの着地
   update(){
     if(this.jumpCooldown>0) this.jumpCooldown--;
     if(!this.onGround){
       this.vy+=GRAVITY; this.y+=this.vy; this.x+=this.vx; this.vx*=0.94;
+      // 下降中のみ着地チェック
       if(this.vy>0){
         const feet=this.y+PH, prevFeet=feet-this.vy, half=PW*0.45;
         for(let i=platform.length-1;i>=0;i--){
@@ -316,35 +399,44 @@ const princess={
     ctx.restore();
 
     if(sad){
+      // 頬
       ctx.save(); ctx.fillStyle='rgba(255,100,120,0.3)';
       ctx.beginPath(); ctx.ellipse(px+pw*0.25,py+ph*0.22,pw*0.12,ph*0.04,0,0,Math.PI*2); ctx.fill(); ctx.restore();
       ctx.save(); ctx.fillStyle='rgba(255,100,120,0.3)';
       ctx.beginPath(); ctx.ellipse(px+pw*0.75,py+ph*0.22,pw*0.12,ph*0.04,0,0,Math.PI*2); ctx.fill(); ctx.restore();
+      // 左目
       ctx.save(); ctx.fillStyle='#2040a0';
       ctx.translate(px+pw*0.38,py+ph*0.15); ctx.rotate(-0.4);
       ctx.beginPath(); ctx.ellipse(0,0,pw*0.07,ph*0.05,0,0,Math.PI*2); ctx.fill(); ctx.restore();
+      // 右目
       ctx.save(); ctx.fillStyle='#2040a0';
       ctx.translate(px+pw*0.62,py+ph*0.15); ctx.rotate(0.4);
       ctx.beginPath(); ctx.ellipse(0,0,pw*0.07,ph*0.05,0,0,Math.PI*2); ctx.fill(); ctx.restore();
+      // ハイライト
       ctx.save(); ctx.fillStyle='white';
       ctx.beginPath(); ctx.arc(px+pw*0.40,py+ph*0.13,pw*0.022,0,Math.PI*2); ctx.fill(); ctx.restore();
       ctx.save(); ctx.fillStyle='white';
       ctx.beginPath(); ctx.arc(px+pw*0.64,py+ph*0.13,pw*0.022,0,Math.PI*2); ctx.fill(); ctx.restore();
+      // への字口
       ctx.save(); ctx.strokeStyle='#cc6680'; ctx.lineWidth=sx(1.2);
       ctx.beginPath(); ctx.arc(px+pw*0.5,py+ph*0.28,pw*0.09,Math.PI+0.3,Math.PI*2-0.3); ctx.stroke(); ctx.restore();
     } else {
+      // 頬
       ctx.save(); ctx.fillStyle='rgba(255,160,180,0.4)';
       ctx.beginPath(); ctx.ellipse(px+pw*0.28,py+ph*0.2,pw*0.1,ph*0.035,0,0,Math.PI*2); ctx.fill(); ctx.restore();
       ctx.save(); ctx.fillStyle='rgba(255,160,180,0.4)';
       ctx.beginPath(); ctx.ellipse(px+pw*0.72,py+ph*0.2,pw*0.1,ph*0.035,0,0,Math.PI*2); ctx.fill(); ctx.restore();
+      // 目
       ctx.save(); ctx.fillStyle='#2040a0';
       ctx.beginPath(); ctx.ellipse(px+pw*0.38,py+ph*0.15,pw*0.07,ph*0.055,0,0,Math.PI*2); ctx.fill(); ctx.restore();
       ctx.save(); ctx.fillStyle='#2040a0';
       ctx.beginPath(); ctx.ellipse(px+pw*0.62,py+ph*0.15,pw*0.07,ph*0.055,0,0,Math.PI*2); ctx.fill(); ctx.restore();
+      // ハイライト
       ctx.save(); ctx.fillStyle='white';
       ctx.beginPath(); ctx.arc(px+pw*0.4,py+ph*0.14,pw*0.025,0,Math.PI*2); ctx.fill(); ctx.restore();
       ctx.save(); ctx.fillStyle='white';
       ctx.beginPath(); ctx.arc(px+pw*0.64,py+ph*0.14,pw*0.025,0,Math.PI*2); ctx.fill(); ctx.restore();
+      // 口
       ctx.save(); ctx.strokeStyle='#cc6680'; ctx.lineWidth=sx(1);
       ctx.beginPath(); ctx.arc(px+pw*0.5,py+ph*0.2,pw*0.09,0.2,Math.PI-0.2); ctx.stroke(); ctx.restore();
     }
@@ -373,6 +465,7 @@ const princess={
 
     // 王冠
     const crx=px+pw*0.5, cry=py-ph*0.04, crw=pw*0.44, crTop=ph*0.1;
+    // 本体
     ctx.save(); ctx.fillStyle='#ffd700';
     if(sad){ ctx.translate(crx,cry); ctx.rotate(0.35); ctx.translate(-crx,-cry); }
     ctx.beginPath();
@@ -381,6 +474,7 @@ const princess={
     ctx.lineTo(crx+crw/6,cry-crTop*0.5); ctx.lineTo(crx+crw/2,cry-crTop);
     ctx.lineTo(crx+crw/2,cry); ctx.closePath(); ctx.fill();
     ctx.restore();
+    // 輪郭
     ctx.save(); ctx.strokeStyle='#cc9900'; ctx.lineWidth=sx(0.5);
     if(sad){ ctx.translate(crx,cry); ctx.rotate(0.35); ctx.translate(-crx,-cry); }
     ctx.beginPath();
@@ -389,10 +483,10 @@ const princess={
     ctx.lineTo(crx+crw/6,cry-crTop*0.5); ctx.lineTo(crx+crw/2,cry-crTop);
     ctx.lineTo(crx+crw/2,cry); ctx.closePath(); ctx.stroke();
     ctx.restore();
+    // 宝石
     ctx.save(); ctx.fillStyle='#ff88cc';
     if(sad){ ctx.translate(crx,cry); ctx.rotate(0.35); ctx.translate(-crx,-cry); }
-    ctx.beginPath();
-    ctx.arc(crx,cry-crTop*1.1,sx(2),0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(crx,cry-crTop*1.1,sx(2),0,Math.PI*2); ctx.fill();
     ctx.restore();
   }
 };
@@ -413,7 +507,7 @@ function drawSweet(p,camY){
   ctx.beginPath(); ctx.moveTo(bx+sx(4),by+bh*0.55); ctx.lineTo(bx+bw-sx(4),by+bh*0.55); ctx.stroke();
   ctx.font=`${sy(22)}px serif`; ctx.textAlign='center'; ctx.textBaseline='middle';
   ctx.fillText(p.type.emoji,bx+bw/2,by+bh*0.62);
-  ctx.beginPath();
+  ctx.beginPath(); // パスをクリアして次の描画に影響させない
   ctx.restore();
 }
 
@@ -434,6 +528,7 @@ function drawCastle(camY){
     ctx.fillRect(x-w/2,baseY-h,w,h);
     const mw=tw/6;
     for(let i=0;i<3;i++) ctx.fillRect(x-tw/2+i*mw*2,baseY-h-th,mw,th);
+    // 窓：シンプルな長方形（arcを使わない）
     const wr=w*0.16, wh=w*0.28;
     ctx.fillStyle='rgba(100,150,200,0.5)';
     ctx.fillRect(x-wr, baseY-h*0.62, wr*2, wh);
@@ -551,22 +646,32 @@ function checkOffsetGameover(newX,newW){
 
 // ══════════════════════════════════════
 //  横衝突チェック
+//  incoming ケーキが胴体に当たったか判定。
+//  「上から乗る」との分離:
+//    下降中 かつ 足元がまだスイーツ上面より上 → 着地ロジックに任せる
+//    それ以外の重なりはすべて横衝突
 // ══════════════════════════════════════
 function checkSideCollision(){
   if(!incoming || incoming.landed) return false;
 
+  // プリンセス胴体のAABB（王冠・スカート裾を除いた胴体中心部）
   const pLeft  = princess.x - PW * 0.45;
   const pRight = princess.x + PW * 0.45;
-  const pTop   = princess.y + PH * 0.05;
-  const pBot   = princess.y + PH * 0.95;
+  const pTop   = princess.y + PH * 0.05;   // 頭の上部
+  const pBot   = princess.y + PH * 0.95;   // 足元ほぼ全体
 
   const sl=incoming.x, sr=incoming.x+incoming.w;
   const st=incoming.y;
 
+  // 横に重なっていない
   if(pRight<=sl || pLeft>=sr) return false;
+  // 縦に重なっていない
   if(pBot<=st || pTop>=st+SWEET_H) return false;
+
+  // 重なっている → 下降中で足元がまだスイーツ上面より上なら着地扱いにする
   if(princess.vy > 0 && princess.y+PH <= st+4) return false;
 
+  // それ以外はすべて衝突
   return true;
 }
 
@@ -574,21 +679,16 @@ function checkSideCollision(){
 //  更新
 // ══════════════════════════════════════
 function update(){
-  if(state!=='playing' && state!=='gameover') return;
-
-  // ゲームオーバー中もパーティクルの更新（裏での移動・消滅）だけは止めずに実行
-  if(state==='gameover'){
-    updateParticles();
-    return;
-  }
-
+  if(state!=='playing') return;
   frame++;
 
+  // incoming を動かす
   if(!incoming){
     incomingTimer++;
     if(incomingTimer>=INCOMING_DELAY){ incomingTimer=0; spawnIncoming(); }
   } else {
     incoming.x+=incoming.vx;
+    // 通り過ぎたらゲームオーバー
     const passedLeft  = incoming.slideDir>0 && incoming.x+incoming.w<0;
     const passedRight = incoming.slideDir<0 && incoming.x>GW;
     if(passedLeft||passedRight){
@@ -598,6 +698,7 @@ function update(){
       triggerGameover(); return;
     }
 
+    // ★ 衝突チェックはincomingを動かした直後・物理更新の前に行う
     if(checkSideCollision()){
       gameoverReason='💥 ケーキにぶつかった！';
       sfxHit();
@@ -606,8 +707,10 @@ function update(){
     }
   }
 
+  // 物理 + 積み済みスタックへの着地
   princess.update();
 
+  // incoming への着地
   if(!princess.onGround && princess.vy>0 && incoming && !incoming.landed){
     const feet=princess.y+PH, prevFeet=feet-princess.vy, half=PW*0.45;
     if(
@@ -632,6 +735,7 @@ function update(){
     }
   }
 
+  // カメラ
   const targetCamY=princess.y-GH*0.55;
   if(targetCamY<cameraY) cameraY+=(targetCamY-cameraY)*0.08;
 
@@ -642,10 +746,11 @@ function update(){
   updateParticles();
 }
 
+// ★ triggerGameover: 即座に sad フラグを立てて描画に反映、オーバーレイは少し後
 function triggerGameover(){
   if(state==='gameover') return;
   state='gameover';
-  princess.sad=true;
+  princess.sad=true;    // ← 即座に悲しい表情
   stopBGM(); sfxOver();
   setTimeout(()=>showOverlay('gameover'), 900);
 }
@@ -654,7 +759,7 @@ function triggerGameover(){
 //  描画
 // ══════════════════════════════════════
 function draw(){
-  ctx.beginPath();
+  ctx.beginPath(); // フレーム開始時に必ずパスをリセット
   const camY=cameraY;
   drawBackground(camY); drawSnow();
   for(let i=0;i<platform.length;i++){
@@ -709,7 +814,7 @@ function startGame(){
   score=0; frame=0; particles=[]; incoming=null; incomingTimer=0;
   nextDir=(Math.random()>0.5)?1:-1; cameraY=0; gameoverReason='';
   initPlatforms(); princess.reset(); updateHUD(); state='playing';
-  playBGM();
+  stopBGM(); playBGM();
 }
 
 // ══════════════════════════════════════
