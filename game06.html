@@ -573,6 +573,8 @@ function renderMonthlyGrid(nichikan, startYear, startMonth) {
   const nowYear   = nowDate.getFullYear();
   const nowMonth  = nowDate.getMonth() + 1;
 
+  _shareMonthlyData = []; // リセット
+
   for (let i = 0; i < 12; i++) {
     let y = startYear;
     let m = startMonth + i;
@@ -582,6 +584,9 @@ function renderMonthlyGrid(nichikan, startYear, startMonth) {
     const mJi     = getMonthJiForYearMonth(y, m);
     const fortune = getMonthlyFortune(nichikan, mKan);
     const isCurrent = (y === nowYear && m === nowMonth);
+
+    // シェア用データ保存
+    _shareMonthlyData.push({ y, m, mKan, mJi, fortune, isCurrent });
 
     const row = document.createElement('div');
     let cls = 'monthly-row';
@@ -1165,98 +1170,90 @@ function updateBgmBtn(){
 
 // ── シェア画像生成 ──
 let _shareNichikan='', _shareMainGogyo='', _shareGogyoScore={}, _sharePillars=[];
+let _shareMonthlyData=[]; // 月運データ保存用
 
 function generateShareImage(){
   const canvas=document.getElementById('shareCanvas');
-  const W=900,H=700;
+  const W=900, H=100+_shareMonthlyData.length*62+80;
   canvas.width=W; canvas.height=H;
   const ctx=canvas.getContext('2d');
 
   // 背景
   const bg=ctx.createLinearGradient(0,0,W,H);
-  bg.addColorStop(0,'#06060e');
-  bg.addColorStop(1,'#0c0c1a');
-  ctx.fillStyle=bg;
-  ctx.fillRect(0,0,W,H);
+  bg.addColorStop(0,'#06060e'); bg.addColorStop(1,'#0c0c1a');
+  ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
 
   // 上部ゴールドライン
-  ctx.fillStyle='#c8a84b';
-  ctx.fillRect(0,0,W,4);
-
-  // 背景の装飾
-  ctx.fillStyle='rgba(200,168,75,0.04)';
-  ctx.font='20px serif';
-  ['☯','✦','☯','✦','☯','✦'].forEach((s,i)=>{
-    ctx.fillText(s,(i*170)+40,60);
-  });
+  ctx.fillStyle='#c8a84b'; ctx.fillRect(0,0,W,4);
 
   // タイトル
   ctx.fillStyle='#c8a84b';
-  ctx.font='bold 14px Helvetica Neue,Arial,sans-serif';
+  ctx.font='bold 15px Helvetica Neue,Arial,sans-serif';
   ctx.textAlign='center';
-  ctx.letterSpacing='8px';
-  ctx.fillText('四柱推命うらない', W/2, 50);
+  ctx.fillText('月ごとの運勢カレンダー', W/2, 36);
+  ctx.fillStyle='#605848';
+  ctx.font='12px Helvetica Neue,Arial,sans-serif';
+  ctx.fillText(`あなたの星：${_shareNichikan}（${_shareMainGogyo}のエネルギー）`, W/2, 58);
 
-  // 命式4柱
-  const cols=[{l:'年柱',i:0},{l:'月柱',i:1},{l:'日柱',i:2},{l:'時柱',i:3}];
-  const colW=180, startX=(W-colW*4)/2;
-  cols.forEach((col,ci)=>{
-    const p=_sharePillars[col.i];
-    const x=startX+ci*colW+colW/2;
-    const isNichi=col.i===2;
-    // カード背景
-    roundRectS(ctx,startX+ci*colW+10,75,colW-20,160,6,isNichi?'rgba(200,168,75,0.08)':'rgba(255,255,255,0.03)',isNichi?'#c8a84b':'#3a3460',isNichi?1.5:0.5);
-    // 柱ラベル
-    ctx.fillStyle='#605848';
-    ctx.font='11px Helvetica Neue,Arial,sans-serif';
-    ctx.textAlign='center';
-    ctx.fillText(col.l,x,100);
-    // 天干
-    ctx.fillStyle=isNichi?'#f5e0a0':'#c8a84b';
-    ctx.font='bold 44px Helvetica Neue,Arial,sans-serif';
-    ctx.fillText(p&&p.kan!==null?KAN[p.kan]:'—',x,158);
-    // 地支
-    ctx.fillStyle=isNichi?'#e8e0c8':'#a09878';
-    ctx.font='bold 38px Helvetica Neue,Arial,sans-serif';
-    ctx.fillText(p&&p.ji!==null?JI[p.ji]:'—',x,210);
-  });
+  // 区切り
+  ctx.strokeStyle='rgba(200,168,75,0.2)'; ctx.lineWidth=0.5;
+  ctx.beginPath(); ctx.moveTo(60,70); ctx.lineTo(W-60,70); ctx.stroke();
 
-  // 区切り線
-  ctx.strokeStyle='rgba(200,168,75,0.2)';
-  ctx.lineWidth=0.5;
-  ctx.beginPath(); ctx.moveTo(60,255); ctx.lineTo(W-60,255); ctx.stroke();
+  // 月ごとの行
+  _shareMonthlyData.forEach((d, i)=>{
+    const y=86+i*62;
+    const {fortune, isCurrent, mKan, mJi} = d;
 
-  // 日主タグ
-  ctx.fillStyle='#a09878';
-  ctx.font='13px Helvetica Neue,Arial,sans-serif';
-  ctx.textAlign='center';
-  ctx.fillText(`あなたの星：${_shareNichikan}　${_shareMainGogyo}のエネルギー`,W/2,285);
+    // 行背景
+    const rowBg = isCurrent ? 'rgba(200,168,75,0.1)' :
+                  fortune.level==='good' ? 'rgba(68,170,102,0.07)' :
+                  fortune.level==='caution' ? 'rgba(204,68,68,0.07)' :
+                  'rgba(255,255,255,0.02)';
+    const rowBorder = isCurrent ? '#c8a84b' :
+                      fortune.level==='good' ? '#44aa66' :
+                      fortune.level==='caution' ? '#cc4444' : '#252535';
+    roundRectS(ctx, 40, y, W-80, 52, 4, rowBg, rowBorder, isCurrent?1.5:0.5);
 
-  // 五行バー
-  const gogyoEntries=[['木','#44aa66'],['火','#cc4433'],['土','#aa8833'],['金','#aaaaaa'],['水','#3366cc']];
-  const total=Object.values(_shareGogyoScore).reduce((a,b)=>a+b,0)||1;
-  const barX=80, barW=W-160, barH=16, barGap=48;
-  gogyoEntries.forEach(([g,color],i)=>{
-    const y=320+i*barGap;
-    const pct=(_shareGogyoScore[g]||0)/total;
-    ctx.fillStyle='rgba(255,255,255,0.05)';
-    roundRectS(ctx,barX,y,barW,barH,4,'rgba(255,255,255,0.05)');
-    if(pct>0) roundRectS(ctx,barX,y,barW*pct,barH,4,color);
-    ctx.fillStyle=color;
-    ctx.font='12px Helvetica Neue,Arial,sans-serif';
+    // 年月ラベル
+    ctx.fillStyle = isCurrent ? '#c8a84b' : '#605848';
+    ctx.font = `${isCurrent?'bold ':''  }12px Helvetica Neue,Arial,sans-serif`;
     ctx.textAlign='left';
-    ctx.fillText(g,barX-24,y+12);
-    ctx.fillStyle='#605848';
-    ctx.textAlign='right';
-    ctx.fillText(Math.round(pct*100)+'%',barX+barW+30,y+12);
+    ctx.fillText(`${isCurrent?'▶ ':''}${d.y}年${d.m}月${isCurrent?'（今月）':''}`, 60, y+20);
+
+    // 天干・地支
+    ctx.fillStyle='#c8a84b';
+    ctx.font='bold 22px Helvetica Neue,Arial,sans-serif';
+    ctx.fillText(KAN[mKan], 220, y+34);
+    ctx.fillStyle='#a09878';
+    ctx.fillText(JI[mJi], 248, y+34);
+
+    // 運勢テキスト
+    ctx.fillStyle='#a09878';
+    ctx.font='12px Helvetica Neue,Arial,sans-serif';
+    ctx.fillText(fortune.short, 290, y+20);
+    ctx.fillStyle = fortune.level==='caution' ? '#cc4444' :
+                    fortune.level==='good' ? '#44aa66' : '#605848';
+    ctx.font='11px Helvetica Neue,Arial,sans-serif';
+    ctx.fillText(fortune.level==='caution' ? '⚠ '+fortune.caution : '◎ '+fortune.good, 290, y+40);
+
+    // バッジ
+    const badgeText = fortune.level==='good' ? '運気アップ' :
+                      fortune.level==='caution' ? '注意' : 'ふつう';
+    const badgeColor = fortune.level==='good' ? '#44aa66' :
+                       fortune.level==='caution' ? '#cc4444' : '#3a3460';
+    roundRectS(ctx, W-160, y+12, 110, 26, 4, badgeColor+'22', badgeColor, 0.5);
+    ctx.fillStyle=badgeColor;
+    ctx.font='bold 11px Helvetica Neue,Arial,sans-serif';
+    ctx.textAlign='center';
+    ctx.fillText(badgeText, W-105, y+30);
   });
 
   // 下部タグ
-  roundRectS(ctx,60,H-70,W-120,44,4,'rgba(200,168,75,0.06)','rgba(200,168,75,0.2)',0.5);
+  roundRectS(ctx,60,H-66,W-120,44,4,'rgba(200,168,75,0.06)','rgba(200,168,75,0.2)',0.5);
   ctx.fillStyle='#c8a84b';
   ctx.font='13px Helvetica Neue,Arial,sans-serif';
   ctx.textAlign='center';
-  ctx.fillText('四柱推命うらない  hikapero.github.io/HIKARI/',W/2,H-42);
+  ctx.fillText('四柱推命うらない  hikapero.github.io/HIKARI/',W/2,H-38);
 
   // プレビュー表示
   const img=document.getElementById('sharePreview');
