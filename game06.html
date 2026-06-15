@@ -271,11 +271,13 @@ body>*{position:relative;z-index:1;}
     <img id="sharePreview" style="width:100%;border-radius:4px;display:none;margin-bottom:14px;" alt="結果カード">
     <div style="display:flex;flex-direction:column;gap:10px;">
       <button class="btn-calc" id="btnGenImg" onclick="generateShareImage()">✦ 結果カードを画像にする</button>
-      <button id="btnNativeShare" onclick="nativeShare()" style="display:none;width:100%;padding:14px;border-radius:3px;border:0.5px solid var(--gold);background:transparent;color:var(--gold2);font-size:12px;letter-spacing:3px;cursor:pointer;font-family:inherit;">📤 画像をシェアする</button>
-      <div id="pcShareWrap" style="display:none;flex-direction:column;gap:8px;">
-        <div style="font-size:11px;color:var(--text2);background:rgba(200,168,75,0.06);border:0.5px solid var(--border2);border-radius:3px;padding:10px 14px;line-height:1.7;">📎 画像を保存してから、Xの投稿画面で添付してね！</div>
+      <!-- スマホ：Web Share API -->
+      <button id="btnNativeShare" onclick="nativeShare()" style="display:none;width:100%;padding:14px;border-radius:3px;border:0.5px solid var(--gold);background:transparent;color:var(--gold2);font-size:12px;letter-spacing:3px;cursor:pointer;font-family:inherit;">📤 画像をシェアする（Xなど）</button>
+      <!-- 共通：保存＋Xポスト -->
+      <div id="shareButtons" style="display:none;flex-direction:column;gap:8px;">
         <button onclick="downloadImage()" style="width:100%;padding:12px;border-radius:3px;border:0.5px solid var(--teal);background:transparent;color:var(--teal);font-size:12px;letter-spacing:2px;cursor:pointer;font-family:inherit;">⬇️ 画像を保存する</button>
         <button onclick="shareToX()" style="width:100%;padding:12px;border-radius:3px;border:none;background:#000;color:#fff;font-size:12px;letter-spacing:2px;cursor:pointer;font-family:inherit;">✕ Xにポストする</button>
+        <div style="font-size:10px;color:var(--text3);text-align:center;line-height:1.6;">💡 スマホの場合は画像を保存してからXの投稿画面で添付してね</div>
       </div>
     </div>
   </div>
@@ -1034,7 +1036,7 @@ function render(dateVal) {
   // シェアカードリセット
   document.getElementById('sharePreview').style.display='none';
   document.getElementById('btnNativeShare').style.display='none';
-  document.getElementById('pcShareWrap').style.display='none';
+  document.getElementById('shareButtons').style.display='none';
   document.getElementById('btnGenImg').textContent='✦ 結果カードを画像にする';
 
   show('screenResult');
@@ -1263,7 +1265,7 @@ function generateShareImage(){
 
   const canNative=!!navigator.share&&!!navigator.canShare;
   document.getElementById('btnNativeShare').style.display=canNative?'block':'none';
-  document.getElementById('pcShareWrap').style.display=canNative?'none':'flex';
+  document.getElementById('shareButtons').style.display='flex';
   document.getElementById('btnGenImg').textContent='🔄 画像を作り直す';
 }
 
