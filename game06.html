@@ -151,11 +151,21 @@ body>*{position:relative;z-index:1;}
 .ai-regen{margin-top:14px;width:100%;padding:10px;border:0.5px solid var(--border2);border-radius:3px;background:transparent;color:var(--text2);font-size:11px;letter-spacing:2px;cursor:pointer;font-family:inherit;transition:border-color .2s,color .2s;}
 .ai-regen:hover{border-color:var(--gold);color:var(--gold2);}
 
+/* BGM */
+(function(){
+  const p=new URLSearchParams(location.search),u=p.get('bgm');
+  if(!u)return;
+  const a=new Audio(u);a.loop=true;a.volume=0.4;
+  document.querySelector('.btn-calc').addEventListener('click',()=>a.play().catch(()=>{}),{once:true});
+})();
 </style>
 </head>
 <body>
 <div class="wrap">
 
+<div style="position:fixed;top:12px;right:16px;z-index:100;">
+  <button id="bgmToggle" onclick="toggleBgm()" style="display:none;background:rgba(12,12,26,0.85);border:0.5px solid #3a3460;border-radius:20px;color:#a09878;font-size:11px;letter-spacing:1px;padding:6px 14px;cursor:pointer;font-family:inherit;backdrop-filter:blur(8px);">🔊 BGM ON</button>
+</div>
 <div class="site-header">
   <span class="header-symbol">☯</span>
   <div class="header-title">四柱推命うらない</div>
@@ -252,6 +262,21 @@ body>*{position:relative;z-index:1;}
         あなたの生年月日をもとに、今月だけのアドバイスをAIが考えてくれるよ！
       </div>
       <button class="btn-calc" id="btnAiAdvice" onclick="generateAiAdvice()">✦ AIにアドバイスを聞く</button>
+    </div>
+  </div>
+
+  <div class="card" id="shareCard">
+    <div class="card-label">📸 結果をシェアしよう</div>
+    <canvas id="shareCanvas" style="display:none;"></canvas>
+    <img id="sharePreview" style="width:100%;border-radius:4px;display:none;margin-bottom:14px;" alt="結果カード">
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <button class="btn-calc" id="btnGenImg" onclick="generateShareImage()">✦ 結果カードを画像にする</button>
+      <button id="btnNativeShare" onclick="nativeShare()" style="display:none;width:100%;padding:14px;border-radius:3px;border:0.5px solid var(--gold);background:transparent;color:var(--gold2);font-size:12px;letter-spacing:3px;cursor:pointer;font-family:inherit;">📤 画像をシェアする</button>
+      <div id="pcShareWrap" style="display:none;flex-direction:column;gap:8px;">
+        <div style="font-size:11px;color:var(--text2);background:rgba(200,168,75,0.06);border:0.5px solid var(--border2);border-radius:3px;padding:10px 14px;line-height:1.7;">📎 画像を保存してから、Xの投稿画面で添付してね！</div>
+        <button onclick="downloadImage()" style="width:100%;padding:12px;border-radius:3px;border:0.5px solid var(--teal);background:transparent;color:var(--teal);font-size:12px;letter-spacing:2px;cursor:pointer;font-family:inherit;">⬇️ 画像を保存する</button>
+        <button onclick="shareToX()" style="width:100%;padding:12px;border-radius:3px;border:none;background:#000;color:#fff;font-size:12px;letter-spacing:2px;cursor:pointer;font-family:inherit;">✕ Xにポストする</button>
+      </div>
     </div>
   </div>
 
@@ -1001,6 +1026,17 @@ function render(dateVal) {
     </div>
     <button class="btn-calc" id="btnAiAdvice" onclick="generateAiAdvice()">✦ AIにアドバイスを聞く</button>`;
 
+  // シェア用データ保存
+  _shareNichikan = KAN[dKan];
+  _shareMainGogyo = mainGogyo;
+  _shareGogyoScore = {...gogyoScore};
+  _sharePillars = pillars;
+  // シェアカードリセット
+  document.getElementById('sharePreview').style.display='none';
+  document.getElementById('btnNativeShare').style.display='none';
+  document.getElementById('pcShareWrap').style.display='none';
+  document.getElementById('btnGenImg').textContent='✦ 結果カードを画像にする';
+
   show('screenResult');
 }
 
@@ -1086,13 +1122,188 @@ function reset() {
   show('screenInput');
 }
 
-// BGM対応
+// ── BGM制御 ──
+let _bgmAudio = null;
+let _bgmPlaying = false;
 (function(){
   const p=new URLSearchParams(location.search),u=p.get('bgm');
   if(!u)return;
-  const a=new Audio(u);a.loop=true;a.volume=0.4;
-  document.querySelector('.btn-calc').addEventListener('click',()=>a.play().catch(()=>{}),{once:true});
+  _bgmAudio = new Audio(u);
+  _bgmAudio.loop=true;
+  _bgmAudio.volume=0.4;
+  // 最初のボタン操作で再生開始
+  document.querySelector('.btn-calc').addEventListener('click',()=>{
+    _bgmAudio.play().then(()=>{
+      _bgmPlaying=true;
+      updateBgmBtn();
+    }).catch(()=>{});
+  },{once:true});
+  const btn=document.getElementById('bgmToggle');
+  if(btn)btn.style.display='block';
 })();
+
+function toggleBgm(){
+  if(!_bgmAudio)return;
+  if(_bgmPlaying){
+    _bgmAudio.pause();
+    _bgmPlaying=false;
+  } else {
+    _bgmAudio.play().catch(()=>{});
+    _bgmPlaying=true;
+  }
+  updateBgmBtn();
+}
+function updateBgmBtn(){
+  const btn=document.getElementById('bgmToggle');
+  if(!btn)return;
+  btn.textContent=_bgmPlaying?'🔊 BGM ON':'🔇 BGM OFF';
+  btn.style.color=_bgmPlaying?'#c8a84b':'#605848';
+  btn.style.borderColor=_bgmPlaying?'#3a3460':'#252535';
+}
+
+// ── シェア画像生成 ──
+let _shareNichikan='', _shareMainGogyo='', _shareGogyoScore={}, _sharePillars=[];
+
+function generateShareImage(){
+  const canvas=document.getElementById('shareCanvas');
+  const W=900,H=700;
+  canvas.width=W; canvas.height=H;
+  const ctx=canvas.getContext('2d');
+
+  // 背景
+  const bg=ctx.createLinearGradient(0,0,W,H);
+  bg.addColorStop(0,'#06060e');
+  bg.addColorStop(1,'#0c0c1a');
+  ctx.fillStyle=bg;
+  ctx.fillRect(0,0,W,H);
+
+  // 上部ゴールドライン
+  ctx.fillStyle='#c8a84b';
+  ctx.fillRect(0,0,W,4);
+
+  // 背景の装飾
+  ctx.fillStyle='rgba(200,168,75,0.04)';
+  ctx.font='20px serif';
+  ['☯','✦','☯','✦','☯','✦'].forEach((s,i)=>{
+    ctx.fillText(s,(i*170)+40,60);
+  });
+
+  // タイトル
+  ctx.fillStyle='#c8a84b';
+  ctx.font='bold 14px Helvetica Neue,Arial,sans-serif';
+  ctx.textAlign='center';
+  ctx.letterSpacing='8px';
+  ctx.fillText('四柱推命うらない', W/2, 50);
+
+  // 命式4柱
+  const cols=[{l:'年柱',i:0},{l:'月柱',i:1},{l:'日柱',i:2},{l:'時柱',i:3}];
+  const colW=180, startX=(W-colW*4)/2;
+  cols.forEach((col,ci)=>{
+    const p=_sharePillars[col.i];
+    const x=startX+ci*colW+colW/2;
+    const isNichi=col.i===2;
+    // カード背景
+    roundRectS(ctx,startX+ci*colW+10,75,colW-20,160,6,isNichi?'rgba(200,168,75,0.08)':'rgba(255,255,255,0.03)',isNichi?'#c8a84b':'#3a3460',isNichi?1.5:0.5);
+    // 柱ラベル
+    ctx.fillStyle='#605848';
+    ctx.font='11px Helvetica Neue,Arial,sans-serif';
+    ctx.textAlign='center';
+    ctx.fillText(col.l,x,100);
+    // 天干
+    ctx.fillStyle=isNichi?'#f5e0a0':'#c8a84b';
+    ctx.font='bold 44px Helvetica Neue,Arial,sans-serif';
+    ctx.fillText(p&&p.kan!==null?KAN[p.kan]:'—',x,158);
+    // 地支
+    ctx.fillStyle=isNichi?'#e8e0c8':'#a09878';
+    ctx.font='bold 38px Helvetica Neue,Arial,sans-serif';
+    ctx.fillText(p&&p.ji!==null?JI[p.ji]:'—',x,210);
+  });
+
+  // 区切り線
+  ctx.strokeStyle='rgba(200,168,75,0.2)';
+  ctx.lineWidth=0.5;
+  ctx.beginPath(); ctx.moveTo(60,255); ctx.lineTo(W-60,255); ctx.stroke();
+
+  // 日主タグ
+  ctx.fillStyle='#a09878';
+  ctx.font='13px Helvetica Neue,Arial,sans-serif';
+  ctx.textAlign='center';
+  ctx.fillText(`あなたの星：${_shareNichikan}　${_shareMainGogyo}のエネルギー`,W/2,285);
+
+  // 五行バー
+  const gogyoEntries=[['木','#44aa66'],['火','#cc4433'],['土','#aa8833'],['金','#aaaaaa'],['水','#3366cc']];
+  const total=Object.values(_shareGogyoScore).reduce((a,b)=>a+b,0)||1;
+  const barX=80, barW=W-160, barH=16, barGap=48;
+  gogyoEntries.forEach(([g,color],i)=>{
+    const y=320+i*barGap;
+    const pct=(_shareGogyoScore[g]||0)/total;
+    ctx.fillStyle='rgba(255,255,255,0.05)';
+    roundRectS(ctx,barX,y,barW,barH,4,'rgba(255,255,255,0.05)');
+    if(pct>0) roundRectS(ctx,barX,y,barW*pct,barH,4,color);
+    ctx.fillStyle=color;
+    ctx.font='12px Helvetica Neue,Arial,sans-serif';
+    ctx.textAlign='left';
+    ctx.fillText(g,barX-24,y+12);
+    ctx.fillStyle='#605848';
+    ctx.textAlign='right';
+    ctx.fillText(Math.round(pct*100)+'%',barX+barW+30,y+12);
+  });
+
+  // 下部タグ
+  roundRectS(ctx,60,H-70,W-120,44,4,'rgba(200,168,75,0.06)','rgba(200,168,75,0.2)',0.5);
+  ctx.fillStyle='#c8a84b';
+  ctx.font='13px Helvetica Neue,Arial,sans-serif';
+  ctx.textAlign='center';
+  ctx.fillText('四柱推命うらない  hikapero.github.io/HIKARI/',W/2,H-42);
+
+  // プレビュー表示
+  const img=document.getElementById('sharePreview');
+  img.src=canvas.toDataURL('image/png');
+  img.style.display='block';
+
+  const canNative=!!navigator.share&&!!navigator.canShare;
+  document.getElementById('btnNativeShare').style.display=canNative?'block':'none';
+  document.getElementById('pcShareWrap').style.display=canNative?'none':'flex';
+  document.getElementById('btnGenImg').textContent='🔄 画像を作り直す';
+}
+
+function roundRectS(ctx,x,y,w,h,r,fill,stroke,sw){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+  if(fill){ctx.fillStyle=fill;ctx.fill();}
+  if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=sw||1;ctx.stroke();}
+}
+
+function downloadImage(){
+  const a=document.createElement('a');
+  a.download='shichusuimei.png';
+  a.href=document.getElementById('shareCanvas').toDataURL('image/png');
+  a.click();
+}
+
+async function nativeShare(){
+  const canvas=document.getElementById('shareCanvas');
+  const text=`四柱推命で占ってみたよ！あなたの星は${_shareNichikan}（${_shareMainGogyo}のエネルギー）✨\nHIKARIサイトの PLAYメニュー から試してみてね！\nhttps://hikapero.github.io/HIKARI/\n\n#四柱推命 #うらない`;
+  canvas.toBlob(async(blob)=>{
+    const file=new File([blob],'shichusuimei.png',{type:'image/png'});
+    try{
+      if(navigator.canShare&&navigator.canShare({files:[file]})){
+        await navigator.share({files:[file],text});
+      } else {
+        await navigator.share({text});
+      }
+    }catch(e){if(e.name!=='AbortError')downloadImage();}
+  },'image/png');
+}
+
+function shareToX(){
+  const text=`四柱推命で占ってみたよ！あなたの星は${_shareNichikan}（${_shareMainGogyo}のエネルギー）✨\nHIKARIサイトの PLAYメニュー から試してみてね！\nhttps://hikapero.github.io/HIKARI/\n\n#四柱推命 #うらない`;
+  window.open('https://x.com/intent/tweet?text='+encodeURIComponent(text),'_blank');
+}
 </script>
 </body>
 </html>
