@@ -151,13 +151,6 @@ body>*{position:relative;z-index:1;}
 .ai-regen{margin-top:14px;width:100%;padding:10px;border:0.5px solid var(--border2);border-radius:3px;background:transparent;color:var(--text2);font-size:11px;letter-spacing:2px;cursor:pointer;font-family:inherit;transition:border-color .2s,color .2s;}
 .ai-regen:hover{border-color:var(--gold);color:var(--gold2);}
 
-/* BGM */
-(function(){
-  const p=new URLSearchParams(location.search),u=p.get('bgm');
-  if(!u)return;
-  const a=new Audio(u);a.loop=true;a.volume=0.4;
-  document.querySelector('.btn-calc').addEventListener('click',()=>a.play().catch(()=>{}),{once:true});
-})();
 </style>
 </head>
 <body>
@@ -1024,19 +1017,30 @@ async function generateAiAdvice() {
   const monthJkName = getJukkami(c.dKan, now.monthKan);
   const yearJkName  = getJukkami(c.dKan, now.yearKan);
 
-  const prompt = `四柱推命占い師として、以下の命式の人への今月（${now.year}年${new Date().getMonth()+1}月）のアドバイスを日本語で書いてください。
+  const prompt = `あなたは四柱推命の熟練した占い師です。以下の命式を持つ人に対して、今月（${now.year}年${new Date().getMonth()+1}月）のオーダーメイドアドバイスを鑑定してください。
 
-命式：${c.dKanName}${c.dJiName}日生まれ（${c.mainGogyo}・${c.isYin?'陰':'陽'}）
-エネルギー：${c.gogyoText.replace(/\n/g,'／')}
-今月の星：${c.monthKanName}${c.monthJiName}（${monthJkName}）
-今年の星：${c.yearKanName}${c.yearJiName}（${yearJkName}）
+【あなたのうまれつきの星】
+・年の星：${c.nKanName}${c.nJiName}
+・月の星：${c.mKanName}${c.mJiName}
+・生まれの星（日柱）：${c.dKanName}${c.dJiName}　${c.dKanName}（${c.mainGogyo}・${c.isYin ? '陰' : '陽'}）
+・生まれた時間の星：${c.hKanName || '不明'}${c.hJiName || ''}
 
-以下の4項目を各2文ずつ、小中学生でも読めるやさしい言葉で書いてください。専門用語は使わないで。
+【5つのエネルギーバランス】
+${c.gogyoText}
 
-■ 今月の全体運
-■ 恋愛・友だち関係
-■ 勉強・お金
-■ ラッキーアドバイス`;
+【今月の星（干支）】${c.monthKanName}${c.monthJiName}（あなたの星との相性：${monthJkName}）
+【今年の星（干支）】${c.yearKanName}${c.yearJiName}（あなたの星との相性：${yearJkName}）
+【いまの10年運】${c.currentDaiyun}
+
+【鑑定内容】
+以下の4つについて、この人の命式に特化した具体的なアドバイスを述べてください。テンプレート的な表現は避け、命式の特徴を活かした個別の内容にしてください。
+
+■ 今月の全体的な運勢
+■ 恋愛・友だちとの関係
+■ 勉強・将来・お金
+■ ラッキーアドバイス（この人にとくに効果的なこと）
+
+各項目は3〜5文で書いてね。小学生〜中学生でも読めるやさしい言葉で、専門用語は使わないで。でもちゃんとその人の命式に合った具体的な内容にしてね。`;
 
   try {
     // ストリーミングなし・一括受信
