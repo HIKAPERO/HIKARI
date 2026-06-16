@@ -942,7 +942,9 @@ body.dark .nav-btn.active{
         <button class="rtab" onclick="sfxClick();switchCompatTab(3)">注意点</button>
         <button class="rtab" onclick="sfxClick();switchCompatTab(4)">距離感</button>
         <button class="rtab" onclick="sfxClick();switchCompatTab(5)">総　評</button>
-        <button class="rtab" onclick="sfxClick();switchCompatTab(6)">✦ AI鑑定</button>
+        <button class="rtab" onclick="sfxClick();switchCompatTab(6)">今月の相性</button>
+        <button class="rtab" onclick="sfxClick();switchCompatTab(7)">年間グラフ</button>
+        <button class="rtab" onclick="sfxClick();switchCompatTab(8)">✦ AI鑑定</button>
       </div>
 
       <div id="compatTabPanels">
@@ -971,13 +973,28 @@ body.dark .nav-btn.active{
           <div class="section-label">距離感・コミュニケーション</div>
           <div id="compatDistanceDesc" class="reading-text"></div>
         </div>
-        <!-- 総評 -->
+        <!-- 今月の相性 -->
         <div class="rtab-panel" id="ctab5">
           <div class="section-label">鑑定総評</div>
           <div id="compatSummary" class="reading-text"></div>
         </div>
-        <!-- AI鑑定 -->
+        <!-- 今月の相性 -->
         <div class="rtab-panel" id="ctab6">
+          <div class="section-label" id="compatMonthLabel">今月の相性</div>
+          <div id="compatMonthDesc"></div>
+        </div>
+        <!-- 年間相性グラフ -->
+        <div class="rtab-panel" id="ctab7">
+          <div class="section-label" id="compatYearGraphLabel">年間相性グラフ</div>
+          <div id="compatYearGraphDesc" style="font-size:12px;color:var(--muted);line-height:1.9;margin-bottom:14px;font-weight:300;letter-spacing:0.5px;"></div>
+          <div style="position:relative;width:100%;height:240px;">
+            <canvas id="compatYearChart" role="img" aria-label="年間相性グラフ"></canvas>
+          </div>
+          <div id="compatYearLegend" style="display:flex;flex-wrap:wrap;gap:14px;margin-top:12px;font-size:11px;color:var(--muted);"></div>
+          <div id="compatYearPeakDesc" style="margin-top:16px;font-size:13px;color:var(--paper2);line-height:2.0;font-weight:300;"></div>
+        </div>
+        <!-- AI鑑定（最後） -->
+        <div class="rtab-panel" id="ctab8">
           <div class="section-label">✦ AI 相性アドバイス</div>
           <div id="compatAiInner">
             <div style="font-size:12px;color:var(--muted);line-height:1.9;margin-bottom:18px;font-weight:300;letter-spacing:0.5px;">
@@ -3060,11 +3077,12 @@ ${c.kangoName ? `【干合】${c.kangoName}（宿命的な縁）` : ''}
 【凶作用】${badList}
 
 【鑑定内容】
-以下の4項目について、この2人の命式に特化した具体的なアドバイスを述べてください。テンプレート的な表現は避け、検出された作用と五行の特性を活かした個別の内容にしてください。
+以下の5項目について、この2人の命式に特化した具体的なアドバイスを述べてください。テンプレート的な表現は避け、検出された作用と五行の特性を活かした個別の内容にしてください。
 
 ■ 2人の関係の本質（この組み合わせが持つ固有の引力・摩擦）
 ■ 恋愛・パートナーとして長続きさせるための具体的な行動
 ■ 仕事・友人として協力し合うためのコツ
+■ 今月（${c.monthYear}年${c.monthMonth}月・${c.monthKanName}${c.monthJiName}）の二人の相性（${c.name1}の今月の十神：${c.jk1}、${c.name2}の今月の十神：${c.jk2}。今月の傾向：${c.monthOverall}　今月の地支作用：${c.monthEffectsSummary}）
 ■ この2人へのスペシャルアドバイス（命式から読み取れる最も大切なこと）
 
 【文体の指示】
@@ -3346,6 +3364,204 @@ function calcCompat() {
     </div>
     <button class="btn-calc" id="btnCompatAi" onclick="sfxAction();generateCompatAiAdvice()">A I 相性アドバイスを生成する</button>
   `;
+
+  // ── 今月の相性 ──
+  const nowKJ  = getNowKanJi();
+  const mKan   = nowKJ.monthKan;
+  const mJi    = nowKJ.monthJi;
+  const mYear  = nowKJ.year;
+  const mMonth = nowKJ.month;
+  const jk1 = getJukkami(dKan1, mKan);
+  const jk2 = getJukkami(dKan2, mKan);
+  const JK_TYPE = {比肩:'比劫',劫財:'比劫',食神:'食傷',傷官:'食傷',偏財:'財星',正財:'財星',偏官:'官殺',正官:'官殺',偏印:'印星',印綬:'印星'};
+  const JK_MONTH_DESC = {
+    比劫:'自立心が高まり、自分のペースで動きたくなる時期。お互いの主張が強まりやすいので対話を大切に。',
+    食傷:'表現力・創造力が高まる時期。感情を言葉にしやすく、コミュニケーションが活発になります。',
+    財星:'行動することで結果がついてくる時期。積極的に動くと人脈やチャンスが広がりやすいです。',
+    官殺:'責任感が高まり社会的な評価を意識する時期。プレッシャーを感じやすいので、支え合いを意識して。',
+    印星:'学びと内省が深まる時期。じっくり考えて動く傾向が強まり、直感が冴えやすくなります。',
+  };
+  const jkType1 = JK_TYPE[jk1]||'';
+  const jkType2 = JK_TYPE[jk2]||'';
+  const sameType = jkType1 === jkType2;
+
+  // 今月地支×2人の地支との作用チェック
+  const monthEffects = [];
+  const seenME = new Set();
+  const allJisX1 = jis1, allJisX2 = jis2;
+  [[allJisX1, name1],[allJisX2, name2]].forEach(([jlist, nm])=>{
+    for(const j of jlist){
+      for(const [a,b,nm2] of COMPAT_SHIGO){
+        const k=`${nm}-支合-${nm2}`;
+        if(!seenME.has(k)&&((mJi===a&&j===b)||(mJi===b&&j===a))){ seenME.add(k); monthEffects.push({who:nm,type:'支合',name:nm2,good:true}); }
+      }
+      for(const [a,b,nm2] of COMPAT_SHICHU){
+        const k=`${nm}-七冲-${nm2}`;
+        if(!seenME.has(k)&&((mJi===a&&j===b)||(mJi===b&&j===a))){ seenME.add(k); monthEffects.push({who:nm,type:'七冲',name:nm2,good:false}); }
+      }
+      for(const [a,b,nm2] of COMPAT_ROKUGAI){
+        const k=`${nm}-六害-${nm2}`;
+        if(!seenME.has(k)&&((mJi===a&&j===b)||(mJi===b&&j===a))){ seenME.add(k); monthEffects.push({who:nm,type:'六害',name:nm2,good:false}); }
+      }
+    }
+  });
+
+  const goodME = monthEffects.filter(e=>e.good).length;
+  const badME  = monthEffects.filter(e=>!e.good).length;
+  let monthOverall = sameType
+    ? (goodME>badME ? `2人とも「${jkType1}」の気が流れる月。同じ方向のエネルギーが高まり、共鳴しやすい月です。`
+                    : `2人とも「${jkType1}」の気が流れますが、摩擦を感じやすい時期。お互いのペースを尊重しましょう。`)
+    : (badME>0 ? `${name1}は「${jkType1}」、${name2}は「${jkType2}」の気が流れる月。方向性の違いからすれ違いが起きやすいので、こまめな連絡が助けになります。`
+               : `${name1}は「${jkType1}」、${name2}は「${jkType2}」の気が流れる月。異なるエネルギーが交差し、互いを補い合えます。`);
+
+  // 今月ラベル更新
+  const mlEl = document.getElementById('compatMonthLabel');
+  if(mlEl) mlEl.textContent = `${mYear}年${mMonth}月の二人の相性`;
+
+  // 今月HTML
+  let monthHtml = `
+    <div style="background:var(--ink2);border:0.5px solid var(--line2);border-radius:var(--r);padding:14px 16px;margin-bottom:16px;">
+      <div style="font-size:11px;letter-spacing:2px;color:var(--muted);margin-bottom:8px;font-weight:300;">今月の月干支</div>
+      <div style="font-size:28px;font-weight:300;color:var(--rose2);letter-spacing:4px;">${KAN[mKan]}${JI[mJi]}</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:6px;letter-spacing:1px;">${mYear}年${mMonth}月</div>
+    </div>
+    <div style="font-size:15px;color:var(--paper2);line-height:2.1;font-weight:300;margin-bottom:20px;">${monthOverall}</div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">`;
+  [[name1,jk1,jkType1],[name2,jk2,jkType2]].forEach(([nm,jk,typ])=>{
+    const isGood=['食傷','財星','印星'].includes(typ);
+    const col=isGood?'rgba(42,122,64,0.07)':'rgba(160,80,32,0.06)';
+    const bdr=isGood?'rgba(42,122,64,0.22)':'rgba(160,80,32,0.22)';
+    const tagCol=isGood?'var(--good)':'var(--caution)';
+    const tag=isGood?'▲ 追い風':'▼ 逆風';
+    monthHtml+=`<div style="background:${col};border:0.5px solid ${bdr};border-radius:10px;padding:14px 16px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+        <span style="font-size:12px;color:var(--muted);font-weight:300;">${nm}</span>
+        <span style="font-size:11px;color:${tagCol};letter-spacing:1px;">${tag}</span>
+        <span style="font-size:13px;color:var(--paper);font-weight:400;margin-left:auto;">今月の十神：${jk}</span>
+      </div>
+      <div style="font-size:13px;color:var(--paper2);line-height:1.9;font-weight:300;">${JK_MONTH_DESC[typ]||''}</div>
+    </div>`;
+  });
+  monthHtml += `</div>`;
+  if(monthEffects.length){
+    monthHtml += `<div style="font-size:11px;letter-spacing:3px;color:var(--muted);margin-bottom:10px;font-weight:400;">今月の地支との作用</div><div style="display:flex;flex-direction:column;gap:8px;">`;
+    monthEffects.forEach(e=>{
+      const col=e.good?'rgba(42,122,64,0.07)':'rgba(160,80,32,0.06)';
+      const bdr=e.good?'rgba(42,122,64,0.22)':'rgba(160,80,32,0.22)';
+      const tagCol=e.good?'var(--good)':'var(--caution)';
+      monthHtml+=`<div style="background:${col};border:0.5px solid ${bdr};border-radius:8px;padding:11px 14px;">
+        <span style="font-size:11px;color:${tagCol};">${e.good?'▲ 吉':'▼ 注意'} ${e.type}</span>
+        <span style="font-size:13px;color:var(--paper);margin-left:8px;">${e.name}</span>
+        <span style="font-size:12px;color:var(--muted);margin-left:8px;">— ${e.who}の地支と今月が${e.type}</span>
+      </div>`;
+    });
+    monthHtml += `</div>`;
+  } else {
+    monthHtml += `<div style="font-size:13px;color:var(--muted);text-align:center;padding:12px 0;line-height:2;">今月の地支との特別な作用は検出されませんでした。<br>穏やかなエネルギーの中で関係を育める月です。</div>`;
+  }
+  document.getElementById('compatMonthDesc').innerHTML = monthHtml;
+
+  // ── 年間相性グラフ ──
+  const isDark = document.body.classList.contains('dark');
+  const curYear = mYear;
+  const labels = [], compat12 = [], you12 = [], partner12 = [];
+
+  // 十神の運気スコア変換（個人の月運）
+  const JK_SCORE = {比肩:55,劫財:60,食神:75,傷官:65,偏財:70,正財:72,偏官:60,正官:68,偏印:65,印綬:78};
+
+  for(let mo=1; mo<=12; mo++){
+    const mk  = getMonthKanForYearMonth(curYear, mo);
+    const mj  = getMonthJiForYearMonth(curYear, mo);
+    labels.push(`${mo}月`);
+
+    // 月ごとの相性スコア（基本スコア＋月干の作用）
+    const jkC1 = getJukkami(dKan1, mk);
+    const jkC2 = getJukkami(dKan2, mk);
+    const s1   = JK_SCORE[jkC1] || 60;
+    const s2   = JK_SCORE[jkC2] || 60;
+    // 月地支と2人の地支との作用による補正
+    let mBonus = 0;
+    for(const j1 of jis1){
+      for(const [a,b] of COMPAT_SHIGO)  if((mj===a&&j1===b)||(mj===b&&j1===a)) mBonus+=8;
+      for(const [a,b] of COMPAT_SHICHU) if((mj===a&&j1===b)||(mj===b&&j1===a)) mBonus-=12;
+      for(const [a,b] of COMPAT_ROKUGAI)if((mj===a&&j1===b)||(mj===b&&j1===a)) mBonus-=7;
+    }
+    for(const j2 of jis2){
+      for(const [a,b] of COMPAT_SHIGO)  if((mj===a&&j2===b)||(mj===b&&j2===a)) mBonus+=8;
+      for(const [a,b] of COMPAT_SHICHU) if((mj===a&&j2===b)||(mj===b&&j2===a)) mBonus-=12;
+      for(const [a,b] of COMPAT_ROKUGAI)if((mj===a&&j2===b)||(mj===b&&j2===a)) mBonus-=7;
+    }
+    const compatScore = Math.min(100, Math.max(10, score + mBonus));
+    compat12.push(compatScore);
+    you12.push(Math.min(100, Math.max(10, s1)));
+    partner12.push(Math.min(100, Math.max(10, s2)));
+  }
+
+  // ピーク月・注意月を特定
+  const maxIdx   = compat12.indexOf(Math.max(...compat12));
+  const minIdx   = compat12.indexOf(Math.min(...compat12));
+  const peakDesc = `【${curYear}年のおすすめ月】${maxIdx+1}月（相性スコア${compat12[maxIdx]}点）が最も縁が深まりやすい時期です。二人で何か新しいことを始めるなら、この月が特におすすめです。${minIdx+1}月（${compat12[minIdx]}点）はすれ違いが起きやすい時期なので、こまめな連絡と対話を意識しましょう。`;
+  document.getElementById('compatYearGraphLabel').textContent = `${curYear}年 年間相性グラフ`;
+  document.getElementById('compatYearGraphDesc').textContent  = `月ごとの相性スコア（折れ線）と2人それぞれの運気（棒グラフ）を表示しています。`;
+  document.getElementById('compatYearPeakDesc').textContent   = peakDesc;
+  document.getElementById('compatYearLegend').innerHTML = `
+    <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:12px;border-radius:2px;background:${isDark?'#7aaa7a':'#3d7a4a'};display:inline-block;"></span>相性スコア（折れ線）</span>
+    <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:12px;border-radius:2px;background:rgba(88,140,200,0.7);display:inline-block;"></span>${name1}の運気</span>
+    <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:12px;border-radius:2px;background:rgba(200,140,88,0.7);display:inline-block;"></span>${name2}の運気</span>`;
+
+  // Chart.js 描画
+  _loadChartJs(()=>{
+    const canvas = document.getElementById('compatYearChart');
+    if(!canvas) return;
+    if(canvas._chartInstance){ canvas._chartInstance.destroy(); }
+    const lineColor  = isDark ? '#7aaa7a' : '#2a5e38';
+    const bar1Color  = 'rgba(88,140,200,0.55)';
+    const bar2Color  = 'rgba(200,140,88,0.55)';
+    const gridColor  = isDark ? 'rgba(100,160,90,0.12)' : 'rgba(60,120,70,0.10)';
+    const tickColor  = isDark ? '#607060' : '#7a8870';
+    canvas._chartInstance = new Chart(canvas, {
+      data: {
+        labels,
+        datasets: [
+          { type:'bar',  label:`${name1}の運気`, data:you12,     backgroundColor:bar1Color, borderWidth:0, borderRadius:3, yAxisID:'y', order:2 },
+          { type:'bar',  label:`${name2}の運気`, data:partner12, backgroundColor:bar2Color, borderWidth:0, borderRadius:3, yAxisID:'y', order:3 },
+          { type:'line', label:'相性スコア',      data:compat12,  borderColor:lineColor, backgroundColor:'transparent', borderWidth:2.5, pointRadius:4, pointBackgroundColor:lineColor, tension:0.35, yAxisID:'y', order:1 },
+        ]
+      },
+      options: {
+        responsive:true, maintainAspectRatio:false,
+        plugins: {
+          legend:{display:false},
+          tooltip:{
+            backgroundColor: isDark?'#1a221a':'#fff',
+            titleColor: isDark?'#a0cc96':'#2a5e38',
+            bodyColor:  isDark?'#8a9e80':'#5a6650',
+            borderColor: isDark?'rgba(100,160,90,0.3)':'rgba(60,120,70,0.2)',
+            borderWidth:0.5,
+            callbacks:{
+              label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y}点`
+            }
+          }
+        },
+        scales:{
+          y:{ min:0, max:100, ticks:{callback:v=>v+'点', font:{size:10}, color:tickColor, stepSize:20}, grid:{color:gridColor}, border:{display:false} },
+          x:{ ticks:{font:{size:10}, color:tickColor}, grid:{display:false}, border:{color:isDark?'rgba(100,160,90,0.2)':'rgba(60,120,70,0.2)'} }
+        }
+      }
+    });
+  });
+
+  // AIコンテキストに今月情報を追加
+  _compatAiContext.monthKanName = KAN[mKan];
+  _compatAiContext.monthJiName  = JI[mJi];
+  _compatAiContext.monthYear    = mYear;
+  _compatAiContext.monthMonth   = mMonth;
+  _compatAiContext.jk1          = jk1;
+  _compatAiContext.jk2          = jk2;
+  _compatAiContext.monthOverall = monthOverall;
+  _compatAiContext.monthEffectsSummary = monthEffects.length
+    ? monthEffects.map(e=>`${e.who}に${e.type}（${e.name}）`).join('、')
+    : 'なし';
 
   // 表示切り替え
   document.getElementById('compatInputSection').style.display = 'none';
