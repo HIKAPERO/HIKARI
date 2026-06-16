@@ -3026,11 +3026,11 @@ async function generateCompatAiAdvice(){
 
   const prompt = `あなたは四柱推命の熟練した鑑定士です。以下の2人の命式と相性情報をもとに、具体的な関係アドバイスを鑑定してください。
 
-【Aさん（あなた）】
+【${c.name1}】
 ・日柱：${c.kan1}${c.ji1}（${c.g1}・${c.yin1}）
 ・命式：${c.pillars1}
 
-【Bさん（相手）】
+【${c.name2}】
 ・日柱：${c.kan2}${c.ji2}（${c.g2}・${c.yin2}）
 ・命式：${c.pillars2}
 
@@ -3053,7 +3053,7 @@ ${c.kangoName ? `【干合】${c.kangoName}（宿命的な縁）` : ''}
 ・「〜です」「〜ます」「〜でしょう」など、丁寧でフラットなトーンで書いてください。
 ・占い特有の難しい専門用語は使わず、わかりやすい言い換えを使ってください。
 ・各項目は3〜5文で、具体的かつ前向きなアドバイスにしてください。
-・AさんとBさんそれぞれに向けた言葉を意識してください。`;
+・${c.name1}さんと${c.name2}さんそれぞれに向けた言葉を意識してください。`;
 
   try {
     const res = await fetch('https://hikari-ai.peropero-wahaha.workers.dev', {
@@ -3301,6 +3301,13 @@ function calcCompat() {
   document.getElementById('compatDistanceDesc').textContent = distLines.join('\n\n');
 
   // ── AIアドバイス用コンテキストを保存 ──
+  // 保存済みプロフィール名があれば使用、なければ「あなた」「相手」
+  const p1NameEl = document.getElementById('compatP1Name');
+  const p2NameEl = document.getElementById('compatP2Name');
+  const p1RawName = p1NameEl ? p1NameEl.textContent.replace('✦ ','').trim() : '';
+  const p2RawName = p2NameEl ? p2NameEl.textContent.replace('✦ ','').trim() : '';
+  const name1 = p1RawName || 'あなた';
+  const name2 = p2RawName || '相手';
   _compatAiContext = {
     kan1: KAN[dKan1], ji1: JI[pillars1.find(p=>p.isNichi)?.ji ?? 0],
     kan2: KAN[dKan2], ji2: JI[pillars2.find(p=>p.isNichi)?.ji ?? 0],
@@ -3311,6 +3318,7 @@ function calcCompat() {
     pillars1: pillars1.map(p=>KAN[p.kan]+JI[p.ji]+`(${p.label})`).join('・'),
     pillars2: pillars2.map(p=>KAN[p.kan]+JI[p.ji]+`(${p.label})`).join('・'),
     yin1: yin1?'陰':'陽', yin2: yin2?'陰':'陽',
+    name1, name2,
   };
   // AIタブのボタンをリセット
   document.getElementById('compatAiInner').innerHTML = `
