@@ -709,6 +709,61 @@ body.dark .nav-btn.active{
 /* 通常時は非表示 */
 #printFooter { display: none; }
 
+/* ── 鑑定中プロフィールバー ── */
+#resultProfileBar{
+  display:flex;align-items:center;gap:10px;
+  background:var(--ink2);
+  border:0.5px solid var(--line);
+  border-radius:10px;
+  padding:10px 14px;
+  margin-bottom:4px;
+  font-size:12px;color:var(--muted);
+  letter-spacing:0.5px;font-weight:300;
+}
+#resultProfileBar .rpb-name{
+  font-size:14px;color:var(--paper);
+  font-weight:300;letter-spacing:1px;margin-right:4px;
+}
+#resultProfileBar .rpb-date{color:var(--muted);}
+
+/* ── ナビ横「もう一度」ボタン ── */
+.nav-recalc{
+  background:none;
+  border:0.5px solid var(--line2);
+  border-radius:8px;
+  color:var(--muted);
+  font-size:11px;
+  letter-spacing:0.5px;
+  padding:6px 12px;
+  cursor:pointer;
+  font-family:inherit;
+  font-weight:300;
+  white-space:nowrap;
+  transition:color .15s,border-color .15s;
+}
+.nav-recalc:hover{color:var(--rose);border-color:var(--rose);}
+
+/* ── 恋愛タイプ レーダーチャート ── */
+.love-radar-wrap{
+  position:relative;width:100%;max-width:300px;
+  margin:0 auto 20px;
+}
+.love-score-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:8px;margin-bottom:20px;
+}
+.love-score-item{
+  background:var(--ink2);
+  border:0.5px solid var(--line);
+  border-radius:10px;
+  padding:11px 14px;
+  display:flex;flex-direction:column;gap:5px;
+}
+.love-score-label{font-size:10px;letter-spacing:1.5px;color:var(--muted);font-weight:300;}
+.love-score-bar-wrap{height:4px;background:var(--ink3);border-radius:99px;overflow:hidden;}
+.love-score-bar{height:100%;border-radius:99px;background:linear-gradient(to right,var(--rose),var(--rose2));}
+.love-score-val{font-size:18px;color:var(--rose2);font-weight:300;text-align:right;}
+
 /* ── 運勢ダイアリー ── */
 .diary-cal-header{
   display:grid;grid-template-columns:repeat(7,1fr);
@@ -1187,7 +1242,12 @@ body.dark .nav-btn.active{
 <!-- 結果 -->
 <div id="screenResult">
 
-  <div class="section">
+  <div class="section" style="padding-top:20px;">
+    <div id="resultProfileBar" style="display:none;">
+      <span style="font-size:16px;color:var(--rose2);">☯</span>
+      <span class="rpb-name" id="rpbName"></span>
+      <span class="rpb-date" id="rpbDate"></span>
+    </div>
     <div class="section-label">命式 — 4つの柱</div>
     <div class="meishiki-grid" id="meishikiGrid"></div>
     <div style="margin-top:14px;">
@@ -1978,6 +2038,8 @@ function calc() {
   const d = document.getElementById('inputDay').value;
   if(!y||!m||!d){ alert('生年月日を選択してください'); return; }
   const dateVal = `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+  window._calcDateVal = dateVal;
+  window._calcName = '';  // 通常入力時は名前なし
   show('screenLoading');
   setTimeout(() => render(dateVal), 1600);
 }
@@ -1987,6 +2049,21 @@ function render(dateVal) {
   const hourVal   = parseInt(document.getElementById('inputHour').value);
   const sex       = document.getElementById('inputSex').value;
   const hasHour   = hourVal >= 0;
+
+  // ── プロフィールバー更新 ──
+  const name = window._calcName || '';
+  const rpbBar  = document.getElementById('resultProfileBar');
+  const rpbName = document.getElementById('rpbName');
+  const rpbDate = document.getElementById('rpbDate');
+  const hourStr = hasHour ? ` ${hourVal}時台` : '';
+  rpbDate.textContent = `${y}年${m}月${d}日${hourStr}生まれ`;
+  if (name) {
+    rpbName.textContent = name;
+    rpbName.style.display = '';
+  } else {
+    rpbName.style.display = 'none';
+  }
+  rpbBar.style.display = '';
 
   // 四柱算出
   const nKan = getYearKan(y),  nJi  = getYearJi(y);
@@ -2193,7 +2270,47 @@ function render(dateVal) {
           <div class="reading-text">命式の中で「${mainGogyo}」のエネルギーが最も強く出ています。${GOGYO_DESC[mainGogyo].desc}の資質が際立ち、行動や判断の軸になっています。</div>
         </div>`;
     } else if (t.id === 'love') {
+      const loveYin = KAN_YIN[dKan];
+      const ls = calcLoveScores(mainGogyo, loveYin);
+      const lcId = 'loveRadar_' + Date.now();
       panel.innerHTML = `
+        <div class="reading-block">
+          <div class="reading-title">— 恋愛タイプ診断</div>
+          <div style="text-align:center;margin-bottom:14px;">
+            <span style="font-size:20px;color:var(--rose2);font-weight:300;letter-spacing:2px;">${ls.type}</span>
+          </div>
+          <div class="love-radar-wrap"><div id="${lcId}"></div></div>
+          <div class="love-score-grid">
+            <div class="love-score-item">
+              <div class="love-score-label">恋愛依存度</div>
+              <div class="love-score-bar-wrap"><div class="love-score-bar" style="width:${ls.dep}%"></div></div>
+              <div class="love-score-val">${ls.dep}<span style="font-size:11px;color:var(--muted);">点</span></div>
+            </div>
+            <div class="love-score-item">
+              <div class="love-score-label">一途度</div>
+              <div class="love-score-bar-wrap"><div class="love-score-bar" style="width:${ls.ichizu}%"></div></div>
+              <div class="love-score-val">${ls.ichizu}<span style="font-size:11px;color:var(--muted);">点</span></div>
+            </div>
+            <div class="love-score-item">
+              <div class="love-score-label">情熱度</div>
+              <div class="love-score-bar-wrap"><div class="love-score-bar" style="width:${ls.passion}%"></div></div>
+              <div class="love-score-val">${ls.passion}<span style="font-size:11px;color:var(--muted);">点</span></div>
+            </div>
+            <div class="love-score-item">
+              <div class="love-score-label">駆け引き度</div>
+              <div class="love-score-bar-wrap"><div class="love-score-bar" style="width:${ls.kakehiki}%"></div></div>
+              <div class="love-score-val">${ls.kakehiki}<span style="font-size:11px;color:var(--muted);">点</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="reading-block">
+          <div class="reading-title">— 愛情表現タイプ</div>
+          <div class="reading-text">${ls.expr}</div>
+        </div>
+        <div class="reading-block">
+          <div class="reading-title">— 相性の良いアプローチ</div>
+          <div class="reading-text">${ls.approach}</div>
+        </div>
         <div class="reading-block">
           <div class="reading-title">— 恋愛・パートナーシップの傾向</div>
           <div class="reading-text">${GOGYO_LOVE[mainGogyo]}</div>
@@ -2202,6 +2319,7 @@ function render(dateVal) {
           <div class="reading-title">— 人間関係の縁</div>
           <div class="reading-text">${pillars[1].jukkami ? `命式に「${pillars[1].jukkami}」の才能が出ています。${JUKKAMI_DESC[pillars[1].jukkami]}この傾向が人間関係にも自然と表れてきます。` : `月柱に${JI[mJi]}のエネルギーがあり、人との縁に影響しています。${JI_GOGYO[mJi]}の力を大切にすることで、いい関係が生まれやすくなります。`}</div>
         </div>`;
+      setTimeout(() => renderLoveRadar(lcId, ls), 0);
     } else if (t.id === 'work') {
       panel.innerHTML = `
         <div class="reading-block">
@@ -2593,6 +2711,9 @@ function reset() {
   document.getElementById('inputMonth').value = '';
   document.getElementById('inputDay').value = '';
   document.getElementById('inputHour').value = '-1';
+  window._calcName = '';
+  const pb = document.getElementById('resultProfileBar');
+  if (pb) pb.style.display = 'none';
   show('screenInput');
   loadBookmarkBanner();
   renderBookmarkList();
@@ -3073,6 +3194,111 @@ function _showDiaryDetail(y, m, d, score, bY, bM, bD) {
   box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
+// ════════════════════════════════════════
+//  恋愛タイプ診断（五行×陰陽ベース）
+// ════════════════════════════════════════
+const LOVE_BASE = {
+  木: { dep:52, ichizu:65, passion:70, kakehiki:60,
+        type:'自由恋愛型',
+        expr:'言葉より行動で愛情を示すタイプ。一緒に何かを体験することで気持ちが深まります。',
+        approach:'共通の目標や体験を通じて距離を縮めるアプローチが効果的です。' },
+  火: { dep:58, ichizu:55, passion:92, kakehiki:72,
+        type:'情熱一直線型',
+        expr:'感情をストレートに言葉と行動で全力表現。テンションの高さが魅力です。',
+        approach:'ストレートに気持ちを伝える直球アプローチが最も響きます。' },
+  土: { dep:70, ichizu:88, passion:58, kakehiki:38,
+        type:'安定重視型',
+        expr:'日常の積み重ねと誠実さで愛情を示します。派手さより信頼を大切にします。',
+        approach:'誠実さと安心感を大切にした、じっくり距離を縮めるアプローチが効果的です。' },
+  金: { dep:45, ichizu:75, passion:62, kakehiki:82,
+        type:'こだわり選択型',
+        expr:'行動やサポートで愛情を示します。言葉は少なめでも深く想っています。',
+        approach:'信頼と誠実さを示しながら相手のペースを尊重するアプローチが響きます。' },
+  水: { dep:62, ichizu:68, passion:65, kakehiki:78,
+        type:'深愛型・感性重視',
+        expr:'共感と繊細な言葉で気持ちを深く伝えます。感性が豊かで相手をよく観察します。',
+        approach:'相手の話をよく聞き、感性や価値観に寄り添うアプローチが最も効果的です。' },
+};
+const LOVE_YIN_ADJ = {
+  dep:      [-3, +5],
+  ichizu:   [-3, +4],
+  passion:  [+5, -3],
+  kakehiki: [+4, -5],
+};
+function calcLoveScores(gogyo, yin) {
+  const base = LOVE_BASE[gogyo];
+  const clamp = v => Math.max(10, Math.min(100, Math.round(v)));
+  return {
+    dep:      clamp(base.dep      + LOVE_YIN_ADJ.dep[yin]),
+    ichizu:   clamp(base.ichizu   + LOVE_YIN_ADJ.ichizu[yin]),
+    passion:  clamp(base.passion  + LOVE_YIN_ADJ.passion[yin]),
+    kakehiki: clamp(base.kakehiki + LOVE_YIN_ADJ.kakehiki[yin]),
+    type:     base.type,
+    expr:     base.expr,
+    approach: base.approach,
+  };
+}
+function renderLoveRadar(containerId, scores) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+
+  const isDark   = document.body.classList.contains('dark');
+  const labelCol = isDark ? 'rgba(220,220,210,0.85)' : 'rgba(40,40,40,0.80)';
+  const tickCol  = isDark ? 'rgba(255,255,255,0.50)' : 'rgba(80,80,80,0.90)';
+  const axisCol  = isDark ? 'rgba(255,255,255,0.20)' : 'rgba(80,80,80,0.40)';
+  const gridStroke = isDark
+    ? (i) => `rgba(255,255,255,${(0.12 + i*0.08).toFixed(2)})`
+    : (i) => `rgba(100,120,100,${(0.30 + i*0.12).toFixed(2)})`;
+  const dotCol   = isDark ? '#8fbc8f' : '#3d7a4a';
+  const fillCol  = isDark ? 'rgba(143,188,143,0.18)' : 'rgba(61,122,74,0.15)';
+  const lineCol  = isDark ? '#8fbc8f' : '#3d7a4a';
+
+  const SIZE = 280, CX = SIZE/2, CY = SIZE/2, R = 100, N = 4;
+  const LABELS = ['恋愛依存度','一途度','情熱度','駆け引き度'];
+  const VALS   = [scores.dep, scores.ichizu, scores.passion, scores.kakehiki];
+  const angles = Array.from({length:N}, (_,i) => (Math.PI*2*i/N) - Math.PI/2);
+
+  const pt   = (r,a) => ({ x: CX+r*Math.cos(a), y: CY+r*Math.sin(a) });
+  const poly = (r,aa) => aa.map(a=>{ const p=pt(r,a); return `${p.x},${p.y}`; }).join(' ');
+
+  const grids = [20,40,60,80,100].map((v,i) => {
+    const r = R*v/100;
+    return `<circle cx="${CX}" cy="${CY}" r="${r}"
+      fill="none" stroke="${gridStroke(i)}" stroke-width="1"/>`;
+  }).join('');
+
+  const axisLines = angles.map(a => {
+    const p = pt(R,a);
+    return `<line x1="${CX}" y1="${CY}" x2="${p.x}" y2="${p.y}"
+      stroke="${axisCol}" stroke-width="1"/>`;
+  }).join('');
+
+  const ticks = [20,40,60,80].map(v => {
+    const p = pt(R*v/100, -Math.PI/2);
+    return `<text x="${p.x+5}" y="${p.y+4}"
+      fill="${tickCol}" font-size="9" font-family="sans-serif">${v}</text>`;
+  }).join('');
+
+  const dataPoints = angles.map((a,i) => pt(R*VALS[i]/100, a));
+  const dataPath   = dataPoints.map((p,i)=>`${i===0?'M':'L'}${p.x} ${p.y}`).join(' ')+' Z';
+  const dots       = dataPoints.map(p=>
+    `<circle cx="${p.x}" cy="${p.y}" r="4" fill="${dotCol}"/>`).join('');
+
+  const labelEls = angles.map((a,i) => {
+    const p = pt(R+28, a);
+    const anchor = Math.cos(a)>0.1?'start':Math.cos(a)<-0.1?'end':'middle';
+    return `<text x="${p.x}" y="${p.y+4}" fill="${labelCol}"
+      font-size="11" font-family="inherit" text-anchor="${anchor}">${LABELS[i]}</text>`;
+  }).join('');
+
+  el.innerHTML = `<svg viewBox="0 0 ${SIZE} ${SIZE}" xmlns="http://www.w3.org/2000/svg"
+    style="width:100%;display:block;overflow:visible;">
+    ${grids}${axisLines}${ticks}
+    <path d="${dataPath}" fill="${fillCol}" stroke="${lineCol}" stroke-width="1.5"/>
+    ${dots}${labelEls}
+  </svg>`;
+}
+
 function _loadChartJs(cb){
   if(window.Chart){ cb(); return; }
   const s=document.createElement('script');
@@ -3177,13 +3403,13 @@ function loadBookmarkBanner(){
     <div style="display:flex;flex-wrap:wrap;gap:6px;">
       ${list.map((p,i)=>{
         const hourAttr = (p.hour !== null && p.hour !== undefined) ? p.hour : 'null';
-        return `<button class="bookmark-btn-sm" onclick="sfxCalc();restoreBookmark('${p.date}','${p.sex}',${hourAttr})">${p.name}</button>`;
+        return `<button class="bookmark-btn-sm" onclick="sfxCalc();restoreBookmark('${p.date}','${p.sex}',${hourAttr},'${p.name}')">${p.name}</button>`;
       }).join('')}
     </div>
   </div>`;
 }
 
-function restoreBookmark(dateVal, sex, hour){
+function restoreBookmark(dateVal, sex, hour, name){
   const [y,m,d] = dateVal.split('-').map(Number);
   const yEl=document.getElementById('inputYear');
   const mEl=document.getElementById('inputMonth');
@@ -3194,8 +3420,9 @@ function restoreBookmark(dateVal, sex, hour){
   if(mEl){ mEl.value=m; mEl.dispatchEvent(new Event('change')); }
   setTimeout(()=>{ if(dEl) dEl.value=d; },50);
   if(sEl) sEl.value=sex;
-  // 時間を復元（nullの場合は「わからない」にリセット）
   if(hEl) hEl.value = (hour !== null && hour !== undefined) ? hour : '-1';
+  window._calcDateVal = dateVal;
+  window._calcName = name || '';
   sfxCalc();
   show('screenLoading');
   setTimeout(()=>render(dateVal),1600);
