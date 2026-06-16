@@ -2804,21 +2804,26 @@ function saveBookmark(){
   const sex = document.getElementById('inputSex').value;
   if(!y||!m||!d){ alert('先に鑑定を実行してください'); return; }
 
+  // 時間（未入力=-1、入力あり=偶数値）
+  const hourRaw = document.getElementById('inputHour').value;
+  const hour = (hourRaw !== '' && parseInt(hourRaw) >= 0) ? parseInt(hourRaw) : null;
+
   const nameEl = document.getElementById('bmNameInput');
   const name = (nameEl && nameEl.value.trim()) || `${y}年${m}月${d}日`;
   const date = `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
 
   let list = _getBmProfiles();
-  // 同じ日付・性別が既にあれば名前だけ更新
+  // 同じ日付・性別が既にあれば名前・時間を更新
   const exist = list.findIndex(p=>p.date===date && p.sex===sex);
   if(exist>=0){
     list[exist].name = name;
+    list[exist].hour = hour;
   } else {
     if(list.length >= BM_MAX){
       if(!confirm(`保存は最大${BM_MAX}件です。一番古い「${list[0].name}」を削除して保存しますか？`)){ return; }
       list.shift();
     }
-    list.push({ name, date, sex, savedAt: Date.now() });
+    list.push({ name, date, sex, hour, savedAt: Date.now() });
   }
   _saveBmProfiles(list);
 
@@ -2842,15 +2847,23 @@ function renderBookmarkList(){
   if(!el) return;
   const list = _getBmProfiles();
   if(!list.length){ el.innerHTML='<div style="font-size:12px;color:var(--muted);text-align:center;padding:8px 0;">保存されたプロフィールはありません</div>'; return; }
-  el.innerHTML = list.map((p,i)=>`
+
+  // 時間ラベル変換用
+  const HOUR_LABELS = {0:'子の刻',2:'丑の刻',4:'寅の刻',6:'卯の刻',8:'辰の刻',10:'巳の刻',12:'午の刻',14:'未の刻',16:'申の刻',18:'酉の刻',20:'戌の刻',22:'亥の刻'};
+
+  el.innerHTML = list.map((p,i)=>{
+    const hourLabel = (p.hour !== null && p.hour !== undefined) ? `・${HOUR_LABELS[p.hour]||''}` : '';
+    const hourAttr  = (p.hour !== null && p.hour !== undefined) ? p.hour : 'null';
+    return `
     <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--ink2);border:0.5px solid var(--line);border-radius:10px;margin-bottom:8px;">
       <div style="flex:1;">
         <div style="font-size:14px;color:var(--paper);font-weight:300;">${p.name}</div>
-        <div style="font-size:11px;color:var(--muted);margin-top:2px;">${p.date}・${p.sex==='M'?'男性':'女性'}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px;">${p.date}・${p.sex==='M'?'男性':'女性'}${hourLabel}</div>
       </div>
-      <button class="bookmark-btn-sm" onclick="sfxCalc();restoreBookmark('${p.date}','${p.sex}')">鑑定</button>
+      <button class="bookmark-btn-sm" onclick="sfxCalc();restoreBookmark('${p.date}','${p.sex}',${hourAttr})">鑑定</button>
       <button onclick="deleteBookmark(${i})" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;line-height:1;padding:0 4px;" title="削除">×</button>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 function loadBookmarkBanner(){
@@ -2862,21 +2875,27 @@ function loadBookmarkBanner(){
   banner.innerHTML = `<div class="bookmark-banner" style="flex-direction:column;align-items:flex-start;gap:8px;">
     <div class="bookmark-banner-text" style="font-size:12px;">保存済みプロフィール（${list.length}/${BM_MAX}件）</div>
     <div style="display:flex;flex-wrap:wrap;gap:6px;">
-      ${list.map((p,i)=>`<button class="bookmark-btn-sm" onclick="sfxCalc();restoreBookmark('${p.date}','${p.sex}')">${p.name}</button>`).join('')}
+      ${list.map((p,i)=>{
+        const hourAttr = (p.hour !== null && p.hour !== undefined) ? p.hour : 'null';
+        return `<button class="bookmark-btn-sm" onclick="sfxCalc();restoreBookmark('${p.date}','${p.sex}',${hourAttr})">${p.name}</button>`;
+      }).join('')}
     </div>
   </div>`;
 }
 
-function restoreBookmark(dateVal, sex){
+function restoreBookmark(dateVal, sex, hour){
   const [y,m,d] = dateVal.split('-').map(Number);
   const yEl=document.getElementById('inputYear');
   const mEl=document.getElementById('inputMonth');
   const dEl=document.getElementById('inputDay');
   const sEl=document.getElementById('inputSex');
+  const hEl=document.getElementById('inputHour');
   if(yEl) yEl.value=y;
   if(mEl){ mEl.value=m; mEl.dispatchEvent(new Event('change')); }
   setTimeout(()=>{ if(dEl) dEl.value=d; },50);
   if(sEl) sEl.value=sex;
+  // 時間を復元（nullの場合は「わからない」にリセット）
+  if(hEl) hEl.value = (hour !== null && hour !== undefined) ? hour : '-1';
   sfxCalc();
   show('screenLoading');
   setTimeout(()=>render(dateVal),1600);
@@ -3362,10 +3381,13 @@ function fillCompatFromProfile(idx){
   const yEl=document.getElementById('cY'+slot);
   const mEl=document.getElementById('cM'+slot);
   const dEl=document.getElementById('cD'+slot);
+  const hEl=document.getElementById('cH'+slot);
   const nameEl=document.getElementById('compatP'+slot+'Name');
   if(yEl) yEl.value=y;
   if(mEl){ mEl.value=m; mEl.dispatchEvent(new Event('change')); }
   setTimeout(()=>{ if(dEl) dEl.value=d; },50);
+  // 時間を復元（nullの場合は空欄＝入力しない）
+  if(hEl) hEl.value = (p.hour !== null && p.hour !== undefined) ? p.hour : '';
   if(nameEl) nameEl.textContent='✦ '+p.name;
   _compatSlot = slot===1 ? 2 : 1;
 }
