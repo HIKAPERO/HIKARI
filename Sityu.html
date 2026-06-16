@@ -3295,9 +3295,9 @@ function renderLoveRadar(containerId, scores) {
 
   el.innerHTML = `<svg viewBox="0 0 ${SIZE} ${SIZE}" xmlns="http://www.w3.org/2000/svg"
     style="width:100%;display:block;overflow:visible;">
-    ${grids}${axisLines}${ticks}
+    ${grids}${axisLines}
     <path d="${dataPath}" fill="${fillCol}" stroke="${lineCol}" stroke-width="1.5"/>
-    ${dots}${labelEls}
+    ${dots}${ticks}${labelEls}
   </svg>`;
 }
 
