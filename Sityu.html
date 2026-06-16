@@ -555,6 +555,22 @@ body.dark .nav-btn.active{
 .compat-bar-wrap{height:6px;background:var(--ink3);border-radius:99px;overflow:hidden;margin:8px 0 16px;}
 .compat-bar{height:100%;border-radius:99px;background:linear-gradient(to right,var(--rose),var(--rose2));transition:width .8s cubic-bezier(.4,0,.2,1);}
 
+/* ── 相性作用カード ── */
+.compat-effect-card{border-radius:12px;padding:14px 16px;border:0.5px solid var(--line);margin-bottom:10px;}
+.compat-effect-card.good{background:rgba(42,122,64,0.07);border-color:rgba(42,122,64,0.28);}
+.compat-effect-card.bad{background:rgba(160,80,32,0.07);border-color:rgba(160,80,32,0.28);}
+.compat-effect-card.neutral{background:var(--ink2);}
+.compat-effect-tag{font-size:10px;letter-spacing:2px;padding:2px 9px;border-radius:20px;display:inline-block;margin-bottom:8px;}
+.compat-effect-tag.good{color:var(--good);background:rgba(42,122,64,0.12);border:0.5px solid rgba(42,122,64,0.3);}
+.compat-effect-tag.bad{color:var(--caution);background:rgba(160,80,32,0.10);border:0.5px solid rgba(160,80,32,0.28);}
+.compat-effect-title{font-size:14px;color:var(--paper);margin-bottom:6px;font-weight:300;letter-spacing:0.5px;}
+.compat-effect-desc{font-size:14px;color:var(--paper2);line-height:2.0;font-weight:300;}
+.compat-pillar-chip{flex:1;background:var(--ink2);border:0.5px solid var(--line);border-radius:8px;padding:7px 3px;text-align:center;min-width:0;}
+.compat-pillar-chip.nichi{border-color:var(--rose);}
+.compat-pillar-chip-head{font-size:9px;letter-spacing:1px;color:var(--muted);margin-bottom:3px;}
+.compat-pillar-chip-kan{font-size:16px;color:var(--rose2);line-height:1;font-weight:300;}
+.compat-pillar-chip-ji{font-size:16px;color:var(--paper);line-height:1;font-weight:300;margin-top:2px;}
+
 /* ── ブックマーク ── */
 .bookmark-banner{
   background:rgba(42,122,64,0.08);
@@ -747,59 +763,165 @@ body.dark .nav-btn.active{
 <!-- 相性占い画面 -->
 <div id="screenCompat" style="display:none;padding:24px 0;">
 
-  <div class="section" style="border-top:none;padding-top:8px;">
-    <div class="section-label">2人の生年月日を入力</div>
-
-    <!-- 保存済みプロフィールから入力 -->
-    <div id="compatProfileBtns" style="margin-bottom:16px;"></div>
-
-    <div class="compat-grid">
-      <div>
-        <div style="font-size:11px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;font-weight:300;">あなた</div>
-        <div id="compatP1Name" style="font-size:12px;color:var(--rose);min-height:16px;margin-bottom:6px;letter-spacing:1px;"></div>
-        <select id="cY1" style="width:100%;background:var(--ink2);border:0.5px solid var(--line2);border-radius:var(--r);padding:12px 14px;font-size:15px;color:var(--paper);outline:none;font-family:inherit;font-weight:300;appearance:none;margin-bottom:8px;"></select>
-        <select id="cM1" style="width:100%;background:var(--ink2);border:0.5px solid var(--line2);border-radius:var(--r);padding:12px 14px;font-size:15px;color:var(--paper);outline:none;font-family:inherit;font-weight:300;appearance:none;margin-bottom:8px;"></select>
-        <select id="cD1" style="width:100%;background:var(--ink2);border:0.5px solid var(--line2);border-radius:var(--r);padding:12px 14px;font-size:15px;color:var(--paper);outline:none;font-family:inherit;font-weight:300;appearance:none;"></select>
+  <!-- スコア分布インフォ -->
+  <div class="section" style="border-top:none;padding-top:8px;padding-bottom:0;">
+    <div class="section-label">スコア分布について</div>
+    <div style="background:var(--ink2);border:0.5px solid var(--line2);border-radius:var(--r);padding:16px 16px 12px;">
+      <div style="font-size:13px;color:var(--paper2);line-height:2.0;font-weight:300;margin-bottom:14px;">
+        本鑑定は干合・支合・三合・七冲・六害など五行理論にもとづく本格判定を行います。<br>
+        <span style="color:var(--rose2);font-weight:400;">100点は約0.1%（1000人に1人）の超レア</span>。スコアは縁の深さの目安です。
       </div>
-      <div class="compat-vs">vs</div>
-      <div>
-        <div style="font-size:11px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;font-weight:300;">相手</div>
-        <div id="compatP2Name" style="font-size:12px;color:var(--rose);min-height:16px;margin-bottom:6px;letter-spacing:1px;"></div>
-        <select id="cY2" style="width:100%;background:var(--ink2);border:0.5px solid var(--line2);border-radius:var(--r);padding:12px 14px;font-size:15px;color:var(--paper);outline:none;font-family:inherit;font-weight:300;appearance:none;margin-bottom:8px;"></select>
-        <select id="cM2" style="width:100%;background:var(--ink2);border:0.5px solid var(--line2);border-radius:var(--r);padding:12px 14px;font-size:15px;color:var(--paper);outline:none;font-family:inherit;font-weight:300;appearance:none;margin-bottom:8px;"></select>
-        <select id="cD2" style="width:100%;background:var(--ink2);border:0.5px solid var(--line2);border-radius:var(--r);padding:12px 14px;font-size:15px;color:var(--paper);outline:none;font-family:inherit;font-weight:300;appearance:none;"></select>
+      <!-- 凡例 -->
+      <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-bottom:10px;letter-spacing:0.5px;">
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;border-radius:2px;background:#3d7a4a;display:inline-block;"></span>吉縁（70点以上）</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;border-radius:2px;background:#7aaa7a;display:inline-block;"></span>普通（40〜69点）</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;border-radius:2px;background:var(--muted2);display:inline-block;"></span>要注意（〜39点）</span>
       </div>
+      <!-- グラフ -->
+      <div style="position:relative;width:100%;height:140px;">
+        <canvas id="compatDistChart" role="img" aria-label="相性スコア分布グラフ">10〜19点:2.95%, 20〜29点:5.55%, 30〜39点:13.47%, 40〜49点:20.14%, 50〜59点:22.92%, 60〜69点:19.65%, 70〜79点:10.42%, 80〜89点:3.85%, 90〜99点:0.95%, 100点:0.10%</canvas>
+      </div>
+      <div style="font-size:11px;color:var(--muted2);text-align:right;margin-top:6px;letter-spacing:0.5px;">※ 100万件シミュレーションによる実測値</div>
     </div>
-    <button class="btn-calc" onclick="sfxCalc();calcCompat()">相性を鑑定する</button>
   </div>
 
+  <!-- 入力フォーム -->
+  <div id="compatInputSection">
+    <div class="section" style="padding-top:20px;">
+      <div class="section-label">2人の生年月日を入力</div>
+
+      <!-- 保存済みプロフィールから入力 -->
+      <div id="compatProfileBtns" style="margin-bottom:16px;"></div>
+
+      <!-- あなた -->
+      <div style="margin-bottom:14px;">
+        <div style="font-size:11px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;font-weight:300;">あなた</div>
+        <div id="compatP1Name" style="font-size:12px;color:var(--rose);min-height:16px;margin-bottom:6px;letter-spacing:1px;"></div>
+        <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px;margin-bottom:8px;">
+          <select id="cY1" style="width:100%;background:var(--ink2);border:0.5px solid var(--line2);border-radius:var(--r);padding:12px 14px;font-size:15px;color:var(--paper);outline:none;font-family:inherit;font-weight:300;appearance:none;"></select>
+          <select id="cM1" style="width:100%;background:var(--ink2);border:0.5px solid var(--line2);border-radius:var(--r);padding:12px 14px;font-size:15px;color:var(--paper);outline:none;font-family:inherit;font-weight:300;appearance:none;"></select>
+          <select id="cD1" style="width:100%;background:var(--ink2);border:0.5px solid var(--line2);border-radius:var(--r);padding:12px 14px;font-size:15px;color:var(--paper);outline:none;font-family:inherit;font-weight:300;appearance:none;"></select>
+        </div>
+        <div style="font-size:11px;color:var(--muted2);margin-bottom:6px;letter-spacing:1px;">生まれた時間（任意・空欄OK）</div>
+        <select id="cH1" style="width:100%;background:var(--ink2);border:0.5px solid var(--line2);border-radius:var(--r);padding:12px 14px;font-size:14px;color:var(--paper);outline:none;font-family:inherit;font-weight:300;appearance:none;">
+          <option value="">わからない・入力しない</option>
+          <option value="0">子の刻（23:00〜01:00）</option>
+          <option value="2">丑の刻（01:00〜03:00）</option>
+          <option value="4">寅の刻（03:00〜05:00）</option>
+          <option value="6">卯の刻（05:00〜07:00）</option>
+          <option value="8">辰の刻（07:00〜09:00）</option>
+          <option value="10">巳の刻（09:00〜11:00）</option>
+          <option value="12">午の刻（11:00〜13:00）</option>
+          <option value="14">未の刻（13:00〜15:00）</option>
+          <option value="16">申の刻（15:00〜17:00）</option>
+          <option value="18">酉の刻（17:00〜19:00）</option>
+          <option value="20">戌の刻（19:00〜21:00）</option>
+          <option value="22">亥の刻（21:00〜23:00）</option>
+        </select>
+      </div>
+
+      <div style="text-align:center;padding:10px 0;font-size:18px;color:var(--muted2);letter-spacing:4px;">vs</div>
+
+      <!-- 相手 -->
+      <div style="margin-bottom:20px;">
+        <div style="font-size:11px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;font-weight:300;">相手</div>
+        <div id="compatP2Name" style="font-size:12px;color:var(--rose);min-height:16px;margin-bottom:6px;letter-spacing:1px;"></div>
+        <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px;margin-bottom:8px;">
+          <select id="cY2" style="width:100%;background:var(--ink2);border:0.5px solid var(--line2);border-radius:var(--r);padding:12px 14px;font-size:15px;color:var(--paper);outline:none;font-family:inherit;font-weight:300;appearance:none;"></select>
+          <select id="cM2" style="width:100%;background:var(--ink2);border:0.5px solid var(--line2);border-radius:var(--r);padding:12px 14px;font-size:15px;color:var(--paper);outline:none;font-family:inherit;font-weight:300;appearance:none;"></select>
+          <select id="cD2" style="width:100%;background:var(--ink2);border:0.5px solid var(--line2);border-radius:var(--r);padding:12px 14px;font-size:15px;color:var(--paper);outline:none;font-family:inherit;font-weight:300;appearance:none;"></select>
+        </div>
+        <div style="font-size:11px;color:var(--muted2);margin-bottom:6px;letter-spacing:1px;">生まれた時間（任意・空欄OK）</div>
+        <select id="cH2" style="width:100%;background:var(--ink2);border:0.5px solid var(--line2);border-radius:var(--r);padding:12px 14px;font-size:14px;color:var(--paper);outline:none;font-family:inherit;font-weight:300;appearance:none;">
+          <option value="">わからない・入力しない</option>
+          <option value="0">子の刻（23:00〜01:00）</option>
+          <option value="2">丑の刻（01:00〜03:00）</option>
+          <option value="4">寅の刻（03:00〜05:00）</option>
+          <option value="6">卯の刻（05:00〜07:00）</option>
+          <option value="8">辰の刻（07:00〜09:00）</option>
+          <option value="10">巳の刻（09:00〜11:00）</option>
+          <option value="12">午の刻（11:00〜13:00）</option>
+          <option value="14">未の刻（13:00〜15:00）</option>
+          <option value="16">申の刻（15:00〜17:00）</option>
+          <option value="18">酉の刻（17:00〜19:00）</option>
+          <option value="20">戌の刻（19:00〜21:00）</option>
+          <option value="22">亥の刻（21:00〜23:00）</option>
+        </select>
+      </div>
+
+      <button class="btn-calc" onclick="sfxCalc();calcCompat()">相　性　を　鑑　定　す　る</button>
+    </div>
+  </div><!-- /compatInputSection -->
+
+  <!-- 結果エリア -->
   <div id="compatResult" style="display:none;">
+
+    <!-- 命式比較 -->
     <div class="section">
-      <div class="section-label">相性スコア</div>
+      <div class="section-label">命式の比較</div>
+      <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:start;">
+        <div>
+          <div style="font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:8px;font-weight:300;">あなた</div>
+          <div id="compatMini1" style="display:flex;gap:5px;"></div>
+        </div>
+        <div style="padding-top:24px;color:var(--muted2);font-size:13px;text-align:center;">vs</div>
+        <div>
+          <div style="font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:8px;font-weight:300;">相手</div>
+          <div id="compatMini2" style="display:flex;gap:5px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- スコア -->
+    <div class="section">
+      <div class="section-label">総合相性スコア</div>
       <div class="compat-result-box">
         <div class="compat-score-label">総合相性</div>
         <div class="compat-score" id="compatScoreNum">--</div>
         <div class="compat-bar-wrap"><div class="compat-bar" id="compatBar" style="width:0%"></div></div>
-        <div class="reading-text" id="compatScoreDesc" style="text-align:center;font-size:13px;"></div>
+        <div class="reading-text" id="compatScoreDesc" style="text-align:center;font-size:13px;margin-top:4px;"></div>
       </div>
     </div>
+
+    <!-- タブ -->
     <div class="section">
-      <div class="section-label">五行の相性</div>
-      <div id="compatGogyoDesc" class="reading-text"></div>
+      <div class="result-tabs" id="compatTabs">
+        <button class="rtab active" onclick="sfxClick();switchCompatTab(0)">作用一覧</button>
+        <button class="rtab" onclick="sfxClick();switchCompatTab(1)">恋愛・縁</button>
+        <button class="rtab" onclick="sfxClick();switchCompatTab(2)">仕事・友情</button>
+        <button class="rtab" onclick="sfxClick();switchCompatTab(3)">総　評</button>
+      </div>
+
+      <div id="compatTabPanels">
+        <!-- 作用一覧 -->
+        <div class="rtab-panel active" id="ctab0">
+          <div class="section-label">検出された作用</div>
+          <div id="compatEffectList"></div>
+        </div>
+        <!-- 恋愛 -->
+        <div class="rtab-panel" id="ctab1">
+          <div class="section-label">恋愛・パートナーシップ</div>
+          <div id="compatLoveDesc" class="reading-text"></div>
+        </div>
+        <!-- 仕事 -->
+        <div class="rtab-panel" id="ctab2">
+          <div class="section-label">仕事・友人関係</div>
+          <div id="compatWorkDesc" class="reading-text"></div>
+        </div>
+        <!-- 総評 -->
+        <div class="rtab-panel" id="ctab3">
+          <div class="section-label">鑑定総評</div>
+          <div id="compatSummary" class="reading-text"></div>
+        </div>
+      </div>
     </div>
-    <div class="section">
-      <div class="section-label">恋愛・パートナーシップ</div>
-      <div id="compatLoveDesc" class="reading-text"></div>
+
+    <!-- やり直し -->
+    <div class="section" style="padding-bottom:20px;">
+      <button class="btn-sub" onclick="sfxReset();resetCompat()">もう一度鑑定する</button>
     </div>
-    <div class="section">
-      <div class="section-label">仕事・友人関係</div>
-      <div id="compatWorkDesc" class="reading-text"></div>
-    </div>
-    <div class="section">
-      <div class="section-label">注意点とアドバイス</div>
-      <div id="compatAdvice" class="reading-text"></div>
-    </div>
-  </div>
+
+  </div><!-- /compatResult -->
 
 </div><!-- /screenCompat -->
 
@@ -2222,12 +2344,28 @@ function initBgm(){
 }
 
 function startBgm(){
+  // ① AudioContextをresumed状態にしてからAudio要素を再生
+  //    ChromeはAudioContextがsuspendedだとAudio.play()も制限することがある
+  getAC();
   if(!_bgmAudio) initBgm();
   if(!_bgmAudio) return;
-  _bgmAudio.play().then(()=>{
-    _bgmPlaying = true;
-    updateBgmBtn();
-  }).catch(()=>{});
+  // ② 再生前にAudioContextのresume完了を待つ
+  const doPlay = () => {
+    _bgmAudio.play().then(()=>{
+      _bgmPlaying = true;
+      updateBgmBtn();
+    }).catch((e)=>{
+      // play()失敗時もボタン状態を正しく戻す
+      console.warn('BGM play() failed:', e);
+      _bgmPlaying = false;
+      updateBgmBtn();
+    });
+  };
+  if(_ac && _ac.state === 'suspended'){
+    _ac.resume().then(doPlay).catch(doPlay);
+  } else {
+    doPlay();
+  }
 }
 
 function stopBgm(){
@@ -2243,12 +2381,16 @@ function toggleBgm(){
 function updateBgmBtn(){
   const btn = document.getElementById('bgmToggle');
   if(!btn) return;
+  const dark = document.body.classList.contains('dark');
   btn.textContent = _bgmPlaying ? '🎵 BGM ON' : '🎵 BGM OFF';
-  btn.style.color = _bgmPlaying ? '#2a5e38' : '#7a8870';
+  btn.style.color = _bgmPlaying
+    ? (dark ? '#a0cc96' : '#2a5e38')
+    : (dark ? '#607060' : '#7a8870');
 }
 
 document.addEventListener('DOMContentLoaded', ()=>{
-  initBgm();
+  // ③ initBgm()はDOMContentLoadedで呼ばず、最初の操作時に初期化
+  //    （ページ読み込み直後のnew Audio()がonerrorを起こす環境への対処）
   const btn = document.getElementById('bgmToggle');
   if(btn) btn.style.display = 'block';
 });
@@ -2512,6 +2654,10 @@ function toggleDark(){
   }
   // 設定を保存
   try{ localStorage.setItem('theme', isDark?'dark':'light'); }catch(e){}
+  // 相性グラフをダークモードに合わせて再描画
+  if(window.Chart && document.getElementById('compatDistChart')){
+    setTimeout(renderCompatDistChart, 50);
+  }
 }
 
 // ページ読み込み時に設定を復元
@@ -2546,8 +2692,20 @@ function switchNav(tab){
   document.getElementById('screenCompat').style.display = isMain ? 'none' : '';
   document.getElementById('navMain').classList.toggle('active', isMain);
   document.getElementById('navCompat').classList.toggle('active', !isMain);
-  if(!isMain){ initCompatSelects(); renderCompatProfileBtns(); }
+  if(!isMain){
+    initCompatSelects();
+    renderCompatProfileBtns();
+    _loadChartJs(renderCompatDistChart);
+  }
   sfxTab();
+}
+
+function _loadChartJs(cb){
+  if(window.Chart){ cb(); return; }
+  const s=document.createElement('script');
+  s.src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js';
+  s.onload=cb;
+  document.head.appendChild(s);
 }
 
 
@@ -2652,41 +2810,303 @@ function restoreBookmark(dateVal, sex){
 }
 
 // ════════════════════════════════════════
-//  相性占い
+//  本格相性鑑定エンジン
 // ════════════════════════════════════════
-const GOGYO_COMPAT = {
-  木:{木:{score:85,gogyo:'同じ木のエネルギー同士。成長への意欲や理想を共有しやすく、高め合える関係です。',love:'お互いの自由を尊重し合えるカップルです。共に新しいことに挑戦する喜びを共有できます。',work:'同じ方向を向いて走れる理想的なチームです。競い合うより協力し合うことで大きな成果が生まれます。',advice:'お互い「正しさ」へのこだわりが強いため、意見が衝突することも。どちらかが一歩引く柔軟さが関係を長続きさせます。'},
-  火:{score:90,gogyo:'木は火を燃やす、理想的な相生関係。一方が情熱を与え、もう一方がそれを活かします。',love:'木の人が火の人の情熱に火をつける関係。明るくエネルギッシュな恋愛になりやすいです。',work:'木の企画力と火の実行力が組み合わさる最強タッグ。新しいプロジェクトで特に力を発揮します。',advice:'ペースの違いに注意。木はじっくり型、火は勢い型。互いのリズムを尊重することが大切です。'},
-  土:{score:70,gogyo:'木は土を押し広げる関係。自由を求める木と安定を求める土は、価値観の違いが生まれやすいです。',love:'最初は新鮮さを感じますが、長期的には価値観の違いが出やすいカップルです。',work:'木の変化志向と土の安定志向がぶつかることも。役割分担を明確にすると機能します。',advice:'お互いの「違い」を否定せず、補い合いの関係と捉えることが関係改善のカギです。'},
-  金:{score:55,gogyo:'金は木を傷つける関係。批判やプレッシャーをかけ合いやすく、慎重なコミュニケーションが必要です。',love:'刺激的な関係ですが、傷つき合うリスクも高いカップルです。お互いの言葉に注意が必要です。',work:'金の厳密さが木の創造性を削いでしまうことも。それぞれの強みを生かす環境作りが重要です。',advice:'感情的になったときほど一歩引くことが大切。冷静な対話の習慣が関係を安定させます。'},
-  水:{score:88,gogyo:'水は木を育てる、理想的な相生関係。サポートし合い、自然に力を引き出し合える関係です。',love:'水の人の深い愛情が木の人を育てます。穏やかで安定した、長く続く関係になりやすいです。',work:'水の知性と木の行動力が見事に補い合います。長期的なプロジェクトで特に力を発揮します。',advice:'水が木に尽くしすぎてしまうことがあります。時には木が感謝を言葉で伝えることが大切。'},
-  },
-  火:{木:{score:90,gogyo:'木は火を燃やす相生関係。木がサポートし、火がそれを活力に変える理想的な関係です。',love:'自然に高め合えるカップル。木の誠実さが火の情熱を支えます。',work:'発想力と実行力の最強コンビ。スタートアップや新規事業で特に輝きます。',advice:'火のペースが木を疲れさせることも。たまにはゆっくり過ごす時間を作って。'},
-  火:{score:82,gogyo:'同じ火のエネルギー同士。情熱と活気があふれる関係ですが、感情がぶつかりやすい面も。',love:'最初から盛り上がるタイプの恋愛。ただし感情の衝突も激しくなりやすいです。',work:'お互いのモチベーションを高め合える関係。ただしどちらも主導権を取りたがるので注意。',advice:'冷却期間を大切に。興奮しているときの判断は後でよく振り返るようにしましょう。'},
-  土:{score:88,gogyo:'火は土を生む相生関係。火のエネルギーが土の安定を生み出す、自然な支え合いの関係。',love:'情熱と安定が組み合わさった、バランスのよいカップルです。',work:'火の企画と土の実行・管理が見事に噛み合います。長期プロジェクトで特に機能します。',advice:'火の人が飽きないよう、土の人は時々変化や刺激を取り入れてみましょう。'},
-  金:{score:60,gogyo:'火は金を溶かす関係。強い感情がぶつかりやすく、お互いの個性が削られることがあります。',love:'刺激的ですが消耗しやすい関係。感情的になる前に話し合う習慣が必要です。',work:'火の勢いが金の精密さを乱すことも。役割を明確に分けることで機能します。',advice:'お互い「正しい」と思っているときほど、相手の立場に立って考える練習を。'},
-  水:{score:65,gogyo:'水は火を消す関係。アプローチの違いが摩擦を生みやすいですが、うまくいけば補い合えます。',love:'真逆の魅力で引き合うタイプ。長続きには互いの違いを受け入れる寛容さが必要です。',work:'感性と論理の組み合わせ。うまくかみ合えば強力ですが、コミュニケーションコストが高めです。',advice:'感情と論理をぶつけ合わず、それぞれの得意を活かす場面を作ることが大切。'},
-  },
-  土:{木:{score:70,gogyo:'木は土を押し広げる関係。価値観の違いが摩擦を生みやすいです。',love:'変化を求める木と安定を求める土。互いに魅力を感じながらも、すれ違いやすいカップルです。',work:'木のアイデアと土の実行力は相性がいいですが、スピード感の違いに注意が必要です。',advice:'どちらかが一方的に合わせるのではなく、中間点を見つけることが関係の安定につながります。'},
-  火:{score:88,gogyo:'火は土を生む相生関係。情熱が安定に変わる、自然な流れがある関係です。',love:'火のリードを土がしっかり支える、安定感のある関係です。',work:'火の発想力と土の実行・継続力が見事に補い合います。',advice:'土の人が尽くしすぎることがあります。火の人は感謝をしっかり言葉で伝えましょう。'},
-  土:{score:80,gogyo:'同じ土のエネルギー同士。安定感と信頼感が自然と生まれる関係です。',love:'急がずゆっくり深まる関係。一度信頼が生まれると長く続く愛になります。',work:'安定した仕事の進め方ができるコンビ。長期プロジェクトで特に力を発揮します。',advice:'変化への対応が遅くなりやすいです。定期的に新しい刺激を取り入れることで関係が活性化します。'},
-  金:{score:88,gogyo:'土は金を生む相生関係。安定が精密さを育てる、自然なサポートの関係です。',love:'お互いを深く信頼し合える、誠実な関係です。',work:'土の管理力と金の精密さが組み合わさる最強タッグ。品質が求められる仕事で特に輝きます。',advice:'変化や新しいことへの対応が遅くなりやすいです。外からの刺激を積極的に取り入れましょう。'},
-  水:{score:62,gogyo:'土は水をせき止める関係。自由を求める水に対して、土の安定志向が窮屈に感じることがあります。',love:'最初は新鮮ですが、時間とともに価値観のずれが出やすいカップルです。',work:'水の流動性を土がうまく形にできれば強力なチームに。ただしコントロールしすぎに注意。',advice:'水の人の自由を尊重しながら、土の人は安定の場を提供することが関係のカギです。'},
-  },
-  金:{木:{score:55,gogyo:'金は木を傷つける関係。批判や厳しさが相手を傷つけやすいです。',love:'互いに魅力を感じながらも、言葉で傷つけ合うリスクが高いカップルです。',work:'金の基準の高さが木の伸びやかさを阻害することも。互いの強みを活かす環境が必要です。',advice:'正論より感情に寄り添うことを意識すると、関係が大きく改善します。'},
-  火:{score:60,gogyo:'火は金を溶かす関係。感情的なやりとりが多くなると消耗しやすいです。',love:'強い引力がある一方、衝突も多いカップルです。お互いの「核心」に触れる深い関係になれます。',work:'情熱と精密さの組み合わせ。役割分担がうまくいけば強力です。',advice:'感情が高ぶったときは一拍置く習慣を。冷静な対話が関係の質を上げます。'},
-  土:{score:88,gogyo:'土は金を生む相生関係。安定した土台の上で金の才能が最大限に発揮されます。',love:'誠実さと責任感が共鳴する、信頼できる関係です。',work:'土の安定と金の精密さが組み合わさる最強コンビ。品質重視の仕事で特に輝きます。',advice:'ふたりとも完璧主義になりやすいです。時には「80点でよし」と割り切る練習を。'},
-  金:{score:78,gogyo:'同じ金のエネルギー同士。高い基準と強い意志を共有できる関係です。',love:'お互いの強さを認め合える関係。ただしどちらも譲らない場面では衝突が起きやすいです。',work:'品質と精度への共通のこだわりが強みです。ただし完璧主義が高じると進まなくなることも。',advice:'勝ち負けにこだわらず、相手の「正しさ」も認める姿勢が関係を深めます。'},
-  水:{score:88,gogyo:'金は水を生む相生関係。金の誠実さが水の知性を育てる、自然な流れのある関係です。',love:'知性と誠実さが響き合う、深い信頼関係が築けるカップルです。',work:'論理と感性の組み合わせ。専門的な仕事や研究分野で特に力を発揮します。',advice:'どちらも感情を内に秘める傾向があります。定期的に気持ちを言葉にする習慣を作りましょう。'},
-  },
-  水:{木:{score:88,gogyo:'水は木を育てる相生関係。深い愛情とサポートが自然に生まれる関係です。',love:'水の深さが木の成長を支える、理想的なカップルです。',work:'水の知性と木の行動力が見事に補い合います。',advice:'水が尽くしすぎることがあります。木の人は感謝を積極的に伝えましょう。'},
-  火:{score:65,gogyo:'水は火を消す関係。アプローチが真逆で、衝突が生まれやすいです。',love:'引き合う魅力はありますが、価値観の違いが表面化しやすいカップルです。',work:'論理と感情の組み合わせ。役割を分けてお互いの強みを活かすことが大切です。',advice:'相手の「違い」を欠点ではなく個性として受け入れることが、関係改善のカギです。'},
-  土:{score:62,gogyo:'土は水をせき止める関係。自由に動きたい水と、安定を求める土がぶつかりやすいです。',love:'価値観の違いから距離ができやすいカップルです。小さな違いを積み重ねないことが大切。',work:'水のアイデアを土が形にできれば機能しますが、水が窮屈に感じやすいです。',advice:'土の人は水の自由を尊重し、水の人は土の安定への需要を理解することが大切です。'},
-  金:{score:88,gogyo:'金は水を生む相生関係。誠実さと知性が育て合う、理想的な関係です。',love:'知的な深みで繋がる、長続きするカップルです。',work:'精密さと知性の組み合わせ。専門性の高い分野で特に力を発揮します。',advice:'どちらも「言わなくてもわかる」に甘えやすいです。定期的な対話の時間を設けましょう。'},
-  水:{score:80,gogyo:'同じ水のエネルギー同士。感性と知性が深く共鳴する関係です。',love:'言わなくても伝わる感覚がある、深いところで繋がれるカップルです。',work:'直感と思考力の組み合わせ。クリエイティブな仕事や研究で特に力を発揮します。',advice:'お互い内省的なため、不満を溜め込みやすいです。定期的に気持ちを話し合う場を作りましょう。'},
-  },
+
+// ── 干合テーブル（天干インデックス同士） ──
+const COMPAT_KANGO = {
+  '0-5':'甲己合（中正の合）','5-0':'甲己合（中正の合）',
+  '1-6':'乙庚合（仁義の合）','6-1':'乙庚合（仁義の合）',
+  '2-7':'丙辛合（威制の合）','7-2':'丙辛合（威制の合）',
+  '3-8':'丁壬合（淫匿の合）','8-3':'丁壬合（淫匿の合）',
+  '4-9':'戊癸合（無情の合）','9-4':'戊癸合（無情の合）',
+};
+const KANGO_DESC = {
+  '甲己合（中正の合）':'穏やかで安定した縁。互いに誠実さで歩める、信頼関係が自然と育まれる組み合わせです。長期的な絆を築きやすく、困難なときも共に乗り越えられます。',
+  '乙庚合（仁義の合）':'義理と誠実さが際立つ縁。互いの責任感が共鳴し、困難なときほど力を合わせられる関係です。仕事でも私生活でも信頼し合える絆が生まれます。',
+  '丙辛合（威制の合）':'独特の緊張感と引力を持つ縁。お互いに刺激を与え合い、精神的に高め合える関係です。意見がぶつかることもありますが、それが成長のエネルギーになります。',
+  '丁壬合（淫匿の合）':'深い感情的なつながりを持つ縁。言葉にならない感性で共鳴し合い、精神的な深みのある関係になりやすい組み合わせです。',
+  '戊癸合（無情の合）':'情熱と安定が交差する縁。表面的な違いはあっても内面では惹かれ合い、互いに欠けているものを補い合える関係です。',
 };
 
+// ── 支合（六合）テーブル ──
+const COMPAT_SHIGO = [
+  [0,1,'子丑合'],[2,11,'寅亥合'],[3,10,'卯戌合'],
+  [4,9,'辰酉合'],[5,8,'巳申合'],[6,7,'午未合'],
+];
+const SHIGO_DESC = {
+  '子丑合':'子と丑が合う「支合」。陰陽が調和し、不思議な引力で惹かれ合う縁。ゆっくりと深まる安定した関係を築きやすい組み合わせです。',
+  '寅亥合':'寅と亥が合う「支合」。木と水の相生が重なる縁。お互いの力を自然に引き出し合い、成長を促す関係です。',
+  '卯戌合':'卯と戌が合う「支合」。情熱的な引力がある縁。感情的なつながりが強く、深い絆を育みやすいです。',
+  '辰酉合':'辰と酉が合う「支合」。土と金の相生が重なる縁。誠実さとこだわりが共鳴し、信頼関係を築きやすいです。',
+  '巳申合':'巳と申が合う「支合」。独特の緊張感と魅力が交差する縁。刺激的で互いを高め合える関係です。',
+  '午未合':'午と未が合う「支合」。火と土の相生が重なる縁。情熱と安定がバランスよく組み合わさった関係です。',
+};
+
+// ── 三合テーブル ──
+const COMPAT_SANGO = [
+  [[8,0,4],'申子辰（水局）'],[[2,6,10],'寅午戌（火局）'],
+  [[5,9,1],'巳酉丑（金局）'],[[11,3,7],'亥卯未（木局）'],
+];
+const SANGO_DESC = {
+  '申子辰（水局）':'申・子・辰の「三合（水局）」。知性と感性が深く共鳴し、精神的なつながりが強い縁です。ともにいると互いの知的な深みが増します。',
+  '寅午戌（火局）':'寅・午・戌の「三合（火局）」。情熱と行動力が共鳴し、互いに燃え上がるような縁です。共に挑戦するとシナジーが生まれます。',
+  '巳酉丑（金局）':'巳・酉・丑の「三合（金局）」。誠実さとこだわりが共鳴し、強固な信頼関係を築ける縁です。長期的なパートナーシップで特に輝きます。',
+  '亥卯未（木局）':'亥・卯・未の「三合（木局）」。成長と調和のエネルギーが高まり、ともに発展できる縁です。互いの可能性を引き出し合います。',
+};
+
+// ── 七冲（六冲）テーブル ──
+const COMPAT_SHICHU = [
+  [0,6,'子午冲'],[1,7,'丑未冲'],[2,8,'寅申冲'],
+  [3,9,'卯酉冲'],[4,10,'辰戌冲'],[5,11,'巳亥冲'],
+];
+const SHICHU_DESC = {
+  '子午冲':'子と午が冲する「七冲」。エネルギーが真正面からぶつかり合います。変化と刺激が多い関係ですが、うまく昇華できれば大きな成長が生まれます。',
+  '丑未冲':'丑と未が冲する「七冲」。安定同士がぶつかり合う関係。価値観の違いが表面化しやすいですが、互いの個性を尊重することで補い合えます。',
+  '寅申冲':'寅と申が冲する「七冲」。強いエネルギー同士が衝突する関係。競い合う場面も多いですが、それが互いの成長につながることも。',
+  '卯酉冲':'卯と酉が冲する「七冲」。感性と精密さがぶつかり合う関係。感情的な衝突が起きやすいですが、深いところでは惹かれ合っています。',
+  '辰戌冲':'辰と戌が冲する「七冲」。土の力同士が衝突する関係。頑固さがぶつかることもありますが、忍耐強さという共通点もあります。',
+  '巳亥冲':'巳と亥が冲する「七冲」。火と水が激しくぶつかり合う関係。変化が多くなりやすいですが、互いへの理解が深まると強い絆になります。',
+};
+
+// ── 六害テーブル ──
+const COMPAT_ROKUGAI = [
+  [0,7,'子未害'],[1,6,'丑午害'],[2,5,'寅巳害'],
+  [3,4,'卯辰害'],[8,11,'申亥害'],[9,10,'酉戌害'],
+];
+const ROKUGAI_DESC = {
+  '子未害':'子と未が害する「六害」。関係においてすれ違いや誤解が生じやすい組み合わせ。丁寧なコミュニケーションを心がけることが関係を改善します。',
+  '丑午害':'丑と午が害する「六害」。価値観の違いから摩擦が生じやすいです。互いの違いを受け入れる寛容さが関係の鍵となります。',
+  '寅巳害':'寅と巳が害する「六害」。エネルギーが噛み合いにくく、すれ違いが起きやすい組み合わせ。時間をかけて信頼を積み上げることが大切です。',
+  '卯辰害':'卯と辰が害する「六害」。繊細さと安定感がうまく噛み合わないことがあります。お互いのペースを尊重することで関係が安定します。',
+  '申亥害':'申と亥が害する「六害」。動くタイミングがずれやすい組み合わせ。コミュニケーションを増やし、意図を確認し合うことが重要です。',
+  '酉戌害':'酉と戌が害する「六害」。理想とこだわりがぶつかりやすい関係。どちらかが一歩引く柔軟さが関係の潤滑油になります。',
+};
+
+// ── 五行相性テーブル（日主同士） ──
+const COMPAT_GOGYO = {
+  木:{木:{score:5,love:'同じ「成長・挑戦」のエネルギー同士。共に高め合える理想的な関係ですが、正しさへのこだわりが衝突することも。',work:'同じ方向を向いて走れるコンビ。競争より協力を意識すれば大きな成果が生まれます。',advice:'どちらかが一歩引く柔軟さが関係を長続きさせます。'},
+  火:{score:10,love:'木が火を育てる相生。自然に高め合えるカップルです。',work:'発想力と実行力の最強コンビ。新しいプロジェクトで特に輝きます。',advice:'ペースの違いを意識して、互いのリズムを尊重しましょう。'},
+  土:{score:-5,love:'木が土を剋する関係。変化を求める木と安定を求める土で価値観の違いが出やすいです。',work:'木のアイデアと土の実行力は噛み合いますが、スピード感の違いに注意。',advice:'お互いの「違い」を補い合いの関係と捉えることが大切です。'},
+  金:{score:-10,love:'金が木を剋する関係。言葉で傷つけ合うリスクが高く、丁寧なコミュニケーションが必要です。',work:'金の厳密さが木の創造性を削ぐことも。互いの強みを活かす環境作りが重要です。',advice:'正論より感情に寄り添うことを意識すると関係が改善します。'},
+  水:{score:10,love:'水が木を育てる相生。深い愛情が自然に育まれる、理想的なカップルです。',work:'水の知性と木の行動力が見事に補い合います。長期プロジェクトで特に力を発揮。',advice:'水が尽くしすぎないよう、木の人は感謝を言葉で伝えましょう。'}},
+  火:{木:{score:10,love:'木が火を育てる相生。火の情熱を木が支える、自然な高め合いの関係です。',work:'企画力と実行力の最強タッグ。',advice:'火のペースが木を疲れさせることも。ゆっくりする時間も大切に。'},
+  火:{score:5,love:'同じ「情熱・行動」エネルギー同士。最初から盛り上がりますが感情の衝突も激しくなりやすいです。',work:'モチベーションを高め合える関係。ただし主導権争いに注意。',advice:'冷却期間を大切に。興奮しているときの判断は後でよく振り返りましょう。'},
+  土:{score:10,love:'火が土を生む相生。情熱が安定に変わる、バランスのいい関係です。',work:'火の企画と土の実行・管理が見事に噛み合います。',advice:'火の人が飽きないよう、土の人は時々変化を取り入れてみましょう。'},
+  金:{score:-10,love:'火が金を剋する関係。感情的なやりとりが多くなると消耗しやすいです。',work:'情熱と精密さの組み合わせ。役割分担がうまくいけば強力です。',advice:'感情が高ぶったときは一拍置く習慣を。冷静な対話が関係の質を上げます。'},
+  水:{score:-10,love:'水が火を剋する関係。真逆の引力はありますが価値観の衝突が起きやすいです。',work:'感性と論理の組み合わせ。コミュニケーションコストが高めです。',advice:'感情と論理をぶつけ合わず、それぞれの得意を活かす場面を作ることが大切。'}},
+  土:{木:{score:-5,love:'木が土を剋する関係。変化を求める木に土がついていけないことも。',work:'木のアイデアと土の安定感を役割分担で活かせます。',advice:'中間点を見つけることが関係の安定につながります。'},
+  火:{score:10,love:'火が土を生む相生。情熱と安定が組み合わさったバランスのよいカップルです。',work:'火の発想力と土の実行・継続力が補い合います。',advice:'土の人が尽くしすぎることがあります。火の人は感謝を言葉で伝えましょう。'},
+  土:{score:5,love:'同じ「安定・信頼」エネルギー同士。じっくり深まる関係で一度信頼が生まれると長続きします。',work:'安定した進め方ができるコンビ。長期プロジェクトで特に力を発揮します。',advice:'変化への対応が遅くなりやすいです。定期的に新しい刺激を取り入れましょう。'},
+  金:{score:10,love:'土が金を生む相生。深く信頼し合える誠実な関係です。',work:'土の管理力と金の精密さが組み合わさる最強タッグ。品質重視の仕事で輝きます。',advice:'ふたりとも完璧主義になりやすいです。時には「80点でよし」と割り切る練習を。'},
+  水:{score:-8,love:'土が水をせき止める関係。自由を求める水に土の安定志向が窮屈に感じることも。',work:'水のアイデアを土が形にできれば機能しますが、水が窮屈に感じやすいです。',advice:'水の人の自由を尊重しながら、土の人は安定の場を提供することが関係のカギです。'}},
+  金:{木:{score:-10,love:'金が木を剋する関係。批判やプレッシャーをかけ合いやすく、慎重なコミュニケーションが必要です。',work:'金の基準の高さが木の伸びやかさを阻害することも。',advice:'正論より感情に寄り添うことを意識すると、関係が大きく改善します。'},
+  火:{score:-10,love:'火が金を剋する関係。強い感情がぶつかりやすく消耗しやすいです。',work:'情熱と精密さの組み合わせ。役割を明確に分けることで機能します。',advice:'感情が高ぶったときは一拍置く習慣を。冷静な対話が関係の質を上げます。'},
+  土:{score:10,love:'土が金を生む相生。誠実さと責任感が共鳴する信頼できる関係です。',work:'土の安定と金の精密さが最強コンビ。品質が求められる仕事で特に輝きます。',advice:'ふたりとも完璧主義になりやすいです。時には割り切る練習を。'},
+  金:{score:5,love:'同じ「意志・こだわり」エネルギー同士。高い基準を認め合える関係ですが譲らない場面では衝突しやすいです。',work:'品質と精度への共通のこだわりが強みです。',advice:'勝ち負けにこだわらず、相手の「正しさ」も認める姿勢が関係を深めます。'},
+  水:{score:10,love:'金が水を生む相生。知性と誠実さが響き合う深い信頼関係が築けます。',work:'論理と感性の組み合わせ。専門的な分野で特に力を発揮します。',advice:'どちらも感情を内に秘める傾向があります。定期的に気持ちを言葉にする習慣を。'}},
+  水:{木:{score:10,love:'水が木を育てる相生。深い愛情とサポートが自然に生まれる理想的な関係です。',work:'水の知性と木の行動力が見事に補い合います。',advice:'水が尽くしすぎることがあります。木の人は感謝を積極的に伝えましょう。'},
+  火:{score:-10,love:'水が火を剋する関係。引き合う魅力はありますが価値観の違いが表面化しやすいです。',work:'論理と感情の組み合わせ。役割を分けてお互いの強みを活かすことが大切です。',advice:'相手の「違い」を欠点ではなく個性として受け入れることが、関係改善のカギです。'},
+  土:{score:-8,love:'土が水をせき止める関係。価値観の違いから距離ができやすいカップルです。',work:'水のアイデアを土が形にできれば機能しますが水が窮屈に感じやすいです。',advice:'土の人は水の自由を尊重し、水の人は土の安定への需要を理解することが大切です。'},
+  金:{score:10,love:'金が水を生む相生。知的な深みで繋がる長続きするカップルです。',work:'精密さと知性の組み合わせ。専門性の高い分野で力を発揮します。',advice:'どちらも「言わなくてもわかる」に甘えやすいです。定期的な対話の時間を設けましょう。'},
+  水:{score:5,love:'同じ「知性・感性」エネルギー同士。言わなくても伝わる感覚がある深いところで繋がれるカップルです。',work:'直感と思考力の組み合わせ。クリエイティブな仕事で力を発揮します。',advice:'お互い内省的なため、不満を溜め込みやすいです。定期的に気持ちを話し合う場を作りましょう。'}},
+};
+
+// ── 柱を構築（時柱は任意） ──
+function buildCompatPillars(y, m, d, hStr) {
+  const pillars = [
+    { label:'年柱', kan:getYearKan(y),       ji:getYearJi(y) },
+    { label:'月柱', kan:getMonthKan(y,m,d),   ji:getMonthJi(y,m,d) },
+    { label:'日柱', kan:getDayKan(y,m,d),     ji:getDayJi(y,m,d), isNichi:true },
+  ];
+  if(hStr !== '') {
+    const h = parseInt(hStr);
+    pillars.push({ label:'時柱', kan:getHourKan(getDayKan(y,m,d),h), ji:getHourJi(h) });
+  }
+  return pillars;
+}
+
+// ── 命式ミニ表示 ──
+function renderCompatMini(targetId, pillars) {
+  const el = document.getElementById(targetId);
+  if(!el) return;
+  el.innerHTML = pillars.map(p=>`
+    <div class="compat-pillar-chip ${p.isNichi?'nichi':''}">
+      <div class="compat-pillar-chip-head">${p.label}</div>
+      <div class="compat-pillar-chip-kan">${KAN[p.kan]}</div>
+      <div class="compat-pillar-chip-ji">${JI[p.ji]}</div>
+    </div>
+  `).join('');
+}
+
+// ── 相性タブ切り替え ──
+function switchCompatTab(idx) {
+  document.querySelectorAll('#compatTabs .rtab').forEach((t,i)=>t.classList.toggle('active',i===idx));
+  document.querySelectorAll('#compatTabPanels .rtab-panel').forEach((p,i)=>p.classList.toggle('active',i===idx));
+}
+
+// ── リセット ──
+function resetCompat() {
+  document.getElementById('compatResult').style.display = 'none';
+  document.getElementById('compatInputSection').style.display = 'block';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ── メイン鑑定関数 ──
+function calcCompat() {
+  const y1=parseInt(document.getElementById('cY1').value)||0;
+  const m1=parseInt(document.getElementById('cM1').value)||0;
+  const d1=parseInt(document.getElementById('cD1').value)||0;
+  const h1=document.getElementById('cH1').value;
+  const y2=parseInt(document.getElementById('cY2').value)||0;
+  const m2=parseInt(document.getElementById('cM2').value)||0;
+  const d2=parseInt(document.getElementById('cD2').value)||0;
+  const h2=document.getElementById('cH2').value;
+  if(!y1||!m1||!d1||!y2||!m2||!d2){ alert('2人の生年月日をすべて選択してください'); return; }
+
+  const pillars1 = buildCompatPillars(y1,m1,d1,h1);
+  const pillars2 = buildCompatPillars(y2,m2,d2,h2);
+  const jis1  = pillars1.map(p=>p.ji);
+  const jis2  = pillars2.map(p=>p.ji);
+  const kans1 = pillars1.map(p=>p.kan);
+  const kans2 = pillars2.map(p=>p.kan);
+  const dKan1 = getDayKan(y1,m1,d1);
+  const dKan2 = getDayKan(y2,m2,d2);
+  const g1 = KAN_GOGYO[dKan1];
+  const g2 = KAN_GOGYO[dKan2];
+
+  let score = 50;
+  const effects = [];
+
+  // 1. 干合（全柱対全柱・最初の1件のみ）
+  let kangoName = null;
+  outer_kango: for(const k1 of kans1) for(const k2 of kans2) {
+    const key = `${k1}-${k2}`;
+    if(COMPAT_KANGO[key]) {
+      kangoName = COMPAT_KANGO[key];
+      score += 15;
+      effects.push({ positive:true, tag:'干合 ▸ 天干の縁', title: kangoName, desc: KANGO_DESC[kangoName] });
+      break outer_kango;
+    }
+  }
+
+  // 2. 支合（同種は1回のみ）
+  const shigoSeen = new Set();
+  for(const j1 of jis1) for(const j2 of jis2)
+    for(let i=0;i<COMPAT_SHIGO.length;i++) {
+      const [a,b,nm] = COMPAT_SHIGO[i];
+      if(!shigoSeen.has(i) && ((j1===a&&j2===b)||(j1===b&&j2===a))) {
+        shigoSeen.add(i);
+        score += 8;
+        effects.push({ positive:true, tag:'支合（六合）▸ 地支の縁', title: nm, desc: SHIGO_DESC[nm] });
+      }
+    }
+
+  // 3. 三合（1件のみ）
+  const allJis = [...new Set([...jis1,...jis2])];
+  let sangoFound = false;
+  for(const [combo, nm] of COMPAT_SANGO) {
+    if(!sangoFound && combo.every(j=>allJis.includes(j))) {
+      sangoFound = true;
+      score += 10;
+      effects.push({ positive:true, tag:'三合 ▸ 強い地支の縁', title: nm, desc: SANGO_DESC[nm] });
+    }
+  }
+
+  // 4. 七冲（同種は1回のみ）
+  const shichuSeen = new Set();
+  for(const j1 of jis1) for(const j2 of jis2)
+    for(let i=0;i<COMPAT_SHICHU.length;i++) {
+      const [a,b,nm] = COMPAT_SHICHU[i];
+      if(!shichuSeen.has(i) && ((j1===a&&j2===b)||(j1===b&&j2===a))) {
+        shichuSeen.add(i);
+        score -= 15;
+        effects.push({ positive:false, tag:'七冲 ▸ 地支の衝突', title: nm, desc: SHICHU_DESC[nm] });
+      }
+    }
+
+  // 5. 六害（同種は1回のみ）
+  const rokugaiSeen = new Set();
+  for(const j1 of jis1) for(const j2 of jis2)
+    for(let i=0;i<COMPAT_ROKUGAI.length;i++) {
+      const [a,b,nm] = COMPAT_ROKUGAI[i];
+      if(!rokugaiSeen.has(i) && ((j1===a&&j2===b)||(j1===b&&j2===a))) {
+        rokugaiSeen.add(i);
+        score -= 10;
+        effects.push({ positive:false, tag:'六害 ▸ 地支の不調和', title: nm, desc: ROKUGAI_DESC[nm] });
+      }
+    }
+
+  // 6. 五行相生相剋（日主同士）
+  const gogyoData = COMPAT_GOGYO[g1]?.[g2];
+  if(gogyoData) {
+    score += gogyoData.score;
+    const relLabel = gogyoData.score>0 ? '相生（吉）' : gogyoData.score<0 ? '相剋（要注意）' : '比和';
+    effects.unshift({
+      positive: gogyoData.score >= 0,
+      tag: `五行 ▸ ${relLabel}`,
+      title: `${g1}（${KAN[dKan1]}）× ${g2}（${KAN[dKan2]}）`,
+      desc: gogyoData.love + '\n' + gogyoData.advice,
+    });
+  }
+
+  score = Math.min(100, Math.max(10, score));
+
+  // ── 表示 ──
+  renderCompatMini('compatMini1', pillars1);
+  renderCompatMini('compatMini2', pillars2);
+
+  document.getElementById('compatScoreNum').textContent = score;
+  document.getElementById('compatBar').style.width = score + '%';
+  const level = score>=95?'✦ 運命的なつながり':score>=85?'最高の相性':score>=70?'良い相性':score>=55?'補い合える関係':score>=40?'意識が必要な関係':'個性が際立つ組み合わせ';
+  document.getElementById('compatScoreDesc').textContent = `${g1}（${KAN[dKan1]}）× ${g2}（${KAN[dKan2]}）— ${level}`;
+
+  // 作用一覧
+  const efEl = document.getElementById('compatEffectList');
+  if(effects.length === 0) {
+    efEl.innerHTML = '<div style="font-size:14px;color:var(--muted);text-align:center;padding:20px 0;line-height:2;">特定の作用は検出されませんでした。<br>それぞれの個性を尊重し合うことで<br>自然と良好な関係を築ける組み合わせです。</div>';
+  } else {
+    efEl.innerHTML = effects.map(e=>`
+      <div class="compat-effect-card ${e.positive?'good':'bad'}">
+        <div class="compat-effect-tag ${e.positive?'good':'bad'}">${e.positive?'▲ 吉作用':'▼ 凶作用'} — ${e.tag}</div>
+        <div class="compat-effect-title">${e.title}</div>
+        <div class="compat-effect-desc">${e.desc.replace(/\n/g,'<br>')}</div>
+      </div>
+    `).join('');
+  }
+
+  // 恋愛テキスト
+  const gd = COMPAT_GOGYO[g1]?.[g2];
+  let loveLines = [gd?.love || 'それぞれの個性が異なる組み合わせ。互いの違いを尊重することで深まる関係です。'];
+  if(kangoName) loveLines.push(`「${kangoName}」の干合により、運命的な縁を感じやすい関係です。`);
+  [...shigoSeen].forEach(i=>{ const [,,nm]=COMPAT_SHIGO[i]; loveLines.push(`地支の支合（${nm}）により、自然な引力で惹かれ合う縁があります。`); });
+  if(sangoFound) loveLines.push('三合の縁が加わり、ともにいると互いのエネルギーが高まりやすいです。');
+  [...shichuSeen].forEach(i=>{ const [,,nm]=COMPAT_SHICHU[i]; loveLines.push(`七冲（${nm}）の影響で刺激的な関係になりやすいですが、それが互いを成長させることもあります。`); });
+  document.getElementById('compatLoveDesc').textContent = loveLines.join('\n\n');
+
+  // 仕事テキスト
+  let workLines = [gd?.work || 'それぞれの強みを持ち寄ることで補い合えるコンビです。'];
+  if(shigoSeen.size>0||sangoFound) workLines.push('支合・三合の縁があり、共同作業でシナジーが生まれやすい組み合わせです。');
+  [...shichuSeen].forEach(i=>{ const [,,nm]=COMPAT_SHICHU[i]; workLines.push(`七冲（${nm}）の影響でぶつかることもありますが、切磋琢磨できる関係でもあります。`); });
+  [...rokugaiSeen].forEach(i=>{ const [,,nm]=COMPAT_ROKUGAI[i]; workLines.push(`六害（${nm}）のすれ違いを意識し、定期的な進捗共有で摩擦を減らすことが大切です。`); });
+  document.getElementById('compatWorkDesc').textContent = workLines.join('\n\n');
+
+  // 総評
+  const goodCount = effects.filter(e=>e.positive).length;
+  const badCount  = effects.filter(e=>!e.positive).length;
+  let summary = `${KAN[dKan1]}（${g1}）× ${KAN[dKan2]}（${g2}）の組み合わせ。総合スコアは${score}点で「${level.replace('✦ ','')}」といえる相性です。\n\n`;
+  if(kangoName) summary += `天干同士の「${kangoName}」が検出され、宿命的な縁を感じさせます。\n\n`;
+  if(goodCount) summary += `良縁を示す作用が${goodCount}件あり、二人の関係に自然な引力と調和をもたらします。`;
+  if(badCount)  summary += (goodCount?'\n\n':'') + `緊張を示す作用も${badCount}件あります。摩擦が生じやすい側面もありますが、それぞれの個性を認め合うことで補い合える関係へと変わります。`;
+  summary += '\n\n四柱推命の相性は「絶対」ではなく、お互いの理解と努力によって関係はいくらでも育てていけます。';
+  document.getElementById('compatSummary').textContent = summary;
+
+  // 表示切り替え
+  document.getElementById('compatInputSection').style.display = 'none';
+  document.getElementById('compatResult').style.display = 'block';
+  sfxResult();
+  document.getElementById('compatResult').scrollIntoView({behavior:'smooth',block:'start'});
+}
 
 // ── 相性占い：保存済みプロフィールから入力 ──
 let _compatSlot = 1;
@@ -2721,6 +3141,66 @@ function fillCompatFromProfile(idx){
   setTimeout(()=>{ if(dEl) dEl.value=d; },50);
   if(nameEl) nameEl.textContent='✦ '+p.name;
   _compatSlot = slot===1 ? 2 : 1;
+}
+
+// ── スコア分布グラフ描画（Chart.js） ──
+let _distChartInstance = null;
+function renderCompatDistChart(){
+  const canvas = document.getElementById('compatDistChart');
+  if(!canvas) return;
+  if(_distChartInstance){ _distChartInstance.destroy(); _distChartInstance=null; }
+  const isDark = document.body.classList.contains('dark');
+  const labels = ['10〜19','20〜29','30〜39','40〜49','50〜59','60〜69','70〜79','80〜89','90〜99','100'];
+  const data   = [2.953, 5.554, 13.468, 20.136, 22.921, 19.647, 10.424, 3.850, 0.948, 0.100];
+  const mutedC  = isDark ? '#607060' : '#7a8870';
+  const goodDk  = isDark ? '#5a9e6a' : '#2a5e38';
+  const goodMd  = isDark ? '#7aaa7a' : '#3d7a4a';
+  const normalC = isDark ? '#4a6040' : '#97c459';
+  const colors  = [mutedC,mutedC,mutedC, normalC,normalC,normalC, goodMd,goodDk,'#1a4028','#0d2018'];
+  const gridC   = isDark ? 'rgba(100,160,90,0.12)' : 'rgba(60,120,70,0.10)';
+  const tickC   = isDark ? '#607060' : '#7a8870';
+  _distChartInstance = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        backgroundColor: colors,
+        borderWidth: 0,
+        borderRadius: 3,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            title: ctx => ctx[0].label + '点',
+            label: ctx => ' ' + ctx.parsed.y.toFixed(3) + '%'
+          },
+          backgroundColor: isDark ? '#1a221a' : '#fff',
+          titleColor: isDark ? '#a0cc96' : '#2a5e38',
+          bodyColor:  isDark ? '#8a9e80' : '#5a6650',
+          borderColor: isDark ? 'rgba(100,160,90,0.3)' : 'rgba(60,120,70,0.2)',
+          borderWidth: 0.5,
+        }
+      },
+      scales: {
+        x: {
+          ticks: { autoSkip: false, maxRotation: 0, font:{size:10}, color: tickC },
+          grid: { display: false },
+          border: { color: isDark ? 'rgba(100,160,90,0.2)' : 'rgba(60,120,70,0.2)' }
+        },
+        y: {
+          ticks: { callback: v => v+'%', font:{size:10}, color: tickC, maxTicksLimit: 5 },
+          grid: { color: gridC },
+          border: { display: false }
+        }
+      }
+    }
+  });
 }
 
 function initCompatSelects(){
@@ -2759,35 +3239,7 @@ function initCompatSelects(){
   updateDays('cY2','cM2','cD2');
 }
 
-function calcCompat(){
-  const y1=document.getElementById('cY1').value, m1=document.getElementById('cM1').value, d1=document.getElementById('cD1').value;
-  const y2=document.getElementById('cY2').value, m2=document.getElementById('cM2').value, d2=document.getElementById('cD2').value;
-  if(!y1||!m1||!d1||!y2||!m2||!d2){ alert('2人の生年月日をすべて選択してください'); return; }
-
-  const date1=`${y1}-${String(m1).padStart(2,'0')}-${String(d1).padStart(2,'0')}`;
-  const date2=`${y2}-${String(m2).padStart(2,'0')}-${String(d2).padStart(2,'0')}`;
-  const c1=calcMeishiki(date1), c2=calcMeishiki(date2);
-  const g1=KAN_GOGYO[c1.dKan], g2=KAN_GOGYO[c2.dKan];
-
-  const cd = (GOGYO_COMPAT[g1]&&GOGYO_COMPAT[g1][g2]) ? GOGYO_COMPAT[g1][g2] : {score:70,gogyo:'異なるエネルギーを持つ組み合わせです。',love:'互いの違いを尊重することで深まる関係です。',work:'それぞれの強みを活かすことで補い合えます。',advice:'定期的なコミュニケーションを大切にしましょう。'};
-
-  const result=document.getElementById('compatResult');
-  result.style.display='block';
-  document.getElementById('compatScoreNum').textContent=cd.score;
-  document.getElementById('compatBar').style.width=cd.score+'%';
-
-  const level = cd.score>=85?'最高の相性です':cd.score>=70?'良い相性です':cd.score>=60?'補い合える関係です':'意識が必要な関係です';
-  document.getElementById('compatScoreDesc').textContent=`${g1}（${KAN[c1.dKan]}）× ${g2}（${KAN[c2.dKan]}）— ${cd.score>=85?'最高の相性です':cd.score>=70?'良い相性です':cd.score>=60?'補い合える関係です':'意識が必要な関係です'}`;
-  document.getElementById('compatGogyoDesc').textContent=cd.gogyo;
-  document.getElementById('compatLoveDesc').textContent=cd.love;
-  document.getElementById('compatWorkDesc').textContent=cd.work;
-  document.getElementById('compatAdvice').textContent=cd.advice;
-
-  sfxResult();
-  result.scrollIntoView({behavior:'smooth',block:'start'});
-}
-
-// render()から日主の五行と日干を取得する補助関数
+// ── calcMeishiki（既存鑑定との互換用） ──
 function calcMeishiki(dateVal){
   const [y,m,d]=dateVal.split('-').map(Number);
   const baseDay=new Date(1984,0,31);
@@ -2796,6 +3248,45 @@ function calcMeishiki(dateVal){
   const dKan=((diff%10)+10)%10;
   return {dKan, mainGogyo: KAN_GOGYO[dKan]};
 }
+
+// ════════════════════════════════════════
+//  （旧GOGYO_COMPATは新エンジンに統合済み）
+// ════════════════════════════════════════
+const GOGYO_COMPAT = {
+  木:{木:{score:85,gogyo:'同じ木のエネルギー同士。成長への意欲や理想を共有しやすく、高め合える関係です。',love:'お互いの自由を尊重し合えるカップルです。共に新しいことに挑戦する喜びを共有できます。',work:'同じ方向を向いて走れる理想的なチームです。競い合うより協力し合うことで大きな成果が生まれます。',advice:'お互い「正しさ」へのこだわりが強いため、意見が衝突することも。どちらかが一歩引く柔軟さが関係を長続きさせます。'},
+  火:{score:90,gogyo:'木は火を燃やす、理想的な相生関係。一方が情熱を与え、もう一方がそれを活かします。',love:'木の人が火の人の情熱に火をつける関係。明るくエネルギッシュな恋愛になりやすいです。',work:'木の企画力と火の実行力が組み合わさる最強タッグ。新しいプロジェクトで特に力を発揮します。',advice:'ペースの違いに注意。木はじっくり型、火は勢い型。互いのリズムを尊重することが大切です。'},
+  土:{score:70,gogyo:'木は土を押し広げる関係。自由を求める木と安定を求める土は、価値観の違いが生まれやすいです。',love:'最初は新鮮さを感じますが、長期的には価値観の違いが出やすいカップルです。',work:'木の変化志向と土の安定志向がぶつかることも。役割分担を明確にすると機能します。',advice:'お互いの「違い」を否定せず、補い合いの関係と捉えることが関係改善のカギです。'},
+  金:{score:55,gogyo:'金は木を傷つける関係。批判やプレッシャーをかけ合いやすく、慎重なコミュニケーションが必要です。',love:'刺激的な関係ですが、傷つき合うリスクも高いカップルです。お互いの言葉に注意が必要です。',work:'金の厳密さが木の創造性を削いでしまうことも。それぞれの強みを生かす環境作りが重要です。',advice:'感情的になったときほど一歩引くことが大切。冷静な対話の習慣が関係を安定させます。'},
+  水:{score:88,gogyo:'水は木を育てる、理想的な相生関係。サポートし合い、自然に力を引き出し合える関係です。',love:'水の人の深い愛情が木の人を育てます。穏やかで安定した、長く続く関係になりやすいです。',work:'水の知性と木の行動力が見事に補い合います。長期的なプロジェクトで特に力を発揮します。',advice:'水が木に尽くしすぎてしまうことがあります。時には木が感謝を言葉で伝えることが大切。'},
+  },
+  火:{木:{score:90,gogyo:'木は火を燃やす相生関係。木がサポートし、火がそれを活力に変える理想的な関係です。',love:'自然に高め合えるカップル。木の誠実さが火の情熱を支えます。',work:'発想力と実行力の最強コンビ。スタートアップや新規事業で特に輝きます。',advice:'火のペースが木を疲れさせることも。たまにはゆっくり過ごす時間を作って。'},
+  火:{score:82,gogyo:'同じ火のエネルギー同士。情熱と活気があふれる関係ですが、感情がぶつかりやすい面も。',love:'最初から盛り上がるタイプの恋愛。ただし感情の衝突も激しくなりやすいです。',work:'お互いのモチベーションを高め合える関係。ただしどちらも主導権を取りたがるので注意。',advice:'冷却期間を大切に。興奮しているときの判断は後でよく振り返るようにしましょう。'},
+  土:{score:88,gogyo:'火は土を生む相生関係。火のエネルギーが土の安定を生み出す、自然な支え合いの関係。',love:'情熱と安定が組み合わさった、バランスのよいカップルです。',work:'火の企画と土の実行・管理が見事に噛み合います。長期プロジェクトで特に機能します。',advice:'火の人が飽きないよう、土の人は時々変化や刺激を取り入れてみましょう。'},
+  金:{score:60,gogyo:'火は金を溶かす関係。強い感情がぶつかりやすく、お互いの個性が削られることがあります。',love:'刺激的ですが消耗しやすい関係。感情的になる前に話し合う習慣が必要です。',work:'火の勢いが金の精密さを乱すことも。役割を明確に分けることで機能します。',advice:'お互い「正しい」と思っているときほど、相手の立場に立って考える練習を。'},
+  水:{score:65,gogyo:'水は火を消す関係。アプローチの違いが摩擦を生みやすいですが、うまくいけば補い合えます。',love:'真逆の魅力で引き合うタイプ。長続きには互いの違いを受け入れる寛容さが必要です。',work:'感性と論理の組み合わせ。うまくかみ合えば強力ですが、コミュニケーションコストが高めです。',advice:'感情と論理をぶつけ合わず、それぞれの得意を活かす場面を作ることが大切。'},
+  },
+  土:{木:{score:70,gogyo:'木は土を押し広げる関係。価値観の違いが摩擦を生みやすいです。',love:'変化を求める木と安定を求める土。互いに魅力を感じながらも、すれ違いやすいカップルです。',work:'木のアイデアと土の実行力は相性がいいですが、スピード感の違いに注意が必要です。',advice:'どちらかが一方的に合わせるのではなく、中間点を見つけることが関係の安定につながります。'},
+  火:{score:88,gogyo:'火は土を生む相生関係。情熱が安定に変わる、自然な流れがある関係です。',love:'火のリードを土がしっかり支える、安定感のある関係です。',work:'火の発想力と土の実行・継続力が見事に補い合います。',advice:'土の人が尽くしすぎることがあります。火の人は感謝をしっかり言葉で伝えましょう。'},
+  土:{score:80,gogyo:'同じ土のエネルギー同士。安定感と信頼感が自然と生まれる関係です。',love:'急がずゆっくり深まる関係。一度信頼が生まれると長く続く愛になります。',work:'安定した仕事の進め方ができるコンビ。長期プロジェクトで特に力を発揮します。',advice:'変化への対応が遅くなりやすいです。定期的に新しい刺激を取り入れることで関係が活性化します。'},
+  金:{score:88,gogyo:'土は金を生む相生関係。安定が精密さを育てる、自然なサポートの関係です。',love:'お互いを深く信頼し合える、誠実な関係です。',work:'土の管理力と金の精密さが組み合わさる最強タッグ。品質が求められる仕事で特に輝きます。',advice:'変化や新しいことへの対応が遅くなりやすいです。外からの刺激を積極的に取り入れましょう。'},
+  水:{score:62,gogyo:'土は水をせき止める関係。自由を求める水に対して、土の安定志向が窮屈に感じることがあります。',love:'最初は新鮮ですが、時間とともに価値観のずれが出やすいカップルです。',work:'水の流動性を土がうまく形にできれば強力なチームに。ただしコントロールしすぎに注意。',advice:'水の人の自由を尊重しながら、土の人は安定の場を提供することが関係のカギです。'},
+  },
+  金:{木:{score:55,gogyo:'金は木を傷つける関係。批判や厳しさが相手を傷つけやすいです。',love:'互いに魅力を感じながらも、言葉で傷つけ合うリスクが高いカップルです。',work:'金の基準の高さが木の伸びやかさを阻害することも。互いの強みを活かす環境が必要です。',advice:'正論より感情に寄り添うことを意識すると、関係が大きく改善します。'},
+  火:{score:60,gogyo:'火は金を溶かす関係。感情的なやりとりが多くなると消耗しやすいです。',love:'強い引力がある一方、衝突も多いカップルです。お互いの「核心」に触れる深い関係になれます。',work:'情熱と精密さの組み合わせ。役割分担がうまくいけば強力です。',advice:'感情が高ぶったときは一拍置く習慣を。冷静な対話が関係の質を上げます。'},
+  土:{score:88,gogyo:'土は金を生む相生関係。安定した土台の上で金の才能が最大限に発揮されます。',love:'誠実さと責任感が共鳴する、信頼できる関係です。',work:'土の安定と金の精密さが組み合わさる最強コンビ。品質重視の仕事で特に輝きます。',advice:'ふたりとも完璧主義になりやすいです。時には「80点でよし」と割り切る練習を。'},
+  金:{score:78,gogyo:'同じ金のエネルギー同士。高い基準と強い意志を共有できる関係です。',love:'お互いの強さを認め合える関係。ただしどちらも譲らない場面では衝突が起きやすいです。',work:'品質と精度への共通のこだわりが強みです。ただし完璧主義が高じると進まなくなることも。',advice:'勝ち負けにこだわらず、相手の「正しさ」も認める姿勢が関係を深めます。'},
+  水:{score:88,gogyo:'金は水を生む相生関係。金の誠実さが水の知性を育てる、自然な流れのある関係です。',love:'知性と誠実さが響き合う、深い信頼関係が築けるカップルです。',work:'論理と感性の組み合わせ。専門的な仕事や研究分野で特に力を発揮します。',advice:'どちらも感情を内に秘める傾向があります。定期的に気持ちを言葉にする習慣を作りましょう。'},
+  },
+  水:{木:{score:88,gogyo:'水は木を育てる相生関係。深い愛情とサポートが自然に生まれる関係です。',love:'水の深さが木の成長を支える、理想的なカップルです。',work:'水の知性と木の行動力が見事に補い合います。',advice:'水が尽くしすぎることがあります。木の人は感謝を積極的に伝えましょう。'},
+  火:{score:65,gogyo:'水は火を消す関係。アプローチが真逆で、衝突が生まれやすいです。',love:'引き合う魅力はありますが、価値観の違いが表面化しやすいカップルです。',work:'論理と感情の組み合わせ。役割を分けてお互いの強みを活かすことが大切です。',advice:'相手の「違い」を欠点ではなく個性として受け入れることが、関係改善のカギです。'},
+  土:{score:62,gogyo:'土は水をせき止める関係。自由に動きたい水と、安定を求める土がぶつかりやすいです。',love:'価値観の違いから距離ができやすいカップルです。小さな違いを積み重ねないことが大切。',work:'水のアイデアを土が形にできれば機能しますが、水が窮屈に感じやすいです。',advice:'土の人は水の自由を尊重し、水の人は土の安定への需要を理解することが大切です。'},
+  金:{score:88,gogyo:'金は水を生む相生関係。誠実さと知性が育て合う、理想的な関係です。',love:'知的な深みで繋がる、長続きするカップルです。',work:'精密さと知性の組み合わせ。専門性の高い分野で特に力を発揮します。',advice:'どちらも「言わなくてもわかる」に甘えやすいです。定期的な対話の時間を設けましょう。'},
+  水:{score:80,gogyo:'同じ水のエネルギー同士。感性と知性が深く共鳴する関係です。',love:'言わなくても伝わる感覚がある、深いところで繋がれるカップルです。',work:'直感と思考力の組み合わせ。クリエイティブな仕事や研究で特に力を発揮します。',advice:'お互い内省的なため、不満を溜め込みやすいです。定期的に気持ちを話し合う場を作りましょう。'},
+  },
+};
+
+
+
 
 // ════════════════════════════════════════
 //  PDF出力
