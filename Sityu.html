@@ -763,28 +763,6 @@ body.dark .nav-btn.active{
 <!-- 相性占い画面 -->
 <div id="screenCompat" style="display:none;padding:24px 0;">
 
-  <!-- スコア分布インフォ -->
-  <div class="section" style="border-top:none;padding-top:8px;padding-bottom:0;">
-    <div class="section-label">スコア分布について</div>
-    <div style="background:var(--ink2);border:0.5px solid var(--line2);border-radius:var(--r);padding:16px 16px 12px;">
-      <div style="font-size:13px;color:var(--paper2);line-height:2.0;font-weight:300;margin-bottom:14px;">
-        本鑑定は干合・支合・三合・七冲・六害など五行理論にもとづく本格判定を行います。<br>
-        <span style="color:var(--rose2);font-weight:400;">100点は約0.1%（1000人に1人）の超レア</span>。スコアは縁の深さの目安です。
-      </div>
-      <!-- 凡例 -->
-      <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-bottom:10px;letter-spacing:0.5px;">
-        <span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;border-radius:2px;background:#3d7a4a;display:inline-block;"></span>吉縁（70点以上）</span>
-        <span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;border-radius:2px;background:#7aaa7a;display:inline-block;"></span>普通（40〜69点）</span>
-        <span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;border-radius:2px;background:var(--muted2);display:inline-block;"></span>要注意（〜39点）</span>
-      </div>
-      <!-- グラフ -->
-      <div style="position:relative;width:100%;height:140px;">
-        <canvas id="compatDistChart" role="img" aria-label="相性スコア分布グラフ">10〜19点:2.95%, 20〜29点:5.55%, 30〜39点:13.47%, 40〜49点:20.14%, 50〜59点:22.92%, 60〜69点:19.65%, 70〜79点:10.42%, 80〜89点:3.85%, 90〜99点:0.95%, 100点:0.10%</canvas>
-      </div>
-      <div style="font-size:11px;color:var(--muted2);text-align:right;margin-top:6px;letter-spacing:0.5px;">※ 100万件シミュレーションによる実測値</div>
-    </div>
-  </div>
-
   <!-- 入力フォーム -->
   <div id="compatInputSection">
     <div class="section" style="padding-top:20px;">
@@ -851,6 +829,78 @@ body.dark .nav-btn.active{
 
       <button class="btn-calc" onclick="sfxCalc();calcCompat()">相　性　を　鑑　定　す　る</button>
     </div>
+
+    <!-- スコア分布 -->
+    <div class="section">
+      <div class="section-label">スコア分布について</div>
+      <div style="background:var(--ink2);border:0.5px solid var(--line2);border-radius:var(--r);padding:16px 16px 12px;margin-bottom:0;">
+        <div style="font-size:13px;color:var(--paper2);line-height:2.0;font-weight:300;margin-bottom:14px;">
+          <span style="color:var(--rose2);font-weight:400;">100点は約0.1%（1000人に1人）の超レア。</span>スコアは縁の深さの目安です。
+        </div>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-bottom:10px;letter-spacing:0.5px;">
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;border-radius:2px;background:#3d7a4a;display:inline-block;"></span>吉縁（70点以上）</span>
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;border-radius:2px;background:#7aaa7a;display:inline-block;"></span>普通（40〜69点）</span>
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;border-radius:2px;background:var(--muted2);display:inline-block;"></span>要注意（〜39点）</span>
+        </div>
+        <div style="position:relative;width:100%;height:140px;">
+          <canvas id="compatDistChart" role="img" aria-label="相性スコア分布グラフ">10〜19点:2.95%, 20〜29点:5.55%, 30〜39点:13.47%, 40〜49点:20.14%, 50〜59点:22.92%, 60〜69点:19.65%, 70〜79点:10.42%, 80〜89点:3.85%, 90〜99点:0.95%, 100点:0.10%</canvas>
+        </div>
+        <div style="font-size:11px;color:var(--muted2);text-align:right;margin-top:6px;letter-spacing:0.5px;">※ 100万件シミュレーションによる実測値</div>
+      </div>
+    </div>
+
+    <!-- 計算ロジック説明 -->
+    <div class="section" style="padding-bottom:28px;">
+      <div class="section-label">計算ロジックについて</div>
+      <div style="font-size:13px;color:var(--paper2);line-height:2.2;font-weight:300;margin-bottom:18px;">
+        四柱推命の本格理論にもとづき、以下の作用を年・月・日（・時）柱の全組み合わせで検出・採点します。
+      </div>
+
+      <div style="margin-bottom:8px;font-size:11px;letter-spacing:3px;color:var(--good);font-weight:400;">▲ 吉作用（スコア加算）</div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">
+        <div style="background:rgba(42,122,64,0.06);border:0.5px solid rgba(42,122,64,0.22);border-radius:10px;padding:14px 16px;">
+          <div style="font-size:13px;color:var(--paper);font-weight:400;margin-bottom:6px;letter-spacing:0.5px;">五行相生 ― 基本の相性</div>
+          <div style="font-size:13px;color:var(--paper2);line-height:1.9;font-weight:300;">木→火→土→金→水と循環する「生む」関係。日主の五行が相生だと自然に力を与え合えます。スコア加算：最大＋10点。</div>
+        </div>
+        <div style="background:rgba(42,122,64,0.06);border:0.5px solid rgba(42,122,64,0.22);border-radius:10px;padding:14px 16px;">
+          <div style="font-size:13px;color:var(--paper);font-weight:400;margin-bottom:6px;letter-spacing:0.5px;">干合 ― 天干の縁</div>
+          <div style="font-size:13px;color:var(--paper2);line-height:1.9;font-weight:300;">甲己・乙庚・丙辛・丁壬・戊癸の5組。全柱の天干を相互にチェックし、最初の1組を採用。スコア加算：＋15点。</div>
+        </div>
+        <div style="background:rgba(42,122,64,0.06);border:0.5px solid rgba(42,122,64,0.22);border-radius:10px;padding:14px 16px;">
+          <div style="font-size:13px;color:var(--paper);font-weight:400;margin-bottom:6px;letter-spacing:0.5px;">支合・六合 ― 地支の縁</div>
+          <div style="font-size:13px;color:var(--paper2);line-height:1.9;font-weight:300;">子丑・寅亥・卯戌・辰酉・巳申・午未の6組。同一組は1回のみカウント。スコア加算：1組につき＋8点。</div>
+        </div>
+        <div style="background:rgba(42,122,64,0.06);border:0.5px solid rgba(42,122,64,0.22);border-radius:10px;padding:14px 16px;">
+          <div style="font-size:13px;color:var(--paper);font-weight:400;margin-bottom:6px;letter-spacing:0.5px;">三合 ― 強い地支の縁</div>
+          <div style="font-size:13px;color:var(--paper2);line-height:1.9;font-weight:300;">申子辰・寅午戌・巳酉丑・亥卯未の4組。両者の地支を合算して3つが揃うと発動。スコア加算：＋10点。</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:8px;font-size:11px;letter-spacing:3px;color:var(--caution);font-weight:400;">▼ 凶作用（スコア減算）</div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">
+        <div style="background:rgba(160,80,32,0.06);border:0.5px solid rgba(160,80,32,0.22);border-radius:10px;padding:14px 16px;">
+          <div style="font-size:13px;color:var(--paper);font-weight:400;margin-bottom:6px;letter-spacing:0.5px;">五行相剋 ― 基本の摩擦</div>
+          <div style="font-size:13px;color:var(--paper2);line-height:1.9;font-weight:300;">木→土・土→水・水→火・火→金・金→木と「克す」関係。意識的なコミュニケーションが必要になります。スコア減算：最大－10点。</div>
+        </div>
+        <div style="background:rgba(160,80,32,0.06);border:0.5px solid rgba(160,80,32,0.22);border-radius:10px;padding:14px 16px;">
+          <div style="font-size:13px;color:var(--paper);font-weight:400;margin-bottom:6px;letter-spacing:0.5px;">七冲・六冲 ― 地支の衝突</div>
+          <div style="font-size:13px;color:var(--paper2);line-height:1.9;font-weight:300;">子午・丑未・寅申・卯酉・辰戌・巳亥の6組。同一組は1回のみカウント。スコア減算：1組につき－15点。</div>
+        </div>
+        <div style="background:rgba(160,80,32,0.06);border:0.5px solid rgba(160,80,32,0.22);border-radius:10px;padding:14px 16px;">
+          <div style="font-size:13px;color:var(--paper);font-weight:400;margin-bottom:6px;letter-spacing:0.5px;">六害 ― 地支の不調和</div>
+          <div style="font-size:13px;color:var(--paper2);line-height:1.9;font-weight:300;">子未・丑午・寅巳・卯辰・申亥・酉戌の6組。同一組は1回のみカウント。スコア減算：1組につき－10点。</div>
+        </div>
+      </div>
+
+      <div style="padding:14px 16px;background:var(--ink2);border-radius:10px;border:0.5px solid var(--line2);">
+        <div style="font-size:12px;color:var(--muted);line-height:2.0;font-weight:300;">
+          ※ 基本スコアは50点からスタートし、上記の作用を加減算します。最低10点・最高100点でキャップされます。<br>
+          ※ 時柱は生まれた時間を入力した場合のみ判定に使用されます。<br>
+          ※ 四柱推命の相性は絶対的なものではなく、互いの理解と努力で関係はいくらでも育てていけます。
+        </div>
+      </div>
+    </div>
+
   </div><!-- /compatInputSection -->
 
   <!-- 結果エリア -->
@@ -889,7 +939,10 @@ body.dark .nav-btn.active{
         <button class="rtab active" onclick="sfxClick();switchCompatTab(0)">作用一覧</button>
         <button class="rtab" onclick="sfxClick();switchCompatTab(1)">恋愛・縁</button>
         <button class="rtab" onclick="sfxClick();switchCompatTab(2)">仕事・友情</button>
-        <button class="rtab" onclick="sfxClick();switchCompatTab(3)">総　評</button>
+        <button class="rtab" onclick="sfxClick();switchCompatTab(3)">注意点</button>
+        <button class="rtab" onclick="sfxClick();switchCompatTab(4)">距離感</button>
+        <button class="rtab" onclick="sfxClick();switchCompatTab(5)">総　評</button>
+        <button class="rtab" onclick="sfxClick();switchCompatTab(6)">✦ AI鑑定</button>
       </div>
 
       <div id="compatTabPanels">
@@ -908,10 +961,30 @@ body.dark .nav-btn.active{
           <div class="section-label">仕事・友人関係</div>
           <div id="compatWorkDesc" class="reading-text"></div>
         </div>
-        <!-- 総評 -->
+        <!-- 注意点 -->
         <div class="rtab-panel" id="ctab3">
+          <div class="section-label">注意点とすれ違いを防ぐヒント</div>
+          <div id="compatCautionDesc" class="reading-text"></div>
+        </div>
+        <!-- 距離感 -->
+        <div class="rtab-panel" id="ctab4">
+          <div class="section-label">距離感・コミュニケーション</div>
+          <div id="compatDistanceDesc" class="reading-text"></div>
+        </div>
+        <!-- 総評 -->
+        <div class="rtab-panel" id="ctab5">
           <div class="section-label">鑑定総評</div>
           <div id="compatSummary" class="reading-text"></div>
+        </div>
+        <!-- AI鑑定 -->
+        <div class="rtab-panel" id="ctab6">
+          <div class="section-label">✦ AI 相性アドバイス</div>
+          <div id="compatAiInner">
+            <div style="font-size:12px;color:var(--muted);line-height:1.9;margin-bottom:18px;font-weight:300;letter-spacing:0.5px;">
+              2人の命式・検出された作用・スコアをもとに、AIが具体的な関係アドバイスを生成します。
+            </div>
+            <button class="btn-calc" id="btnCompatAi" onclick="sfxAction();generateCompatAiAdvice()">A I 相性アドバイスを生成する</button>
+          </div>
         </div>
       </div>
     </div>
@@ -2939,6 +3012,82 @@ function renderCompatMini(targetId, pillars) {
   `).join('');
 }
 
+// ── 相性AI鑑定コンテキスト ──
+let _compatAiContext = null;
+
+async function generateCompatAiAdvice(){
+  if(!_compatAiContext) return;
+  const inner = document.getElementById('compatAiInner');
+  inner.innerHTML = `<div class="ai-loading"><div class="ai-loading-sym">☯</div><div>命式を解析しています…</div></div>`;
+
+  const c = _compatAiContext;
+  const goodList = c.goodEffects.length ? c.goodEffects.join('、') : 'なし';
+  const badList  = c.badEffects.length  ? c.badEffects.join('、')  : 'なし';
+
+  const prompt = `あなたは四柱推命の熟練した鑑定士です。以下の2人の命式と相性情報をもとに、具体的な関係アドバイスを鑑定してください。
+
+【Aさん（あなた）】
+・日柱：${c.kan1}${c.ji1}（${c.g1}・${c.yin1}）
+・命式：${c.pillars1}
+
+【Bさん（相手）】
+・日柱：${c.kan2}${c.ji2}（${c.g2}・${c.yin2}）
+・命式：${c.pillars2}
+
+【相性スコア】${c.score}点 — ${c.level}
+【五行の関係】${c.g1} × ${c.g2}
+${c.kangoName ? `【干合】${c.kangoName}（宿命的な縁）` : ''}
+【吉作用】${goodList}
+【凶作用】${badList}
+
+【鑑定内容】
+以下の4項目について、この2人の命式に特化した具体的なアドバイスを述べてください。テンプレート的な表現は避け、検出された作用と五行の特性を活かした個別の内容にしてください。
+
+■ 2人の関係の本質（この組み合わせが持つ固有の引力・摩擦）
+■ 恋愛・パートナーとして長続きさせるための具体的な行動
+■ 仕事・友人として協力し合うためのコツ
+■ この2人へのスペシャルアドバイス（命式から読み取れる最も大切なこと）
+
+【文体の指示】
+・10代から60代まで自然に読めるよう、やさしい言葉で書いてください。
+・「〜です」「〜ます」「〜でしょう」など、丁寧でフラットなトーンで書いてください。
+・占い特有の難しい専門用語は使わず、わかりやすい言い換えを使ってください。
+・各項目は3〜5文で、具体的かつ前向きなアドバイスにしてください。
+・AさんとBさんそれぞれに向けた言葉を意識してください。`;
+
+  try {
+    const res = await fetch('https://hikari-ai.peropero-wahaha.workers.dev', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 2000,
+        stream: false,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    if(!res.ok) throw new Error('API error');
+    const data = await res.json();
+    const fullText = data?.content?.[0]?.text || '';
+    if(!fullText) throw new Error('empty response');
+
+    inner.innerHTML = `<div class="ai-advice-text" id="compatAiText"></div>`;
+    document.getElementById('compatAiText').textContent = fullText;
+
+    const regenBtn = document.createElement('button');
+    regenBtn.className = 'ai-regen';
+    regenBtn.textContent = '↺ もう一度アドバイスをもらう';
+    regenBtn.onclick = ()=>{ sfxAction(); generateCompatAiAdvice(); };
+    inner.appendChild(regenBtn);
+
+  } catch(e) {
+    inner.innerHTML = `<div style="font-size:12px;color:var(--muted);line-height:1.8;">
+      アドバイスの生成に失敗しました。少し時間をおいてから再試行してください。
+      <br><br><button class="ai-regen" onclick="sfxAction();generateCompatAiAdvice()">↺ 再試行</button>
+    </div>`;
+  }
+}
+
 // ── 相性タブ切り替え ──
 function switchCompatTab(idx) {
   document.querySelectorAll('#compatTabs .rtab').forEach((t,i)=>t.classList.toggle('active',i===idx));
@@ -3100,6 +3249,76 @@ function calcCompat() {
   if(badCount)  summary += (goodCount?'\n\n':'') + `緊張を示す作用も${badCount}件あります。摩擦が生じやすい側面もありますが、それぞれの個性を認め合うことで補い合える関係へと変わります。`;
   summary += '\n\n四柱推命の相性は「絶対」ではなく、お互いの理解と努力によって関係はいくらでも育てていけます。';
   document.getElementById('compatSummary').textContent = summary;
+
+  // ── 注意点テキスト ──
+  const yin1 = [1,3,5,7,9].includes(dKan1);
+  const yin2 = [1,3,5,7,9].includes(dKan2);
+  const cautionLines = [];
+  const badEffects = effects.filter(e=>!e.positive);
+  if(badEffects.length === 0){
+    cautionLines.push('目立った摩擦要因は検出されませんでした。どんな相性でも定期的に本音を話し合う時間を設けることが関係を長持ちさせるコツです。');
+  } else {
+    badEffects.forEach(e=>{
+      if(e.tag.includes('七冲')){
+        cautionLines.push(`【${e.title}】エネルギーがぶつかりやすいため、意見の対立が起きたときは「どちらが正しいか」ではなく「どうすれば前に進めるか」を優先する視点が有効です。`);
+      } else if(e.tag.includes('六害')){
+        cautionLines.push(`【${e.title}】すれ違いが起きやすいため、「相手がわかっているはず」という思い込みを避け、意図・気持ちを言葉で確認し合う習慣が大切です。`);
+      } else if(e.tag.includes('相剋')){
+        cautionLines.push(`【五行の相剋】${g1}と${g2}はエネルギーの方向性がぶつかりやすい組み合わせです。相手を「変えよう」とせず、違いを個性として尊重することが関係改善のカギです。`);
+      }
+    });
+  }
+  if(yin1 === yin2){
+    cautionLines.push(`2人とも${yin1?'陰':'陽'}の性質をもつため、似た価値観ゆえの主張のぶつかりに注意。相手の意見を「自分とは違う視点」として受け取る余裕が関係を安定させます。`);
+  } else {
+    cautionLines.push(`${yin1?'陰':'陽'}と${yin2?'陰':'陽'}の組み合わせで、行動のテンポや表現の仕方に違いが出やすいです。どちらが「遅い・速い」ではなく、それぞれのリズムを尊重することが大切です。`);
+  }
+  document.getElementById('compatCautionDesc').textContent = cautionLines.join('\n\n');
+
+  // ── 距離感・コミュニケーションテキスト ──
+  const KAN_STYLE = {
+    木:['目標に向かって直進する','自分のペースと自由な空間を大切にします。干渉されすぎると距離を置く傾向があります。'],
+    火:['感情表現が豊かで行動力がある','感情をストレートに表現し、共感してもらえると一気に距離が縮まります。'],
+    土:['安定と信頼を大切にする','時間をかけてゆっくり信頼を積み上げます。急かされると心を閉じやすいです。'],
+    金:['こだわりと意志が強い','深い関係より誠実なやりとりを好みます。真剣な会話で距離が縮まります。'],
+    水:['感性と知性で物事を深く見る','感性で繋がることを好み、言葉より「雰囲気」で伝わることを重視します。'],
+  };
+  const [p1label, p1style] = KAN_STYLE[g1] || ['独自のエネルギーをもつ',''];
+  const [p2label, p2style] = KAN_STYLE[g2] || ['独自のエネルギーをもつ',''];
+  const distLines = [];
+  distLines.push(`あなた（${g1}・${KAN[dKan1]}）は${p1label}タイプ。相手（${g2}・${KAN[dKan2]}）は${p2label}タイプです。`);
+  distLines.push(`あなたは${p1style}`);
+  distLines.push(`相手は${p2style}`);
+  const relScore = gogyoData?.score ?? 0;
+  if(relScore > 0){
+    distLines.push('五行が相生の関係のため、自然と距離が縮まりやすいです。相手のペースに合わせながら関係を深めていくと、安定した信頼関係に発展しやすいです。');
+  } else if(relScore < 0){
+    distLines.push('五行が相剋の関係のため、最初は距離を感じることもあるかもしれません。共通の目標や好きなことを見つけることが、距離を縮める近道になります。');
+  } else {
+    distLines.push('同じ五行のエネルギーをもつため、価値観や好みが似ていて話が合いやすいです。ただし「わかり合えて当然」という甘えが生じやすい点に注意が必要です。');
+  }
+  if(kangoName) distLines.push(`干合（${kangoName}）の縁があるため、初対面から不思議な近さを感じやすい関係です。この引力を大切にしつつ、相手の個性もきちんと尊重することがポイントです。`);
+  document.getElementById('compatDistanceDesc').textContent = distLines.join('\n\n');
+
+  // ── AIアドバイス用コンテキストを保存 ──
+  _compatAiContext = {
+    kan1: KAN[dKan1], ji1: JI[pillars1.find(p=>p.isNichi)?.ji ?? 0],
+    kan2: KAN[dKan2], ji2: JI[pillars2.find(p=>p.isNichi)?.ji ?? 0],
+    g1, g2, score, level: level.replace('✦ ',''),
+    kangoName: kangoName || null,
+    goodEffects: effects.filter(e=>e.positive).map(e=>e.title),
+    badEffects:  effects.filter(e=>!e.positive).map(e=>e.title),
+    pillars1: pillars1.map(p=>KAN[p.kan]+JI[p.ji]+`(${p.label})`).join('・'),
+    pillars2: pillars2.map(p=>KAN[p.kan]+JI[p.ji]+`(${p.label})`).join('・'),
+    yin1: yin1?'陰':'陽', yin2: yin2?'陰':'陽',
+  };
+  // AIタブのボタンをリセット
+  document.getElementById('compatAiInner').innerHTML = `
+    <div style="font-size:12px;color:var(--muted);line-height:1.9;margin-bottom:18px;font-weight:300;letter-spacing:0.5px;">
+      2人の命式・検出された作用・スコアをもとに、AIが具体的な関係アドバイスを生成します。
+    </div>
+    <button class="btn-calc" id="btnCompatAi" onclick="sfxAction();generateCompatAiAdvice()">A I 相性アドバイスを生成する</button>
+  `;
 
   // 表示切り替え
   document.getElementById('compatInputSection').style.display = 'none';
