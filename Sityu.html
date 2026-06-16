@@ -708,6 +708,109 @@ body.dark .nav-btn.active{
 
 /* 通常時は非表示 */
 #printFooter { display: none; }
+
+/* ── 運勢ダイアリー ── */
+.diary-cal-header{
+  display:grid;grid-template-columns:repeat(7,1fr);
+  gap:3px;margin-bottom:5px;
+}
+.diary-cal-header div{
+  text-align:center;font-size:10px;
+  letter-spacing:1px;color:var(--muted);
+  padding:4px 0;font-weight:300;
+}
+.diary-cal-grid{
+  display:grid;grid-template-columns:repeat(7,1fr);
+  gap:3px;
+}
+.diary-cell{
+  border:0.5px solid var(--line);
+  border-radius:7px;
+  padding:5px 2px 7px;
+  text-align:center;
+  background:var(--ink2);
+  cursor:pointer;
+  transition:border-color .18s,background .18s;
+  min-height:54px;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:flex-start;
+  gap:3px;
+}
+.diary-cell:hover{ border-color:var(--rose);background:var(--ink3);}
+.diary-cell.today{ border-color:var(--rose);}
+.diary-cell.empty{
+  background:transparent;border-color:transparent;
+  cursor:default;pointer-events:none;
+}
+.diary-cell.good{
+  border-color:rgba(42,122,64,0.45);
+  background:rgba(42,122,64,0.06);
+}
+.diary-cell.caution{
+  border-color:rgba(160,80,32,0.40);
+  background:rgba(160,80,32,0.05);
+}
+.diary-cell.selected{
+  border-color:var(--rose2);
+  background:rgba(60,120,70,0.14);
+  box-shadow:0 0 0 1px var(--rose2);
+}
+.diary-cell-day{font-size:10px;color:var(--muted);font-weight:300;line-height:1;}
+.diary-cell-score{font-size:14px;color:var(--paper);font-weight:300;line-height:1;}
+.diary-cell-score.good{color:var(--good);}
+.diary-cell-score.caution{color:var(--caution);}
+.diary-nav{
+  display:flex;align-items:center;
+  justify-content:space-between;
+  margin-bottom:14px;
+}
+.diary-nav-btn{
+  background:none;border:0.5px solid var(--line2);
+  border-radius:8px;color:var(--muted);
+  font-size:18px;width:34px;height:34px;
+  cursor:pointer;font-family:inherit;
+  display:flex;align-items:center;justify-content:center;
+  transition:border-color .15s,color .15s;
+}
+.diary-nav-btn:hover{border-color:var(--rose);color:var(--rose);}
+.diary-nav-title{
+  font-size:16px;letter-spacing:3px;
+  color:var(--paper);font-weight:300;
+}
+.diary-banner{
+  text-align:right;font-size:11px;
+  color:var(--rose);letter-spacing:1px;
+  margin-bottom:8px;
+}
+.diary-legend{
+  display:flex;gap:14px;flex-wrap:wrap;
+  font-size:11px;color:var(--muted);
+  margin-top:13px;letter-spacing:0.5px;
+}
+.diary-legend span{display:flex;align-items:center;gap:4px;}
+.diary-legend i{
+  width:9px;height:9px;border-radius:2px;
+  display:inline-block;flex-shrink:0;
+}
+.diary-detail-box{
+  margin-top:20px;
+  background:var(--ink2);
+  border:0.5px solid var(--line2);
+  border-radius:var(--r);
+  padding:18px 18px 20px;
+}
+.diary-detail-score{
+  font-size:50px;font-weight:300;color:var(--rose2);
+  text-align:center;line-height:1;margin:6px 0 4px;
+}
+.diary-detail-bar-wrap{
+  height:5px;background:var(--ink3);
+  border-radius:99px;overflow:hidden;margin:6px 0 14px;
+}
+.diary-detail-bar{
+  height:100%;border-radius:99px;
+  transition:width .6s cubic-bezier(.4,0,.2,1);
+}
 </style>
 </head>
 <body>
@@ -1955,6 +2058,7 @@ function render(dateVal) {
 
   // ── 鑑定タブ ──
   const tabs = [
+    {id:'diary',       label:'運勢ダイアリー'},
     {id:'monthwatch',  label:'今年の注意月'},
     {id:'personality', label:'性格・強み'},
     {id:'jukkami',     label:'先天的な才能'},
@@ -1992,7 +2096,93 @@ function render(dateVal) {
     panel.dataset.label = t.label;
     panel.id = 'panel-'+t.id;
 
-    if (t.id === 'personality') {
+    if (t.id === 'diary') {
+      // 生年月日（render内のy,m,dをそのまま利用）
+      const diaryBY = y, diaryBM = m, diaryBD = d;
+      const diaryNow = new Date();
+      // パネルHTML（カレンダー用コンテナ）
+      panel.innerHTML = `
+        <div id="diaryNavWrap">
+          <div class="diary-nav">
+            <button class="diary-nav-btn" id="diaryPrevBtn">‹</button>
+            <div class="diary-nav-title" id="diaryCalTitle"></div>
+            <button class="diary-nav-btn" id="diaryNextBtn">›</button>
+          </div>
+          <div class="diary-banner" id="diaryBanner"></div>
+          <div class="diary-cal-header">
+            <div>日</div><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div>土</div>
+          </div>
+          <div class="diary-cal-grid" id="diaryCalGrid"></div>
+          <div class="diary-legend">
+            <span><i style="background:var(--good);"></i>吉日（80点以上）</span>
+            <span><i style="background:var(--muted2);"></i>普通（65〜79点）</span>
+            <span><i style="background:var(--caution);"></i>注意（〜64点）</span>
+          </div>
+          <div id="diaryDetailBox" style="display:none;" class="diary-detail-box"></div>
+        </div>`;
+
+      // カレンダー描画関数をクロージャで保持
+      let _diaryCY = diaryNow.getFullYear();
+      let _diaryCM = diaryNow.getMonth() + 1;
+
+      function renderDiaryCal() {
+        const cy = _diaryCY, cm = _diaryCM;
+        document.getElementById('diaryCalTitle').textContent = cy + '年 ' + cm + '月';
+
+        const todayY = diaryNow.getFullYear();
+        const todayM = diaryNow.getMonth() + 1;
+        const todayD = diaryNow.getDate();
+        const daysInMonth = new Date(cy, cm, 0).getDate();
+        const banner = document.getElementById('diaryBanner');
+        banner.style.display = 'none';
+
+        const firstDay = new Date(cy, cm - 1, 1).getDay();
+        const grid = document.getElementById('diaryCalGrid');
+        grid.innerHTML = '';
+        document.getElementById('diaryDetailBox').style.display = 'none';
+
+        for (let i = 0; i < firstDay; i++) {
+          const e = document.createElement('div');
+          e.className = 'diary-cell empty';
+          grid.appendChild(e);
+        }
+        for (let d = 1; d <= daysInMonth; d++) {
+          const score = _calcDiaryScore(diaryBY, diaryBM, diaryBD, cy, cm, d);
+          const sc = score >= 80 ? 'good' : score < 65 ? 'caution' : '';
+          const isToday = (cy === todayY && cm === todayM && d === todayD);
+          const cell = document.createElement('div');
+          cell.className = 'diary-cell' + (isToday ? ' today' : '') + (sc ? ' ' + sc : '');
+          cell.innerHTML = '<div class="diary-cell-day">' + d + '</div>'
+            + '<div class="diary-cell-score' + (sc ? ' ' + sc : '') + '">' + score + '点</div>';
+          cell.addEventListener('click', () => {
+            document.querySelectorAll('.diary-cell.selected').forEach(c => c.classList.remove('selected'));
+            cell.classList.add('selected');
+            _showDiaryDetail(cy, cm, d, score, diaryBY, diaryBM, diaryBD);
+          });
+          grid.appendChild(cell);
+        }
+      }
+
+      // 翌月・前月ボタン
+      setTimeout(() => {
+        const prevBtn = document.getElementById('diaryPrevBtn');
+        const nextBtn = document.getElementById('diaryNextBtn');
+        if (prevBtn) prevBtn.addEventListener('click', () => {
+          sfxClick();
+          _diaryCM--;
+          if (_diaryCM < 1) { _diaryCM = 12; _diaryCY--; }
+          renderDiaryCal();
+        });
+        if (nextBtn) nextBtn.addEventListener('click', () => {
+          sfxClick();
+          _diaryCM++;
+          if (_diaryCM > 12) { _diaryCM = 1; _diaryCY++; }
+          renderDiaryCal();
+        });
+        renderDiaryCal();
+      }, 0);
+
+    } else if (t.id === 'personality') {
       panel.innerHTML = `
         <div class="reading-block">
           <div class="reading-title">— あなたの本質</div>
@@ -2788,6 +2978,99 @@ function switchNav(tab){
     _loadChartJs(renderCompatDistChart);
   }
   sfxTab();
+}
+
+// ════════════════════════════════════════
+//  運勢ダイアリー：スコア計算・詳細表示
+// ════════════════════════════════════════
+function _calcDiaryScore(bY, bM, bD, tY, tM, tD) {
+  const dKanB  = getDayKan(bY, bM, bD);
+  const dJiB   = getDayJi (bY, bM, bD);
+  const tDKan  = getDayKan(tY, tM, tD);
+  const tDJi   = getDayJi (tY, tM, tD);
+  const tYKan  = ((tY - 4) % 10 + 10) % 10;
+  const tYJi   = ((tY - 4) % 12 + 12) % 12;
+  const tMKan  = getMonthKan(tY, tM, tD);
+  const tMJi   = getMonthJi (tY, tM, tD);
+
+  let score = 65; // 開始点を底上げ
+  // 干合（+20）メリハリのため増強
+  const KAN_GO = [[0,5],[1,6],[2,7],[3,8],[4,9]];
+  const allTK = [tYKan, tMKan, tDKan];
+  for (const [a, b] of KAN_GO) {
+    if (allTK.some(k => (k===a && dKanB===b) || (k===b && dKanB===a))) { score += 20; break; }
+  }
+  // 支合（+8/組）
+  const JI_GO = [[0,1],[2,11],[3,10],[4,9],[5,8],[6,7]];
+  const allTJ = [tYJi, tMJi, tDJi];
+  for (const [a, b] of JI_GO) {
+    if (allTJ.some(j => (j===a && dJiB===b) || (j===b && dJiB===a))) score += 8;
+  }
+  // 六冲（−8/組）控えめに
+  const JI_CHONG = [[0,6],[1,7],[2,8],[3,9],[4,10],[5,11]];
+  for (const [a, b] of JI_CHONG) {
+    if (allTJ.some(j => (j===a && dJiB===b) || (j===b && dJiB===a))) score -= 8;
+  }
+  // 六害（−4/組）控えめに
+  const JI_HARM = [[0,7],[1,6],[2,5],[3,4],[8,11],[9,10]];
+  for (const [a, b] of JI_HARM) {
+    if (allTJ.some(j => (j===a && dJiB===b) || (j===b && dJiB===a))) score -= 4;
+  }
+  // 五行相生（+10）
+  const GO_SEIS = {木:'火',火:'土',土:'金',金:'水',水:'木'};
+  const dG = KAN_GOGYO[dKanB], tG = KAN_GOGYO[tDKan];
+  if (GO_SEIS[dG]===tG || GO_SEIS[tG]===dG) score += 10;
+  // 五行相剋（−5）控えめに
+  const GO_KOKU = {木:'土',土:'水',水:'火',火:'金',金:'木'};
+  if (GO_KOKU[dG]===tG || GO_KOKU[tG]===dG) score -= 5;
+  // 同日干（+6）
+  if (dKanB === tDKan) score += 6;
+
+  return Math.max(55, Math.min(100, score)); // 下限55点・上限100点
+}
+
+const _DIARY_MSG = {
+  high: [
+    '天の気が流れ、行動に追い風が吹く吉日です。新しいことを始めるのに最適な一日。',
+    '縁と運が重なる日。大切な人への連絡や、重要な決断に向いています。',
+    '五行のエネルギーが整う吉日。前向きな行動が、より大きな実りへつながります。',
+    '流れが良い日。チャンスに積極的に乗ることで、思いがけない縁が生まれます。',
+  ],
+  mid: [
+    '穏やかな流れの一日。焦らず着実に、目の前のことを丁寧に進めましょう。',
+    'コツコツした努力が後から実を結ぶ、種まきの時間です。',
+    '無理をせず自分のペースを大切にすることで、安定した一日になります。',
+    '日常の中にある小さな幸せに気づく感性を大切に。穏やかな縁日です。',
+  ],
+  low: [
+    '少しエネルギーが落ちやすい日。無理な決断や衝動的な行動は避けましょう。',
+    '大きな動きは控え、内省と準備の時間にするのが吉の日です。',
+    '大きな出費・契約・重要な決断は翌日以降に回すのが賢明な一日。',
+    '守りの日。休養・整理・お清めで翌日へのリセットを。',
+  ],
+};
+
+function _showDiaryDetail(y, m, d, score, bY, bM, bD) {
+  const box = document.getElementById('diaryDetailBox');
+  if (!box) return;
+  const wday = ['日','月','火','水','木','金','土'][new Date(y, m-1, d).getDay()];
+  const sc   = score >= 80 ? 'good' : score < 65 ? 'caution' : 'normal';
+  const barC = score >= 80 ? 'var(--good)' : score < 65 ? 'var(--caution)' : 'var(--rose)';
+  const msgs = sc==='good' ? _DIARY_MSG.high : sc==='caution' ? _DIARY_MSG.low : _DIARY_MSG.mid;
+  const msg  = msgs[(y*10000 + m*100 + d) % msgs.length];
+  const tKan = KAN[getDayKan(y, m, d)];
+  const tJi  = JI [getDayJi (y, m, d)];
+  box.innerHTML =
+    '<div style="font-size:10px;letter-spacing:2px;color:var(--muted);text-align:center;margin-bottom:2px;">'
+    + m + '月' + d + '日（' + wday + '）</div>'
+    + '<div class="diary-detail-score">' + score
+    + '<span style="font-size:16px;color:var(--muted);margin-left:4px;">点</span></div>'
+    + '<div class="diary-detail-bar-wrap"><div class="diary-detail-bar" style="width:' + score + '%;background:' + barC + ';"></div></div>'
+    + '<div style="text-align:center;font-size:11px;color:var(--muted);letter-spacing:2px;margin-bottom:14px;">'
+    + tKan + tJi + ' の日</div>'
+    + '<div style="font-size:15px;color:var(--paper2);line-height:2.2;font-weight:300;letter-spacing:0.5px;">' + msg + '</div>';
+  box.style.display = '';
+  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 function _loadChartJs(cb){
