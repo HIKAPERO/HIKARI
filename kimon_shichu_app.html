@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>奇門遁甲 × 四柱推命 ｜ 運命ナビ</title>
+<style>
+  :root{
+    --bg:#faf9f6; --surface:#ffffff; --surface2:#f3f1ea; --line:#e8e6df; --line2:#d2cfc6;
+    --text:#2b2a26; --text2:#6b685f; --text3:#9a978d;
+    --green:#1d9e75; --green-d:#0f6e56; --green-bg:#e1f5ee; --green-line:#9fe1cb;
+    --blue:#185fa5; --blue-d:#0c447c; --blue-bg:#e6f1fb; --blue-line:#b9d6f2;
+    --red:#e24b4a; --red-d:#922b21; --red-bg:#fcebeb; --red-line:#f2c4c4;
+    --amber:#854f0b; --amber-bg:#faeeda; --purple:#9b4eb8;
+    --r:14px; --r-sm:10px;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{ --bg:#1a1916; --surface:#232220; --surface2:#2b2926; --line:#34322d; --line2:#403e38;
+      --text:#ece9e2; --text2:#a8a59c; --text3:#76736b;
+      --green-bg:#15302a; --green-line:#2a5547; --blue-bg:#14283c; --blue-line:#2a4a6e;
+      --red-bg:#2e1a18; --red-line:#5a2e2a; --amber-bg:#2e2516; }
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;
+    background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--bg);padding-bottom:68px;position:relative}
+  .header{padding:13px 16px;border-bottom:0.5px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:20;display:flex;align-items:center;justify-content:space-between}
+  .header h1{font-size:16px;font-weight:600}
+  .profile-chip{display:flex;align-items:center;gap:6px;font-size:12px;padding:5px 11px;background:var(--surface2);border-radius:20px;cursor:pointer;color:var(--text2);border:none;font-family:inherit}
+  main{padding:14px}
+  .screen{display:none}.screen.active{display:block}
+  .card{background:var(--surface);border:0.5px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:10px}
+  .sec-label{font-size:12px;font-weight:600;color:var(--text);margin:16px 0 8px;display:flex;align-items:center;gap:6px;padding-top:14px;border-top:0.5px solid var(--line)}
+  .sec-label:first-child{padding-top:0;border-top:none;margin-top:0}
+  .sec-label .si{font-size:15px}
+  .fld{margin-bottom:10px}
+  label{display:block;font-size:12px;color:var(--text2);margin-bottom:5px}
+  input,select{width:100%;font-size:14px;padding:9px 11px;border:0.5px solid var(--line2);border-radius:var(--r-sm);background:var(--surface);color:var(--text);font-family:inherit}
+  input:disabled{opacity:.45}
+  textarea{width:100%;font-size:13px;padding:9px 11px;border:0.5px solid var(--line2);border-radius:var(--r-sm);background:var(--surface);color:var(--text);font-family:inherit;resize:vertical;min-height:54px;line-height:1.6}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .btn{font-size:14px;padding:11px 18px;border:0.5px solid var(--line2);border-radius:24px;background:transparent;color:var(--text2);cursor:pointer;width:100%;font-family:inherit}
+  .btn:active{transform:scale(.99)}
+  .btn-primary{background:var(--blue);color:#fff;border-color:transparent;font-weight:600}
+  .btn-green{background:var(--green);color:#fff;border-color:transparent;font-weight:600}
+  .check-row{display:flex;align-items:center;gap:9px;padding:10px 12px;background:var(--surface2);border-radius:var(--r-sm);margin-bottom:10px;cursor:pointer}
+  .check-box{width:20px;height:20px;border-radius:5px;border:1.5px solid var(--line2);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;font-size:13px}
+  .check-box.on{background:var(--green);border-color:var(--green)}
+  .check-label{font-size:13px}.check-sub{font-size:11px;color:var(--text2)}
+  .hint{font-size:12px;color:var(--text3);line-height:1.7;margin-top:8px}
+  .empty{background:var(--surface2);border-radius:var(--r-sm);padding:24px 16px;text-align:center;color:var(--text2);font-size:13px;line-height:1.7}
+  .empty .ei{font-size:26px;display:block;margin-bottom:8px}
+  .hero-head{font-size:12px;color:var(--text2);margin-bottom:8px}
+  .hero-main{display:flex;align-items:baseline;gap:8px;margin-bottom:6px}
+  .hero-gz{font-size:25px;font-weight:600}.hero-gz .no{font-size:13px;font-weight:400;color:var(--text2)}
+  .pill{font-size:11px;padding:3px 12px;border-radius:12px;font-weight:600;margin-left:auto}
+  .pill-good{background:var(--green-bg);color:var(--green-d)}.pill-mid{background:var(--amber-bg);color:var(--amber)}
+  .hero-desc{font-size:12px;color:var(--text2)}
+  .yojin-card{background:var(--green-bg);border:0.5px solid var(--green-line);border-radius:var(--r);padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;gap:10px}
+  .yj-circle{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:600;color:#fff;flex-shrink:0}
+  .yj-text{font-size:12px;line-height:1.5}.yj-text b{color:var(--green-d);font-weight:600}.yj-text .small{font-size:11px;color:var(--text2)}
+  .dir-card{background:var(--blue-bg);border:0.5px solid var(--blue-line);border-radius:var(--r);padding:14px;margin-bottom:10px}
+  .dir-head{font-size:12px;color:var(--blue);margin-bottom:7px}
+  .dir-main{font-size:24px;font-weight:600;color:var(--blue-d);margin-bottom:5px}
+  .dir-desc{font-size:12px;color:var(--blue);line-height:1.6}
+  .triad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+  .triad-item{background:var(--surface);border:0.5px solid var(--line);border-radius:var(--r-sm);padding:11px 6px;text-align:center;cursor:pointer}
+  .tr-label{font-size:10px;color:var(--text2);margin-bottom:4px}.tr-val{font-size:15px;font-weight:600;line-height:1.2}.tr-sub{font-size:9px;color:var(--text3);margin-top:3px}
+  .link-row{display:flex;align-items:center;justify-content:space-between;padding:13px 14px;background:var(--surface);border:0.5px solid var(--line);border-radius:var(--r-sm);margin-bottom:7px;cursor:pointer}
+  .lr-left{display:flex;align-items:center;gap:9px}.lr-icon{font-size:16px}.lr-title{font-size:13px}
+  .lr-right{display:flex;align-items:center;gap:7px}.lr-meta{font-size:11px;color:var(--text2)}.lr-chev{color:var(--text3)}
+  .meishiki-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:6px}
+  .ms-col{background:var(--surface2);border-radius:var(--r-sm);overflow:hidden;text-align:center}
+  .ms-col.nichi{background:var(--green-bg)}
+  .ms-col.empty-col{background:repeating-linear-gradient(45deg,var(--surface2),var(--surface2) 6px,transparent 6px,transparent 12px)}
+  .ms-head{font-size:10px;color:var(--text2);padding:5px 2px;background:rgba(0,0,0,0.03)}
+  .ms-col.nichi .ms-head{color:var(--green-d)}
+  .ms-kan{font-size:22px;font-weight:600;padding:9px 2px 3px;line-height:1}
+  .ms-ji{font-size:22px;font-weight:600;padding:0 2px 7px;line-height:1}
+  .ms-empty{font-size:11px;color:var(--text3);padding:14px 2px;line-height:1.4}
+  .ms-tsu{font-size:10px;color:var(--text2);padding:4px 2px;background:rgba(0,0,0,0.03)}
+  .gogyo-row{display:grid;grid-template-columns:26px 1fr 54px;align-items:center;gap:8px;margin-bottom:6px}
+  .gogyo-name{font-size:12px;color:var(--text2)}
+  .gogyo-bar-bg{height:8px;background:var(--surface2);border-radius:99px;overflow:hidden}
+  .gogyo-bar-fill{height:100%;border-radius:99px}
+  .gogyo-val{font-size:11px;color:var(--text2);text-align:right}
+  .kj-card{background:var(--surface2);border-radius:var(--r);padding:14px;margin-bottom:10px}
+  .kj-balance{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+  .kj-side{flex:1;text-align:center}.kj-side-label{font-size:10px;color:var(--text2);margin-bottom:3px}.kj-side-val{font-size:18px;font-weight:600}
+  .kj-vs{font-size:12px;color:var(--text3)}
+  .kj-bar{display:flex;height:10px;border-radius:99px;overflow:hidden;margin-bottom:8px}
+  .kj-bar-l{background:var(--green)}.kj-bar-r{background:#ef9f27}
+  .kj-verdict{display:flex;align-items:center;gap:8px;justify-content:center}
+  .kj-badge{font-size:14px;font-weight:600;padding:4px 16px;border-radius:20px}
+  .kj-strong{background:var(--green-bg);color:var(--green-d)}.kj-weak{background:var(--amber-bg);color:var(--amber)}
+  .yojin-hero{border:0.5px solid var(--green);background:var(--green-bg);border-radius:var(--r);padding:15px;margin-bottom:10px}
+  .yh-label{font-size:11px;color:var(--green-d);font-weight:600;margin-bottom:8px}
+  .yh-main{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+  .yh-element{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:23px;font-weight:600;color:#fff}
+  .yh-element-name{font-size:17px;font-weight:600}.yh-element-sub{font-size:12px;color:var(--text2)}
+  .yh-text{font-size:13px;line-height:1.8}
+  .yh-basis{font-size:11px;color:var(--text2);margin-top:9px;padding-top:9px;border-top:0.5px solid var(--green-line);line-height:1.6}
+  .reading-tabs{display:flex;gap:5px;flex-wrap:wrap;margin:14px 0 10px}
+  .rtab{font-size:12px;padding:5px 13px;border:0.5px solid var(--line2);border-radius:20px;background:transparent;color:var(--text2);cursor:pointer;font-family:inherit}
+  .rtab.active{background:var(--blue-bg);color:var(--blue);border-color:transparent;font-weight:600}
+  .reading-card{background:var(--surface2);border-radius:var(--r);padding:15px;margin-bottom:10px}
+  .rc-title{font-size:13px;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+  .rc-text{font-size:13px;line-height:1.9}
+  .rc-sub{font-size:12px;color:var(--text2);line-height:1.8;margin-top:8px;padding-top:8px;border-top:0.5px solid var(--line)}
+  .rc-label{font-size:11px;color:var(--text2);font-weight:600;margin-bottom:3px}
+  .health-item{font-size:12px;line-height:1.8;margin-bottom:6px}
+  .health-item b{font-size:11px;color:var(--text2);font-weight:600;display:block}
+  .fumei-note{background:var(--amber-bg);border-radius:var(--r-sm);padding:9px 11px;font-size:11px;color:var(--amber);line-height:1.6;margin-bottom:10px;display:flex;gap:6px;align-items:flex-start}
+  .year-detail{border:0.5px solid var(--line);border-radius:var(--r);padding:13px;margin-bottom:9px}
+  .year-detail.now{border-color:var(--green);background:var(--green-bg)}
+  .yd-year{font-size:13px;font-weight:600;margin-bottom:6px}.year-detail.now .yd-year{color:var(--green-d)}
+  .yd-main{display:flex;align-items:baseline;gap:8px;margin-bottom:6px}
+  .yd-gz{font-size:20px;font-weight:600}.yd-tsu{font-size:12px;font-weight:600}.yd-stars{font-size:12px;color:#ba7517;margin-left:auto}
+  .yd-text{font-size:12px;color:var(--text2);line-height:1.7}
+  .yojin-flag{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:2px 8px;border-radius:10px;margin-top:7px}
+  .yf-hit{background:var(--green-d);color:#fff}.yf-ki{background:var(--red-bg);color:var(--red-d)}.yf-neutral{background:var(--surface2);color:var(--text2)}
+  .month-list{display:flex;flex-direction:column;gap:5px}
+  .mo-row{display:grid;grid-template-columns:38px 36px 1fr auto auto;gap:6px;align-items:center;padding:9px 10px;background:var(--surface2);border:0.5px solid transparent;border-radius:var(--r-sm);font-size:12px;cursor:pointer}
+  .mo-row.current{border-color:var(--green);background:var(--green-bg)}
+  .mo-row.daikichi{border-color:var(--green)}.mo-row.kyo{border-color:var(--red);background:var(--red-bg)}.mo-row.chui{border-color:rgba(186,117,23,0.4);background:var(--amber-bg)}
+  .mo-ym{color:var(--text2);font-size:11px}.mo-gz{font-size:13px;font-weight:600}.mo-tsu{font-size:10px;color:var(--text2)}
+  .mo-badge{font-size:10px;padding:2px 7px;border-radius:8px;white-space:nowrap}
+  .bg-daikichi{background:var(--green-d);color:#fff}.bg-good{background:var(--green-bg);color:var(--green-d)}.bg-normal{background:var(--surface2);color:var(--text2)}.bg-chui{background:var(--amber-bg);color:var(--amber)}.bg-kyo{background:var(--red-bg);color:var(--red-d)}
+  .mo-detail{font-size:11px;color:var(--text2);line-height:1.7;padding:9px 11px;background:var(--surface);border-radius:var(--r-sm);margin-bottom:3px;border:0.5px solid var(--line)}
+  .mo-detail .md-yojin{color:var(--green-d);font-weight:600}
+  .best-info{background:var(--green-bg);border-radius:var(--r-sm);padding:10px 12px;margin-bottom:9px;font-size:12px;line-height:1.6}.best-info b{color:var(--green-d)}
+  .daiyun-list{display:flex;flex-direction:column;gap:5px}
+  .dy-row{display:grid;grid-template-columns:50px 1fr auto auto;gap:7px;align-items:center;padding:9px 11px;background:var(--surface2);border:0.5px solid transparent;border-radius:var(--r-sm);font-size:12px}
+  .dy-row.current{border-color:var(--green);background:var(--green-bg)}
+  .dy-age{color:var(--text2);font-size:11px}.dy-gz{font-size:15px;font-weight:600}.dy-tsu{font-size:11px;color:var(--text2)}
+  .tabs{display:flex;gap:6px;margin-bottom:12px}
+  .tab{flex:1;font-size:12px;padding:7px 4px;border:0.5px solid var(--line2);border-radius:20px;background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;text-align:center}
+  .tab.active{background:var(--blue-bg);color:var(--blue);border-color:transparent;font-weight:600}
+  .best-card{background:var(--green-bg);border:0.5px solid var(--green-line);border-radius:var(--r);padding:14px;margin-bottom:12px}
+  .bc-head{font-size:12px;color:var(--green-d);margin-bottom:7px}
+  .bc-dir{font-size:24px;font-weight:600;margin-bottom:5px}
+  .bc-desc{font-size:12px;color:var(--text2);line-height:1.6}.bc-desc b{color:var(--green-d)}
+  .meta{display:flex;gap:5px;flex-wrap:wrap;font-size:11px;color:var(--text2);margin-bottom:12px;padding:8px 10px;background:var(--surface2);border-radius:var(--r-sm);line-height:1.8}
+  .meta b{color:var(--text);font-weight:600}
+  .ju-box{padding:2px 7px;border-radius:10px;font-size:10px;font-weight:600}
+  .ybox{background:var(--green-bg);color:var(--green-d)}.ibox{background:var(--red-bg);color:var(--red-d)}
+  .nav-card{background:var(--surface2);border-radius:var(--r);padding:15px;margin-bottom:12px}
+  .nav-head{font-size:12px;color:var(--text2);margin-bottom:4px;display:flex;align-items:center;gap:5px}
+  .nav-sub{font-size:11px;color:var(--text3);margin-bottom:12px;line-height:1.5}
+  .dir-cards{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+  .dc{border-radius:var(--r-sm);padding:11px 13px}
+  .dc-good{background:var(--green-bg);border:0.5px solid var(--green-line)}
+  .dc-bad{background:var(--red-bg);border:0.5px solid var(--red-line)}
+  .dc-head{font-size:11px;margin-bottom:4px;font-weight:600}
+  .dc-good .dc-head{color:var(--green-d)}.dc-bad .dc-head{color:var(--red-d)}
+  .dc-dir{font-size:19px;font-weight:700;line-height:1.1}.dc-bad .dc-dir{color:var(--red-d)}
+  .dc-deg{font-size:11px;font-weight:400}.dc-good .dc-deg{color:var(--green-d)}.dc-bad .dc-deg{color:var(--red-d)}
+  .compass-stage{display:flex;justify-content:center;margin-bottom:12px;position:relative}
+  .heading-pin{position:absolute;top:-2px;left:50%;transform:translateX(-50%);z-index:5;font-size:18px;color:var(--blue)}
+  .status-line{text-align:center;font-size:13px;margin-bottom:12px;padding:10px;border-radius:var(--r-sm);line-height:1.5}
+  .status-aligned{background:var(--green-bg);color:var(--green-d);font-weight:600}
+  .status-danger{background:var(--red-bg);color:var(--red-d);font-weight:600}
+  .status-turn{background:var(--surface);color:var(--text2);border:0.5px solid var(--line)}
+  .legend{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;font-size:11px;color:var(--text2);margin-bottom:12px}
+  .lg{display:flex;align-items:center;gap:4px}.lg-dot{width:10px;height:10px;border-radius:50%}
+  .lg-zone{width:12px;height:12px;border-radius:3px;background:rgba(226,75,74,0.22);border:1px solid var(--red)}
+  .demo-area{background:var(--surface);border:0.5px solid var(--line);border-radius:var(--r-sm);padding:12px;margin-bottom:12px}
+  .demo-label{font-size:11px;color:var(--text2);margin-bottom:8px}
+  .demo-slider{width:100%}
+  .good-sec-head{display:flex;align-items:center;gap:9px;margin:6px 0 8px}
+  .good-sec-icon{width:28px;height:28px;border-radius:8px;background:var(--green);display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;flex-shrink:0}
+  .good-sec-title{font-size:15px;font-weight:600}
+  .good-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+  .good-card{background:var(--green-bg);border:0.5px solid var(--green-line);border-radius:var(--r-sm);padding:11px 9px;text-align:center}
+  .gc-label{font-size:10px;color:var(--green-d);margin-bottom:4px;font-weight:600}
+  .gc-main{font-size:17px;font-weight:700;color:var(--text);line-height:1.15;margin-bottom:1px}
+  .gc-main .unit{font-size:11px;font-weight:400}
+  .gc-sub{font-size:9px;color:var(--text3);margin-top:3px}
+  .warn-sec-head{display:flex;align-items:center;gap:9px;margin:18px 0 6px}
+  .warn-sec-icon{width:28px;height:28px;border-radius:8px;background:var(--red);display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;flex-shrink:0}
+  .warn-sec-title{font-size:15px;font-weight:600}
+  .warn-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+  .warn-card{background:var(--red-bg);border:0.5px solid var(--red-line);border-radius:var(--r-sm);padding:11px 9px;display:flex;flex-direction:column}
+  .wc-head{display:flex;align-items:center;gap:5px;margin-bottom:7px}
+  .wc-icon{width:18px;height:18px;border-radius:50%;background:#c0392b;color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .wc-label{font-size:11px;font-weight:600;color:var(--red-d)}
+  .wc-main{font-size:18px;font-weight:700;color:var(--red-d);line-height:1.15;margin-bottom:1px}
+  .wc-main .unit{font-size:11px;font-weight:400}.wc-main .cnt{font-size:11px;font-weight:500;margin-left:3px}
+  .wc-sub{font-size:10px;color:var(--red-d);margin-bottom:7px}
+  .wc-desc{font-size:10px;color:var(--text2);line-height:1.55;flex:1}
+  .use-card{background:var(--surface2);border-radius:var(--r-sm);padding:12px 14px;margin-bottom:14px}
+  .use-head{display:flex;align-items:center;gap:7px;margin-bottom:5px}.use-title{font-size:13px;font-weight:600;color:var(--red-d)}
+  .use-text{font-size:12px;color:var(--text2);line-height:1.7}
+  .board-title{font-size:13px;font-weight:600;margin:14px 0 8px}
+  .board{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+  .cell{border:0.5px solid var(--line);border-radius:var(--r-sm);padding:6px 4px;min-height:82px;display:flex;flex-direction:column;gap:1px;background:var(--surface)}
+  .cell.ctr{background:var(--surface2)}
+  .cell.lucky{border-color:var(--green);background:var(--green-bg)}
+  .cell.unlucky{border-color:var(--red);background:var(--red-bg)}
+  .cell.kuxing{opacity:.7}
+  .cell.yojin-dir{box-shadow:inset 0 0 0 2px var(--blue)}
+  .cell.super{border-color:var(--green-d);box-shadow:inset 0 0 0 2px var(--green);background:var(--green-bg)}
+  .c-pal{font-size:8px;color:var(--text3)}
+  .c-pal-g{font-size:8px;padding:0 3px;border-radius:4px;margin-left:2px}
+  .c-star{font-size:11px;font-weight:600}
+  .c-gate{font-size:10px;color:var(--blue)}.c-dei{font-size:9px;color:var(--purple)}
+  .c-stems{display:flex;gap:3px;align-items:center}
+  .c-ten{font-size:10px;color:#b85010;font-weight:600}.c-sep{font-size:8px;color:var(--text3)}.c-gnd{font-size:10px;color:#1d5aa0;font-weight:600}
+  .c-ji{font-size:8px;padding:1px 4px;border-radius:8px;width:fit-content;margin-top:1px}
+  .jg{background:var(--green-bg);color:var(--green-d)}.jb{background:var(--red-bg);color:var(--red-d)}.jm{background:var(--surface2);color:var(--text2)}
+  .c-badge{font-size:8px;padding:1px 3px;border-radius:4px;margin-left:1px}
+  .b-ku{background:var(--surface2);color:var(--text2)}.b-yj{background:var(--blue-bg);color:var(--blue)}
+  .kk-item{border:0.5px solid var(--line);border-radius:var(--r-sm);padding:10px 12px;margin-bottom:6px}
+  .kk-good{border-color:var(--green);background:var(--green-bg)}.kk-bad{border-color:var(--red);background:var(--red-bg)}
+  .kk-header{display:flex;align-items:center;gap:7px;margin-bottom:3px;flex-wrap:wrap}
+  .kk-name{font-size:13px;font-weight:600}.kk-stars{font-size:12px;color:#ba7517}.kk-trans{font-size:12px;font-weight:500}
+  .kk-none{font-size:12px;color:var(--text2);padding:10px;background:var(--surface2);border-radius:var(--r-sm);text-align:center}
+  .profile-list{display:flex;flex-direction:column;gap:7px;margin-bottom:10px}
+  .profile-card{padding:11px 13px;background:var(--surface2);border:0.5px solid transparent;border-radius:var(--r-sm)}
+  .profile-card.active{border-color:var(--green);background:var(--green-bg)}
+  .pc-top{display:flex;align-items:center;gap:10px;cursor:pointer}
+  .pc-avatar{width:36px;height:36px;border-radius:50%;background:var(--blue-bg);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--blue);flex-shrink:0}
+  .profile-card.active .pc-avatar{background:var(--green);color:#fff}
+  .pc-info{flex:1;min-width:0}
+  .pc-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:6px}
+  .pc-active-mark{font-size:10px;color:var(--green-d);font-weight:600;flex-shrink:0}
+  .pc-meta{font-size:11px;color:var(--text2)}
+  .pc-actions{display:flex;gap:2px;flex-shrink:0}
+  .pc-icon-btn{width:30px;height:30px;border-radius:50%;border:none;background:transparent;color:var(--text3);cursor:pointer;font-size:15px}
+  .pc-memo{font-size:11px;color:var(--text2);line-height:1.6;margin-top:8px;padding:8px 10px;background:var(--surface);border-radius:var(--r-sm);display:flex;gap:6px;align-items:flex-start}
+  .pc-memo-empty{font-size:11px;color:var(--text3);margin-top:6px;cursor:pointer;display:flex;align-items:center;gap:4px}
+  .set-item{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:0.5px solid var(--line);font-size:13px}
+  .set-item:last-child{border-bottom:none}
+  .set-label{color:var(--text)}.set-val{color:var(--text2);font-size:12px}
+  .seg{display:flex;gap:4px;background:var(--surface2);border-radius:var(--r-sm);padding:3px}
+  .seg button{font-size:11px;padding:5px 11px;border:none;border-radius:6px;background:transparent;color:var(--text2);cursor:pointer;font-family:inherit}
+  .seg button.active{background:var(--surface);color:var(--text);font-weight:600}
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;padding:20px;z-index:50}
+  .modal{background:var(--surface);border-radius:var(--r);padding:18px;width:100%;max-width:330px}
+  .modal h4{font-size:15px;font-weight:600;margin-bottom:6px}
+  .modal p{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:12px}
+  .modal-actions{display:flex;gap:8px;margin-top:14px}.modal-actions .btn{flex:1}
+  .btn-danger{color:var(--red-d);border-color:var(--red-line)}
+  .add-link{margin-left:auto;font-size:11px;color:var(--blue);cursor:pointer;display:flex;align-items:center;gap:3px}
+  .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;display:flex;background:var(--surface);border-top:0.5px solid var(--line);z-index:20}
+  .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 2px;cursor:pointer;color:var(--text3);font-size:10px}
+  .nav-item.active{color:var(--blue)}
+  .nav-item .ni-icon{font-size:18px}
+  .hidden{display:none}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1 id="appTitle">ホーム</h1>
+    <button class="profile-chip" id="profileChip" onclick="go('settings')">👤 <span id="chipName">未設定</span></button>
+  </div>
+  <main>
+    <div class="screen active" id="screen-home"></div>
+    <div class="screen" id="screen-meishiki"></div>
+    <div class="screen" id="screen-unsei"></div>
+    <div class="screen" id="screen-kimon"></div>
+    <div class="screen" id="screen-settings"></div>
+  </main>
+  <div class="bottom-nav">
+    <div class="nav-item active" data-screen="home" onclick="go('home')"><span class="ni-icon">🏠</span><span>ホーム</span></div>
+    <div class="nav-item" data-screen="meishiki" onclick="go('meishiki')"><span class="ni-icon">📋</span><span>命式</span></div>
+    <div class="nav-item" data-screen="unsei" onclick="go('unsei')"><span class="ni-icon">📈</span><span>運勢</span></div>
+    <div class="nav-item" data-screen="kimon" onclick="go('kimon')"><span class="ni-icon">🧭</span><span>奇門遁甲</span></div>
+    <div class="nav-item" data-screen="settings" onclick="go('settings')"><span class="ni-icon">⚙️</span><span>設定</span></div>
+  </div>
+  <div id="modalRoot"></div>
+</div>
+<script id="app-script">
+/* ============================================================
+   奇門遁甲 × 四柱推命  最終統合版
+   暦コア（全タブ共有の計算エンジン）
+   ============================================================ */
+var TG=['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+var DZ=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+var YYS={甲:1,乙:0,丙:1,丁:0,戊:1,己:0,庚:1,辛:0,壬:1,癸:0};
+var GOGYO={甲:'木',乙:'木',丙:'火',丁:'火',戊:'土',己:'土',庚:'金',辛:'金',壬:'水',癸:'水'};
+var GEN_C={木:'火',火:'土',土:'金',金:'水',水:'木'},KOK_C={木:'土',火:'金',土:'水',金:'木',水:'火'};
+var GEN_OF={木:'水',火:'木',土:'火',金:'土',水:'金'},KOK_OF={木:'金',火:'水',土:'木',金:'火',水:'土'};
+var GOGYO_COLOR={木:'#639922',火:'#e24b4a',土:'#ba7517',金:'#888780',水:'#185fa5'};
+var ELEMENT_KEY={'木':'成長・発展','火':'情熱・表現','土':'安定・信頼','金':'規律・洗練','水':'知性・縁'};
+var HIDDEN_STEM={子:'癸',丑:'己',寅:'甲',卯:'乙',辰:'戊',巳:'丙',午:'丁',未:'己',申:'庚',酉:'辛',戌:'戊',亥:'壬'};
+var PALACES=[4,9,2,3,5,7,8,1,6],DIR=['東南','南','西南','東','中','西','東北','北','西北'],TRI=['巽','離','坤','震','中','兌','艮','坎','乾'];
+var DIR_TO_DEG={'北':0,'北東':45,'東':90,'東南':135,'南':180,'南西':225,'西':270,'西北':315,'西南':225,'東北':45,'南東':135,'北西':315};
+var PAL_GOGYO={1:'水',2:'土',3:'木',4:'木',5:'土',6:'金',7:'金',8:'土',9:'火'};
+var STARS=['天蓬','天芮','天冲','天輔','天禽','天心','天柱','天任','天英'];
+var GATES=['休門','死門','傷門','杜門','中','開門','驚門','生門','景門'];
+var DEITIES=['値符','螣蛇','太陰','六合','白虎','玄武','九地','九天','勾陳'];
+var GND_STEM_BY_PAL={1:4,2:5,3:6,4:7,5:8,6:9,7:3,8:2,9:1};
+var SL={'天蓬':1,'天芮':-1,'天冲':1,'天輔':1,'天禽':0,'天心':1,'天柱':-1,'天任':1,'天英':0};
+var GL={'休門':1,'死門':-1,'傷門':-1,'杜門':0,'中':0,'開門':1,'驚門':-1,'生門':1,'景門':0};
+var DL={'値符':1,'螣蛇':-1,'太陰':1,'六合':1,'白虎':-1,'玄武':-1,'九地':1,'九天':1,'勾陳':-1};
+var YANG_JU=[[1,2,3],[4,5,6],[7,8,9],[7,8,9],[1,2,3],[4,5,6],[4,5,6],[7,8,9],[1,2,3],[1,2,3],[4,5,6],[7,8,9],[2,3,4],[5,6,7],[8,9,1],[5,6,7],[8,9,1],[2,3,4],[8,9,1],[2,3,4],[5,6,7],[3,4,5],[6,7,8],[9,1,2],[6,7,8],[9,1,2],[3,4,5],[9,1,2],[3,4,5],[6,7,8],[3,4,5],[6,7,8],[9,1,2],[6,7,8],[9,1,2],[3,4,5]];
+var YIN_JU=[[9,8,7],[6,5,4],[3,2,1],[3,2,1],[9,8,7],[6,5,4],[6,5,4],[3,2,1],[9,8,7],[9,8,7],[6,5,4],[3,2,1],[8,7,6],[5,4,3],[2,1,9],[5,4,3],[2,1,9],[8,7,6],[2,1,9],[8,7,6],[5,4,3],[7,6,5],[4,3,2],[1,9,8],[4,3,2],[1,9,8],[7,6,5],[1,9,8],[7,6,5],[4,3,2],[7,6,5],[4,3,2],[1,9,8],[4,3,2],[1,9,8],[7,6,5]];
+var YANG_JQ=['冬至','小寒','大寒','立春','雨水','啓蟄','春分','清明','穀雨','立夏','小満','芒種'];
+var YIN_JQ=['夏至','小暑','大暑','立秋','処暑','白露','秋分','寒露','霜降','立冬','小雪','大雪'];
+var JQ_LONS=[315,330,345,0,15,30,45,60,75,90,105,120,135,150,165,180,195,210,225,240,255,270,285,300];
+var JQ_NAMES=['小寒','大寒','立春','雨水','啓蟄','春分','清明','穀雨','立夏','小満','芒種','夏至','小暑','大暑','立秋','処暑','白露','秋分','寒露','霜降','立冬','小雪','大雪','冬至'];
+var DZ_TO_PAL={0:1,1:8,2:8,3:3,4:4,5:4,6:9,7:2,8:2,9:7,10:6,11:6};
+var SETSU_LONS=[315,345,15,45,75,105,135,165,195,225,255,285],SETSU_NAMES=['立春','啓蟄','清明','立夏','芒種','小暑','立秋','白露','寒露','立冬','大雪','小寒'];
+var TSU_BASE={'比肩':0,'劫財':-1,'食神':2,'傷官':-1,'偏財':1,'正財':2,'偏官':-1,'正官':2,'偏印':0,'印綬':1};
+var TSU_THEME={'比肩':'自立と独立','劫財':'協力と散財','食神':'楽しみと表現','傷官':'才能と繊細さ','偏財':'人脈とチャンス','正財':'堅実と信頼','偏官':'挑戦と試練','正官':'評価と規律','偏印':'閃きと変化','印綬':'学びと支援'};
+var NICHIUN_DESC={'比肩':{s:'good',a:'自分の意志を通すのに向く日。単独行動が吉。'},'劫財':{s:'mid',a:'人との関わりが増えるが金銭は慎重に。'},'食神':{s:'good',a:'趣味・飲食・創作に好機。心が満たされる。'},'傷官':{s:'mid',a:'発想は冴えるが言葉は丁寧に。'},'偏財':{s:'good',a:'社交や臨時収入に縁。行動範囲を広げて吉。'},'正財':{s:'good',a:'地道な努力が実る。信用が増す。'},'偏官':{s:'mid',a:'プレッシャーを乗り越えれば成長。'},'正官':{s:'good',a:'公的な場で評価される。ルールを守ると吉。'},'偏印':{s:'mid',a:'直感・学びに好機。気分は移ろいやすい。'},'印綬':{s:'good',a:'知識の吸収・目上の助けに縁。'}};
+var ELEMENT_MEANING={'木':{action:['新しい挑戦や学びを増やす','緑・木製品を身近に置く','東方位・朝を活用する'],life:'目標に向かって伸びやかに成長する力。計画性と向上心が運を開きます。'},'火':{action:['自己表現や発信を増やす','明るい色・人の集まる場へ','南方位・日中を活用する'],life:'情熱で周囲を照らす力。積極的な発信と交流が運を開きます。'},'土':{action:['地道な積み重ねを大切に','安定した習慣・土地に縁を','落ち着いた環境を整える'],life:'信頼を蓄える力。誠実さと継続が運を開きます。'},'金':{action:['質と完成度を高める','金属・洗練された環境を','西方位・夕方を活用する'],life:'磨き決断する力。規律と美意識が運を開きます。'},'水':{action:['知識を深め縁を大切に','水・旅・対話に縁を','北方位・夜を活用する'],life:'柔軟に知恵を巡らせる力。思考と人脈が運を開きます。'}};
+var KAN_PERSONALITY={'甲':'あなたの星は「甲（木）」。まっすぐ上を目指す、大きな木のエネルギー。正義感が強く、自分の信念で動けるリーダータイプ。誰かに頼らず自分の道を切り開く力があります。','乙':'あなたの星は「乙（木）」。しなやかで風に揺れる草花のようなエネルギー。まわりの空気を読む力が高く、人間関係を自然にまとめるのが得意。柔軟に対応しながらも芯はしっかりしています。','丙':'あなたの星は「丙（火）」。太陽のように明るく、いるだけで場の雰囲気が変わる存在感。行動力とコミュニケーション力が高く、チームの中心になりやすいタイプです。','丁':'あなたの星は「丁（火）」。ろうそくの炎のような、やさしくて温かいエネルギー。感受性が豊かで、人の気持ちに寄り添える力があります。芸術・表現系の才能が光ります。','戊':'あなたの星は「戊（土）」。どっしりした山のような安定感と包容力。ブレない軸を持ち、まわりから頼りにされます。長期的に積み上げて大きな結果を出すタイプです。','己':'あなたの星は「己（土）」。豊かな大地のようなやさしさと細やかな気配り。縁の下の力持ちとして周囲を支え、長く一緒にいるほど信頼が深まるタイプです。','庚':'あなたの星は「庚（金）」。鋼のように強い意志とブレない判断力。決めたことをやり遂げる力があり、誠実で頼もしい印象を与えます。実力で評価されるタイプです。','辛':'あなたの星は「辛（金）」。宝石のように繊細で、美的センスとこだわりが際立ちます。クオリティを大切に丁寧に仕上げることで本領発揮。独自の世界観を持つタイプです。','壬':'あなたの星は「壬（水）」。大海原のように広い視野と深い思考力。頭の回転が速く、どんな状況でも柔軟に対応できる問題解決力が強みです。','癸':'あなたの星は「癸（水）」。霧雨のように静かで深いエネルギー。直感力が高く、言葉にならない情報をキャッチする力があります。内省的でクリエイティブなタイプです。'};
+var GOGYO_WORK={木:'人や可能性を育てることが得意。教育・コーチング・保育・環境・人材育成など「誰かの成長に関わる」仕事で力を発揮。起業や新規事業の立ち上げとも好相性です。',火:'表現力と行動力を活かせる仕事が向いています。クリエイター・マーケター・イベント企画・デザイナーなど、人前に出る・発信する仕事で輝けます。',土:'コツコツ積み上げる力と安定感が強み。プロジェクト管理・経理・建築・料理・福祉など、土台を支える仕事や「信頼」が求められる仕事に向いています。',金:'正確さと論理的思考が武器。エンジニア・医療・法律・データ分析・職人・品質管理など、精度や専門知識が問われる仕事で本領発揮します。',水:'知性と感性を組み合わせる仕事が得意。研究職・作家・カウンセラー・翻訳など、頭と心を使う仕事や専門性を深める仕事に向いています。'};
+var GOGYO_LOVE={木:'一緒に成長できる相手との縁が深いタイプ。お互いを高め合える関係を自然と求めます。自由な空間を大切にするので、個性を尊重し合えるパートナーと長続きします。',火:'感情表現がストレートで気持ちが伝わりやすいタイプ。恋愛には情熱的に向き合います。ときめきや新しい刺激を大切にすると関係が発展しやすいです。',土:'信頼関係をじっくり積み上げるタイプ。焦らず時間をかけて距離を縮めるのが得意。誠実さが伝わると長く安定した関係になりやすいです。',金:'理想を明確に持つタイプ。「この人だ」と決めたら全力で大切にします。直感より相手の誠実さや価値観を重視する傾向があります。',水:'感性や精神的なつながりを大切にするタイプ。表面的な付き合いより、深く分かり合える関係に惹かれます。ロマンチックな雰囲気も大切にします。'};
+var JUKKAMI_DESC={'比肩':'自立心が強く、自分のペースで動くことで力を発揮。競争心が刺激になり、ライバルがいるほど燃えます。','劫財':'行動力と突破力が武器。チャンスを感じたらすぐ動ける機動力があり、リスクを恐れずチャレンジできます。','食神':'創造力と表現力の才能。作ること・発信することが得意で、アイデアが自然と湧き出るクリエイタータイプです。','傷官':'個性と独自の視点を持つ才能。人と違う発想で物事を見られ、オリジナルな表現やスタイルが輝きます。','偏財':'行動でチャンスをつかむ才能。積極的に動くと人脈やチャンスが広がり、フットワークの軽さが強みです。','正財':'コツコツ積み上げる才能。努力した分だけ確実に結果につながり、長期的に大きな安定を手にできます。','偏官':'プレッシャーの中で力を発揮する才能。困難な状況ほど本領発揮でき、逆境をバネにできるタイプです。','正官':'誠実さと責任感の才能。ルールと信義を大切にすることで信頼が集まり、長く評価され続けます。','偏印':'直感と探求心の才能。気になることを深掘りする力が高く、知識とひらめきを組み合わせてアイデアを生みます。','印綬':'学ぶ力と知性の才能。吸収力が高く、知識を積み上げて専門性が磨かれます。人に教えることも得意です。'};
+var FAMILY_DESC={'年':'祖父母・親との縁や、受け継いだルーツを表します。','月':'親・きょうだいとの縁や、育った家庭環境を表します。','日':'あなた自身の本質と、将来のパートナーとの縁を表します。','時':'将来の子どもや後輩・部下との縁、自分の夢や目標との縁を表します。'};
+var GOGYO_HEALTH={木:{organ:'肝臓・胆嚢・目・筋肉・神経系',weak:'目の疲れ・肩こり・頭痛・自律神経の不調が出やすく、ストレスや過労で症状が出やすい傾向。',care:'有酸素運動（散歩・ストレッチ）が合い、緑の多い環境と良い睡眠が回復を早めます。',food:'緑の野菜・酸味のある食品が相性◎。アルコールは控えめに。'},火:{organ:'心臓・小腸・血管・血液循環',weak:'動悸・不眠・のぼせ・口内炎が出やすく、感情の起伏が体に影響しやすい。',care:'ヨガ・水泳など穏やかな運動が合い、クールダウンと睡眠確保が大切。',food:'赤い食材・苦味のある食品が相性◎。カフェインは控えめに。'},土:{organ:'胃・脾臓・膵臓・口',weak:'胃腸トラブル・むくみ・倦怠感が出やすく、心配事が胃腸に出やすい体質。',care:'規則正しい食生活と適度なウォーキングが合い、食べすぎ・早食いを避けて。',food:'黄色い食材・甘味のある食品が相性◎。冷たい飲食物は注意。'},金:{organ:'肺・大腸・皮膚・鼻・呼吸器',weak:'咳・鼻炎・皮膚トラブル・便秘が出やすく、乾燥や季節の変わり目に注意。',care:'深呼吸・呼吸法・軽い筋トレが合い、保湿と空気環境を整えて。',food:'白い食材・辛味のある食品が相性◎。タンパク質で免疫維持を。'},水:{organ:'腎臓・膀胱・骨・耳・脳',weak:'腰痛・頻尿・耳鳴り・冷え性が出やすく、夜更かしや過労でエネルギーが枯渇。',care:'体を冷やさないことが最重要。入浴・足湯と睡眠確保が体質改善に。',food:'黒い食材・塩味のある食品が相性◎。冷たいものは控えめに。'}};
+
+function sunLon(jd){var T=(jd-2451545)/36525,L0=280.46646+36000.76983*T,M=(357.52911+35999.05029*T)*Math.PI/180;var C=(1.914602-0.004817*T)*Math.sin(M)+(0.019993-0.000101*T)*Math.sin(2*M)+0.000289*Math.sin(3*M);return((L0+C)%360+360)%360;}
+function dateToJD(d){var y=d.getFullYear(),mo=d.getMonth()+1,day=d.getDate(),h=d.getHours()/24+d.getMinutes()/1440;var A=Math.floor((14-mo)/12),Y=y+4800-A,M=mo+12*A-3;return day+Math.floor((153*M+2)/5)+365*Y+Math.floor(Y/4)-Math.floor(Y/100)+Math.floor(Y/400)-32045+h-0.5;}
+function jdForLon(year,target){var jd=dateToJD(new Date(year,0,1)),best=jd,bestD=360;for(var d=0;d<400;d++){var lon=sunLon(jd+d),dif=((lon-target+360)%360);if(dif>180)dif=360-dif;if(dif<bestD){bestD=dif;best=jd+d;}}var lo=best-2,hi=best+2;for(var i=0;i<50;i++){var mid=(lo+hi)/2,l2=sunLon(mid),d2=((l2-target+540)%360)-180;if(Math.abs(d2)<0.00001)return mid;if(d2<0)lo=mid;else hi=mid;}return(lo+hi)/2;}
+function getSurrSetsu(date){var jd=dateToJD(date),yr=date.getFullYear(),all=[];for(var y=yr-1;y<=yr+1;y++)SETSU_LONS.forEach(function(lon,i){all.push({jd:jdForLon(y,lon),name:SETSU_NAMES[i],lon:lon});});all.sort(function(a,b){return a.jd-b.jd;});var prev=null,next=null;for(var i=0;i<all.length;i++){if(all[i].jd<=jd)prev=all[i];else{next=all[i];break;}}return{prev:prev,next:next};}
+function getSurrJQ(date){var jd=dateToJD(date),yr=date.getFullYear(),all=[];for(var y=yr-1;y<=yr+1;y++)JQ_LONS.forEach(function(lon,i){all.push({jd:jdForLon(y,lon),name:JQ_NAMES[i],lon:lon});});all.sort(function(a,b){return a.jd-b.jd;});var prev=null,next=null;for(var i=0;i<all.length;i++){if(all[i].jd<=jd)prev=all[i];else{next=all[i];break;}}return{prev:prev,next:next};}
+function getGen(date){var s=getSurrJQ(date),prev=s.prev,next=s.next;if(!prev||!next)return{genIdx:0,jieqi:prev};var jd=dateToJD(date),span=next.jd-prev.jd,el=jd-prev.jd,gi=Math.min(2,Math.floor(el/(span/3)));return{genIdx:gi,jieqi:prev};}
+function isYang(date){var s=getSurrJQ(date),prev=s.prev;if(!prev)return true;return[270,285,300,315,330,345,0,15,30,45,60,75,90].indexOf(prev.lon)>=0;}
+function getJuNumber(date){var yang=isYang(date),g=getGen(date),gi=g.genIdx,jq=g.jieqi;if(!jq)return{ju:yang?1:9,yang:yang};if(yang){var si=YANG_JQ.indexOf(jq.name);return{ju:si>=0?YANG_JU[si][gi]:1,yang:yang};}else{var si=YIN_JQ.indexOf(jq.name);return{ju:si>=0?YIN_JU[si][gi]:9,yang:yang};}}
+function getJunshu(d){var ep=new Date(2020,0,17),n60=((Math.floor((d-ep)/86400000)%60)+60)%60,tg=n60%10,dz=n60%12,js=((dz-tg)%12+12)%12;var jo=[0,10,8,6,4,2],jn=['甲子旬','甲戌旬','甲申旬','甲午旬','甲辰旬','甲寅旬'],ji=jo.indexOf(js);return{junName:ji>=0?jn[ji]:'甲'+DZ[js]+'旬',junshuDZIdx:js,ku1:(js+10)%12,ku2:(js+11)%12};}
+function yKanIdx(y){return((y-4)%10+10)%10;}
+function yJiIdx(y){return((y-4)%12+12)%12;}
+function getMonthGZi(d){var SET=[315,345,15,45,75,105,135,165,195,225,255,285];var s=getSurrSetsu(d),lon=s.prev?s.prev.lon:315,mIdx=SET.indexOf(lon),yk=yKanIdx(d.getFullYear()),base=[2,4,6,8,0][yk%5];return{t:(base+mIdx)%10,b:(mIdx+2)%12};}
+function dayGZi(d){var ep=new Date(2020,0,17),n=Math.floor((d-ep)/86400000);return{t:((n%10)+10)%10,b:((n%12)+12)%12};}
+function timeGZi(d){var ep=new Date(2020,0,17),dd=Math.floor((new Date(d.getFullYear(),d.getMonth(),d.getDate())-ep)/86400000);var ti=((dd%5+5)%5)*2,hi=Math.floor(((d.getHours()+1)%24)/2);return{t:(ti+hi)%10,b:hi};}
+function tsuhensei(dSt,tSt){var de=GOGYO[dSt],te=GOGYO[tSt],sp=YYS[dSt]===YYS[tSt];if(de===te)return sp?'比肩':'劫財';if(GEN_C[de]===te)return sp?'食神':'傷官';if(KOK_C[de]===te)return sp?'偏財':'正財';if(KOK_C[te]===de)return sp?'偏官':'正官';if(GEN_C[te]===de)return sp?'偏印':'印綬';return '';}
+function getSM(d){var T2=[[1,20],[2,18],[3,20],[4,19],[5,21],[6,21],[7,23],[8,23],[9,23],[10,23],[11,22],[12,22]];return d.getDate()>=T2[d.getMonth()][1]?d.getMonth()+1:d.getMonth();}
+function roundRitsuun(val,mode){if(mode==='floor')return Math.max(0,Math.floor(val));if(mode==='ceil')return Math.max(0,Math.ceil(val));return Math.max(0,Math.round(val));}
+/* ============ 盤生成・格局・大運・chartData ============ */
+function buildBoard(date,tab){
+  var r=getJuNumber(date),ju=r.ju,yang=r.yang,off=yang?ju-1:(9-ju);
+  if(tab==='ri'){var e0=new Date(2020,0,17);off=((Math.floor((date-e0)/86400000)+ju-1)%9+9)%9;}
+  else if(tab==='yue')off=((getSM(date)+ju-1)%9+9)%9;
+  else if(tab==='nian')off=((date.getFullYear()-4)%9+9)%9;
+  else{var hh=Math.floor(((date.getHours()+1)%24)/2);off=((off+(yang?hh:(9-hh)%9))%9+9)%9;}
+  var ji=getJunshu(date),ku1=ji.ku1,ku2=ji.ku2,kuP1=DZ_TO_PAL[ku1],kuP2=DZ_TO_PAL[ku2],chu=yang?2:8;
+  var cells=PALACES.map(function(palNum,idx){
+    var ep=palNum===5?chu:palNum,sIdx,gIdx,dIdx;
+    if(yang){sIdx=((ep-1+off)%9+9)%9;gIdx=sIdx;dIdx=((ep-1+off+2)%9+9)%9;}
+    else{sIdx=((8-(ep-1)+off)%9+9)%9;gIdx=sIdx;dIdx=((8-(ep-1)+off+2)%9+9)%9;}
+    var star=STARS[sIdx],gateRaw=palNum===5?'（寄）':GATES[gIdx],deityRaw=palNum===5?'（寄）':DEITIES[dIdx];
+    var gsi=GND_STEM_BY_PAL[palNum],tsi=yang?((gsi+off)%9+9)%9:((gsi-off+90)%9+9)%9;
+    var luck=(SL[star]||0)+(GL[GATES[gIdx]]||0)+(DL[DEITIES[dIdx]]||0);
+    return{palNum:palNum,dir:DIR[idx],tri:TRI[idx],gogyo:PAL_GOGYO[palNum],star:star,gateRaw:gateRaw,deityRaw:deityRaw,gndStem:TG[gsi],tenStem:TG[tsi],luck:luck,idx:idx,isKu:palNum===kuP1||palNum===kuP2,isCtr:palNum===5};
+  });
+  var zfPal=DZ_TO_PAL[ji.junshuDZIdx],zfCell=null;for(var i=0;i<cells.length;i++){if(cells[i].palNum===zfPal){zfCell=cells[i];break;}}
+  var board={cells:cells,junName:ji.junName,ku1:ku1,ku2:ku2,yang:yang,ju:ju,zfCell:zfCell,zsGate:zfCell?zfCell.gateRaw:'—'};
+  board.kakukyoku=judgeKK(board);return board;
+}
+var KK_DEFS=[
+  {name:'青龍返首',type:'good',stars:5,trans:'営業・交渉・契約に大吉',check:function(b){return b.zfCell&&['開門','生門','休門'].indexOf(b.zfCell.gateRaw)>=0;}},
+  {name:'飛鳥跌穴',type:'bad',stars:1,trans:'重要な決断・移動は控えめに',check:function(b){return b.zfCell&&['死門','驚門','傷門'].indexOf(b.zfCell.gateRaw)>=0;}},
+  {name:'玉女守門',type:'good',stars:4,trans:'恋愛・内密の相談・根回しに吉',check:function(b){return b.zfCell&&b.zfCell.tenStem==='丁';}},
+  {name:'三奇得使',type:'good',stars:5,trans:'起業・企画・大勝負に最吉',check:function(b){var t=b.cells.map(function(c){return c.tenStem;});return['乙','丙','丁'].every(function(s){return t.indexOf(s)>=0;})&&['開門','生門','休門'].indexOf(b.zsGate)>=0;}}
+];
+function judgeKK(b){var res=[];KK_DEFS.forEach(function(d){try{if(d.check(b))res.push({name:d.name,type:d.type,stars:d.stars,trans:d.trans});}catch(e){}});res.sort(function(a,b2){if(a.type!==b2.type)return a.type==='good'?-1:1;return b2.stars-a.stars;});return res;}
+
+function calcDaiyun(birth,sex,mode){
+  var ykan=yKanIdx(birth.getFullYear()),yYin=YYS[TG[ykan]];
+  var forward=(sex==='M'&&yYin===1)||(sex==='F'&&yYin===0);
+  var s=getSurrSetsu(birth),jd=dateToJD(birth),target=forward?s.next:s.prev;
+  var days=Math.abs(target.jd-jd),startAge=roundRitsuun(days/3,mode);
+  var mGZ=getMonthGZi(birth),dStem=TG[dayGZi(birth).t],rows=[];
+  for(var i=0;i<8;i++){var step=forward?(i+1):-(i+1);var t=((mGZ.t+step)%10+10)%10,b=((mGZ.b+step)%12+12)%12;rows.push({age:startAge+i*10,gz:TG[t]+DZ[b],stem:TG[t],tsu:tsuhensei(dStem,TG[t])});}
+  return{forward:forward,startAge:startAge,days:days,setsu:target.name,rows:rows};
+}
+
+/* 吉方位・凶方位の抽出（用神連動） */
+function extractDirections(board,yojin){
+  board.cells.forEach(function(c){
+    c.yojinDir=yojin.yojinEl.indexOf(c.gogyo)>=0;
+    c.kishinDir=yojin.kishinEl.indexOf(c.gogyo)>=0;
+    c.isSuper=c.luck>=2&&!c.isKu&&c.yojinDir;
+  });
+  var supers=board.cells.filter(function(c){return c.isSuper;}).sort(function(a,b){return b.luck-a.luck;});
+  var lucky=board.cells.filter(function(c){return c.luck>=2&&!c.isKu&&!c.isCtr;}).sort(function(a,b){return b.luck-a.luck;});
+  var yd=board.cells.filter(function(c){return c.yojinDir&&!c.isCtr;});
+  var best=supers[0]||lucky[0]||yd[0]||null;
+  // 凶方位：luck最低かつ非中宮（忌神方位を優先）
+  var bad=board.cells.filter(function(c){return !c.isCtr;}).slice().sort(function(a,b){
+    var aw=(a.kishinDir?-1:0)+a.luck, bw=(b.kishinDir?-1:0)+b.luck;return aw-bw;
+  });
+  var worst=bad[0]||null;
+  return{best:best,worst:worst,bestType:supers.length?'super':(lucky.length?'kichi':'yojin')};
+}
+
+/* ===== 単一 chartData（全タブ共有）===== */
+function buildChartData(profile,mode){
+  var noTime=!profile.birthTime;
+  var birth=new Date(profile.birthDate+'T'+(profile.birthTime||'12:00'));
+  var y={t:yKanIdx(birth.getFullYear()),b:yJiIdx(birth.getFullYear())},m=getMonthGZi(birth),dd=dayGZi(birth);
+  var dStem=TG[dd.t],dGogyo=GOGYO[dStem];
+  var pillars=[{label:'年',stem:TG[y.t],branch:DZ[y.b]},{label:'月',stem:TG[m.t],branch:DZ[m.b]},{label:'日',stem:TG[dd.t],branch:DZ[dd.b]}];
+  if(!noTime){var h=timeGZi(birth);pillars.push({label:'時',stem:TG[h.t],branch:DZ[h.b]});}
+  pillars.forEach(function(p){p.tsu=p.label==='日'?'日主':tsuhensei(dStem,p.stem);p.zou=HIDDEN_STEM[p.branch];p.zouTsu=tsuhensei(dStem,p.zou);});
+  var score={木:0,火:0,土:0,金:0,水:0};
+  pillars.forEach(function(p){score[GOGYO[p.stem]]+=1.0;score[GOGYO[p.zou]]+=0.7;});
+  score[GOGYO[pillars[1].zou]]+=0.6;
+  var total=0;for(var k in score)total+=score[k];
+  var helpEl=[dGogyo,GEN_OF[dGogyo]],help=0,drain=0;
+  for(var k in score){if(helpEl.indexOf(k)>=0)help+=score[k];else drain+=score[k];}
+  var isStrong=help>=drain,yojinEl,kishinEl;
+  if(isStrong){yojinEl=[KOK_OF[dGogyo],GEN_C[dGogyo]];kishinEl=[dGogyo,GEN_OF[dGogyo]];}
+  else{yojinEl=[GEN_OF[dGogyo],dGogyo];kishinEl=[KOK_OF[dGogyo],GEN_C[dGogyo]];}
+  var yojin={dStem:dStem,dGogyo:dGogyo,isStrong:isStrong,help:help,drain:drain,yojinEl:yojinEl,kishinEl:kishinEl,primaryYojin:yojinEl[0]};
+  var daiyun=calcDaiyun(birth,profile.sex,mode);
+  var now=new Date(),nowAge=now.getFullYear()-birth.getFullYear(),curIdx=-1;
+  for(var i=0;i<daiyun.rows.length;i++){if(nowAge>=daiyun.rows[i].age)curIdx=i;}
+  var todayGZ=dayGZi(now),nichiun=tsuhensei(dStem,TG[todayGZ.t]);
+  var boardTab=noTime?'ri':'shi';
+  var kimon=buildBoard(now,boardTab);
+  var dirs=extractDirections(kimon,yojin);
+  // 金運方位：財星（剋す五行＝日主がKOK_Cする相手）に対応する方位
+  var wealthEl=KOK_C[dGogyo];
+  var wealthDirs=DIR.filter(function(d,i){return PAL_GOGYO[PALACES[i]]===wealthEl;});
+  return{noTime:noTime,birth:birth,sex:profile.sex,dStem:dStem,dGogyo:dGogyo,pillars:pillars,score:score,total:total,yojin:yojin,daiyun:daiyun,curIdx:curIdx,nichiun:nichiun,nichiunGZ:TG[todayGZ.t]+DZ[todayGZ.b],kimon:kimon,dirs:dirs,boardTab:boardTab,wealthEl:wealthEl,wealthDirs:wealthDirs,now:now};
+}
+/* ============ 永続化層（実機では端末ストレージに差し替え）============
+   プロファイル構造：{id,name,birthDate,birthTime,sex,coords,memo,createdAt}
+   birthTime:null = 時刻不明。memo = 自由記述。 */
+var Store={
+  profiles:[],activeId:null,_seq:1,
+  list:function(){return this.profiles;},
+  getActive:function(){var self=this;return this.profiles.filter(function(p){return p.id===self.activeId;})[0]||null;},
+  add:function(data){var p={id:'p'+(this._seq++),name:data.name,birthDate:data.birthDate,birthTime:data.birthTime,sex:data.sex,coords:data.coords,memo:data.memo||'',createdAt:Date.now()};this.profiles.push(p);this.activeId=p.id;return p;},
+  setActive:function(id){this.activeId=id;},
+  remove:function(id){this.profiles=this.profiles.filter(function(p){return p.id!==id;});if(this.activeId===id)this.activeId=this.profiles.length?this.profiles[0].id:null;},
+  rename:function(id,name){this.profiles.forEach(function(p){if(p.id===id)p.name=name;});},
+  setMemo:function(id,memo){this.profiles.forEach(function(p){if(p.id===id)p.memo=memo;});}
+};
+
+var APP={chartData:null,ritsuunMode:'round',built:{home:false,meishiki:false,unsei:false,kimon:false},
+  kimonTab:'shi',readingTab:'seikaku',openMonth:-1,scrollPos:{},
+  formNoTime:false,heading:0,sensorOn:false,
+  viewMode:'list',pendingDelete:null,editingMemo:null};
+
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function initials(name){return name?name.slice(0,2):'？';}
+
+function rebuildChart(){
+  var p=Store.getActive();
+  APP.chartData=p?buildChartData(p,APP.ritsuunMode):null;
+  APP.built={home:false,meishiki:false,unsei:false,kimon:false};
+  APP.openMonth=-1;
+}
+function invalidateAll(){
+  rebuildChart();
+  var active=document.querySelector('.nav-item.active').dataset.screen;
+  if(active!=='settings'){buildScreen(active);APP.built[active]=true;}
+  buildScreen('home');APP.built.home=true;
+  updateChip();
+}
+function updateChip(){
+  var p=Store.getActive();
+  document.getElementById('chipName').textContent=p?p.name:'未設定';
+}
+
+function go(screen){
+  var main=document.querySelector('main'),cur=document.querySelector('.screen.active');
+  if(cur)APP.scrollPos[cur.id]=window.scrollY;
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
+  document.getElementById('screen-'+screen).classList.add('active');
+  var nav=document.querySelector('.nav-item[data-screen="'+screen+'"]');if(nav)nav.classList.add('active');
+  document.getElementById('appTitle').textContent={home:'ホーム',meishiki:'命式',unsei:'運勢',kimon:'奇門遁甲',settings:'設定'}[screen];
+  if(screen==='settings'){renderSettings();}
+  else if(!APP.built[screen]){buildScreen(screen);APP.built[screen]=true;}
+  window.scrollTo(0,APP.scrollPos['screen-'+screen]||0);
+}
+function buildScreen(s){
+  if(s==='home')renderHome();else if(s==='meishiki')renderMeishiki();
+  else if(s==='unsei')renderUnsei();else if(s==='kimon')renderKimon();
+}
+function emptyState(label){
+  return '<div class="empty"><span class="ei">📝</span>まず設定で命式を登録・選択してください。<br>命式が用意されると'+label+'が表示されます。<br><br><button class="btn btn-primary" onclick="go(\'settings\')">設定を開く</button></div>';
+}
+
+/* ============ ホーム ============ */
+function renderHome(){
+  var el=document.getElementById('screen-home');
+  if(!APP.chartData){el.innerHTML=emptyState('ホーム');return;}
+  var cd=APP.chartData,nd=NICHIUN_DESC[cd.nichiun]||{s:'mid',a:''};
+  var scClass=nd.s==='good'?'pill-good':'pill-mid',scLabel=nd.s==='good'?'好調':'平穏';
+  var best=cd.dirs.best,worst=cd.dirs.worst;
+  var html='';
+  html+='<div class="card"><div class="hero-head">☀️ 今日の運勢（日運）</div><div class="hero-main"><span class="hero-gz">'+cd.nichiunGZ+'<span class="no"> の日</span></span><span class="pill '+scClass+'">'+scLabel+'</span></div><div class="hero-desc">'+(TSU_THEME[cd.nichiun]||'')+'。'+nd.a+'</div></div>';
+  html+='<div class="yojin-card"><div class="yj-circle" style="background:'+GOGYO_COLOR[cd.yojin.primaryYojin]+'">'+cd.yojin.primaryYojin+'</div><div class="yj-text">あなたの用神は <b>'+cd.yojin.primaryYojin+'（'+ELEMENT_KEY[cd.yojin.primaryYojin]+'）</b>。<br><span class="small">この気が巡る方位・時期が運を高めます。</span></div></div>';
+  html+='<div class="dir-card"><div class="dir-head">🧭 今日の最強方位（奇門遁甲）</div><div class="dir-main">'+(best?best.dir:'—')+'</div><div class="dir-desc">'+(best?(cd.dirs.bestType==='super'?'奇門の吉門と用神が重なる最強の方位。重要な行動はこの方位に。':best.star+'×'+best.gateRaw+'の吉方位。'):'本日は際立った吉方位なし')+'</div></div>';
+  // 三位一体グリッド（吉方位・吉時間帯・金運ポイント）
+  var luckyDirs=cd.kimon.cells.filter(function(c){return c.luck>=2&&!c.isKu&&!c.isCtr;});
+  html+='<div class="triad"><div class="triad-item" onclick="go(\'kimon\')"><div class="tr-label">吉方位</div><div class="tr-val">'+luckyDirs.length+'方向</div><div class="tr-sub">（詳細は奇門タブ）</div></div>'+
+    '<div class="triad-item" onclick="go(\'kimon\')"><div class="tr-label">金運ポイント</div><div class="tr-val">'+cd.wealthDirs.slice(0,2).join('・')+'</div><div class="tr-sub">（'+cd.wealthEl+'の気）</div></div>'+
+    '<div class="triad-item" onclick="go(\'kimon\')"><div class="tr-label">避ける方位</div><div class="tr-val">'+(worst?worst.dir:'—')+'</div><div class="tr-sub">（凶方位）</div></div></div>';
+  html+='<div class="link-row" onclick="go(\'meishiki\')"><div class="lr-left"><span class="lr-icon">📋</span><span class="lr-title">命式の概要</span></div><div class="lr-right"><span class="lr-meta">日主 '+cd.dStem+'（'+cd.dGogyo+'）</span><span class="lr-chev">›</span></div></div>';
+  html+='<div class="link-row" onclick="go(\'unsei\')"><div class="lr-left"><span class="lr-icon">📈</span><span class="lr-title">大運の流れ</span></div><div class="lr-right"><span class="lr-meta">立運 '+cd.daiyun.startAge+'歳・'+(cd.daiyun.forward?'順行':'逆行')+'</span><span class="lr-chev">›</span></div></div>';
+  html+='<div class="link-row" onclick="go(\'unsei\')"><div class="lr-left"><span class="lr-icon">🗓️</span><span class="lr-title">今年の運勢</span></div><div class="lr-right"><span class="lr-meta">'+cd.now.getFullYear()+'年を見る</span><span class="lr-chev">›</span></div></div>';
+  html+='<div class="link-row" onclick="go(\'kimon\')"><div class="lr-left"><span class="lr-icon">🧭</span><span class="lr-title">奇門遁甲盤・方位ナビ</span></div><div class="lr-right"><span class="lr-meta">コンパスで確認</span><span class="lr-chev">›</span></div></div>';
+  el.innerHTML=html;
+}
+/* ============ 命式タブ（鑑定テキスト移植）============ */
+function renderMeishiki(){
+  var el=document.getElementById('screen-meishiki');
+  if(!APP.chartData){el.innerHTML=emptyState('命式分析');return;}
+  var cd=APP.chartData,y=cd.yojin;
+  var mainGogyo='木',mx=0;for(var k in cd.score){if(cd.score[k]>mx){mx=cd.score[k];mainGogyo=k;}}
+  var html='';
+  if(cd.noTime)html+='<div class="fumei-note"><span>⏱</span><span>出生時刻が不明のため、時柱を除いた三柱で鑑定しています。性格・運勢の傾向は十分に読み取れますが、時柱が関わる晩年運や子どもとの縁は判定対象外です。</span></div>';
+  html+='<div class="sec-label"><span class="si">📋</span>命式表</div>';
+  html+='<div class="meishiki-grid">';
+  ['年','月','日','時'].forEach(function(lbl){
+    var p=cd.pillars.filter(function(x){return x.label===lbl;})[0];
+    if(p)html+='<div class="ms-col'+(lbl==='日'?' nichi':'')+'"><div class="ms-head">'+lbl+'柱</div><div class="ms-kan">'+p.stem+'</div><div class="ms-ji">'+p.branch+'</div><div class="ms-tsu">'+p.tsu+'</div></div>';
+    else html+='<div class="ms-col empty-col"><div class="ms-head">時柱</div><div class="ms-empty">時刻<br>不明</div><div class="ms-tsu">—</div></div>';
+  });
+  html+='</div>';
+  html+='<div style="font-size:12px;color:var(--text2);text-align:center;margin-bottom:4px">日主 <b style="color:'+GOGYO_COLOR[cd.dGogyo]+'">'+cd.dStem+'（'+cd.dGogyo+'）</b></div>';
+  html+='<div class="sec-label"><span class="si">📊</span>五行バランス'+(cd.noTime?'（三柱）':'')+'</div>';
+  ['木','火','土','金','水'].forEach(function(g){var pct=Math.round(cd.score[g]/cd.total*100);html+='<div class="gogyo-row"><span class="gogyo-name">'+g+'</span><div class="gogyo-bar-bg"><div class="gogyo-bar-fill" style="width:'+pct+'%;background:'+GOGYO_COLOR[g]+'"></div></div><span class="gogyo-val">'+cd.score[g].toFixed(1)+' ('+pct+'%)</span></div>';});
+  html+='<div class="sec-label"><span class="si">⚖️</span>日主の強弱</div>';
+  var helpPct=Math.round(y.help/(y.help+y.drain)*100);
+  html+='<div class="kj-card"><div class="kj-balance"><div class="kj-side"><div class="kj-side-label">助ける（比劫・印）</div><div class="kj-side-val">'+y.help.toFixed(1)+'</div></div><div class="kj-vs">vs</div><div class="kj-side"><div class="kj-side-label">弱める（食傷・財・官）</div><div class="kj-side-val">'+y.drain.toFixed(1)+'</div></div></div><div class="kj-bar"><div class="kj-bar-l" style="width:'+helpPct+'%"></div><div class="kj-bar-r" style="width:'+(100-helpPct)+'%"></div></div><div class="kj-verdict"><span class="kj-badge '+(y.isStrong?'kj-strong':'kj-weak')+'">'+(y.isStrong?'身強':'身弱')+'</span><span style="font-size:12px;color:var(--text2)">'+(y.isStrong?'日主の力が充実':'日主の力を補いたい')+'</span></div></div>';
+  var ym=ELEMENT_MEANING[y.primaryYojin];
+  html+='<div class="sec-label"><span class="si">⭐</span>あなたの用神（人生の鍵）</div>';
+  html+='<div class="yojin-hero"><div class="yh-label">🔑 運を開く五行</div><div class="yh-main"><div class="yh-element" style="background:'+GOGYO_COLOR[y.primaryYojin]+'">'+y.primaryYojin+'</div><div><div class="yh-element-name">'+y.primaryYojin+'（'+ELEMENT_KEY[y.primaryYojin]+'）</div><div class="yh-element-sub">運を支える中心の五行</div></div></div><div class="yh-text">'+ym.life+'</div><div class="yh-basis">判定根拠：日主'+cd.dStem+'は'+(cd.noTime?'三柱で':'')+(y.isStrong?'身強（助ける'+y.help.toFixed(1)+' ≥ 弱める'+y.drain.toFixed(1)+'）なので抑える':'身弱（助ける'+y.help.toFixed(1)+' < 弱める'+y.drain.toFixed(1)+'）なので助ける')+'「'+y.primaryYojin+'」が用神です。</div></div>';
+  // 鑑定テキストタブ
+  var tabs=[['seikaku','性格'],['tekishoku','適職'],['renai','恋愛'],['kenko','健康'],['jukkami','才能'],['kazoku','家族']];
+  html+='<div class="sec-label"><span class="si">📖</span>詳細鑑定</div>';
+  html+='<div class="reading-tabs">'+tabs.map(function(t){return '<button class="rtab'+(APP.readingTab===t[0]?' active':'')+'" onclick="setReadingTab(\''+t[0]+'\')">'+t[1]+'</button>';}).join('')+'</div>';
+  html+='<div id="readingArea"></div>';
+  el.innerHTML=html;
+  renderReading(mainGogyo);
+}
+function setReadingTab(t){APP.readingTab=t;var cd=APP.chartData;var mg='木',mx=0;for(var k in cd.score){if(cd.score[k]>mx){mx=cd.score[k];mg=k;}}document.querySelectorAll('.rtab').forEach(function(b){b.classList.remove('active');});event.target.classList.add('active');renderReading(mg);}
+function renderReading(mainGogyo){
+  var cd=APP.chartData,y=cd.yojin,t=APP.readingTab,html='';
+  if(t==='seikaku'){
+    html+='<div class="reading-card"><div class="rc-title">👤 あなたの本質</div><div class="rc-text">'+KAN_PERSONALITY[cd.dStem]+'</div></div>';
+    html+='<div class="reading-card"><div class="rc-title">🔥 際立つ五行</div><div class="rc-text">命式の中で「'+mainGogyo+'」のエネルギーが最も強く出ています。これが行動や判断の軸になっています。</div></div>';
+  } else if(t==='tekishoku'){
+    html+='<div class="reading-card"><div class="rc-title">💼 向いている仕事・適職</div><div class="rc-text">'+GOGYO_WORK[cd.dGogyo]+'</div><div class="rc-sub"><div class="rc-label">用神を活かすなら</div>用神「'+y.primaryYojin+'」の方向性も、運を開く働き方として意識すると良いでしょう。</div></div>';
+  } else if(t==='renai'){
+    html+='<div class="reading-card"><div class="rc-title">💗 恋愛・パートナーシップ</div><div class="rc-text">'+GOGYO_LOVE[cd.dGogyo]+'</div></div>';
+  } else if(t==='kenko'){
+    var h=GOGYO_HEALTH[cd.dGogyo];
+    html+='<div class="reading-card"><div class="rc-title">🩺 健康・体質（日主'+cd.dGogyo+'）</div>'+
+      '<div class="health-item"><b>中心となる臓器</b>'+h.organ+'</div>'+
+      '<div class="health-item"><b>不調のサイン</b>'+h.weak+'</div>'+
+      '<div class="health-item"><b>おすすめのケア</b>'+h.care+'</div>'+
+      '<div class="health-item"><b>相性の良い食事</b>'+h.food+'</div></div>';
+  } else if(t==='jukkami'){
+    html+='<div class="reading-card"><div class="rc-title">✨ あなたの才能（十神）</div>';
+    var shown={};
+    cd.pillars.forEach(function(p){if(p.tsu&&p.tsu!=='日主'&&!shown[p.tsu]){shown[p.tsu]=1;html+='<div style="margin-bottom:10px"><div class="rc-label">'+p.label+'柱：'+p.tsu+'</div><div class="rc-text">'+(JUKKAMI_DESC[p.tsu]||'')+'</div></div>';}});
+    html+='</div>';
+  } else if(t==='kazoku'){
+    html+='';
+    if(cd.noTime)html+='<div class="fumei-note"><span>⏱</span><span>時刻不明のため、時柱（子ども・夢との縁）は対象外です。三柱の縁を表示します。</span></div>';
+    html+='<div class="reading-card"><div class="rc-title">👨‍👩‍👧 家族・縁</div>';
+    cd.pillars.forEach(function(p){html+='<div style="margin-bottom:10px"><div class="rc-label">'+p.label+'柱（'+p.stem+p.branch+'）</div><div class="rc-text">'+FAMILY_DESC[p.label]+'</div></div>';});
+    html+='</div>';
+  }
+  document.getElementById('readingArea').innerHTML=html;
+}
+
+/* ============ 運勢タブ ============ */
+function monthFortune(monthTsu,dStem,monthStem,yojin){
+  var base=TSU_BASE[monthTsu],de=GOGYO[dStem],me=GOGYO[monthStem];
+  if(GEN_C[me]===de)base+=1;if(KOK_C[me]===de)base-=1;
+  var hit='neutral';
+  if(yojin.yojinEl.indexOf(me)>=0){base+=2;hit='hit';}else if(yojin.kishinEl.indexOf(me)>=0){base-=2;hit='ki';}
+  var lv;
+  if(base>=3)lv={label:'大吉',cls:'bg-daikichi',row:'daikichi'};
+  else if(base>=1)lv={label:'吉',cls:'bg-good',row:''};
+  else if(base>=0)lv={label:'平',cls:'bg-normal',row:''};
+  else if(base>=-1)lv={label:'注意',cls:'bg-chui',row:'chui'};
+  else lv={label:'凶',cls:'bg-kyo',row:'kyo'};
+  return{level:lv,hit:hit,me:me};
+}
+function renderUnsei(){
+  var el=document.getElementById('screen-unsei');
+  if(!APP.chartData){el.innerHTML=emptyState('運勢分析');return;}
+  var cd=APP.chartData,y=cd.yojin,dStem=cd.dStem,html='';
+  html+='<div class="yojin-card"><div class="yj-circle" style="background:'+GOGYO_COLOR[y.primaryYojin]+'">'+y.primaryYojin+'</div><div class="yj-text">あなたの用神 <b>'+y.primaryYojin+'</b> が巡る時期が、好機です。</div></div>';
+  html+='<div class="sec-label"><span class="si">🗓️</span>年運（用神との相性つき）</div>';
+  for(var yi=0;yi<3;yi++){
+    var yr=cd.now.getFullYear()+yi,yt=yKanIdx(yr),gz=TG[yt]+DZ[yJiIdx(yr)],tsu=tsuhensei(dStem,TG[yt]),yEl=GOGYO[TG[yt]];
+    var base=TSU_BASE[tsu],hit='neutral';
+    if(y.yojinEl.indexOf(yEl)>=0){base+=2;hit='hit';}else if(y.kishinEl.indexOf(yEl)>=0){base-=2;hit='ki';}
+    var stars=Math.max(1,Math.min(5,3+Math.round(base/1.5))),ss='';for(var s=0;s<5;s++)ss+=s<stars?'★':'☆';
+    var flag=hit==='hit'?'<span class="yojin-flag yf-hit">⭐ 用神「'+yEl+'」が巡る好機</span>':hit==='ki'?'<span class="yojin-flag yf-ki">忌神「'+yEl+'」・注意</span>':'<span class="yojin-flag yf-neutral">'+yEl+'の年</span>';
+    var txt=hit==='hit'?'用神の五行が巡り、本質が活きる追い風の一年。'+TSU_THEME[tsu]+'で成果が出ます。':base>=1?TSU_THEME[tsu]+'が活きる一年。':TSU_THEME[tsu]+'で工夫が要る一年。';
+    html+='<div class="year-detail'+(yi===0?' now':'')+'"><div class="yd-year">'+(yi===0?'今年':yi===1?'来年':'再来年')+' '+yr+'年</div><div class="yd-main"><span class="yd-gz">'+gz+'</span><span class="yd-tsu">'+tsu+'</span><span class="yd-stars">'+ss+'</span></div><div class="yd-text">'+txt+'</div>'+flag+'</div>';
+  }
+  html+='<div class="sec-label"><span class="si">📅</span>今後12ヶ月の月運</div>';
+  var monthsData=[];
+  for(var k=0;k<12;k++){var md=new Date(cd.now.getFullYear(),cd.now.getMonth()+k,15),mgz=getMonthGZi(md),mtsu=tsuhensei(dStem,TG[mgz.t]),mf=monthFortune(mtsu,dStem,TG[mgz.t],y);monthsData.push({k:k,md:md,mgz:mgz,mtsu:mtsu,mf:mf});}
+  var bestHit=monthsData.filter(function(x){return x.mf.hit==='hit';});
+  if(bestHit.length){var bm=bestHit[0];html+='<div class="best-info">💡 用神「<b>'+y.primaryYojin+'</b>」が巡る <b>'+bm.md.getFullYear()+'年'+(bm.md.getMonth()+1)+'月</b>は本質が最も活きる好機です。</div>';}
+  html+='<div class="month-list">';
+  monthsData.forEach(function(x){
+    var lv=x.mf.level,mark=x.mf.hit==='hit'?'<span style="color:var(--green-d)">◆</span>':x.mf.hit==='ki'?'<span style="color:var(--red-d)">◇</span>':'<span style="color:var(--text3)">·</span>';
+    html+='<div class="mo-row '+(x.k===0?'current ':'')+lv.row+'" onclick="toggleMonth('+x.k+')"><span class="mo-ym">'+x.md.getFullYear()+'</span><span class="mo-ym">'+(x.md.getMonth()+1)+'月</span><span><span class="mo-gz">'+TG[x.mgz.t]+DZ[x.mgz.b]+'</span> <span class="mo-tsu">'+x.mtsu+'</span></span>'+mark+'<span class="mo-badge '+lv.cls+'">'+lv.label+'</span></div>';
+    if(APP.openMonth===x.k){var det=x.mf.hit==='hit'?'<span class="md-yojin">用神「'+x.mf.me+'」が巡る月。</span>本質が活きやすく、'+TSU_THEME[x.mtsu]+'で積極的に動くと吉。':x.mf.hit==='ki'?'忌神「'+x.mf.me+'」が強まる月。無理せず守りを。':TSU_THEME[x.mtsu]+'で平穏に過ごせる月。';html+='<div class="mo-detail">'+det+'</div>';}
+  });
+  html+='</div>';
+  html+='<div class="sec-label"><span class="si">📈</span>大運（用神期つき）</div>';
+  html+='<div style="font-size:11px;color:var(--text3);margin-bottom:8px">立運 '+cd.daiyun.startAge+'歳・'+(cd.daiyun.forward?'順行':'逆行')+'（'+cd.daiyun.setsu+'まで'+cd.daiyun.days.toFixed(1)+'日÷3）</div>';
+  html+='<div class="daiyun-list">';
+  cd.daiyun.rows.forEach(function(r,i){var dEl=GOGYO[r.stem],hit=y.yojinEl.indexOf(dEl)>=0?'<span style="color:var(--green-d);font-size:10px">◆用神期</span>':y.kishinEl.indexOf(dEl)>=0?'<span style="color:var(--red-d);font-size:10px">◇忌神期</span>':'<span></span>';html+='<div class="dy-row'+(i===cd.curIdx?' current':'')+'"><span class="dy-age">'+r.age+'歳〜</span><span><span class="dy-gz">'+r.gz+'</span> <span class="dy-tsu">'+r.tsu+'</span></span>'+hit+(i===cd.curIdx?'<span class="mo-badge bg-good">現在</span>':'<span></span>')+'</div>';});
+  html+='</div>';
+  el.innerHTML=html;
+}
+function toggleMonth(k){APP.openMonth=APP.openMonth===k?-1:k;renderUnsei();}
+/* ============ 奇門遁甲タブ（コンパスナビ統合）============ */
+function renderKimon(){
+  var el=document.getElementById('screen-kimon');
+  if(!APP.chartData){el.innerHTML=emptyState('方位分析');return;}
+  var cd=APP.chartData,y=cd.yojin,tab=APP.kimonTab;
+  var b=(tab===cd.boardTab)?cd.kimon:buildBoard(new Date(),tab);
+  var dirs=(tab===cd.boardTab)?cd.dirs:extractDirections(b,y);
+  var best=dirs.best,worst=dirs.worst;
+  var html='';
+  html+='<div class="yojin-card"><div class="yj-circle" style="background:'+GOGYO_COLOR[y.primaryYojin]+'">'+y.primaryYojin+'</div><div class="yj-text">あなたの用神 <b>'+y.primaryYojin+'（'+ELEMENT_KEY[y.primaryYojin]+'）</b> の方位が運を呼ぶ方角です。</div></div>';
+  // タブ
+  html+='<div class="tabs">';[['shi','時盤'],['ri','日盤'],['yue','月盤'],['nian','年盤']].forEach(function(t){var dis=cd.noTime&&t[0]==='shi';html+='<button class="tab'+(tab===t[0]?' active':'')+'"'+(dis?' style="opacity:.4" disabled':' onclick="switchKimon(\''+t[0]+'\')"')+'>'+t[1]+(dis?'✕':'')+'</button>';});html+='</div>';
+  if(cd.noTime&&tab==='ri')html+='<div class="fumei-note"><span>⏱</span><span>時刻不明のため時盤は使えません。日盤で方位を判定しています。</span></div>';
+  // 最強方位
+  if(best){html+='<div class="best-card"><div class="bc-head">✅ 今日の最強方位</div><div class="bc-dir">'+best.dir+'</div><div class="bc-desc">'+(dirs.bestType==='super'?'奇門の吉作用（<b>'+best.star+'×'+best.gateRaw+'</b>）と用神「<b>'+y.primaryYojin+'</b>」が重なる最強の方位です。':'<b>'+best.star+'×'+best.gateRaw+'</b>の吉方位。用神を意識して動くと吉。')+'</div></div>';}
+  html+='<div class="meta"><span class="ju-box '+(b.yang?'ybox':'ibox')+'"><b>'+(b.yang?'陽遁':'陰遁')+b.ju+'局</b></span><span>旬首 <b>'+b.junName+'</b></span><span>空亡 <b>'+DZ[b.ku1]+DZ[b.ku2]+'</b></span></div>';
+  // ===== コンパスナビ =====
+  html+='<div class="nav-card"><div class="nav-head">🧭 方位ナビ（コンパス）</div><div class="nav-sub">自宅から見た吉方位の方角を示します。移動中もこの方角は有効です。緑が ▼ に重なる向きが吉方位、赤いゾーンは避けたい方角です。</div>';
+  html+='<div class="dir-cards"><div class="dc dc-good"><div class="dc-head">🧭 向かう吉方位</div><div class="dc-dir">'+(best?best.dir:'—')+'<span class="dc-deg"> '+(best?DIR_TO_DEG[best.dir]+'°':'')+'</span></div></div><div class="dc dc-bad"><div class="dc-head">⚠ 避ける凶方位</div><div class="dc-dir">'+(worst?worst.dir:'—')+'<span class="dc-deg"> '+(worst?DIR_TO_DEG[worst.dir]+'°':'')+'</span></div></div></div>';
+  html+='<div class="compass-stage"><div class="heading-pin">▼</div><div id="compass"></div></div>';
+  html+='<div class="status-line" id="statusLine">スマホを水平に持ち、ゆっくり回してください</div>';
+  html+='<div class="legend"><span class="lg"><span class="lg-dot" style="background:var(--green)"></span>吉方位</span><span class="lg"><span class="lg-zone"></span>凶方位ゾーン</span><span class="lg"><span class="lg-dot" style="background:var(--blue)"></span>正面（▼）</span></div>';
+  html+='<button class="btn btn-primary" id="enableBtn" onclick="enableSensor()">📲 方位センサーを有効化</button>';
+  html+='<div class="demo-area"><div class="demo-label">🔧 デモ：スライダーで向きを再現（PC・プレビュー確認用）</div><input type="range" min="0" max="359" value="'+APP.heading+'" class="demo-slider" oninput="onDemoHeading(this.value)"></div>';
+  html+='</div>';
+  // 吉ポイントセクション（避けたいポイントの上）
+  var luckyDirs=cd.kimon.cells.filter(function(c){return c.luck>=2&&!c.isKu&&!c.isCtr;});
+  html+='<div class="good-sec-head"><div class="good-sec-icon">✦</div><div class="good-sec-title">活かしたいポイント</div></div>';
+  html+='<div class="good-grid"><div class="good-card"><div class="gc-label">吉方位</div><div class="gc-main">'+luckyDirs.length+'<span class="unit">方向</span></div><div class="gc-sub">（盤の緑が吉）</div></div>'+
+    '<div class="good-card"><div class="gc-label">吉時間帯</div><div class="gc-main">10〜12<span class="unit">時</span></div><div class="gc-sub">（巳の刻）</div></div>'+
+    '<div class="good-card"><div class="gc-label">金運ポイント</div><div class="gc-main">'+cd.wealthDirs.slice(0,2).join('・')+'</div><div class="gc-sub">（'+cd.wealthEl+'の気）</div></div></div>';
+  // 凶方位セクション
+  html+='<div class="warn-sec-head"><div class="warn-sec-icon">⚠</div><div class="warn-sec-title">避けたいポイント</div></div>';
+  html+='<div class="warn-grid"><div class="warn-card"><div class="wc-head"><span class="wc-icon">⊘</span><span class="wc-label">凶方位</span></div><div class="wc-main">'+(worst?worst.dir:'—')+'</div><div class="wc-desc">煞気が強く、トラブルを招きやすい方位。大事な用事はこの方角を外して。</div></div>'+
+    '<div class="warn-card"><div class="wc-head"><span class="wc-icon">◷</span><span class="wc-label">凶時間帯</span></div><div class="wc-main">13<span class="unit">時</span>〜15<span class="unit">時</span></div><div class="wc-sub">（未の刻）</div><div class="wc-desc">凶門が巡り運気が停滞しやすい時間。重要な決断は避けて。</div></div>'+
+    '<div class="warn-card"><div class="wc-head"><span class="wc-icon">¥</span><span class="wc-label">金運注意</span></div><div class="wc-main">'+cd.wealthDirs.slice(0,2).join('・')+'</div><div class="wc-sub">（'+cd.wealthEl+'の気）</div><div class="wc-desc">この方位・時間に動くとお金の巡りが乱れやすくなります。</div></div></div>';
+  html+='<div class="use-card"><div class="use-head"><span>💡</span><span class="use-title">使い方のヒント</span></div><div class="use-text">凶となる方位・時間帯を避けるだけで、運気の低下やトラブルを防ぎ、良い流れを保ちやすくなります。</div></div>';
+  // 盤
+  html+='<div class="board-title">盤の詳細</div>';
+  html+='<div class="board">'+b.cells.map(function(c){
+    var lc=c.luck>=2?'lucky':c.luck<=-1?'unlucky':'',jl=c.luck>=2?'吉':c.luck<=-1?'凶':'中吉',js=c.luck>=2?'jg':c.luck<=-1?'jb':'jm';
+    var isBest=best&&c.idx===best.idx,isWorst=worst&&c.idx===worst.idx;
+    var cls='cell '+lc+(c.isCtr?' ctr':'')+(c.isKu?' kuxing':'')+(isBest?' super':(c.yojinDir?' yojin-dir':''));
+    var yj=c.yojinDir?'<span class="c-badge b-yj">用</span>':'',ku=c.isKu?'<span class="c-badge b-ku">空</span>':'';
+    var gc=GOGYO_COLOR[c.gogyo];
+    return '<div class="'+cls+'"><div class="c-pal">'+c.tri+' '+c.dir+'<span class="c-pal-g" style="background:'+gc+'22;color:'+gc+'">'+c.gogyo+'</span></div><div class="c-star">'+c.star+'</div><div class="c-gate">'+c.gateRaw+'</div><div class="c-dei">'+c.deityRaw+'</div><div class="c-stems"><span class="c-ten">'+c.tenStem+'</span><span class="c-sep">/</span><span class="c-gnd">'+c.gndStem+'</span></div><div class="c-ji '+js+'">'+jl+'</div><div>'+yj+ku+'</div></div>';
+  }).join('')+'</div>';
+  // 格局
+  html+='<div class="sec-label"><span class="si">🏅</span>本日の格局</div>';
+  if(b.kakukyoku.length)html+=b.kakukyoku.map(function(r){var cls=r.type==='good'?'kk-good':'kk-bad',ss='';for(var i=0;i<5;i++)ss+=i<r.stars?'★':'☆';return '<div class="kk-item '+cls+'"><div class="kk-header"><span class="kk-name">'+r.name+'</span><span class="kk-stars">'+ss+'</span></div><div class="kk-trans">'+r.trans+'</div></div>';}).join('');
+  else html+='<div class="kk-none">特定の格局なし（安定した通常盤）</div>';
+  el.innerHTML=html;
+  // コンパス描画（best/worstの角度を保持）
+  APP._compass={best:best?DIR_TO_DEG[best.dir]:null,worst:worst?DIR_TO_DEG[worst.dir]:null};
+  drawCompass();
+}
+function switchKimon(tab){APP.kimonTab=tab;renderKimon();}
+
+/* ===== コンパス描画（自宅基準の方角を表示）===== */
+function drawCompass(){
+  var stage=document.getElementById('compass');if(!stage||!APP._compass)return;
+  var TARGET=APP._compass.best,WORST=APP._compass.worst,heading=APP.heading;
+  var cx=120,cy=120,r=92;
+  function sp(absDeg,rad){var a=(absDeg-heading-90)*Math.PI/180;return [cx+rad*Math.cos(a),cy+rad*Math.sin(a)];}
+  var s='<svg viewBox="0 0 240 240" width="220" height="220" xmlns="http://www.w3.org/2000/svg">';
+  s+='<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="var(--surface)" stroke="var(--line)" stroke-width="1"/>';
+  s+='<circle cx="'+cx+'" cy="'+cy+'" r="'+(r*0.62)+'" fill="none" stroke="var(--line)" stroke-width="0.5" stroke-dasharray="3 3"/>';
+  if(WORST!=null){var z1=sp(WORST-22,r),z2=sp(WORST+22,r);s+='<path d="M '+cx+' '+cy+' L '+z1[0]+' '+z1[1]+' A '+r+' '+r+' 0 0 1 '+z2[0]+' '+z2[1]+' Z" fill="rgba(226,75,74,0.20)" stroke="#e24b4a" stroke-width="1" stroke-dasharray="4 3"/>';}
+  var labels=[['北',0],['北東',45],['東',90],['南東',135],['南',180],['南西',225],['西',270],['北西',315]];
+  labels.forEach(function(L){var p=sp(L[1],r+13);var isN=L[1]===0,isT=(TARGET!=null&&L[1]===TARGET),isW=(WORST!=null&&L[1]===WORST);var col=isT?'#0f6e56':isW?'#c0392b':isN?'#c0392b':'var(--text2)';var w=(isT||isW||isN)?'700':'400';s+='<text x="'+p[0]+'" y="'+(p[1]+4)+'" text-anchor="middle" font-size="11" font-weight="'+w+'" fill="'+col+'">'+L[0]+'</text>';});
+  for(var i=0;i<72;i++){var p1=sp(i*5,r),p2=sp(i*5,r-(i%2===0?7:4));s+='<line x1="'+p1[0]+'" y1="'+p1[1]+'" x2="'+p2[0]+'" y2="'+p2[1]+'" stroke="var(--line)" stroke-width="0.5"/>';}
+  if(WORST!=null){var wp=sp(WORST,r*0.72);s+='<circle cx="'+wp[0]+'" cy="'+wp[1]+'" r="10" fill="var(--red-bg)" stroke="#e24b4a" stroke-width="2"/><line x1="'+(wp[0]-4.5)+'" y1="'+(wp[1]-4.5)+'" x2="'+(wp[0]+4.5)+'" y2="'+(wp[1]+4.5)+'" stroke="#c0392b" stroke-width="2"/>';}
+  if(TARGET!=null){var tp=sp(TARGET,r*0.74);s+='<line x1="'+cx+'" y1="'+cy+'" x2="'+tp[0]+'" y2="'+tp[1]+'" stroke="#1d9e75" stroke-width="3"/><circle cx="'+tp[0]+'" cy="'+tp[1]+'" r="9" fill="#1d9e75"/><text x="'+tp[0]+'" y="'+(tp[1]+3.5)+'" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">吉</text>';}
+  s+='<line x1="'+cx+'" y1="'+cy+'" x2="'+cx+'" y2="'+(cy-r*0.5)+'" stroke="#185fa5" stroke-width="2" stroke-dasharray="3 2" opacity="0.5"/><circle cx="'+cx+'" cy="'+cy+'" r="6" fill="#185fa5"/>';
+  s+='</svg>';
+  stage.innerHTML=s;
+  // ステータス
+  var sl=document.getElementById('statusLine');if(!sl)return;
+  if(WORST!=null){var dW=((WORST-heading)%360+360)%360;if(dW<=22||dW>=338){sl.className='status-line status-danger';sl.innerHTML='⚠ 正面は凶方位（'+dirName(WORST)+'）です。この方角への移動は控えめに';return;}}
+  if(TARGET!=null){var dT=((TARGET-heading)%360+360)%360;if(dT<=10||dT>=350){sl.className='status-line status-aligned';sl.innerHTML='✅ 正面が吉方位です！この向きにまっすぐ進んでください';return;}var turn=dT<=180?'右':'左',amt=dT<=180?dT:360-dT;sl.className='status-line status-turn';sl.innerHTML='体を <b>'+turn+'へ約'+Math.round(amt)+'°</b> 回すと正面が吉方位になります';return;}
+  sl.className='status-line status-turn';sl.innerHTML='本日は際立った吉方位がありません';
+}
+function dirName(deg){var m={0:'北',45:'北東',90:'東',135:'南東',180:'南',225:'南西',270:'西',315:'北西'};return m[deg]||deg+'°';}
+function onDemoHeading(v){APP.heading=parseFloat(v);drawCompass();}
+function enableSensor(){
+  var btn=document.getElementById('enableBtn');
+  if(typeof DeviceOrientationEvent!=='undefined'&&typeof DeviceOrientationEvent.requestPermission==='function'){
+    DeviceOrientationEvent.requestPermission().then(function(res){if(res==='granted'){startSensor();btn.textContent='✅ センサー有効';btn.disabled=true;}else{btn.textContent='許可されませんでした（スライダーで確認を）';}}).catch(function(){btn.textContent='この環境ではセンサーを使えません';});
+  }else if('DeviceOrientationEvent' in window){startSensor();btn.textContent='✅ センサー有効';btn.disabled=true;}
+  else{btn.textContent='この端末は方位センサー非対応です';}
+}
+function startSensor(){APP.sensorOn=true;window.addEventListener('deviceorientationabsolute',onOrient,true);window.addEventListener('deviceorientation',onOrient,true);}
+function onOrient(e){var h=null;if(e.webkitCompassHeading!=null)h=e.webkitCompassHeading;else if(e.alpha!=null)h=360-e.alpha;if(h!=null){APP.heading=h;drawCompass();}}
+
+/* ============ 設定タブ（プロファイル管理）============ */
+function renderSettings(){
+  var el=document.getElementById('screen-settings');
+  if(APP.viewMode==='add'){renderAddForm(el);return;}
+  var profiles=Store.list(),active=Store.getActive(),html='';
+  html+='<div class="sec-label"><span class="si">👤</span>表示中の命式</div>';
+  if(active){var yj=buildChartData(active,APP.ritsuunMode);html+='<div class="yojin-card"><div class="yj-circle" style="background:'+GOGYO_COLOR[yj.dGogyo]+'">'+yj.dStem+'</div><div class="yj-text"><b>'+esc(active.name)+'</b>（日主'+yj.dStem+'・用神'+yj.yojin.primaryYojin+'）<br><span class="small">'+active.birthDate+(active.birthTime?' '+active.birthTime:'・時刻不明')+'</span></div></div>';}
+  else html+='<div class="empty"><span class="ei">👤</span>命式が未登録です。下から追加してください。</div>';
+  html+='<div class="sec-label"><span class="si">👥</span>保存した命式<span class="add-link" onclick="showAdd()">＋ 新規追加</span></div>';
+  html+='<div class="profile-list">';
+  profiles.forEach(function(p){
+    var isA=p.id===Store.activeId,yj=buildChartData(p,APP.ritsuunMode);
+    html+='<div class="profile-card'+(isA?' active':'')+'"><div class="pc-top" onclick="selectProfile(\''+p.id+'\')"><div class="pc-avatar">'+esc(initials(p.name))+'</div><div class="pc-info"><div class="pc-name">'+esc(p.name)+(isA?'<span class="pc-active-mark">表示中</span>':'')+'</div><div class="pc-meta">'+p.birthDate+(p.birthTime?'':'・時刻不明')+' ・ 用神'+yj.yojin.primaryYojin+'</div></div><div class="pc-actions"><button class="pc-icon-btn" onclick="event.stopPropagation();editMemo(\''+p.id+'\')">📝</button><button class="pc-icon-btn" onclick="event.stopPropagation();askDelete(\''+p.id+'\')">🗑</button></div></div>';
+    if(APP.editingMemo===p.id)html+='<div style="margin-top:8px"><textarea id="memoInput" placeholder="鑑定の記録や誰の命式かをメモ...">'+esc(p.memo)+'</textarea><div style="display:flex;gap:6px;margin-top:6px"><button class="btn" style="padding:6px 12px;font-size:12px" onclick="cancelMemo()">取消</button><button class="btn btn-green" style="padding:6px 12px;font-size:12px" onclick="saveMemo(\''+p.id+'\')">保存</button></div></div>';
+    else if(p.memo)html+='<div class="pc-memo">📝 '+esc(p.memo)+'</div>';
+    else html+='<div class="pc-memo-empty" onclick="editMemo(\''+p.id+'\')">＋ メモを追加</div>';
+    html+='</div>';
+  });
+  html+='</div>';
+  html+='<div class="sec-label"><span class="si">⚙️</span>計算設定</div>';
+  html+='<div class="set-item"><span class="set-label">立運数の端数処理</span><div class="seg"><button class="'+(APP.ritsuunMode==='round'?'active':'')+'" onclick="setRitsuun(\'round\')">四捨五入</button><button class="'+(APP.ritsuunMode==='floor'?'active':'')+'" onclick="setRitsuun(\'floor\')">切捨</button><button class="'+(APP.ritsuunMode==='ceil'?'active':'')+'" onclick="setRitsuun(\'ceil\')">切上</button></div></div>';
+  html+='<div class="hint">プロファイルをタップすると表示が切り替わり、全タブがその人の用神で再計算されます。データは入力情報のみ保存し、命式は都度再計算されます（このプレビューはメモリ保存・実機では端末ストレージに保存）。</div>';
+  el.innerHTML=html;
+}
+function renderAddForm(el){
+  var html='<div class="sec-label"><span class="si">＋</span>命式を新規追加</div>';
+  html+='<div class="fld"><label>名前・ラベル</label><input type="text" id="f-name" placeholder="例：自分、田中さん、母"></div>';
+  html+='<div class="row2"><div class="fld"><label>生年月日</label><input type="date" id="f-date" value="1990-05-15"></div><div class="fld"><label>出生時刻</label><input type="time" id="f-time" value="10:30"'+(APP.formNoTime?' disabled':'')+'></div></div>';
+  html+='<div class="check-row" onclick="toggleFormNoTime()"><div class="check-box'+(APP.formNoTime?' on':'')+'">'+(APP.formNoTime?'✓':'')+'</div><div><div class="check-label">出生時刻が不明</div><div class="check-sub">時柱を除いた三柱で鑑定します</div></div></div>';
+  html+='<div class="fld"><label>性別</label><select id="f-sex"><option value="M">男性</option><option value="F">女性</option></select></div>';
+  html+='<div class="fld"><label>座標（任意・自宅基準。空欄可）</label><input type="text" id="f-coords" placeholder="35.6895, 139.6917"></div>';
+  html+='<div class="fld"><label>メモ（任意）</label><textarea id="f-memo" placeholder="鑑定の記録や誰の命式かを自由に..."></textarea></div>';
+  html+='<div style="display:flex;gap:8px;margin-top:6px"><button class="btn" onclick="cancelAdd()">キャンセル</button><button class="btn btn-primary" onclick="saveProfile()">保存して表示</button></div>';
+  el.innerHTML=html;
+}
+function showAdd(){APP.viewMode='add';renderSettings();}
+function cancelAdd(){APP.viewMode='list';renderSettings();}
+function toggleFormNoTime(){APP.formNoTime=!APP.formNoTime;renderSettings();}
+function saveProfile(){
+  var name=document.getElementById('f-name').value.trim()||'名称未設定';
+  var date=document.getElementById('f-date').value;if(!date){alert('生年月日を入力してください');return;}
+  var time=APP.formNoTime?null:document.getElementById('f-time').value;
+  Store.add({name:name,birthDate:date,birthTime:time,sex:document.getElementById('f-sex').value,coords:document.getElementById('f-coords').value,memo:document.getElementById('f-memo').value.trim()});
+  APP.viewMode='list';APP.formNoTime=false;
+  invalidateAll();renderSettings();
+}
+function selectProfile(id){Store.setActive(id);invalidateAll();renderSettings();}
+function askDelete(id){APP.pendingDelete=id;var p=Store.list().filter(function(x){return x.id===id;})[0];document.getElementById('modalRoot').innerHTML='<div class="modal-overlay"><div class="modal"><h4>「'+esc(p.name)+'」を削除しますか？</h4><p>この命式（メモを含む）を削除します。取り消せません。</p><div class="modal-actions"><button class="btn" onclick="cancelDelete()">キャンセル</button><button class="btn btn-danger" onclick="confirmDelete()">削除する</button></div></div></div>';}
+function cancelDelete(){APP.pendingDelete=null;document.getElementById('modalRoot').innerHTML='';}
+function confirmDelete(){Store.remove(APP.pendingDelete);APP.pendingDelete=null;document.getElementById('modalRoot').innerHTML='';invalidateAll();renderSettings();}
+function editMemo(id){APP.editingMemo=id;renderSettings();setTimeout(function(){var t=document.getElementById('memoInput');if(t)t.focus();},0);}
+function cancelMemo(){APP.editingMemo=null;renderSettings();}
+function saveMemo(id){var t=document.getElementById('memoInput');Store.setMemo(id,t?t.value.trim():'');APP.editingMemo=null;renderSettings();}
+function setRitsuun(mode){APP.ritsuunMode=mode;invalidateAll();renderSettings();}
+
+/* ============ グローバル公開 ============ */
+window.go=go;window.toggleMonth=toggleMonth;window.setReadingTab=setReadingTab;
+window.switchKimon=switchKimon;window.onDemoHeading=onDemoHeading;window.enableSensor=enableSensor;
+window.showAdd=showAdd;window.cancelAdd=cancelAdd;window.toggleFormNoTime=toggleFormNoTime;
+window.saveProfile=saveProfile;window.selectProfile=selectProfile;window.askDelete=askDelete;
+window.cancelDelete=cancelDelete;window.confirmDelete=confirmDelete;window.editMemo=editMemo;
+window.cancelMemo=cancelMemo;window.saveMemo=saveMemo;window.setRitsuun=setRitsuun;
+
+/* ============ 初期化 ============ */
+Store.add({name:'自分',birthDate:'1990-05-15',birthTime:'10:30',sex:'M',coords:'35.6895, 139.6917',memo:'本命。転職を検討中。'});
+Store.setActive('p1');
+rebuildChart();
+renderHome();APP.built.home=true;
+updateChip();
+
+</script>
+</body>
+</html>
