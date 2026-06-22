@@ -284,6 +284,30 @@
   .trip-good .tr-verdict{color:var(--green-d)}.trip-bad .tr-verdict{color:var(--red-d)}.trip-mid .tr-verdict{color:var(--text2)}
   .tr-detail{font-size:12px;color:var(--text2);line-height:1.7}
   .tr-tip{font-size:11px;color:var(--text3);margin-top:9px;padding-top:8px;border-top:0.5px solid var(--line);line-height:1.6}
+
+  /* ===== 旅先プランナー ===== */
+  .plan-grp{margin-top:12px}
+  .plan-grp-h{font-size:13px;font-weight:600;color:var(--text);margin:0 0 6px}
+  .plan-row{padding:9px 11px;border-radius:var(--r-sm);margin-bottom:6px;border:0.5px solid var(--line)}
+  .pr-good{background:var(--green-bg);border-color:var(--green-line)}
+  .pr-bad{background:var(--red-bg);border-color:var(--red-line)}
+  .pr-name{font-size:14px;font-weight:600;font-family:"Shippori Mincho B1","Noto Serif JP",serif}
+  .pr-dist{font-size:11px;color:var(--text3);font-weight:400;margin-left:4px}
+  .pr-legs{font-size:12px;color:var(--text2);margin-top:3px}
+  .pr-legs .lk-good{color:var(--green-d);font-weight:600;margin-left:2px}
+  .pr-legs .lk-bad{color:var(--red-d);font-weight:600;margin-left:2px}
+  .pr-legs .lk-mid{color:var(--text3);margin-left:2px}
+  .pr-flag{display:inline-block;margin-left:6px;font-size:10px;color:var(--red-d);border:0.5px solid var(--red-line);border-radius:6px;padding:1px 7px}
+  .bottom-nav .nav-item{min-width:0}
+  .bottom-nav .nav-item>span:last-child{font-size:9.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  .tr-coords{font-size:11px;color:var(--text3);margin-top:7px;font-variant-numeric:tabular-nums}
+  .solar-note{font-size:11.5px;color:var(--text2);background:var(--surface2);border:0.5px solid var(--line);border-radius:var(--r-sm);padding:9px 11px;margin:2px 0 6px;line-height:1.7}
+  .solar-note.muted{color:var(--text3)}
+  .solar-note b{color:var(--gold-soft);font-weight:600}
+  .pc-coords{display:flex;align-items:center;gap:6px;margin-top:8px}
+  .pc-coords .pcc-label{font-size:11px;color:var(--text3);white-space:nowrap}
+  .pc-coords input{flex:1;font-size:12px;padding:7px 9px;min-width:0}
+  .pc-coords .pcc-btn{width:auto;padding:7px 12px;font-size:12px;flex:0 0 auto}
 </style>
 </head>
 <body>
@@ -297,6 +321,7 @@
     <div class="screen" id="screen-meishiki"></div>
     <div class="screen" id="screen-unsei"></div>
     <div class="screen" id="screen-kimon"></div>
+    <div class="screen" id="screen-trip"></div>
     <div class="screen" id="screen-settings"></div>
   </main>
   <div class="bottom-nav">
@@ -304,6 +329,7 @@
     <div class="nav-item" data-screen="meishiki" onclick="go('meishiki')"><span class="ni-icon">📋</span><span>命式</span></div>
     <div class="nav-item" data-screen="unsei" onclick="go('unsei')"><span class="ni-icon">📈</span><span>運勢</span></div>
     <div class="nav-item" data-screen="kimon" onclick="go('kimon')"><span class="ni-icon">🧭</span><span>奇門遁甲</span></div>
+    <div class="nav-item" data-screen="trip" onclick="go('trip')"><span class="ni-icon">✈️</span><span>旅行</span></div>
     <div class="nav-item" data-screen="settings" onclick="go('settings')"><span class="ni-icon">⚙️</span><span>設定</span></div>
   </div>
   <div id="modalRoot"></div>
@@ -427,13 +453,17 @@ function extractDirections(board,yojin){
 }
 
 /* ===== 単一 chartData（全タブ共有）===== */
+function equationOfTime(date){var start=new Date(date.getFullYear(),0,0);var N=Math.floor((date-start)/86400000);var B=2*Math.PI*(N-81)/365;return 9.87*Math.sin(2*B)-7.53*Math.cos(B)-1.5*Math.sin(B);}
+function sgnMin(m){return (m>=0?'+':'−')+Math.abs(m).toFixed(1)+'分';}
 function buildChartData(profile,mode){
   var noTime=!profile.birthTime;
   var birth=new Date(profile.birthDate+'T'+(profile.birthTime||'12:00'));
-  var y={t:yKanIdx(birth.getFullYear()),b:yJiIdx(birth.getFullYear())},m=getMonthGZi(birth),dd=dayGZi(birth);
+  var solar=birth,solarInfo=null;
+  if(!noTime){var bco=parseCoords(profile.coords);if(bco){var lonCorr=(bco[1]-135)*4,eot=equationOfTime(birth),totalMin=lonCorr+eot;solar=new Date(birth.getTime()+totalMin*60000);solarInfo={lonCorr:lonCorr,eot:eot,total:totalMin,lng:bco[1]};}}
+  var y={t:yKanIdx(birth.getFullYear()),b:yJiIdx(birth.getFullYear())},m=getMonthGZi(birth),dd=dayGZi(noTime?birth:solar);
   var dStem=TG[dd.t],dGogyo=GOGYO[dStem];
   var pillars=[{label:'年',stem:TG[y.t],branch:DZ[y.b]},{label:'月',stem:TG[m.t],branch:DZ[m.b]},{label:'日',stem:TG[dd.t],branch:DZ[dd.b]}];
-  if(!noTime){var h=timeGZi(birth);pillars.push({label:'時',stem:TG[h.t],branch:DZ[h.b]});}
+  if(!noTime){var h=timeGZi(solar);pillars.push({label:'時',stem:TG[h.t],branch:DZ[h.b]});}
   pillars.forEach(function(p){p.tsu=p.label==='日'?'日主':tsuhensei(dStem,p.stem);p.zou=HIDDEN_STEM[p.branch];p.zouTsu=tsuhensei(dStem,p.zou);});
   var score={木:0,火:0,土:0,金:0,水:0};
   pillars.forEach(function(p){score[GOGYO[p.stem]]+=1.0;score[GOGYO[p.zou]]+=0.7;});
@@ -455,7 +485,7 @@ function buildChartData(profile,mode){
   // 金運方位：財星（剋す五行＝日主がKOK_Cする相手）に対応する方位
   var wealthEl=KOK_C[dGogyo];
   var wealthDirs=DIR.filter(function(d,i){return PAL_GOGYO[PALACES[i]]===wealthEl;});
-  return{noTime:noTime,birth:birth,sex:profile.sex,dStem:dStem,dGogyo:dGogyo,pillars:pillars,score:score,total:total,yojin:yojin,daiyun:daiyun,curIdx:curIdx,nichiun:nichiun,nichiunGZ:TG[todayGZ.t]+DZ[todayGZ.b],kimon:kimon,dirs:dirs,boardTab:boardTab,wealthEl:wealthEl,wealthDirs:wealthDirs,now:now};
+  return{noTime:noTime,birth:birth,solarInfo:solarInfo,sex:profile.sex,dStem:dStem,dGogyo:dGogyo,pillars:pillars,score:score,total:total,yojin:yojin,daiyun:daiyun,curIdx:curIdx,nichiun:nichiun,nichiunGZ:TG[todayGZ.t]+DZ[todayGZ.b],kimon:kimon,dirs:dirs,boardTab:boardTab,wealthEl:wealthEl,wealthDirs:wealthDirs,now:now};
 }
 /* ============ 永続化層（実機では端末ストレージに差し替え）============
    プロファイル構造：{id,name,birthDate,birthTime,sex,coords,memo,createdAt}
@@ -468,11 +498,12 @@ var Store={
   setActive:function(id){this.activeId=id;},
   remove:function(id){this.profiles=this.profiles.filter(function(p){return p.id!==id;});if(this.activeId===id)this.activeId=this.profiles.length?this.profiles[0].id:null;},
   rename:function(id,name){this.profiles.forEach(function(p){if(p.id===id)p.name=name;});},
-  setMemo:function(id,memo){this.profiles.forEach(function(p){if(p.id===id)p.memo=memo;});}
+  setMemo:function(id,memo){this.profiles.forEach(function(p){if(p.id===id)p.memo=memo;});},
+  setCoords:function(id,coords){this.profiles.forEach(function(p){if(p.id===id)p.coords=coords;});}
 };
 
-var APP={chartData:null,ritsuunMode:'round',built:{home:false,meishiki:false,unsei:false,kimon:false},
-  kimonTab:'shi',baseId:'home',destId:'pl13',readingTab:'seikaku',openMonth:-1,scrollPos:{},
+var APP={chartData:null,ritsuunMode:'round',built:{home:false,meishiki:false,unsei:false,kimon:false,trip:false},
+  kimonTab:'shi',baseId:'home',destId:'',tripOut:'',tripRet:'',tripTab:'ri',homeCoords:'',readingTab:'seikaku',openMonth:-1,scrollPos:{},
   formNoTime:false,heading:0,sensorOn:false,
   viewMode:'list',pendingDelete:null,editingMemo:null};
 
@@ -482,7 +513,7 @@ function initials(name){return name?name.slice(0,2):'？';}
 function rebuildChart(){
   var p=Store.getActive();
   APP.chartData=p?buildChartData(p,APP.ritsuunMode):null;
-  APP.built={home:false,meishiki:false,unsei:false,kimon:false};
+  APP.built={home:false,meishiki:false,unsei:false,kimon:false,trip:false};
   APP.openMonth=-1;
 }
 function invalidateAll(){
@@ -504,14 +535,15 @@ function go(screen){
   document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
   document.getElementById('screen-'+screen).classList.add('active');
   var nav=document.querySelector('.nav-item[data-screen="'+screen+'"]');if(nav)nav.classList.add('active');
-  document.getElementById('appTitle').textContent={home:'ホーム',meishiki:'命式',unsei:'運勢',kimon:'奇門遁甲',settings:'設定'}[screen];
+  document.getElementById('appTitle').textContent={home:'ホーム',meishiki:'命式',unsei:'運勢',kimon:'奇門遁甲',trip:'旅行・方位',settings:'設定'}[screen];
   if(screen==='settings'){renderSettings();}
+  else if(screen==='trip'){renderTrip();}
   else if(!APP.built[screen]){buildScreen(screen);APP.built[screen]=true;}
   window.scrollTo(0,APP.scrollPos['screen-'+screen]||0);
 }
 function buildScreen(s){
   if(s==='home')renderHome();else if(s==='meishiki')renderMeishiki();
-  else if(s==='unsei')renderUnsei();else if(s==='kimon')renderKimon();
+  else if(s==='unsei')renderUnsei();else if(s==='kimon')renderKimon();else if(s==='trip')renderTrip();
 }
 function emptyState(label){
   return '<div class="empty"><span class="ei">📝</span>まず設定で命式を登録・選択してください。<br>命式が用意されると'+label+'が表示されます。<br><br><button class="btn btn-primary" onclick="go(\'settings\')">設定を開く</button></div>';
@@ -556,6 +588,7 @@ function renderMeishiki(){
   });
   html+='</div>';
   html+='<div style="font-size:12px;color:var(--text2);text-align:center;margin-bottom:4px">日主 <b style="color:'+GOGYO_COLOR[cd.dGogyo]+'">'+cd.dStem+'（'+cd.dGogyo+'）</b></div>';
+  if(!cd.noTime){html+=cd.solarInfo?('<div class="solar-note">🕐 <b>真太陽時補正</b>：経度 '+sgnMin(cd.solarInfo.lonCorr)+' ／ 均時差 '+sgnMin(cd.solarInfo.eot)+' ＝ <b>合計 '+sgnMin(cd.solarInfo.total)+'</b>（出生地 経度 '+cd.solarInfo.lng.toFixed(2)+'°・東経135度基準）。時柱・日柱は補正後の時刻で判定しています。</div>'):'<div class="solar-note muted">🕐 出生地の座標が未設定のため、真太陽時補正は未適用（入力時刻のまま）。設定の命式カードで出生地座標を入れると補正されます。</div>';}
   html+='<div class="sec-label"><span class="si">📊</span>五行バランス'+(cd.noTime?'（三柱）':'')+'</div>';
   ['木','火','土','金','水'].forEach(function(g){var pct=Math.round(cd.score[g]/cd.total*100);html+='<div class="gogyo-row"><span class="gogyo-name">'+g+'</span><div class="gogyo-bar-bg"><div class="gogyo-bar-fill" style="width:'+pct+'%;background:'+GOGYO_COLOR[g]+'"></div></div><span class="gogyo-val">'+cd.score[g].toFixed(1)+' ('+pct+'%)</span></div>';});
   html+='<div class="sec-label"><span class="si">⚖️</span>日主の強弱</div>';
@@ -678,6 +711,7 @@ var CITIES=[
 function parseCoords(str){if(!str)return null;var m=String(str).split(/[,\uFF0C\s]+/).filter(Boolean);if(m.length<2)return null;var la=parseFloat(m[0]),lo=parseFloat(m[1]);if(isNaN(la)||isNaN(lo))return null;return[la,lo];}
 function calcBearing(la1,lo1,la2,lo2){var p1=la1*Math.PI/180,p2=la2*Math.PI/180,dl=(lo2-lo1)*Math.PI/180;var yy=Math.sin(dl)*Math.cos(p2),xx=Math.cos(p1)*Math.sin(p2)-Math.sin(p1)*Math.cos(p2)*Math.cos(dl);return (Math.atan2(yy,xx)*180/Math.PI+360)%360;}
 function calcDist(la1,lo1,la2,lo2){var R=6371,p1=la1*Math.PI/180,p2=la2*Math.PI/180,dp=(la2-la1)*Math.PI/180,dl=(lo2-lo1)*Math.PI/180;var a=Math.sin(dp/2)*Math.sin(dp/2)+Math.cos(p1)*Math.cos(p2)*Math.sin(dl/2)*Math.sin(dl/2);return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));}
+function distFmt(km){return km<1?Math.round(km*1000)+'m':Math.round(km).toLocaleString()+'km';}
 function bearDir(deg){return ['北','東北','東','東南','南','西南','西','西北'][Math.round(deg/45)%8];}
 /* ===== 登録地点ストア（拠点・目的地） ===== */
 var Places={list:[],_seq:1,
@@ -686,11 +720,63 @@ var Places={list:[],_seq:1,
   get:function(id){return this.list.filter(function(p){return p.id===id;})[0]||null;}
 };
 function placeOptions(sel,includeHome){var o='';if(includeHome)o+='<option value="home"'+(sel==='home'?' selected':'')+'>🏠 自宅</option>';Places.list.forEach(function(p){o+='<option value="'+p.id+'"'+(sel===p.id?' selected':'')+'>'+esc(p.name)+'</option>';});return o;}
-function resolveBase(){if(APP.baseId==='home'){var ap=Store.getActive();var pc=parseCoords(ap&&ap.coords);return{co:pc||[35.6895,139.6917],name:'自宅'+(pc?'':'（座標未設定・東京で代用）')};}var pl=Places.get(APP.baseId);return pl?{co:[pl.lat,pl.lng],name:pl.name}:{co:null,name:'—'};}
-function setBaseId(v){APP.baseId=v;renderKimon();}
-function setDestId(v){APP.destId=v;renderKimon();}
+function homeLatLng(){var hc=parseCoords(APP.homeCoords);if(hc)return hc;var ap=Store.getActive();var pc=parseCoords(ap&&ap.coords);return pc||[35.6895,139.6917];}
+function setHomeCoords(){var el=document.getElementById('home-coords');if(!el)return;var v=el.value.trim();if(v&&!parseCoords(v)){alert('「緯度, 経度」の形式で入力してください（例：35.7510, 139.9127）');return;}APP.homeCoords=v;renderSettings();}
+function resolveBase(){if(APP.baseId==='home'){return{co:homeLatLng(),name:'自宅'};}var pl=Places.get(APP.baseId);return pl?{co:[pl.lat,pl.lng],name:pl.name}:{co:null,name:'—'};}
+function setBaseId(v){APP.baseId=v;renderTrip();}
+function setDestId(v){APP.destId=v;renderTrip();}
 function addPlace(){var ni=document.getElementById('pl-name'),ci=document.getElementById('pl-coords');var n=(ni&&ni.value.trim())||'名称未設定';var c=parseCoords(ci&&ci.value);if(!c){alert('座標を「緯度, 経度」の形式で入力してください（例：35.69, 139.69）');return;}Places.add(n,c[0],c[1]);renderSettings();}
 function removePlace(id){if(APP.baseId===id)APP.baseId='home';if(APP.destId===id)APP.destId='';Places.remove(id);renderSettings();}
+function addPresetPlace(){var sel=document.getElementById('pl-preset');if(!sel||sel.value==='')return;var i=parseInt(sel.value,10);var c=CITIES[i];if(!c)return;if(Places.list.some(function(p){return p.name===c.name;})){alert('「'+c.name+'」は登録済みです');return;}Places.add(c.name,c.lat,c.lng);renderSettings();}
+/* ===== 旅先プランナー（方違えの要否で仕分け） ===== */
+function fmtD(d){var m=('0'+(d.getMonth()+1)).slice(-2),dd=('0'+d.getDate()).slice(-2);return d.getFullYear()+'-'+m+'-'+dd;}
+function setTripDate(w,v){if(w==='out')APP.tripOut=v;else APP.tripRet=v;renderTrip();}
+function cellByDir(bd,dir){for(var i=0;i<bd.cells.length;i++){if(bd.cells[i].dir===dir)return bd.cells[i];}return null;}
+function luckLabel(l){return l>=2?{t:'吉',c:'lk-good'}:l<=-1?{t:'凶',c:'lk-bad'}:{t:'中',c:'lk-mid'};}
+function planTrips(outV,retV){
+  var home=homeLatLng();
+  var od=new Date(outV+'T12:00:00'),rd=new Date((retV||outV)+'T12:00:00');
+  var y=APP.chartData?APP.chartData.yojin:null;
+  var ob=buildBoard(od,'ri'),rb=buildBoard(rd,'ri');
+  try{extractDirections(ob,y);extractDirections(rb,y);}catch(e){}
+  var go=[],need=[];
+  Places.list.forEach(function(pl){
+    var d=calcDist(home[0],home[1],pl.lat,pl.lng);if(d<0.02)return;
+    var outDir=bearDir(calcBearing(home[0],home[1],pl.lat,pl.lng));
+    var retDir=bearDir(calcBearing(pl.lat,pl.lng,home[0],home[1]));
+    var oc=cellByDir(ob,outDir),rc=cellByDir(rb,retDir);
+    var oL=oc?oc.luck:0,rL=rc?rc.luck:0,oBad=oL<=-1,rBad=rL<=-1;
+    var rec={name:pl.name,outDir:outDir,retDir:retDir,oLuck:oL,rLuck:rL,oBad:oBad,rBad:rBad,dist:d};
+    if(oBad||rBad)need.push(rec);else go.push(rec);
+  });
+  go.sort(function(a,b){return (b.oLuck+b.rLuck)-(a.oLuck+a.rLuck);});
+  need.sort(function(a,b){return (a.oLuck+a.rLuck)-(b.oLuck+b.rLuck);});
+  return {go:go,need:need};
+}
+function planGroup(title,list,isNeed){
+  var h='<div class="plan-grp"><div class="plan-grp-h">'+title+'（'+list.length+'件）</div>';
+  if(!list.length){h+='<div class="hint" style="margin:0">該当なし</div></div>';return h;}
+  list.forEach(function(r){
+    var oL=luckLabel(r.oLuck),rL=luckLabel(r.rLuck);
+    var flag=isNeed?'<span class="pr-flag">'+(r.oBad&&r.rBad?'往路・帰路とも要方違え':r.oBad?'往路で要方違え':'帰路で要方違え')+'</span>':'';
+    h+='<div class="plan-row '+(isNeed?'pr-bad':'pr-good')+'"><div class="pr-name">'+esc(r.name)+'<span class="pr-dist">約'+distFmt(r.dist)+'</span></div>'+
+       '<div class="pr-legs">往 '+r.outDir+'<span class="'+oL.c+'">'+oL.t+'</span> ／ 帰 '+r.retDir+'<span class="'+rL.c+'">'+rL.t+'</span>'+flag+'</div></div>';
+  });
+  h+='</div>';return h;
+}
+function planCard(){
+  var outV=APP.tripOut||fmtD(new Date()),retV=APP.tripRet||outV;
+  var h='<div class="sec-label"><span class="si">🗺️</span>旅先プランナー（方違え判定）</div>';
+  h+='<div class="nav-card">';
+  h+='<div class="hint" style="margin:0 0 10px">基準は<b>自宅</b>（帰路の最終目的地も自宅）。出発日・帰着日を決めると、登録地点を「方違えの要否」で仕分けます。判定は日盤で行います。</div>';
+  h+='<div class="row2"><div class="fld"><label>出発日（往路）</label><input type="date" value="'+outV+'" onchange="setTripDate(\'out\',this.value)"></div><div class="fld"><label>帰着日（帰路）</label><input type="date" value="'+retV+'" onchange="setTripDate(\'ret\',this.value)"></div></div>';
+  if(!Places.list.length){h+='<div class="hint" style="margin:0">登録地点がありません。設定 › 登録地点 から追加してください。</div></div>';return h;}
+  var R=planTrips(outV,retV);
+  h+=planGroup('✅ 方違えなしで行ける旅先',R.go,false);
+  h+=planGroup('⚠️ 方違えが必要な旅先',R.need,true);
+  h+='<div class="tr-tip" style="margin-top:8px">※ 往路＝自宅→旅先、帰路＝旅先→自宅。どちらかが凶方位なら「方違えが必要」に分類します。連泊で月盤の影響が強い場合は、上のチェックや盤タブ（時/日/月/年）も併せてご確認ください。</div>';
+  h+='</div>';return h;
+}
 function tripCard(b){
   if(APP.baseId!=='home'&&!Places.get(APP.baseId))APP.baseId='home';
   if(!Places.get(APP.destId)&&Places.list.length)APP.destId=Places.list[0].id;
@@ -704,18 +790,19 @@ function tripCard(b){
   h+='<div class="hint" style="margin:2px 0 0">地点の追加・削除は <b onclick="go(\'settings\')" style="color:var(--gold-soft);cursor:pointer">設定 › 登録地点</b> から。</div>';
   if(!bc||!dco){h+='<div class="trip-res trip-mid"><div class="tr-verdict">地点を選んでください</div></div></div>';return h;}
   var dist=calcDist(bc[0],bc[1],dco[0],dco[1]);
-  if(dist<1){h+='<div class="trip-res trip-mid"><div class="tr-verdict">同じ地点です</div><div class="tr-detail">拠点と目的地が同じため、方位は発生しません。別の地点を選んでください。</div></div></div>';return h;}
+  if(dist<0.02){h+='<div class="trip-res trip-mid"><div class="tr-verdict">同じ地点です</div><div class="tr-detail">拠点と目的地が同じため、方位は発生しません。別の地点を選んでください。</div></div></div>';return h;}
   var deg=calcBearing(bc[0],bc[1],dco[0],dco[1]),dir=bearDir(deg),cell=null;
   for(var i=0;i<b.cells.length;i++){if(b.cells[i].dir===dir){cell=b.cells[i];break;}}
   var luck=cell?cell.luck:0,good=luck>=2,bad=luck<=-1;
   var cls=good?'trip-good':bad?'trip-bad':'trip-mid',vd=good?'【吉方位】':bad?'【凶方位】':'【中（平）】';
   var info=cell?(cell.star+'×'+cell.gateRaw+(cell.deityRaw&&cell.deityRaw!=='（寄）'?'・'+cell.deityRaw:'')):'';
   var note=good?(cell&&cell.yojinDir?'用神の方位に当たり、移動・転居に追い風。':'吉作用のある方角。前向きな移動に向きます。'):bad?(cell&&cell.isKu?'空亡で力が抜けやすい方位。長居・転居は避けて。':'煞気のある方角。長居・転居は控えめに。'):'際立った吉凶はなし。';
-  var tabName={shi:'時盤',ri:'日盤',yue:'月盤',nian:'年盤'}[APP.kimonTab]||'';
+  var tabName={shi:'時盤',ri:'日盤',yue:'月盤',nian:'年盤'}[APP.tripTab]||'';
   h+='<div class="trip-res '+cls+'"><div class="tr-route">'+bn+' → '+dname+'</div>'+
-     '<div class="tr-dirline"><b>'+dir+'</b> 方向 <span class="deg">'+Math.round(deg)+'° ・ 約'+Math.round(dist).toLocaleString()+'km</span></div>'+
+     '<div class="tr-dirline"><b>'+dir+'</b> 方向 <span class="deg">'+Math.round(deg)+'° ・ 約'+distFmt(dist)+'</span></div>'+
      '<div class="tr-verdict">'+tabName+'では '+vd+'</div>'+
      '<div class="tr-detail">'+(info?info+'。':'')+note+'</div>'+
+     '<div class="tr-coords">使用座標：基準 '+bc[0].toFixed(4)+', '+bc[1].toFixed(4)+' ／ 目的地 '+dco[0].toFixed(4)+', '+dco[1].toFixed(4)+'</div>'+
      '<div class="tr-tip">💡 拠点を変えると目的地の方角・吉凶が変わります（方違えの発想）。盤タブ（時/日/月/年）でも判定が変わります。</div></div>';
   h+='</div>';return h;
 }
@@ -743,8 +830,6 @@ function renderKimon(){
   html+='<button class="btn btn-primary" id="enableBtn" onclick="enableSensor()">📲 方位センサーを有効化</button>';
   html+='<div class="demo-area"><div class="demo-label">🔧 デモ：スライダーで向きを再現（PC・プレビュー確認用）</div><input type="range" min="0" max="359" value="'+APP.heading+'" class="demo-slider" oninput="onDemoHeading(this.value)"></div>';
   html+='</div>';
-  // 吉ポイントセクション（避けたいポイントの上）
-  html+=tripCard(b);
   // 活かしたい/避けたいポイント（タブ＝盤の時間単位に連動）
   var luckyTab=b.cells.filter(function(c){return c.luck>=2&&!c.isKu&&!c.isCtr;});
   var tm=kimonTiming(tab,new Date(),y);
@@ -780,6 +865,21 @@ function renderKimon(){
   drawCompass();
 }
 function switchKimon(tab){APP.kimonTab=tab;renderKimon();}
+function switchTrip(tab){APP.tripTab=tab;renderTrip();}
+function renderTrip(){
+  var el=document.getElementById('screen-trip');
+  if(!APP.chartData){el.innerHTML=emptyState('旅行・方位の判定');return;}
+  var cd=APP.chartData,y=cd.yojin,tab=APP.tripTab;
+  var b=(tab===cd.boardTab)?cd.kimon:buildBoard(new Date(),tab);
+  if(tab!==cd.boardTab)extractDirections(b,y);
+  var html='';
+  html+='<div class="yojin-card"><div class="yj-circle" style="background:'+GOGYO_COLOR[y.primaryYojin]+'">'+y.primaryYojin+'</div><div class="yj-text">登録地点への方角が、用神 <b>'+y.primaryYojin+'</b> から見て吉か凶かを判定します。地点は設定で登録できます。</div></div>';
+  html+='<div class="tabs">';[['shi','時盤'],['ri','日盤'],['yue','月盤'],['nian','年盤']].forEach(function(t){var dis=cd.noTime&&t[0]==='shi';html+='<button class="tab'+(tab===t[0]?' active':'')+'"'+(dis?' style="opacity:.4" disabled':' onclick="switchTrip(\''+t[0]+'\')"')+'>'+t[1]+(dis?'✕':'')+'</button>';});html+='</div>';
+  if(cd.noTime&&tab==='ri')html+='<div class="fumei-note"><span>⏱</span><span>時刻不明のため時盤は使えません。日盤で判定しています。</span></div>';
+  html+=tripCard(b);
+  html+=planCard();
+  el.innerHTML=html;
+}
 
 /* ===== コンパス描画（自宅基準の方角を表示）===== */
 function drawCompass(){
@@ -833,18 +933,21 @@ function renderSettings(){
     if(APP.editingMemo===p.id)html+='<div style="margin-top:8px"><textarea id="memoInput" placeholder="鑑定の記録や誰の命式かをメモ...">'+esc(p.memo)+'</textarea><div style="display:flex;gap:6px;margin-top:6px"><button class="btn" style="padding:6px 12px;font-size:12px" onclick="cancelMemo()">取消</button><button class="btn btn-green" style="padding:6px 12px;font-size:12px" onclick="saveMemo(\''+p.id+'\')">保存</button></div></div>';
     else if(p.memo)html+='<div class="pc-memo">📝 '+esc(p.memo)+'</div>';
     else html+='<div class="pc-memo-empty" onclick="editMemo(\''+p.id+'\')">＋ メモを追加</div>';
+    html+=birthCoordsRow(p);
     html+='</div>';
   });
   html+='</div>';
   html+='<div class="sec-label"><span class="si">📍</span>登録地点（拠点・目的地）</div>';
+  html+='<div style="background:var(--surface);border:0.5px solid var(--line);border-radius:var(--r);padding:13px 14px"><div class="fld"><label>🏠 自宅の座標（拠点「自宅」に使用）</label><input type="text" id="home-coords" value="'+esc(APP.homeCoords||(Store.getActive()&&Store.getActive().coords)||'')+'" placeholder="35.7510, 139.9127"></div><button class="btn btn-primary" style="width:auto;padding:9px 14px" onclick="setHomeCoords()">反映</button>'+(APP.homeCoords?'<div style="font-size:12px;color:var(--green-d);margin-top:8px">✓ 保存済み：'+esc(APP.homeCoords)+'</div>':'')+'<div class="hint" style="margin:8px 0 0">旅行タブの拠点「自宅」はこの座標を使います（命式の座標とは独立して設定できます）。</div></div>';
   html+='<div class="profile-list">';
   if(!Places.list.length)html+='<div class="empty"><span class="ei">📍</span>地点が未登録です。下から追加してください。</div>';
   Places.list.forEach(function(pl){
     html+='<div class="profile-card"><div class="pc-top"><div class="pc-avatar">📍</div><div class="pc-info"><div class="pc-name">'+esc(pl.name)+'</div><div class="pc-meta">'+pl.lat.toFixed(4)+', '+pl.lng.toFixed(4)+'</div></div><div class="pc-actions"><button class="pc-icon-btn" onclick="removePlace(\''+pl.id+'\')">🗑</button></div></div></div>';
   });
   html+='</div>';
+  html+='<div style="display:flex;gap:6px;margin-top:8px"><select id="pl-preset" style="flex:1"><option value="">主要都市から選ぶ…</option>'+CITIES.map(function(c,i){return '<option value="'+i+'">'+esc(c.name)+'</option>';}).join('')+'</select><button class="btn btn-primary" style="width:auto;padding:9px 14px" onclick="addPresetPlace()">＋ 追加</button></div>';
   html+='<div style="background:var(--surface);border:0.5px solid var(--line);border-radius:var(--r);padding:13px 14px;margin-top:8px"><div class="fld"><label>地点名</label><input type="text" id="pl-name" placeholder="例：実家、軽井沢の宿、ホテル"></div><div class="fld"><label>座標（緯度, 経度）</label><input type="text" id="pl-coords" placeholder="35.69, 139.69"></div><button class="btn btn-primary" onclick="addPlace()">＋ 地点を追加</button></div>';
-  html+='<div class="hint">ここで登録した地点が、奇門タブの「旅行・引越の方位チェック」で拠点／目的地として選べます。</div>';
+  html+='<div class="hint">ここで登録した地点が、「旅行」タブの方位チェック・旅先プランナーで選べます。</div>';
   html+='<div class="sec-label"><span class="si">⚙️</span>計算設定</div>';
   html+='<div class="set-item"><span class="set-label">立運数の端数処理</span><div class="seg"><button class="'+(APP.ritsuunMode==='round'?'active':'')+'" onclick="setRitsuun(\'round\')">四捨五入</button><button class="'+(APP.ritsuunMode==='floor'?'active':'')+'" onclick="setRitsuun(\'floor\')">切捨</button><button class="'+(APP.ritsuunMode==='ceil'?'active':'')+'" onclick="setRitsuun(\'ceil\')">切上</button></div></div>';
   html+='<div class="hint">プロファイルをタップすると表示が切り替わり、全タブがその人の用神で再計算されます。データは入力情報のみ保存し、命式は都度再計算されます（このプレビューはメモリ保存・実機では端末ストレージに保存）。</div>';
@@ -856,7 +959,7 @@ function renderAddForm(el){
   html+='<div class="row2"><div class="fld"><label>生年月日</label><input type="date" id="f-date" value="1990-05-15"></div><div class="fld"><label>出生時刻</label><input type="time" id="f-time" value="10:30"'+(APP.formNoTime?' disabled':'')+'></div></div>';
   html+='<div class="check-row" onclick="toggleFormNoTime()"><div class="check-box'+(APP.formNoTime?' on':'')+'">'+(APP.formNoTime?'✓':'')+'</div><div><div class="check-label">出生時刻が不明</div><div class="check-sub">時柱を除いた三柱で鑑定します</div></div></div>';
   html+='<div class="fld"><label>性別</label><select id="f-sex"><option value="M">男性</option><option value="F">女性</option></select></div>';
-  html+='<div class="fld"><label>座標（任意・自宅基準。空欄可）</label><input type="text" id="f-coords" placeholder="35.6895, 139.6917"></div>';
+  html+='<div class="fld"><label>出生地の座標（任意・真太陽時補正に使用）</label><input type="text" id="f-coords" placeholder="35.6895, 139.6917"></div>';
   html+='<div class="fld"><label>メモ（任意）</label><textarea id="f-memo" placeholder="鑑定の記録や誰の命式かを自由に..."></textarea></div>';
   html+='<div style="display:flex;gap:8px;margin-top:6px"><button class="btn" onclick="cancelAdd()">キャンセル</button><button class="btn btn-primary" onclick="saveProfile()">保存して表示</button></div>';
   el.innerHTML=html;
@@ -880,6 +983,8 @@ function editMemo(id){APP.editingMemo=id;renderSettings();setTimeout(function(){
 function cancelMemo(){APP.editingMemo=null;renderSettings();}
 function saveMemo(id){var t=document.getElementById('memoInput');Store.setMemo(id,t?t.value.trim():'');APP.editingMemo=null;renderSettings();}
 function setRitsuun(mode){APP.ritsuunMode=mode;invalidateAll();renderSettings();}
+function birthCoordsRow(p){return '<div class="pc-coords"><span class="pcc-label">📍 出生地</span><input type="text" id="bc-'+p.id+'" value="'+esc(p.coords||'')+'" placeholder="緯度, 経度（真太陽時補正に使用）"><button class="btn btn-primary pcc-btn" onclick="saveBirthCoords(\''+p.id+'\')">反映</button></div>';}
+function saveBirthCoords(id){var el=document.getElementById('bc-'+id);if(!el)return;var v=el.value.trim();if(v&&!parseCoords(v)){alert('「緯度, 経度」の形式で入力してください（例：35.69, 139.69）');return;}Store.setCoords(id,v);invalidateAll();renderSettings();}
 
 /* ============ グローバル公開 ============ */
 window.go=go;window.toggleMonth=toggleMonth;window.setReadingTab=setReadingTab;
@@ -888,12 +993,14 @@ window.showAdd=showAdd;window.cancelAdd=cancelAdd;window.toggleFormNoTime=toggle
 window.saveProfile=saveProfile;window.selectProfile=selectProfile;window.askDelete=askDelete;
 window.cancelDelete=cancelDelete;window.confirmDelete=confirmDelete;window.editMemo=editMemo;
 window.cancelMemo=cancelMemo;window.saveMemo=saveMemo;window.setRitsuun=setRitsuun;
+window.saveBirthCoords=saveBirthCoords;
 window.setBaseId=setBaseId;window.setDestId=setDestId;window.addPlace=addPlace;window.removePlace=removePlace;
+window.setTripDate=setTripDate;
+window.switchTrip=switchTrip;window.addPresetPlace=addPresetPlace;window.setHomeCoords=setHomeCoords;
 
 /* ============ 初期化 ============ */
 Store.add({name:'自分',birthDate:'1990-05-15',birthTime:'10:30',sex:'M',coords:'35.6895, 139.6917',memo:'本命。転職を検討中。'});
 Store.setActive('p1');
-CITIES.forEach(function(c){Places.add(c.name,c.lat,c.lng);});
 rebuildChart();
 renderHome();APP.built.home=true;
 updateChip();
