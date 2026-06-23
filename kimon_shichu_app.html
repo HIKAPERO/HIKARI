@@ -308,6 +308,42 @@
   .pc-coords .pcc-label{font-size:11px;color:var(--text3);white-space:nowrap}
   .pc-coords input{flex:1;font-size:12px;padding:7px 9px;min-width:0}
   .pc-coords .pcc-btn{width:auto;padding:7px 12px;font-size:12px;flex:0 0 auto}
+  .love-radar{display:flex;justify-content:center;margin:4px 0 12px}
+  .love-type{text-align:center;font-family:"Shippori Mincho B1","Noto Serif JP",serif;font-size:19px;color:var(--gold-soft);margin:0 0 4px;letter-spacing:.08em}
+  .love-bars{margin-top:6px}
+  .lb-row{display:grid;grid-template-columns:74px 1fr 30px;align-items:center;gap:8px;margin-bottom:7px}
+  .lb-label{font-size:12px;color:var(--text2)}
+  .lb-track{height:7px;background:var(--ink-3,#1f2435);border-radius:4px;overflow:hidden}
+  .lb-fill{height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold-soft));border-radius:4px}
+  .lb-val{font-size:12px;color:var(--gold-soft);text-align:right;font-variant-numeric:tabular-nums}
+  .unsei-intro{font-size:12.5px;color:var(--text2);line-height:1.85;background:var(--surface2);border-left:2px solid var(--gold-dim);border-radius:0 8px 8px 0;padding:9px 12px;margin:2px 0 12px}
+  .unsei-intro b{color:var(--gold-soft);font-weight:600}
+  .diary-head{display:flex;align-items:center;justify-content:space-between;margin:4px 0 8px}
+  .diary-nav{background:var(--surface2);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:4px 14px;font-size:16px;cursor:pointer;line-height:1}
+  .diary-title{font-family:"Shippori Mincho B1","Noto Serif JP",serif;font-size:15px;color:var(--paper,#ece6d6)}
+  .diary-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+  .diary-dow{text-align:center;font-size:10px;color:var(--text3);padding:2px 0}
+  .diary-cell{aspect-ratio:1;border-radius:7px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;cursor:pointer;border:0.5px solid var(--line);background:var(--surface2);color:var(--text)}
+  .diary-cell.empty{background:transparent;border:none;cursor:default}
+  .diary-cell.good{background:rgba(74,157,127,.16);border-color:var(--green-line)}
+  .diary-cell.low{background:rgba(192,67,47,.13);border-color:var(--red-line)}
+  .diary-cell.today{outline:1.5px solid var(--gold)}
+  .diary-cell.sel{outline:1.5px solid var(--gold-soft);outline-offset:1px}
+  .diary-dot{width:5px;height:5px;border-radius:50%;margin-top:2px}
+  .diary-detail{margin-top:10px;background:var(--surface2);border:0.5px solid var(--line);border-radius:var(--r-sm);padding:13px 14px;text-align:center}
+  .diary-detail .dd-score{font-family:"Shippori Mincho B1","Noto Serif JP",serif;font-size:30px}
+  .diary-detail .dd-gz{font-size:12px;color:var(--text3);letter-spacing:1px;margin:0 0 8px}
+  .diary-detail .dd-msg{font-size:13px;color:var(--text2);line-height:1.9}
+  .rc-list{margin:6px 0 0;padding-left:1.1em}
+  .rc-list li{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:3px}
+  .age-row{padding:10px 0;border-bottom:0.5px solid var(--line)}
+  .age-row:last-child{border-bottom:none;padding-bottom:2px}
+  .age-head{display:flex;align-items:center;gap:8px;margin-bottom:2px}
+  .age-range{font-size:13px;font-weight:600;color:var(--paper,#ece6d6)}
+  .age-tag{font-size:10px;padding:1px 8px;border-radius:10px}
+  .age-tag.at-good{background:rgba(74,157,127,.18);color:var(--green-d)}
+  .age-tag.at-cau{background:rgba(205,169,79,.16);color:var(--gold-soft)}
+  .age-title{font-size:13px;color:var(--gold-soft);margin-bottom:3px}
 </style>
 </head>
 <body>
@@ -503,7 +539,7 @@ var Store={
 };
 
 var APP={chartData:null,ritsuunMode:'round',built:{home:false,meishiki:false,unsei:false,kimon:false,trip:false},
-  kimonTab:'shi',baseId:'home',destId:'',tripOut:'',tripRet:'',tripTab:'ri',homeCoords:'',readingTab:'seikaku',openMonth:-1,scrollPos:{},
+  kimonTab:'shi',baseId:'home',destId:'',tripOut:'',tripRet:'',tripTab:'ri',homeCoords:'',readingTab:'seikaku',openMonth:-1,diaryMonth:0,diaryPick:null,scrollPos:{},
   formNoTime:false,heading:0,sensorOn:false,
   viewMode:'list',pendingDelete:null,editingMemo:null};
 
@@ -598,7 +634,7 @@ function renderMeishiki(){
   html+='<div class="sec-label"><span class="si">⭐</span>あなたの用神（人生の鍵）</div>';
   html+='<div class="yojin-hero"><div class="yh-label">🔑 運を開く五行</div><div class="yh-main"><div class="yh-element" style="background:'+GOGYO_COLOR[y.primaryYojin]+'">'+y.primaryYojin+'</div><div><div class="yh-element-name">'+y.primaryYojin+'（'+ELEMENT_KEY[y.primaryYojin]+'）</div><div class="yh-element-sub">運を支える中心の五行</div></div></div><div class="yh-text">'+ym.life+'</div><div class="yh-basis">判定根拠：日主'+cd.dStem+'は'+(cd.noTime?'三柱で':'')+(y.isStrong?'身強（助ける'+y.help.toFixed(1)+' ≥ 弱める'+y.drain.toFixed(1)+'）なので抑える':'身弱（助ける'+y.help.toFixed(1)+' < 弱める'+y.drain.toFixed(1)+'）なので助ける')+'「'+y.primaryYojin+'」が用神です。</div></div>';
   // 鑑定テキストタブ
-  var tabs=[['seikaku','性格'],['tekishoku','適職'],['renai','恋愛'],['kenko','健康'],['jukkami','才能'],['kazoku','家族']];
+  var tabs=[['seikaku','性格'],['tekishoku','適職'],['renai','恋愛'],['kenko','健康'],['jukkami','才能'],['kazoku','家族'],['money','お金'],['fukabori','深掘り']];
   html+='<div class="sec-label"><span class="si">📖</span>詳細鑑定</div>';
   html+='<div class="reading-tabs">'+tabs.map(function(t){return '<button class="rtab'+(APP.readingTab===t[0]?' active':'')+'" onclick="setReadingTab(\''+t[0]+'\')">'+t[1]+'</button>';}).join('')+'</div>';
   html+='<div id="readingArea"></div>';
@@ -606,15 +642,132 @@ function renderMeishiki(){
   renderReading(mainGogyo);
 }
 function setReadingTab(t){APP.readingTab=t;var cd=APP.chartData;var mg='木',mx=0;for(var k in cd.score){if(cd.score[k]>mx){mx=cd.score[k];mg=k;}}document.querySelectorAll('.rtab').forEach(function(b){b.classList.remove('active');});event.target.classList.add('active');renderReading(mg);}
+var LOVE_BASE={
+ 木:{dep:52,ichizu:65,passion:70,kakehiki:60,type:'自由恋愛型',expr:'言葉より行動で愛情を示すタイプ。一緒に何かを体験することで気持ちが深まります。',approach:'共通の目標や体験を通じて距離を縮めるアプローチが効果的です。'},
+ 火:{dep:58,ichizu:55,passion:92,kakehiki:72,type:'情熱一直線型',expr:'感情をストレートに言葉と行動で全力表現。テンションの高さが魅力です。',approach:'ストレートに気持ちを伝える直球アプローチが最も響きます。'},
+ 土:{dep:70,ichizu:88,passion:58,kakehiki:38,type:'安定重視型',expr:'日常の積み重ねと誠実さで愛情を示します。派手さより信頼を大切にします。',approach:'誠実さと安心感を大切に、じっくり距離を縮めるアプローチが効果的です。'},
+ 金:{dep:45,ichizu:75,passion:62,kakehiki:82,type:'こだわり選択型',expr:'行動やサポートで愛情を示します。言葉は少なめでも深く想っています。',approach:'信頼と誠実さを示しながら相手のペースを尊重するアプローチが響きます。'},
+ 水:{dep:62,ichizu:68,passion:65,kakehiki:78,type:'深愛型・感性重視',expr:'共感と繊細な言葉で気持ちを深く伝えます。感性が豊かで相手をよく観察します。',approach:'相手の話をよく聞き、感性や価値観に寄り添うアプローチが最も効果的です。'}
+};
+var LOVE_YIN_ADJ={dep:[-3,5],ichizu:[-3,4],passion:[5,-3],kakehiki:[4,-5]};
+function calcLove(gogyo,yin){var b=LOVE_BASE[gogyo],c=function(v){return Math.max(10,Math.min(100,Math.round(v)));};return{dep:c(b.dep+LOVE_YIN_ADJ.dep[yin]),ichizu:c(b.ichizu+LOVE_YIN_ADJ.ichizu[yin]),passion:c(b.passion+LOVE_YIN_ADJ.passion[yin]),kakehiki:c(b.kakehiki+LOVE_YIN_ADJ.kakehiki[yin]),type:b.type,expr:b.expr,approach:b.approach};}
+function loveBar(label,v){return '<div class="lb-row"><span class="lb-label">'+label+'</span><span class="lb-track"><span class="lb-fill" style="width:'+v+'%"></span></span><span class="lb-val">'+v+'</span></div>';}
+function loveRadarSVG(vals){
+  var S=230,C=S/2,R=78,N=4,LBL=['恋愛依存度','一途度','情熱度','駆け引き度'];
+  function ang(i){return Math.PI*2*i/N-Math.PI/2;}
+  function pt(r,a){return [C+r*Math.cos(a),C+r*Math.sin(a)];}
+  var g='';[20,40,60,80,100].forEach(function(v,i){g+='<circle cx="'+C+'" cy="'+C+'" r="'+(R*v/100).toFixed(1)+'" fill="none" stroke="rgba(205,169,79,'+(0.10+i*0.04).toFixed(2)+')" stroke-width="1"/>';});
+  for(var i=0;i<N;i++){var pa=pt(R,ang(i));g+='<line x1="'+C+'" y1="'+C+'" x2="'+pa[0].toFixed(1)+'" y2="'+pa[1].toFixed(1)+'" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>';}
+  var path='',dots='';for(var i=0;i<N;i++){var rr=R*Math.max(10,Math.min(100,vals[i]))/100,pp=pt(rr,ang(i));path+=(i?'L':'M')+pp[0].toFixed(1)+' '+pp[1].toFixed(1);dots+='<circle cx="'+pp[0].toFixed(1)+'" cy="'+pp[1].toFixed(1)+'" r="3.5" fill="#e6cd83"/>';}path+=' Z';
+  var lbl='';for(var i=0;i<N;i++){var pl=pt(R+22,ang(i)),ca=Math.cos(ang(i)),an=ca>0.1?'start':ca<-0.1?'end':'middle';lbl+='<text x="'+pl[0].toFixed(1)+'" y="'+(pl[1]+4).toFixed(1)+'" fill="#cbbfa0" font-size="11" text-anchor="'+an+'">'+LBL[i]+'</text>';}
+  return '<div class="love-radar"><svg viewBox="0 0 '+S+' '+S+'" style="width:230px;max-width:100%;height:auto;overflow:visible">'+g+'<path d="'+path+'" fill="rgba(205,169,79,0.20)" stroke="#cda94f" stroke-width="1.5"/>'+dots+lbl+'</svg></div>';
+}
+/* ===== 詳細鑑定データ（学び・お金・落とし穴・ストレス・年齢・環境・家族）===== */
+var GOGYO_SAIDACHI={
+ 木:'「成長・チャレンジ・しなやかさ」が持ち味。新しいことを始める推進力と、状況に合わせてしなやかに伸びる適応力があります。理想に向かって人や物事を育てる力が強く、前進を選ぶときに本来の輝きが出ます。',
+ 火:'「情熱・行動力・存在感」が持ち味。感情と行動が直結し、その場を明るくする熱量と発信力があります。人前や表現の場で力を発揮し、手応えやときめきがあるほど勢いに乗ります。',
+ 土:'「安定・信頼・包容力」が持ち味。コツコツ積み上げる継続力と、人を受け止める安心感があります。派手さより信頼で評価され、土台を固めるほど強くなる堅実なタイプです。',
+ 金:'「意志・こだわり・鋭さ」が持ち味。筋を通す意志と、品質や本質を見抜く鋭さがあります。基礎を固めて専門性を磨くほど評価が高まる、本物志向で晩成型のタイプです。',
+ 水:'「知性・感性・適応力」が持ち味。情報を深く読み解く知性と、繊細な感性があります。状況に応じて形を変える柔軟さがあり、考えを巡らせ深掘りするほど独自の強みが出ます。'
+};
+var STUDY_GOGYO={
+ 木:{style:'新しい情報を自分でリサーチして学ぶスタイルが得意。一つを深掘りするより、複数の分野をつなげて考えることで力を発揮します。',subjects:['生物・環境サイエンス','歴史・地理','国語・文章表現','英語・異文化コミュニケーション'],method:'体験型学習・フィールドワーク・動画学習が向いています。「なぜ？」を起点に考えると記憶が定着しやすいです。',qualifications:['教員免許・指導者資格','英語検定・TOEIC','社会福祉士・精神保健福祉士','キャリアコンサルタント','環境管理士・生物分類技能検定'],avoid:'ひたすら暗記するだけの学習や、変化のない繰り返しは少し苦手かも。理由とセットで学ぶと効果的です。'},
+ 火:{style:'楽しみながら・人と関わりながら学ぶのが最強。グループで切磋琢磨したり、発表・アウトプットの中でぐんぐん伸びるタイプです。',subjects:['表現・映像・デザイン','スポーツ・身体表現','プレゼン・ビジネスコミュニケーション','マーケティング・SNS活用'],method:'グループ学習・発表・ロールプレイなど動きのある学習が向いています。音楽や身体の動きを取り入れるのも効果的。',qualifications:['グラフィックデザイン・UI/UX関連','Webデザイン検定','ファイナンシャルプランナー','調理師・製菓衛生師','動画編集・映像制作資格'],avoid:'長時間ひとりで静かにこもる学習は少し苦手。こまめに休憩とアウトプットの時間を取り入れて。'},
+ 土:{style:'コツコツ積み上げるのが本当の強み。繰り返し練習で本物の力がつくタイプ。焦らずじっくりやることが最大の武器です。',subjects:['数学・統計','社会・公民・経済','家庭・生活スキル','歴史・地理'],method:'丁寧なノートまとめが向いています。毎日のルーティンに学習を組み込み、少しずつ積み上げる方法が効果的です。',qualifications:['簿記・公認会計士','宅地建物取引士・不動産関連','ファイナンシャルプランナー','調理師・栄養士・フードコーディネーター','プロジェクトマネージャー（PMP）'],avoid:'ぶっつけ本番や時間プレッシャーが強い環境は少し苦手。計画を立てて進めると本来の力が出ます。'},
+ 金:{style:'論理的に筋道を立てて理解するタイプ。基礎をしっかり固めてから応用に進むことで、圧倒的な実力が身につきます。',subjects:['数学・理系科目','英語（読解・文法）','プログラミング・IT','法律・倫理学'],method:'一つずつ完全理解してから次に進む積み上げ型が向いています。わからないまま先に進まないことが大切です。',qualifications:['ITエンジニア系（基本情報・応用情報・AWS）','弁護士・司法書士・行政書士','医師・薬剤師・看護師','データサイエンティスト検定','数学検定・英語検定'],avoid:'理由がわからないままルールを押しつけられる学習や、基礎を飛ばした詰め込みは実力が伸びにくいです。'},
+ 水:{style:'直感と知識を組み合わせて学ぶタイプ。一つのテーマを深掘りしたり、興味の赴くままに広げる中で本領発揮します。',subjects:['国語・文学・哲学','外国語（英語・中国語・韓国語など）','心理学・人間関係','音楽・映像・アート'],method:'好奇心が向く分野を自由に深掘りするのが向いています。読書・ポッドキャスト・ドキュメンタリーなど、インプット量が多いほど伸びます。',qualifications:['語学系（英検・TOEIC・中国語検定）','臨床心理士・公認心理師','UXリサーチャー・コンテンツライター','音楽・芸術系の資格','データアナリスト・プロンプトエンジニア'],avoid:'感情を無視した詰め込み式学習や、創造性の入る余地がない環境は実力が発揮されにくいです。'}
+};
+var JUKKAMI_STUDY={比肩:'自分でテーマを設定して独学するスタイルが合っています。ライバルの存在がモチベーションになり、競争環境で伸びます。',劫財:'目標（資格・検定・スコア）を明確にすると一気にエンジンがかかるタイプ。締め切りや試験日程が原動力になります。',食神:'作りながら・表現しながら学ぶのが効果的。工作・実験・動画制作・プレゼンなど、アウトプットを通じた学びが強みです。',傷官:'教科書の外の知識や独自のアプローチで学ぶのが得意。人と違うやり方で学ぶことでオリジナルの強みが生まれます。',偏財:'体験しながら学ぶのが向いています。インターン・フィールドワーク・課外活動など、現場での経験が実力につながります。',正財:'継続する力が一番の武器。毎日コツコツ積み上げることで、本番に確かな実力が発揮されます。',偏官:'難しい課題や高い目標に向かうほど燃えるタイプ。難関資格や競争率の高い試験がモチベーションになります。',正官:'基礎とルールをしっかり身につけるのが得意。資格・検定で実力を証明していくことで自信が積み上がります。',偏印:'ひらめきと好奇心で学ぶタイプ。幅広い分野に触れながら、点と点をつなげて独自の強みを作ります。',印綬:'学ぶこと自体を楽しめるタイプ。学び続けるほど実力と評価が高まっていきます。'};
+var GOGYO_MONEY={
+ 木:{pattern:'人や可能性への投資に惜しみなく使う一方、自分自身のためには使いにくい傾向。友人の支援・学びへの投資・新ビジネスへの出資など「育てるため」の支出が多くなりがちです。',gain:'コツコツ型より、チャンスをつかんで一気に増やすタイプ。副業・起業・スキルへの投資が財運を開くきっかけになりやすいです。',lose:'人間関係に絡む出費（おごり・贈り物・支援）で知らないうちに消えるパターンが多いです。感情的になったときの勢い購入にも注意。',advice:'「人への投資」と「自分への投資」のバランスを定期的に確認することが大切。毎月の上限を決めると歯止めになります。'},
+ 火:{pattern:'気分が上がっているときに大きく使い、落ちているときに後悔するジェットコースター型。衝動買いと散財が多く、テンションと出費が連動します。',gain:'人前に出る仕事・発信・エンタメ方面での収入が伸びやすいです。注目されることが直接収入につながる才能があります。',lose:'テンションが高いときの即決購入、見栄のための出費、外食・交際費の積み重ねが財布を圧迫します。',advice:'明細を毎週確認する習慣が効果的。「今テンションが高い」と感じたら24時間カートに入れたまま待つルールがおすすめです。'},
+ 土:{pattern:'コツコツ貯めるのは得意ですが、運用や投資への一歩が踏み出せずインフレに負けやすいです。頼まれると断れず、他人のためにお金が出ていくことも多いです。',gain:'長期的な積み立て・不動産・安定資産との相性がいいです。地道な副業や本業での着実な昇給が財運の主軸になります。',lose:'断れない性格からくる立替・貸しっぱなし・おごりが積もります。保険や固定費の見直しを怠って無駄な出費が続くことも。',advice:'「貸す＝あげる」と割り切ることと、固定費を年に一度見直す習慣が財運を安定させます。'},
+ 金:{pattern:'価値があると判断したものには惜しみなく使う一方、「意味がない」と判断したものには一切使わない二極化が激しいです。品質重視で単価は高め。',gain:'専門性を磨くことで単価が上がりやすいタイプ。資格・スキルアップへの投資が長期的に大きく返ってきます。',lose:'理想の品質を追い求めすぎてコストが膨らむ、こだわりのアップグレードが止まらなくなるパターンがあります。',advice:'「費用対効果」を数字で出す習慣をつけると判断が安定します。品質へのこだわりは武器ですが、上限を決めておくことが大切です。'},
+ 水:{pattern:'情報収集と分析は得意ですが、決断が遅いため投資タイミングを逃しがち。サブスクの積み重ねや知的好奇心への投資で、気づいたら大きな額になっていることがあります。',gain:'知識・情報・スキルを活かした収入源との相性がいいです。コンテンツ・専門サービス・語学などを収益化する才能があります。',lose:'使っていないサブスクの継続や、趣味・知的好奇心への際限ない支出が積み重なります。',advice:'月に一度サブスクと定期支出を棚卸しする日を作ると効果的。情報への投資は「3ヶ月以内に使うか」を基準に判断しましょう。'}
+};
+var GOGYO_PITFALL={
+ 木:{main:'「正しさ」への固執が最大の落とし穴。信念や理想を曲げられず、柔軟な妥協が必要な場面で関係が壊れやすいです。新しい興味が次々湧くため、始めたことを途中で投げ出す癖も出やすいです。',patterns:['決断が早すぎて後で後悔する','他人の意見を「妥協」と感じて受け入れにくい','飽きると急に関心が冷める','「やればできる」と過信して準備不足になる'],avoid:'大きな決断の前に「3日待つ」ルールが有効。人の意見を「情報」として受け取る練習をすると関係が安定します。'},
+ 火:{main:'感情と行動が直結しているため、「勢いで動いて後悔する」パターンが繰り返されやすいです。テンションが高いときに約束や契約をして、冷めてから困ることがあります。',patterns:['気分が高揚しているときに大きな約束をする','飽きやすく長期プロジェクトの後半でペースが落ちる','感情的な言葉が人を傷つけていることに気づきにくい','注目されないと手を抜く傾向がある'],avoid:'重要な決断は「翌日に持ち越す」習慣が効果的。興奮しているときほど署名・約束・送信を一拍置くことが大切です。'},
+ 土:{main:'安定を求めるあまり「変化への抵抗」が強くなりやすいです。チャンスの波に乗り遅れたり、人間関係で我慢し続けて突然限界が来ることがあります。',patterns:['おかしい状況でも波風を立てたくなくて黙ってしまう','損切りが極端に遅い（仕事でも人間関係でも）','心配しすぎて行動のタイミングを逃す','頼まれると断れない'],avoid:'3ヶ月に一度、現状を見直す習慣をつけると停滞を防げます。「変わらないこと」と「タイミングを逃すこと」は違います。'},
+ 金:{main:'完璧主義と白黒思考が最大の落とし穴。「完璧でなければ出さない」と機会を逃したり、「裏切られた」と感じると関係を完全に切る極端さが出やすいです。',patterns:['完成度へのこだわりで着手が遅くなる','「もう信用できない」と一度決めると戻れない','自分の基準を他人にも無意識に押しつける','正論を言いすぎて人間関係が硬くなる'],avoid:'「80点で出す」練習が人生を変えます。人への期待値を意識的に下げると、関係がずっと楽になります。'},
+ 水:{main:'考えすぎて動けなくなる「思考の沼」が最大の落とし穴。情報を集めすぎて決断が遅れたり、感情を外に出さないまま内側で消耗することがあります。',patterns:['完璧な情報が揃うまで動けない','感情を溜め込んで突然爆発する','悩みを人に話さず一人で抱える','空気を読みすぎて自分の意見を言えない'],avoid:'「70%の情報で動く」訓練が有効。信頼できる人に早めに相談する習慣をつけると、思考の沼から抜け出しやすくなります。'}
+};
+var JUKKAMI_PITFALL={比肩:'「自分でやった方が早い」と協力を断り、孤立するリスクがあります。',劫財:'衝動買い・衝動的な転職など、刺激に引き寄せられて足元をすくわれやすいです。',食神:'楽しいことを優先しすぎて、地味な義務や締め切りを後回しにしがちです。',傷官:'批判や皮肉が鋭くなりすぎて、重要な人間関係を傷つけることがあります。',偏財:'広げすぎてどれも中途半端になる「多動リスク」があります。',正財:'チャンスを慎重に見極めすぎて、流れが来ているときに乗り遅れます。',偏官:'プレッシャーに強い反面、無意識に周囲にもそれを求めて軋轢が生まれます。',正官:'ルールへの忠実さが「融通が利かない」と見られ、チャンスを逃すことがあります。',偏印:'熱しやすく冷めやすい。始めたことを完走する仕組みを意識的に作る必要があります。',印綬:'学び続けることが目的化し、「準備ができたら動く」が永遠に来ないパターンがあります。'};
+var GOGYO_STRESS={
+ 木:{trigger:'自由を制限される・理不尽なルールを押しつけられる・成長できない環境・意見を封じられる',sign:'頭痛・目の疲れ・肩こり・神経の過敏さ・言葉にトゲが出る',release:'体を動かす（ランニング・ウォーキング・スポーツ）、自然の中に出る、新しいことに挑戦する、誰かに話を聞いてもらう',recovery:'一人になって自分のペースを取り戻す時間が最も効果的。「次のチャレンジ」を設定すると前向きになりやすいです。',danger:'溜まると攻撃的になるか、急に無気力になる二極化が起きやすいです。どちらも「限界のサイン」と認識してください。'},
+ 火:{trigger:'注目されない・評価されない・退屈な環境・人間関係のトラブル・情熱を否定される',sign:'落ち着きがなくなる・感情の起伏が激しくなる・口数が極端になる・睡眠が乱れる',release:'人と話す・発信する・体を思い切り動かす・音楽や映画など感情を揺さぶるものに触れる',recovery:'感情を「表現する場」があることが最大の回復手段。日記・SNS・友人への電話など外に出す行為が特に効果的です。',danger:'高じると衝動的な行動（衝動買い・勢いでの退職・感情的なメッセージ送信）が出やすくなります。'},
+ 土:{trigger:'急な変化・予定外の出来事・人間関係の不和・感謝されない状況・過剰な責任',sign:'食欲の変化・胃腸の不調・倦怠感・「何もしたくない」という無力感',release:'美味しいものを食べる・家の片付け・信頼できる人と静かに過ごす・ゆっくりお風呂に入る',recovery:'「何もしない時間」を罪悪感なく過ごすことが回復の鍵。予定を詰め込まない週末を定期的に設けると耐性が上がります。',danger:'我慢し続けて突然「もう限界」と爆発しやすいです。小さい不満を早めに言語化する練習が予防になります。'},
+ 金:{trigger:'曖昧な指示・不公平な評価・ダブルスタンダード・期待を裏切られる・完璧にできない状況',sign:'言葉がきつくなる・批判的になる・「なぜできない」という思考ループ・集中力の低下',release:'一人の時間を確保する・整理整頓・読書や専門知識のインプット・完全にオフにする時間を作る',recovery:'「完璧でない状態を許す」練習が最大の回復手段。80点で完了したことを意識的に褒める習慣が長期的に効きます。',danger:'高まると人間関係を切りすぎるリスクがあります。「今は判断をしない」というルールが有効です。'},
+ 水:{trigger:'感情的な人間関係・プレッシャーをかけられる・考える時間がない・自分のペースを乱される',sign:'頭が常にぐるぐるする・睡眠の質が落ちる・人を避けたくなる・現実感が薄くなる',release:'一人になる・静かな場所で過ごす・書くこと（日記・メモ）・音楽のインプット・入浴や水に触れる',recovery:'完全な静寂と一人の時間が最も効果的。誰にも連絡しない半日を定期的に設けると思考がリセットされます。',danger:'内側に溜め込みすぎて突然全部遮断する「蒸発モード」が出やすいです。信頼できる一人に定期的に話すと予防になります。'}
+};
+var JUKKAMI_STRESS={比肩:'「負けた」と感じる体験が引き金になりやすいです。',劫財:'じっとしていることへの強いストレスがあり、動くことが回復手段になります。',食神:'創造や表現の機会がないことがストレスに。何か作ると気持ちが戻ります。',傷官:'感情を否定されることが最大のストレス。ありのままを受け入れてくれる場が必要です。',偏財:'一か所に縛られる状況がストレスに。移動・変化・新しい出会いが回復剤です。',正財:'努力が報われない・評価されない状況が蓄積するとダメージが大きいです。',偏官:'弱さを見せることへの抵抗が強く、溜め込みやすいです。',正官:'責任を果たせない状況・ルールが守られない環境に強いストレスを感じます。',偏印:'興味のないことを強制される状況が最大のストレスです。',印綬:'学びの機会がない・評価されない状況が長く続くと消耗します。'};
+var GOGYO_LIFEAGE={
+ 木:{ages:[{range:'10代後半〜20代前半',type:'caution',title:'方向性の迷走期',desc:'エネルギーが強いあまり、複数の方向に同時に動きすぎて消耗しやすい時期。「何でもやれる」という自信が、かえって選択を難しくします。'},{range:'30代',type:'good',title:'飛躍の時期',desc:'積み上げてきた力が一気に開花しやすい時期。リーダーとしての役割が増え、チャンスも広がります。'},{range:'40代後半',type:'caution',title:'燃え尽き注意',desc:'長年頑張ってきた反動が出やすい時期。休むことへの罪悪感を手放し、意識的にペースを落とすことが必要です。'}],summary:'木タイプは「始める力」が強いため、方向性が定まる前の若い時期と、頑張りすぎの疲弊期が最大の関門です。'},
+ 火:{ages:[{range:'20代',type:'good',title:'最大の輝き期',desc:'エネルギーと行動力がピーク。この時期の人脈・経験・チャレンジが後の人生の基盤になります。思い切って動く価値がある時期。'},{range:'30代後半',type:'caution',title:'失速・迷走のリスク',desc:'20代の勢いが落ち着き、「このままでいいのか」という問いが出やすい時期。衝動的な転職・大きな出費に注意。'},{range:'50代',type:'caution',title:'体力と感情の管理',desc:'若い頃と同じペースで動くと体が悲鳴を上げやすい時期。感情の波も大きくなりやすいため、丁寧なセルフケアが重要です。'}],summary:'火タイプは20代に全力を出しやすい反面、その後の「失速期」をどう乗り越えるかが人生の明暗を分けます。'},
+ 土:{ages:[{range:'20代',type:'caution',title:'チャンスの見逃し期',desc:'安定志向が強すぎて、若い頃に取るべきリスクを避けてしまいやすい時期。守りに入りすぎると後悔が残ります。'},{range:'40代',type:'good',title:'本領発揮期',desc:'長年積み上げてきた信頼と実績が最大値になる時期。コツコツ型の真価が発揮されます。'},{range:'50代後半',type:'caution',title:'変化への適応',desc:'これまでのやり方が通じない変化が来やすい時期。固執すると苦しくなるため、柔軟さを意識することが大切。'}],summary:'土タイプは若い頃の慎重さが後に「安定」として実を結ぶ一方、変化の波に乗り遅れる時期が課題になります。'},
+ 金:{ages:[{range:'20代後半〜30代前半',type:'caution',title:'完璧主義の罠',desc:'基準が高いがゆえに、スタートできないまま時間が過ぎやすい時期。「完璧な準備」を待ちすぎると機会を逃します。'},{range:'30代後半〜40代',type:'good',title:'専門性開花期',desc:'磨いてきたスキルと信頼が最大値になる時期。専門家・職人・リーダーとして評価が高まります。'},{range:'60代以降',type:'caution',title:'引き際の設計',desc:'基準へのこだわりが強いため、潔く手放すことが難しくなる時期。後継への委譲をどう設計するかが重要です。'}],summary:'金タイプは40〜50代に最も輝く晩成型。若い頃の不完全さを受け入れられるかが、キャリアの伸びを左右します。'},
+ 水:{ages:[{range:'10代〜20代前半',type:'caution',title:'インプット過多期',desc:'考えすぎて動けない時期が長くなりやすいです。情報を集めながら小さな行動を同時に起こす練習が必要な時期。'},{range:'30代後半〜40代',type:'good',title:'知性の結実期',desc:'積み上げてきた知識・人脈・経験が統合され、独自の専門性として花開く時期。'},{range:'40代後半',type:'caution',title:'感情の蓄積爆発',desc:'長年溜め込んできた感情やストレスが表面に出やすい時期。定期的に吐き出す場を作っておくことが予防になります。'}],summary:'水タイプは熟成型。若い頃の「動けない感覚」は準備期間として必要なプロセス。焦らず積み上げることが最大の戦略です。'}
+};
+var GOGYO_DIRECTION={
+ 木:{dir:'東・東北',env:'自然・植物が多い環境・学びの場・スタートアップ',color:'ブルー・グリーン',lucky:'新しいことを始めるタイミングが吉。東の方向に動くと流れが開きやすいです。'},
+ 火:{dir:'南',env:'人が集まる場所・都市・舞台・SNSで注目を集める環境',color:'レッド・オレンジ・パープル',lucky:'夏・南方向が勝負どころ。人が多い場所やにぎやかな環境で存在感が増します。'},
+ 土:{dir:'中央・南西・北東',env:'地元・老舗・安定した組織・信頼関係のある環境',color:'イエロー・ブラウン',lucky:'地元や長くいる場所で実力が開花しやすいです。信頼の積み上げがチャンスにつながります。'},
+ 金:{dir:'西・北西',env:'都市・オフィス・整った環境・専門職の現場',color:'ホワイト・シルバー・ゴールド',lucky:'秋・西方向が勝負どころ。クリーンで洗練された環境でこそ実力が発揮されます。'},
+ 水:{dir:'北',env:'海・川・静かな環境・海外・リモートワーク',color:'ブラック・ネイビー・ディープブルー',lucky:'北の方向や水のある場所でひらめきが生まれやすいです。海外や新しいフィールドでも活躍できます。'}
+};
+var FAMILY_RICH={
+ 年柱:'祖父母・両親・家系のルーツとの縁を表す柱。幼少期に置かれた環境や、目上・年長者から受け継ぐもの、社会的なスタート地点に影響します。ここが整っていると、ルーツや周囲の支援を追い風にできます。',
+ 月柱:'両親・きょうだい・職場など「身近で日常的に関わる人」との縁、そして社会人としての土台を表す中心的な柱。働き方や対人関係の基本スタンス、社会での立ち位置がここに表れます。',
+ 日柱:'あなた自身と、配偶者・パートナーとの縁を表す柱。日支は結婚・家庭の領域でもあり、私生活や最も近い人との関係性の質、距離の取り方を映します。',
+ 時柱:'子ども・後輩・部下との縁、そして将来・夢・晩年との縁を表す柱。育てる対象や、次の世代へ受け渡していくものに関わります。時刻が分かると、より詳しく読めます。'
+};
+var FAMILY_ICON={年柱:'🌳',月柱:'🏠',日柱:'💑',時柱:'🌱'};
+function mTsu(cd){var t=cd.pillars[1]&&cd.pillars[1].tsu;return (t&&t!=='日主')?t:null;}
+function rcList(arr){return '<ul class="rc-list">'+arr.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul>';}
+function studyHTML(cd){var S=STUDY_GOGYO[cd.dGogyo],jt=mTsu(cd);return '<div class="reading-card"><div class="rc-title">📚 学び・資格（日主'+cd.dGogyo+'）</div>'+
+ '<div class="rc-sub"><div class="rc-label">あなたの学び方のクセ</div>'+S.style+'</div>'+
+ '<div class="rc-sub"><div class="rc-label">得意な教科・分野</div>'+rcList(S.subjects)+'</div>'+
+ '<div class="rc-sub"><div class="rc-label">おすすめの勉強方法</div>'+S.method+'</div>'+
+ '<div class="rc-sub"><div class="rc-label">向いている資格・進路</div>'+rcList(S.qualifications)+'</div>'+
+ '<div class="rc-sub"><div class="rc-label">苦手な勉強スタイル</div>'+S.avoid+'</div>'+
+ (jt?'<div class="rc-sub"><div class="rc-label">才能「'+jt+'」を活かす学び方</div>'+(JUKKAMI_STUDY[jt]||'')+'</div>':'')+'</div>';}
+function moneyHTML(cd){var M=GOGYO_MONEY[cd.dGogyo];return '<div class="reading-card"><div class="rc-title">💰 お金の使い方のクセ</div><div class="rc-text">'+M.pattern+'</div></div>'+
+ '<div class="reading-card"><div class="rc-title">📈 財運が伸びる方向</div><div class="rc-text">'+M.gain+'</div></div>'+
+ '<div class="reading-card"><div class="rc-title">💸 お金が逃げやすいパターン</div><div class="rc-text">'+M.lose+'</div></div>'+
+ '<div class="reading-card"><div class="rc-title">🛡 財運を安定させるアドバイス</div><div class="rc-text">'+M.advice+'</div></div>';}
+function pitfallHTML(cd){var P=GOGYO_PITFALL[cd.dGogyo],jt=mTsu(cd);return '<div class="reading-card"><div class="rc-title">🕳 最大の落とし穴</div><div class="rc-text">'+P.main+'</div>'+
+ '<div class="rc-sub"><div class="rc-label">出やすいパターン</div>'+rcList(P.patterns)+'</div>'+
+ '<div class="rc-sub"><div class="rc-label">抜け出すコツ</div>'+P.avoid+'</div>'+
+ (jt?'<div class="rc-sub"><div class="rc-label">才能「'+jt+'」ゆえの注意</div>'+(JUKKAMI_PITFALL[jt]||'')+'</div>':'')+'</div>';}
+function stressHTML(cd){var S=GOGYO_STRESS[cd.dGogyo],jt=mTsu(cd);return '<div class="reading-card"><div class="rc-title">🌀 ストレス傾向と回復法</div>'+
+ '<div class="health-item"><b>ストレスの引き金</b>'+S.trigger+'</div>'+
+ '<div class="health-item"><b>溜まったときのサイン</b>'+S.sign+'</div>'+
+ '<div class="health-item"><b>発散におすすめ</b>'+S.release+'</div>'+
+ '<div class="health-item"><b>回復のコツ</b>'+S.recovery+'</div>'+
+ '<div class="health-item"><b>注意したい反応</b>'+S.danger+'</div>'+
+ (jt?'<div class="rc-sub"><div class="rc-label">才能「'+jt+'」の傾向</div>'+(JUKKAMI_STRESS[jt]||'')+'</div>':'')+'</div>';}
+function ageHTML(cd){var L=GOGYO_LIFEAGE[cd.dGogyo];var rows=L.ages.map(function(a){var good=a.type==='good';return '<div class="age-row"><div class="age-head"><span class="age-range">'+a.range+'</span><span class="age-tag '+(good?'at-good':'at-cau')+'">'+(good?'好機':'要注意')+'</span></div><div class="age-title">'+a.title+'</div><div class="rc-text">'+a.desc+'</div></div>';}).join('');return '<div class="reading-card"><div class="rc-title">⏳ 注意の年齢・人生の節目</div>'+rows+'<div class="rc-sub"><div class="rc-label">まとめ</div>'+L.summary+'</div></div>';}
+function successHTML(cd){var D=GOGYO_DIRECTION[cd.dGogyo];return '<div class="reading-card"><div class="rc-title">🌟 成功する環境（日主'+cd.dGogyo+'）</div>'+
+ '<div class="health-item"><b>追い風の方位</b>'+D.dir+'</div>'+
+ '<div class="health-item"><b>力が出る環境</b>'+D.env+'</div>'+
+ '<div class="health-item"><b>ラッキーカラー</b>'+D.color+'</div>'+
+ '<div class="rc-sub"><div class="rc-label">開運のヒント</div>'+D.lucky+'</div></div>';}
 function renderReading(mainGogyo){
   var cd=APP.chartData,y=cd.yojin,t=APP.readingTab,html='';
   if(t==='seikaku'){
     html+='<div class="reading-card"><div class="rc-title">👤 あなたの本質</div><div class="rc-text">'+KAN_PERSONALITY[cd.dStem]+'</div></div>';
-    html+='<div class="reading-card"><div class="rc-title">🔥 際立つ五行</div><div class="rc-text">命式の中で「'+mainGogyo+'」のエネルギーが最も強く出ています。これが行動や判断の軸になっています。</div></div>';
+    html+='<div class="reading-card"><div class="rc-title">🔥 際立つ五行：'+mainGogyo+'</div><div class="rc-text">命式の中で「'+mainGogyo+'」のエネルギーが最も強く出ています。'+GOGYO_SAIDACHI[mainGogyo]+'</div><div class="rc-sub"><div class="rc-label">活かし方</div>この五行の性質が、あなたの行動や判断の軸になります。意識して活かすほど、持ち味が強みに変わります。</div></div>';
   } else if(t==='tekishoku'){
     html+='<div class="reading-card"><div class="rc-title">💼 向いている仕事・適職</div><div class="rc-text">'+GOGYO_WORK[cd.dGogyo]+'</div><div class="rc-sub"><div class="rc-label">用神を活かすなら</div>用神「'+y.primaryYojin+'」の方向性も、運を開く働き方として意識すると良いでしょう。</div></div>';
+    html+=studyHTML(cd);
   } else if(t==='renai'){
-    html+='<div class="reading-card"><div class="rc-title">💗 恋愛・パートナーシップ</div><div class="rc-text">'+GOGYO_LOVE[cd.dGogyo]+'</div></div>';
+    var lyin=(TG.indexOf(cd.dStem)%2===0)?0:1,ls=calcLove(cd.dGogyo,lyin);
+    var en=cd.pillars[1].tsu,enText=(en&&en!=='日主'&&JUKKAMI_DESC[en])?('命式の月柱に「'+en+'」が出ています。'+JUKKAMI_DESC[en]+'この傾向は、人との縁の結び方にも自然と表れます。'):('月柱（'+cd.pillars[1].stem+cd.pillars[1].branch+'）のエネルギーが、人との縁に影響しています。');
+    html+='<div class="reading-card"><div class="rc-title">💗 恋愛タイプ診断</div><div class="love-type">'+ls.type+'</div>'+loveRadarSVG([ls.dep,ls.ichizu,ls.passion,ls.kakehiki])+'<div class="love-bars">'+loveBar('恋愛依存度',ls.dep)+loveBar('一途度',ls.ichizu)+loveBar('情熱度',ls.passion)+loveBar('駆け引き度',ls.kakehiki)+'</div></div>';
+    html+='<div class="reading-card"><div class="rc-title">💞 愛情表現タイプ</div><div class="rc-text">'+ls.expr+'</div></div>';
+    html+='<div class="reading-card"><div class="rc-title">🌹 相性の良いアプローチ</div><div class="rc-text">'+ls.approach+'</div></div>';
+    html+='<div class="reading-card"><div class="rc-title">💑 恋愛・パートナーシップの傾向</div><div class="rc-text">'+GOGYO_LOVE[cd.dGogyo]+'</div></div>';
+    html+='<div class="reading-card"><div class="rc-title">🤝 人間関係の縁</div><div class="rc-text">'+enText+'</div></div>';
   } else if(t==='kenko'){
     var h=GOGYO_HEALTH[cd.dGogyo];
     html+='<div class="reading-card"><div class="rc-title">🩺 健康・体質（日主'+cd.dGogyo+'）</div>'+
@@ -628,11 +781,14 @@ function renderReading(mainGogyo){
     cd.pillars.forEach(function(p){if(p.tsu&&p.tsu!=='日主'&&!shown[p.tsu]){shown[p.tsu]=1;html+='<div style="margin-bottom:10px"><div class="rc-label">'+p.label+'柱：'+p.tsu+'</div><div class="rc-text">'+(JUKKAMI_DESC[p.tsu]||'')+'</div></div>';}});
     html+='</div>';
   } else if(t==='kazoku'){
-    html+='';
     if(cd.noTime)html+='<div class="fumei-note"><span>⏱</span><span>時刻不明のため、時柱（子ども・夢との縁）は対象外です。三柱の縁を表示します。</span></div>';
-    html+='<div class="reading-card"><div class="rc-title">👨‍👩‍👧 家族・縁</div>';
-    cd.pillars.forEach(function(p){html+='<div style="margin-bottom:10px"><div class="rc-label">'+p.label+'柱（'+p.stem+p.branch+'）</div><div class="rc-text">'+FAMILY_DESC[p.label]+'</div></div>';});
-    html+='</div>';
+    html+='<div class="reading-card"><div class="rc-title">👨‍👩‍👧 家族・縁の地図</div><div class="rc-text">四柱はそれぞれ異なる人間関係の領域を映します。年柱＝家系のルーツ、月柱＝身近な縁、日柱＝伴侶、時柱＝次世代。各柱の干支のエネルギーから、縁の質を読み解きます。</div></div>';
+    cd.pillars.forEach(function(p){html+='<div class="reading-card"><div class="rc-title">'+(FAMILY_ICON[p.label]||'🔸')+' '+p.label+'柱（'+p.stem+p.branch+'）</div><div class="rc-text">'+(FAMILY_RICH[p.label]||'')+'</div>'+((p.tsu&&p.tsu!=='日主'&&JUKKAMI_DESC[p.tsu])?'<div class="rc-sub"><div class="rc-label">この柱に出る縁の質「'+p.tsu+'」</div>'+JUKKAMI_DESC[p.tsu]+'</div>':'')+'</div>';});
+  } else if(t==='money'){
+    html+=moneyHTML(cd);
+  } else if(t==='fukabori'){
+    html+='<div class="reading-card" style="background:transparent;padding:0 2px 4px"><div class="rc-text" style="color:var(--text2);font-size:12.5px">日主「'+cd.dGogyo+'」の気質から、つまずきやすい点・ストレス・人生の節目・力が出る環境を読み解きます。弱点ではなく「扱い方を知っておくと楽になるクセ」として捉えてください。</div></div>';
+    html+=pitfallHTML(cd)+stressHTML(cd)+ageHTML(cd)+successHTML(cd);
   }
   document.getElementById('readingArea').innerHTML=html;
 }
@@ -651,12 +807,52 @@ function monthFortune(monthTsu,dStem,monthStem,yojin){
   else lv={label:'凶',cls:'bg-kyo',row:'kyo'};
   return{level:lv,hit:hit,me:me};
 }
+var KAN_GO=[[0,5],[1,6],[2,7],[3,8],[4,9]];
+var JI_GO=[[0,1],[2,11],[3,10],[4,9],[5,8],[6,7]];
+var JI_CHONG=[[0,6],[1,7],[2,8],[3,9],[4,10],[5,11]];
+var JI_HARM=[[0,7],[1,6],[2,5],[3,4],[8,11],[9,10]];
+var DIARY_MSG={
+ high:['天の気が流れ、行動に追い風が吹く吉日。新しいことを始めるのに向いています。','縁と運が重なる日。大切な人への連絡や、重要な決断に向いています。','五行のエネルギーが整う吉日。前向きな行動がより大きな実りへつながります。','流れが良い日。チャンスに乗ることで、思いがけない縁が生まれます。'],
+ mid:['穏やかな流れの一日。焦らず着実に、目の前のことを丁寧に進めましょう。','コツコツした努力が後から実を結ぶ、種まきの時間です。','無理をせず自分のペースを大切にすると、安定した一日になります。','日常の小さな幸せに気づく感性を大切に。穏やかな縁日です。'],
+ low:['ややエネルギーが落ちやすい日。無理な決断や衝動的な行動は控えましょう。','大きな動きは控え、内省と準備の時間にするのが吉。','大きな出費・契約・重要な決断は翌日以降に回すのが賢明です。','守りの日。休養・整理でリセットを。']
+};
+function diaryScore(bd,date){
+  var td=dayGZi(date),ty=yKanIdx(date.getFullYear()),tyj=yJiIdx(date.getFullYear()),tm=getMonthGZi(date),sc=65;
+  var TK=[ty,tm.t,td.t];for(var i=0;i<KAN_GO.length;i++){var a=KAN_GO[i][0],b=KAN_GO[i][1];if(TK.some(function(k){return (k===a&&bd.t===b)||(k===b&&bd.t===a);})){sc+=20;break;}}
+  var TJ=[tyj,tm.b,td.b];
+  JI_GO.forEach(function(pr){if(TJ.some(function(j){return (j===pr[0]&&bd.b===pr[1])||(j===pr[1]&&bd.b===pr[0]);}))sc+=8;});
+  JI_CHONG.forEach(function(pr){if(TJ.some(function(j){return (j===pr[0]&&bd.b===pr[1])||(j===pr[1]&&bd.b===pr[0]);}))sc-=8;});
+  JI_HARM.forEach(function(pr){if(TJ.some(function(j){return (j===pr[0]&&bd.b===pr[1])||(j===pr[1]&&bd.b===pr[0]);}))sc-=4;});
+  var dG=GOGYO[TG[bd.t]],tG=GOGYO[TG[td.t]];
+  if(GEN_C[dG]===tG||GEN_C[tG]===dG)sc+=10;if(KOK_C[dG]===tG||KOK_C[tG]===dG)sc-=5;if(bd.t===td.t)sc+=6;
+  return Math.max(55,Math.min(100,sc));
+}
+function fmtD2(d){return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
+function diaryNav(d){APP.diaryMonth=(APP.diaryMonth||0)+d;renderUnsei();}
+function diaryPick(ds){APP.diaryPick=ds;renderUnsei();}
+function renderDiary(cd){
+  var off=APP.diaryMonth||0,base=new Date(cd.now.getFullYear(),cd.now.getMonth()+off,1),yr=base.getFullYear(),mo=base.getMonth();
+  var bd=dayGZi(cd.birth),first=new Date(yr,mo,1).getDay(),dim=new Date(yr,mo+1,0).getDate(),today=fmtD2(cd.now);
+  var h='<div class="sec-label"><span class="si">📔</span>運勢ダイアリー</div>';
+  h+='<div class="unsei-intro">あなたの命式（日柱）と、その日の干支との巡り合わせから日々の運気を点数化した目安です。点の高い日は行動・連絡・決断に、低い日は休養・準備にあてる――そんな日取りの参考にどうぞ。日付をタップすると詳しい一日の指針が出ます。</div>';
+  h+='<div class="diary-head"><button class="diary-nav" onclick="diaryNav(-1)">‹</button><div class="diary-title">'+yr+'年 '+(mo+1)+'月</div><button class="diary-nav" onclick="diaryNav(1)">›</button></div>';
+  h+='<div class="diary-grid">';['日','月','火','水','木','金','土'].forEach(function(w){h+='<div class="diary-dow">'+w+'</div>';});
+  for(var e=0;e<first;e++)h+='<div class="diary-cell empty"></div>';
+  for(var d=1;d<=dim;d++){var dt=new Date(yr,mo,d),sc=diaryScore(bd,dt),tier=sc>=80?'good':sc<65?'low':'',dot=sc>=80?'var(--green-d)':sc<65?'var(--red-d)':'var(--text3)',ds=yr+'-'+(mo+1)+'-'+d,isT=fmtD2(dt)===today,isS=APP.diaryPick===ds;
+    h+='<div class="diary-cell '+tier+(isT?' today':'')+(isS?' sel':'')+'" onclick="diaryPick(\''+ds+'\')">'+d+'<span class="diary-dot" style="background:'+dot+'"></span></div>';}
+  h+='</div>';
+  if(APP.diaryPick){var pp=APP.diaryPick.split('-'),pdt=new Date(+pp[0],+pp[1]-1,+pp[2]);if(pdt.getFullYear()===yr&&pdt.getMonth()===mo){var psc=diaryScore(bd,pdt),pg=dayGZi(pdt),wd=['日','月','火','水','木','金','土'][pdt.getDay()],tier2=psc>=80?'high':psc<65?'low':'mid',ms=DIARY_MSG[tier2],msg=ms[(+pp[0]*10000+ +pp[1]*100+ +pp[2])%ms.length],bc=psc>=80?'var(--green-d)':psc<65?'var(--red-d)':'var(--gold-soft)';
+    h+='<div class="diary-detail"><div style="font-size:10px;letter-spacing:2px;color:var(--text3)">'+(mo+1)+'月'+pp[2]+'日（'+wd+'）</div><div class="dd-score" style="color:'+bc+'">'+psc+'<span style="font-size:14px;color:var(--text3)">点</span></div><div class="dd-gz">'+TG[pg.t]+DZ[pg.b]+' の日</div><div class="dd-msg">'+msg+'</div></div>';}}
+  return h;
+}
 function renderUnsei(){
   var el=document.getElementById('screen-unsei');
   if(!APP.chartData){el.innerHTML=emptyState('運勢分析');return;}
   var cd=APP.chartData,y=cd.yojin,dStem=cd.dStem,html='';
   html+='<div class="yojin-card"><div class="yj-circle" style="background:'+GOGYO_COLOR[y.primaryYojin]+'">'+y.primaryYojin+'</div><div class="yj-text">あなたの用神 <b>'+y.primaryYojin+'</b> が巡る時期が、好機です。</div></div>';
+  html+=renderDiary(cd);
   html+='<div class="sec-label"><span class="si">🗓️</span>年運（用神との相性つき）</div>';
+  html+='<div class="unsei-intro"><b>年運</b>は、その年ごとの運の流れです。生まれ持った命式（あなた自身）に、毎年めぐってくる干支がどう関わるかで吉凶を読みます。用神（運を開く五行）がめぐる年は本質が活き、追い風に。1年単位の大きなテーマを掴むのに使います。★は用神との相性を表します。</div>';
   for(var yi=0;yi<3;yi++){
     var yr=cd.now.getFullYear()+yi,yt=yKanIdx(yr),gz=TG[yt]+DZ[yJiIdx(yr)],tsu=tsuhensei(dStem,TG[yt]),yEl=GOGYO[TG[yt]];
     var base=TSU_BASE[tsu],hit='neutral';
@@ -667,6 +863,7 @@ function renderUnsei(){
     html+='<div class="year-detail'+(yi===0?' now':'')+'"><div class="yd-year">'+(yi===0?'今年':yi===1?'来年':'再来年')+' '+yr+'年</div><div class="yd-main"><span class="yd-gz">'+gz+'</span><span class="yd-tsu">'+tsu+'</span><span class="yd-stars">'+ss+'</span></div><div class="yd-text">'+txt+'</div>'+flag+'</div>';
   }
   html+='<div class="sec-label"><span class="si">📅</span>今後12ヶ月の月運</div>';
+  html+='<div class="unsei-intro"><b>月運</b>は、月ごとの細かな運の波です。年運という大きな流れの中で、どの月に動くと良いか・控えると良いかを見ます。用神がめぐる月（◆）は積極策、忌神の月（◇）は守りが基本。各月をタップすると詳しい指針が開きます。日々の予定を組む目安にどうぞ。</div>';
   var monthsData=[];
   for(var k=0;k<12;k++){var md=new Date(cd.now.getFullYear(),cd.now.getMonth()+k,15),mgz=getMonthGZi(md),mtsu=tsuhensei(dStem,TG[mgz.t]),mf=monthFortune(mtsu,dStem,TG[mgz.t],y);monthsData.push({k:k,md:md,mgz:mgz,mtsu:mtsu,mf:mf});}
   var bestHit=monthsData.filter(function(x){return x.mf.hit==='hit';});
@@ -679,6 +876,7 @@ function renderUnsei(){
   });
   html+='</div>';
   html+='<div class="sec-label"><span class="si">📈</span>大運（用神期つき）</div>';
+  html+='<div class="unsei-intro"><b>大運</b>は、約10年ごとに切り替わる人生の季節です。立運の年齢から始まり、順行・逆行の向きに従って干支がめぐります。用神期（◆）にあたる10年は人生の追い風、忌神期（◇）は土台を固める時期。いま自分がどの季節にいるかを知ることで、長期の構えが定まります。</div>';
   html+='<div style="font-size:11px;color:var(--text3);margin-bottom:8px">立運 '+cd.daiyun.startAge+'歳・'+(cd.daiyun.forward?'順行':'逆行')+'（'+cd.daiyun.setsu+'まで'+cd.daiyun.days.toFixed(1)+'日÷3）</div>';
   html+='<div class="daiyun-list">';
   cd.daiyun.rows.forEach(function(r,i){var dEl=GOGYO[r.stem],hit=y.yojinEl.indexOf(dEl)>=0?'<span style="color:var(--green-d);font-size:10px">◆用神期</span>':y.kishinEl.indexOf(dEl)>=0?'<span style="color:var(--red-d);font-size:10px">◇忌神期</span>':'<span></span>';html+='<div class="dy-row'+(i===cd.curIdx?' current':'')+'"><span class="dy-age">'+r.age+'歳〜</span><span><span class="dy-gz">'+r.gz+'</span> <span class="dy-tsu">'+r.tsu+'</span></span>'+hit+(i===cd.curIdx?'<span class="mo-badge bg-good">現在</span>':'<span></span>')+'</div>';});
@@ -988,6 +1186,7 @@ function saveBirthCoords(id){var el=document.getElementById('bc-'+id);if(!el)ret
 
 /* ============ グローバル公開 ============ */
 window.go=go;window.toggleMonth=toggleMonth;window.setReadingTab=setReadingTab;
+window.diaryNav=diaryNav;window.diaryPick=diaryPick;
 window.switchKimon=switchKimon;window.onDemoHeading=onDemoHeading;window.enableSensor=enableSensor;
 window.showAdd=showAdd;window.cancelAdd=cancelAdd;window.toggleFormNoTime=toggleFormNoTime;
 window.saveProfile=saveProfile;window.selectProfile=selectProfile;window.askDelete=askDelete;
