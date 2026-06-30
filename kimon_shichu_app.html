@@ -3159,7 +3159,9 @@ function onOrient(e){var h=null;if(e.webkitCompassHeading!=null)h=e.webkitCompas
 
 /* ============ ヘルプ画面 ============ */
 function showHelp(){
+  var cur=document.querySelector('.screen.active');if(cur)APP.scrollPos[cur.id]=window.scrollY;
   document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  var hd=document.querySelector('.header');if(hd)hd.style.display='none';
   var el=document.getElementById('screen-help');
   el.classList.add('active');
   renderHelp();
@@ -3544,7 +3546,7 @@ function renderSettings(){
     +stgRowIc('blue','help')
     +'<div class="stg-row-body"><div class="stg-row-title">使い方・ヘルプ</div><div class="stg-row-desc">初回セットアップ・タブの説明・FAQ・用語解説</div></div>'
     +'<div class="stg-row-right">'+stgChev()+'</div>'
-  +'</div></div>';
+  +'</div>';
   var rlabel={round:'四捨五入',floor:'切り捨て',ceil:'切り上げ'}[APP.ritsuunMode||'round'];
   html+='<details class="stg-det"><summary class="stg-sum">'
     +stgRowIc('gray','calendar_month')
