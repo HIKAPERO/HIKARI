@@ -1683,6 +1683,32 @@ var TEMP_GOGYO_PITFALL={
 };
 function mbtiPitfallHTML(cd){if(!cd.mbti)return '';var grp=mbtiGroupOf(cd.mbti);return '<div class="reading-card"><div class="rc-title">🧭 MBTI×成長のためのヒント</div><div class="rc-text">'+TEMP_GOGYO_PITFALL[grp][cd.dGogyo]+'</div></div>';}
 
+/* 相性タブ用：4気質グループ同士の相性（順不同10通り） */
+var TEMP_COMPAT={
+ 'NF-NF':'お互いの気持ちを深く理解し合えるタイプ同士。共感の連鎖で絆が深まりやすい反面、感情が同時に乱れると支え合う側が不在になることもあります。意識的に冷静な時間を作ると安定します。',
+ 'NF-NT':'感情を大切にするNFと、論理を大切にするNT。視点の違いが新しい発見になりますが、話のテンポや重視するポイントが違うため、お互いのものさしを理解する意識が鍵になります。',
+ 'NF-SJ':'理想を追うNFと、安定を求めるSJ。NFが新しい可能性を見せ、SJが地に足をつけてくれる、補い合える組み合わせです。価値観の違いを否定せず尊重し合うと長続きします。',
+ 'NF-SP':'深い関わりを求めるNFと、身軽さを大事にするSP。一緒にいて刺激は多いものの、距離感の取り方の違いに気をつけたい組み合わせです。求める関係性の濃さを話し合っておくと◎。',
+ 'NT-NT':'お互いに論理を重視するタイプ同士。話が噛み合いやすく知的な刺激を与え合えますが、どちらも譲らないと議論が平行線になることも。「正しさ」より「心地よさ」を意識すると関係が深まります。',
+ 'NT-SJ':'戦略を描くNTと、着実に実行するSJ。役割分担がはまれば非常に強い組み合わせですが、変化への向き合い方の違いで衝突することもあります。決定権を明確にしておくとスムーズです。',
+ 'NT-SP':'計画を練るNTと、すぐに動くSP。最初はテンポの違いに戸惑うかもしれませんが、噛み合うとアイデアと行動力が掛け合わさり、推進力が一気に高まる組み合わせです。',
+ 'SJ-SJ':'お互いに誠実で安定を大切にするタイプ同士。信頼関係をじっくり築ける反面、どちらも変化を避けがちでマンネリ化に注意。たまには新しいことに一緒に挑戦してみましょう。',
+ 'SJ-SP':'計画的なSJと、自由なSP。SJが安定をもたらし、SPが新しい風を吹き込む、刺激と安心のバランスが取れる組み合わせです。お互いのペースを尊重すると良い関係が続きます。',
+ 'SP-SP':'お互いにフットワークが軽く、一緒にいると毎日が楽しい組み合わせです。ただしどちらも計画性が苦手な傾向があるため、大事な約束や将来の話は意識して確認し合いましょう。'
+};
+function mbtiPairKey(g1,g2){return [g1,g2].sort().join('-');}
+function mbtiAishoHTML(cdA,cdB,nameA,nameB){
+  if(!cdA.mbti||!cdB.mbti){
+    var missing=[];if(!cdA.mbti)missing.push(esc(nameA));if(!cdB.mbti)missing.push(esc(nameB));
+    return '<div class="reading-card mbti-prompt" onclick="go(\'settings\')"><div class="rc-title">🧭 MBTIでも相性を見てみませんか？</div><div class="rc-text">'+missing.join('・')+'のMBTIを登録すると、四柱推命とは違う視点での相性も見られます。設定 → 命式を編集 から追加できます。</div></div>';
+  }
+  var gA=mbtiGroupOf(cdA.mbti),gB=mbtiGroupOf(cdB.mbti),key=mbtiPairKey(gA,gB);
+  return '<div class="reading-card"><div class="rc-title">🧭 MBTI×四柱推命の相性</div>'
+    +'<div class="rc-sub" style="margin-bottom:6px"><div class="rc-label">'+esc(nameA)+'：'+cdA.mbti+'（'+MBTI_NAME[cdA.mbti]+'）　×　'+esc(nameB)+'：'+cdB.mbti+'（'+MBTI_NAME[cdB.mbti]+'）</div></div>'
+    +'<div class="rc-text">'+(TEMP_COMPAT[key]||'')+'</div>'
+    +'<div class="rc-sub" style="margin-top:6px;font-size:11px;color:var(--text3)">※ '+(MBTI_GROUP_NAME[gA]||'')+'×'+(MBTI_GROUP_NAME[gB]||'')+'の傾向に基づく目安です。</div></div>';
+}
+
 function mbtiHTML(cd){
   if(!cd.mbti)return '<div class="reading-card mbti-prompt" onclick="go(\'settings\')"><div class="rc-title">🧭 MBTIも登録してみませんか？</div><div class="rc-text">MBTIを登録すると、四柱推命の本質とMBTIの性格タイプを組み合わせた、より立体的な性格分析が見られます。設定 → 命式を編集 から追加できます。</div></div>';
   var grp=mbtiGroupOf(cd.mbti),syn=grp?TEMP_GOGYO_PERSONA[grp][cd.dGogyo]:'';
@@ -2563,6 +2589,7 @@ function renderAisho(){
   html+='<div class="reading-card"><div class="rc-title">⭐ 運の補い合い：'+r.yojin.type+'</div><div class="rc-text">'+r.yojin.desc+'</div>'+(r.yojin.advice?'<div class="rc-sub"><div class="rc-label">活かすコツ</div>'+r.yojin.advice+'</div>':'')+'<div class="rc-sub"><div class="rc-label">用神</div>'+esc(pa.name)+'：'+cdA.yojin.primaryYojin+' ／ '+esc(pb.name)+'：'+cdB.yojin.primaryYojin+'</div></div>';
   html+='<div class="reading-card"><div class="rc-title">⚖️ 五行の補完：'+r.balance.type+'</div><div class="rc-text">'+r.balance.desc+'</div></div>';
   html+=aishoGogyo(cdA,cdB,pa.name,pb.name);
+  html+=mbtiAishoHTML(cdA,cdB,pa.name,pb.name);
   var st=aishoStats(r);
   html+='<div class="reading-card"><div class="rc-title">📈 点数の見方</div><div class="stat-grid"><div class="stat-cell hl"><div class="sc-v">'+r.total+'</div><div class="sc-l">このペア</div></div><div class="stat-cell"><div class="sc-v">'+st.max+'</div><div class="sc-l">最高</div></div><div class="stat-cell"><div class="sc-v">'+st.min+'</div><div class="sc-l">最低</div></div><div class="stat-cell"><div class="sc-v">'+st.avg+'</div><div class="sc-l">平均</div></div></div><div class="rc-sub"><div class="rc-label">出会いの縁ランキング</div>日干・日支の巡り合わせは、全組み合わせ中およそ <b style="color:var(--gold-soft)">上位'+st.top+'%</b>。点数は約45〜98点の範囲で平均は約'+st.avg+'点、'+(r.total>=st.avg?'平均を上回る良縁':'平均前後で、歩み寄りで十分に伸ばせる相性')+'です。</div></div>';
   html+='<div class="hint">相性は「良い・悪い」ではなく関係の<b>クセ</b>です。刺激の多い相性も、理解と歩み寄りで強い絆になります。生年月日のみで算出し、出生時刻があるとより精緻になります。</div>';
