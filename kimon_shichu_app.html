@@ -103,6 +103,8 @@
   .rtab{font-size:12px;padding:5px 13px;border:0.5px solid var(--line2);border-radius:20px;background:transparent;color:var(--text2);cursor:pointer;font-family:inherit}
   .rtab.active{background:var(--blue-bg);color:var(--blue);border-color:transparent;font-weight:600}
   .reading-card{background:var(--surface2);border-radius:var(--r);padding:15px;margin-bottom:10px}
+  .mbti-prompt{cursor:pointer;border:1.5px dashed var(--gold-dim);background:rgba(205,169,79,.08);-webkit-tap-highlight-color:rgba(0,0,0,.04)}
+  .mbti-prompt:active{background:rgba(205,169,79,.14)}
   .rc-title{font-size:13px;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:6px}
   .rc-text{font-size:13px;line-height:1.9}
   .rc-sub{font-size:12px;color:var(--text2);line-height:1.8;margin-top:8px;padding-top:8px;border-top:0.5px solid var(--line)}
@@ -314,8 +316,8 @@
   .love-bars{margin-top:6px}
   .lb-row{display:grid;grid-template-columns:74px 1fr 30px;align-items:center;gap:8px;margin-bottom:7px}
   .lb-label{font-size:12px;color:var(--text2)}
-  .lb-track{height:7px;background:var(--ink-3,#1f2435);border-radius:4px;overflow:hidden}
-  .lb-fill{height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold-soft));border-radius:4px}
+  .lb-track{height:7px;background:var(--surface2,#e8ddc4);border:0.5px solid var(--line2,#d8cba8);border-radius:4px;overflow:hidden}
+  .lb-fill{display:block;height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold-soft));border-radius:4px;transition:width .4s ease}
   .lb-val{font-size:12px;color:var(--gold-soft);text-align:right;font-variant-numeric:tabular-nums}
   .unsei-intro{font-size:12.5px;color:var(--text2);line-height:1.85;background:var(--surface2);border-left:2px solid var(--gold-dim);border-radius:0 8px 8px 0;padding:9px 12px;margin:2px 0 12px}
   .unsei-intro b{color:var(--gold-soft);font-weight:600}
@@ -1279,7 +1281,7 @@ function buildChartData(profile,mode){
   // 金運方位：財星（剋す五行＝日主がKOK_Cする相手）に対応する方位
   var wealthEl=KOK_C[dGogyo];
   var wealthDirs=DIR.filter(function(d,i){return PAL_GOGYO[PALACES[i]]===wealthEl;});
-  return{noTime:noTime,birth:birth,solarInfo:solarInfo,sex:profile.sex,dStem:dStem,dGogyo:dGogyo,pillars:pillars,score:score,total:total,yojin:yojin,daiyun:daiyun,curIdx:curIdx,nichiun:nichiun,nichiunGZ:TG[todayGZ.t]+DZ[todayGZ.b],kimon:kimon,dirs:dirs,boardTab:boardTab,wealthEl:wealthEl,wealthDirs:wealthDirs,now:now};
+  return{noTime:noTime,birth:birth,solarInfo:solarInfo,sex:profile.sex,mbti:profile.mbti||'',dStem:dStem,dGogyo:dGogyo,pillars:pillars,score:score,total:total,yojin:yojin,daiyun:daiyun,curIdx:curIdx,nichiun:nichiun,nichiunGZ:TG[todayGZ.t]+DZ[todayGZ.b],kimon:kimon,dirs:dirs,boardTab:boardTab,wealthEl:wealthEl,wealthDirs:wealthDirs,now:now};
 }
 /* ============ 永続化層（実機では端末ストレージに差し替え）============
    プロファイル構造：{id,name,birthDate,birthTime,sex,coords,memo,createdAt}
@@ -1288,13 +1290,13 @@ var Store={
   profiles:[],activeId:null,_seq:1,
   list:function(){return this.profiles;},
   getActive:function(){var self=this;return this.profiles.filter(function(p){return p.id===self.activeId;})[0]||null;},
-  add:function(data){var p={id:'p'+(this._seq++),name:data.name,birthDate:data.birthDate,birthTime:data.birthTime,sex:data.sex,coords:data.coords,memo:data.memo||'',createdAt:Date.now()};this.profiles.push(p);this.activeId=p.id;persist();return p;},
+  add:function(data){var p={id:'p'+(this._seq++),name:data.name,birthDate:data.birthDate,birthTime:data.birthTime,sex:data.sex,coords:data.coords,mbti:data.mbti||'',memo:data.memo||'',createdAt:Date.now()};this.profiles.push(p);this.activeId=p.id;persist();return p;},
   setActive:function(id){this.activeId=id;persist();},
   remove:function(id){this.profiles=this.profiles.filter(function(p){return p.id!==id;});if(this.activeId===id)this.activeId=this.profiles.length?this.profiles[0].id:null;persist();},
   rename:function(id,name){this.profiles.forEach(function(p){if(p.id===id)p.name=name;});persist();},
   setMemo:function(id,memo){this.profiles.forEach(function(p){if(p.id===id)p.memo=memo;});persist();},
   setCoords:function(id,coords){this.profiles.forEach(function(p){if(p.id===id)p.coords=coords;});persist();},
-  update:function(id,data){this.profiles.forEach(function(p){if(p.id===id){p.name=data.name;p.birthDate=data.birthDate;p.birthTime=data.birthTime;p.sex=data.sex;if(data.coords!==undefined)p.coords=data.coords;if(data.memo!==undefined)p.memo=data.memo;}});persist();}
+  update:function(id,data){this.profiles.forEach(function(p){if(p.id===id){p.name=data.name;p.birthDate=data.birthDate;p.birthTime=data.birthTime;p.sex=data.sex;if(data.coords!==undefined)p.coords=data.coords;if(data.mbti!==undefined)p.mbti=data.mbti;if(data.memo!==undefined)p.memo=data.memo;}});persist();}
 };
 
 var APP={chartData:null,ritsuunMode:'round',built:{home:false,meishiki:false,unsei:false,kimon:false,trip:false,aisho:false},
@@ -1424,7 +1426,7 @@ function renderMeishiki(){
   html+='<div class="sec-label"><span class="si">⭐</span>あなたの用神（人生の鍵）</div>';
   html+='<div class="yojin-hero"><div class="yh-label">🔑 運を開く五行</div><div class="yh-main"><div class="yh-element" style="background:'+GOGYO_COLOR[y.primaryYojin]+'">'+y.primaryYojin+'</div><div><div class="yh-element-name">'+y.primaryYojin+'（'+ELEMENT_KEY[y.primaryYojin]+'）</div><div class="yh-element-sub">運を支える中心の五行</div></div></div><div class="yh-text">'+ym.life+'</div><div class="yh-basis">判定根拠：日主'+cd.dStem+'は'+(cd.noTime?'三柱で':'')+(y.isStrong?'身強（助ける'+y.help.toFixed(1)+' ≥ 弱める'+y.drain.toFixed(1)+'）なので抑える':'身弱（助ける'+y.help.toFixed(1)+' < 弱める'+y.drain.toFixed(1)+'）なので助ける')+'「'+y.primaryYojin+'」が用神です。</div></div>';
   // 鑑定テキストタブ
-  var tabs=[['seikaku','性格'],['tekishoku','適職'],['renai','恋愛'],['kenko','健康'],['jukkami','才能'],['kazoku','家族'],['money','お金'],['fukabori','深掘り']];
+  var tabs=[['seikaku','性格'],['jukkami','才能'],['tekishoku','適職'],['renai','恋愛'],['kenko','健康'],['kazoku','家族'],['money','お金'],['fukabori','深掘り']];
   html+='<div class="sec-label"><span class="si">📖</span>詳細鑑定</div>';
   html+='<div class="reading-tabs">'+tabs.map(function(t){return '<button class="rtab'+(APP.readingTab===t[0]?' active':'')+'" onclick="setReadingTab(\''+t[0]+'\')">'+t[1]+'</button>';}).join('')+'</div>';
   html+='<div id="readingArea"></div>';
@@ -1505,13 +1507,169 @@ var GOGYO_DIRECTION={
  金:{dir:'西・北西',env:'都市・オフィス・整った環境・専門職の現場',color:'ホワイト・シルバー・ゴールド',lucky:'秋・西方向が勝負どころ。クリーンで洗練された環境でこそ実力が発揮されます。'},
  水:{dir:'北',env:'海・川・静かな環境・海外・リモートワーク',color:'ブラック・ネイビー・ディープブルー',lucky:'北の方向や水のある場所でひらめきが生まれやすいです。海外や新しいフィールドでも活躍できます。'}
 };
-var FAMILY_RICH={
- 年柱:'祖父母・両親・家系のルーツとの縁を表す柱。幼少期に置かれた環境や、目上・年長者から受け継ぐもの、社会的なスタート地点に影響します。ここが整っていると、ルーツや周囲の支援を追い風にできます。',
- 月柱:'両親・きょうだい・職場など「身近で日常的に関わる人」との縁、そして社会人としての土台を表す中心的な柱。働き方や対人関係の基本スタンス、社会での立ち位置がここに表れます。',
- 日柱:'あなた自身と、配偶者・パートナーとの縁を表す柱。日支は結婚・家庭の領域でもあり、私生活や最も近い人との関係性の質、距離の取り方を映します。',
- 時柱:'子ども・後輩・部下との縁、そして将来・夢・晩年との縁を表す柱。育てる対象や、次の世代へ受け渡していくものに関わります。時刻が分かると、より詳しく読めます。'
+var GOGYO_JOBS={
+ 木:['教育・保育（先生、保育士、塾講師）','人材育成・コーチング・キャリア支援','NPO・環境・地域づくり関連','起業家・新規事業の立ち上げ','人事・組織開発','農業・林業・ガーデニング関連','コンサルタント（成長支援系）'],
+ 火:['芸能・俳優・タレント・MC','広告・マーケティング・広報','イベント企画・プロデュース','営業・接客（人前に出る仕事）','デザイナー・クリエイター','スポーツ選手・インストラクター','配信者・YouTuber・SNS発信業'],
+ 土:['経理・会計士・税理士','建築士・不動産関連','公務員・行政職','栄養士・調理師・飲食業','介護・福祉関連職','プロジェクトマネージャー','農業・畜産（地に足のついた仕事）'],
+ 金:['エンジニア・プログラマー','医師・薬剤師・歯科医師','弁護士・司法書士などの士業','伝統工芸・職人・技術職','品質管理・精密機器関連','パイロット・整備士','財務・データアナリスト'],
+ 水:['研究者・大学教員','作家・脚本家・編集者','心理カウンセラー・セラピスト','翻訳家・通訳・語学関連','哲学・人文学系の専門職','プログラマー・データサイエンティスト','外交官・国際関連の仕事']
 };
-var FAMILY_ICON={年柱:'🌳',月柱:'🏠',日柱:'💑',時柱:'🌱'};
+var GOGYO_MAJOR={
+ 木:['教育学部','心理学部','農学部・生命科学系','経営学部（起業・組織系）','国際関係学部'],
+ 火:['芸術学部・美術系','メディア・映像・放送学科','スポーツ科学部','マーケティング・広告学科','演劇・音楽・パフォーマンス系'],
+ 土:['建築学部','経済学部','栄養学科・家政学部','社会福祉学部','農学部・畜産学科'],
+ 金:['工学部（機械・電子・情報）','医学部・歯学部・薬学部','法学部','理学部（物理・化学）','航空・精密技術系学科'],
+ 水:['文学部','心理学部','情報科学部・データサイエンス学科','哲学科・人文学系','外国語学部・国際教養学部']
+};
+var TSU_CAREER={
+ 比肩:'自分の裁量で動ける仕事や、実力がそのまま評価される世界に向いています。フリーランス・独立志向の強い職種、個人competitionのある業界で力を発揮します。',
+ 劫財:'チームを巻き込みながら前に進める仕事が向いています。営業・プロジェクト推進・スタートアップなど、スピード感のある現場で輝きます。',
+ 食神:'表現力や発想力をそのまま仕事にできるタイプ。企画職・クリエイティブ職・人を楽しませるエンタメ系の仕事との相性が良いです。',
+ 傷官:'独自のセンスや視点が評価される仕事に向いています。専門職・職人・デザイナーなど、既存の枠にとらわれない仕事で本領発揮します。',
+ 偏財:'人脈とフットワークを活かす仕事が向いています。営業・貿易・不動産など、チャンスをつかみに行く動きの多い仕事と好相性です。',
+ 正財:'コツコツ積み上げて信頼を得る仕事に向いています。経理・公務員など、堅実さが評価される業界で長く活躍できます。',
+ 偏官:'プレッシャーのある環境ほど力を発揮するタイプ。経営・士業・体育会系の組織など、競争の激しい業界で強さを発揮します。',
+ 正官:'規律と信頼が求められる仕事に向いています。公務員・大企業・管理職など、ルールの中で評価される仕事と好相性です。',
+ 偏印:'専門性と直感を組み合わせる仕事が向いています。研究・企画・コンサルなど、独自の知見を武器にする仕事で力を発揮します。',
+ 印綬:'学び続けること自体が仕事になるタイプ。教育・研究・専門職など、知識を深めて人に伝える仕事で評価が高まります。'
+};
+function jobsHTML(cd){return '<div class="reading-card"><div class="rc-title">🎯 具体的な職業例（日主'+cd.dGogyo+'）</div>'+rcList(GOGYO_JOBS[cd.dGogyo])+'<div class="rc-sub"><div class="rc-label">職業選びのヒント</div>これらはあくまで方向性の一例です。同じ五行でも興味や環境によって選ぶ仕事は変わります。「なぜ向いているか」の理由（'+ELEMENT_KEY[cd.dGogyo]+'の力）を意識して選ぶのがポイントです。</div></div>';}
+function majorHTML(cd){return '<div class="reading-card"><div class="rc-title">🏫 向いている学部・進路の系統</div>'+rcList(GOGYO_MAJOR[cd.dGogyo])+'<div class="rc-sub"><div class="rc-label">進路選びの視点</div>学部選びに迷ったときは、この系統を軸に「何を学ぶと将来の適職につながるか」という視点で考えると進路がイメージしやすくなります。</div></div>';}
+function careerHTML(cd){var jt=mTsu(cd);if(!jt)return '';return '<div class="reading-card"><div class="rc-title">⚡ 十神「'+jt+'」から見る強みの活かし方</div><div class="rc-text">'+(TSU_CAREER[jt]||'')+'</div></div>';}
+
+/* ── 性格タブ拡張用データ ── */
+var KAN_KEYWORD={甲:'まっすぐで信念の強いリーダー気質',乙:'柔軟で気配り上手な調整役',丙:'明るく場を盛り上げるムードメーカー',丁:'繊細で人に寄り添う共感型',戊:'どっしり構えた頼れる安定型',己:'やさしく縁の下で支えるサポーター',庚:'意志が強くブレない実力派',辛:'美意識が高く繊細なこだわり屋',壬:'視野が広く臨機応変な策士',癸:'直感が鋭く静かな探求者'};
+var PILLAR_FACE={年:{label:'外から見える顔',desc:'第一印象や、周囲・社会から見られるイメージに表れます。'},月:{label:'普段の素の性格',desc:'最も基本となる行動パターン。日常の判断や習慣のクセはここに最も強く出ます。'},日:{label:'内面・プライベートの顔',desc:'家族や親しい人にだけ見せる本音、プライベートでの素の自分です。'},時:{label:'将来に向かう姿勢',desc:'潜在的な可能性や、晩年・将来に向けて伸びていく方向性を表します。'}};
+var GOGYO_SW={
+ 木:{strength:['新しいことへの挑戦力','人や物事を育てる力','まっすぐな向上心','自分の意志で動ける主体性'],weakness:['頑固になりやすい','人の意見を聞き入れにくい時がある','成長を急ぎすぎて焦りやすい','一度決めたことを曲げにくい']},
+ 火:{strength:['人を惹きつける明るさ','行動力とスピード感','表現力・発信力の高さ','場の空気を変える存在感'],weakness:['感情の起伏が出やすい','飽きっぽく長続きしないことがある','勢いで決めて後悔しやすい','注目されないと物足りなさを感じる']},
+ 土:{strength:['信頼される安定感','コツコツ積み上げる継続力','面倒見の良さ','現実的でブレない判断力'],weakness:['変化への対応が遅れがち','慎重すぎてチャンスを逃すことがある','心配性で動けなくなる時がある','新しい環境に馴染むまで時間がかかる']},
+ 金:{strength:['高い集中力と精度','筋を通す誠実さ','決めたことをやり遂げる意志力','美的センス・こだわりの強さ'],weakness:['完璧主義になりやすい','人に厳しくなりすぎることがある','融通が利きにくい時がある','失敗への恐れが強い']},
+ 水:{strength:['深い思考力・洞察力','広い視野と柔軟な対応力','直感力の鋭さ','静かな探求心'],weakness:['考えすぎて動けないことがある','感情を内側に溜め込みやすい','決断が遅くなりがち','本音を見せるまで時間がかかる']}
+};
+var GOGYO_COMM={
+ 木:'率直にストレートな物言いをするタイプ。正論で人を導く力がありますが、言い方が強くなりすぎると相手を委縮させることも。「伝え方をやわらげる」意識を持つと関係がより良くなります。',
+ 火:'明るく感情豊かなコミュニケーションが得意。場を盛り上げる力がある一方、テンションに波があるため、相手によっては疲れてしまうことも。聞き役に回る時間を意識的に作ると信頼が深まります。',
+ 土:'落ち着いて聞き役に回るのが得意なタイプ。安心感を与える話し方ができますが、自分の意見を言い出すタイミングを逃しやすい面も。「思ったことを一言添える」練習が成長につながります。',
+ 金:'論理的でわかりやすく説明するのが得意。誠実な印象を与えますが、正確さにこだわりすぎると堅い・厳しい印象になることも。柔らかい言葉を一つ添えると伝わりやすくなります。',
+ 水:'聞き上手で、相手の本音を引き出すのが得意なタイプ。深い話ができる一方、自分のことは話したがらない傾向も。少しずつ自己開示する練習が、より深い関係づくりに役立ちます。'
+};
+/* ============ MBTI×四柱推命 ============ */
+var MBTI_TYPES=['INTJ','INTP','ENTJ','ENTP','INFJ','INFP','ENFJ','ENFP','ISTJ','ISFJ','ESTJ','ESFJ','ISTP','ISFP','ESTP','ESFP'];
+var MBTI_NAME={INTJ:'戦略思考型',INTP:'探究分析型',ENTJ:'統率推進型',ENTP:'発想開拓型',INFJ:'理想洞察型',INFP:'理念探求型',ENFJ:'共感先導型',ENFP:'情熱発信型',ISTJ:'堅実遂行型',ISFJ:'献身支援型',ESTJ:'実務管理型',ESFJ:'社交調和型',ISTP:'実践分析型',ISFP:'感性表現型',ESTP:'行動挑戦型',ESFP:'陽気社交型'};
+var MBTI_DESC={
+ INTJ:'長期的な視点で物事を組み立てるのが得意な戦略家タイプ。独自のビジョンを持ち、論理的に最短ルートを描きます。一人の時間を使って深く考えることでエネルギーを充電します。',
+ INTP:'仕組みや理論を突き詰めて理解したいタイプ。好奇心が強く、新しい概念やアイデアを分析することに喜びを感じます。実用性よりも「なぜそうなるか」を重視します。',
+ ENTJ:'目標に向かって人と組織を動かす推進力があるタイプ。決断が早く、効率を重視して物事を進めます。リーダーシップを発揮する場面で本領を発揮します。',
+ ENTP:'新しいアイデアを次々と生み出す発想力豊かなタイプ。議論や知的な刺激を好み、常識にとらわれない視点で物事を捉えます。変化と挑戦を楽しみます。',
+ INFJ:'物事の本質や人の心の機微を読み取る洞察力があるタイプ。理想を大切にしながら、静かに深く物事に向き合います。少人数での深い関わりを好みます。',
+ INFP:'自分の内側にある価値観や理念を大切にするタイプ。感受性が豊かで、物語や創作を通して自分を表現することが得意です。誠実さと調和を重視します。',
+ ENFJ:'人の可能性を引き出し、まわりを前向きに導く力があるタイプ。共感力が高く、人の感情の変化に敏感です。チームや集団をまとめる場面で輝きます。',
+ ENFP:'好奇心旺盛でエネルギッシュなタイプ。新しい人やアイデアとの出会いにワクワクし、自由な発想で周囲を巻き込みます。可能性を信じる力が強みです。',
+ ISTJ:'責任感が強く、決めたことを最後までやり遂げるタイプ。事実とルールを大切にし、堅実に物事を積み上げます。信頼を積み重ねることに価値を置きます。',
+ ISFJ:'まわりの人を陰で支えることに喜びを感じるタイプ。細やかな気配りができ、安定した関係を大切にします。誠実で献身的な姿勢が周囲から信頼されます。',
+ ESTJ:'物事を計画的に管理し、実行していく力があるタイプ。責任感が強く、組織やルールを重んじます。現実的な判断で着実に結果を出します。',
+ ESFJ:'人との調和を大切にし、まわりをサポートするタイプ。社交的で世話好きな一面があり、集団の雰囲気を良くする力があります。協調性が高く評価されます。',
+ ISTP:'手を動かしながら物事を理解する実践派タイプ。冷静に状況を分析し、効率よく問題を解決します。自由な裁量で動ける環境で力を発揮します。',
+ ISFP:'感性が豊かで、自分の美意識や価値観を大切にするタイプ。穏やかでマイペースながら、芯のこだわりを持っています。表現することで自分らしさを発揮します。',
+ ESTP:'今この瞬間を楽しみながら行動するエネルギッシュなタイプ。リスクを恐れず、状況に応じて柔軟に対応します。実践と経験から学ぶスタイルです。',
+ ESFP:'場を明るくするムードメーカータイプ。人と接することが好きで、楽しい雰囲気を作るのが得意です。今を全力で楽しむ姿勢が周囲を惹きつけます。'
+};
+var MBTI_GROUP_NAME={NT:'分析家グループ',NF:'理念家グループ',SJ:'堅実家グループ',SP:'行動家グループ'};
+function mbtiGroupOf(m){
+  if(!m)return null;
+  var hasN=m.indexOf('N')>=0,hasT=m.indexOf('T')>=0,hasF=m.indexOf('F')>=0,hasS=m.indexOf('S')>=0,hasJ=m.indexOf('J')>=0,hasP=m.indexOf('P')>=0;
+  if(hasN&&hasT)return 'NT';
+  if(hasN&&hasF)return 'NF';
+  if(hasS&&hasJ)return 'SJ';
+  if(hasS&&hasP)return 'SP';
+  return null;
+}
+/* 4グループ × 5五行 = 20通りの性格面での重なり・補い合い */
+var TEMP_GOGYO_PERSONA={
+ NT:{木:'分析家グループの論理性と、木の発展志向が組み合わさり、「正しい方向に向かって最短で成長する」タイプです。理屈で納得した道なら迷わず突き進めます。',火:'分析家グループの理論派な面と、火の行動力・発信力が掛け合わさり、「考えてから一気に動く」タイプです。説得力のあるロジックで周囲を巻き込みます。',土:'分析家グループの構造的思考と、土の安定志向が合わさり、「緻密に設計してから着実に積み上げる」タイプです。計画性の高さが強みになります。',金:'分析家グループの論理性と、金の精度・専門性が重なり、「徹底的に突き詰めて完成度を高める」タイプです。妥協のない仕事ぶりが評価されます。',水:'分析家グループの知的探求心と、水の深い思考力が共鳴し、「とことん考え抜く」タイプです。表面的な理解では満足できない探究心があります。'},
+ NF:{木:'理念家グループの価値観の強さと、木の成長志向が組み合わさり、「人や物事の可能性を信じて育てる」タイプです。理想に向かって粘り強く取り組めます。',火:'理念家グループの共感力と、火の表現力が掛け合わさり、「想いを言葉や行動で伝える」タイプです。人の心を動かす発信力があります。',土:'理念家グループの誠実さと、土の安定感が合わさり、「信頼関係をじっくり育てる」タイプです。長く付き合うほど信頼が深まります。',金:'理念家グループの理想の高さと、金のこだわりが重なり、「妥協せず本質を追求する」タイプです。質の高い表現や仕事にこだわります。',水:'理念家グループの感受性と、水の洞察力が共鳴し、「言葉にならない想いを汲み取る」タイプです。人の本音を察する力が強みです。'},
+ SJ:{木:'堅実家グループの責任感と、木の成長志向が組み合わさり、「着実にステップを踏んで成長する」タイプです。地に足のついた向上心があります。',火:'堅実家グループの実行力と、火の行動力が掛け合わさり、「決めたことをテンポよくやり遂げる」タイプです。行動の早さと責任感を兼ね備えます。',土:'堅実家グループの安定志向と、土の安定感が二重に重なり、「ブレない軸でコツコツ積み上げる」最も安定感の強いタイプです。',金:'堅実家グループの規律性と、金の精度が合わさり、「ルールを守りながら高い完成度を目指す」タイプです。信頼される正確さがあります。',水:'堅実家グループの責任感と、水の思慮深さが組み合わさり、「慎重に考えてから着実に実行する」タイプです。失敗の少ない堅実な歩みができます。'},
+ SP:{木:'行動家グループのフットワークの軽さと、木の成長志向が組み合わさり、「とにかくやってみて成長する」タイプです。経験から学ぶ力が強みです。',火:'行動家グループの行動力と、火の表現力・行動力が二重に重なり、「思い立ったらすぐ動く」最もアクティブなタイプです。',土:'行動家グループの実践力と、土の安定感が合わさり、「現実的に動きながら地盤を固める」タイプです。地に足のついたフットワークがあります。',金:'行動家グループの実践的な判断力と、金の精度が組み合わさり、「効率よく的確に動く」タイプです。無駄のない判断と行動ができます。',水:'行動家グループの柔軟さと、水の臨機応変さが共鳴し、「状況に応じてしなやかに対応する」タイプです。変化への適応力が高いです。'}
+};
+/* MBTI×適職 */
+var MBTI_CAREER={
+ INTJ:{text:'長期的な戦略を描く仕事や、独自のビジョンを実現していく仕事に向いています。誰かの指示に従うより、自分で構想を立てて進める環境で力を発揮します。',jobs:['経営戦略・事業企画','研究開発・専門職','建築士・設計士','投資・金融アナリスト']},
+ INTP:{text:'理論や仕組みを深く探求する仕事が向いています。正解のない問いに取り組み続けられる環境や、自分のペースで考えられる仕事と好相性です。',jobs:['研究者・大学教員','プログラマー・エンジニア','哲学・理論系の専門職','データサイエンティスト']},
+ ENTJ:{text:'組織や人を動かしてゴールに導く仕事に向いています。決断力と推進力を活かせる経営・マネジメント系の仕事で本領発揮します。',jobs:['経営者・事業責任者','プロジェクトマネージャー','コンサルタント','弁護士']},
+ ENTP:{text:'新しい事業やアイデアを形にする仕事が向いています。変化が多く、常に新しい課題に取り組める環境でいきいきと働けます。',jobs:['起業家・新規事業開発','マーケター・広告クリエイター','ジャーナリスト','コンサルタント']},
+ INFJ:{text:'人の内面や社会の課題に深く向き合う仕事に向いています。理想を形にしていくプロセスに価値を感じるタイプです。',jobs:['カウンセラー・心理職','作家・編集者','NPO・社会貢献系の仕事','教育関連職']},
+ INFP:{text:'自分の価値観を活かして表現する仕事や、人の成長を支える仕事に向いています。誠実さが求められる環境で力を発揮します。',jobs:['クリエイター・デザイナー','作家・脚本家','カウンセラー','NPO・福祉関連職']},
+ ENFJ:{text:'人を導き、成長を後押しする仕事に向いています。チームや集団をまとめながら、人の可能性を引き出す役割で輝きます。',jobs:['教育者・指導者','人事・人材育成','コーチ・コンサルタント','NPO・組織運営']},
+ ENFP:{text:'人と関わりながら新しいことに挑戦できる仕事に向いています。自由度が高く、創造性を発揮できる環境と好相性です。',jobs:['企画・マーケティング','クリエイター・コンテンツ制作','イベントプランナー','起業家']},
+ ISTJ:{text:'正確さと責任感が求められる仕事に向いています。ルールや手順がはっきりしている環境で、安定した成果を出せます。',jobs:['公務員・行政職','経理・会計士','品質管理','法務関連職']},
+ ISFJ:{text:'人を支え、安定したサービスを提供する仕事に向いています。細やかな気配りが求められる現場で信頼を積み上げます。',jobs:['看護師・医療関連職','事務・サポート業務','保育士・福祉職','カスタマーサポート']},
+ ESTJ:{text:'組織を運営し、計画的に物事を進める仕事に向いています。リーダーシップと実行力を活かせる管理職と好相性です。',jobs:['管理職・経営幹部','公務員・行政職','プロジェクト管理','営業マネージャー']},
+ ESFJ:{text:'人と関わりながらチームを支える仕事に向いています。協調性を活かして職場の雰囲気を良くする役割で評価されます。',jobs:['人事・総務','接客・サービス業','教育・保育関連','医療・福祉関連職']},
+ ISTP:{text:'手や道具を使って問題を解決する仕事に向いています。自分の裁量で動ける現場仕事や技術職と好相性です。',jobs:['エンジニア・技術職','整備士・職人','データ分析','緊急対応系の専門職']},
+ ISFP:{text:'感性を活かして表現する仕事や、マイペースに取り組める仕事に向いています。自分の美意識を大切にできる環境で輝きます。',jobs:['デザイナー・アーティスト','写真家・映像クリエイター','料理人','動物・植物関連の仕事']},
+ ESTP:{text:'スピード感のある現場で、実践的に動く仕事に向いています。リスクを取りながらチャンスをつかむ仕事と好相性です。',jobs:['営業・セールス','起業家','スポーツ関連職','イベント・エンタメ業界']},
+ ESFP:{text:'人を楽しませる仕事や、明るい雰囲気を作る仕事に向いています。人前に出る・人と関わる仕事でいきいきと働けます。',jobs:['接客・サービス業','エンターテイナー・タレント','イベント企画','販売・営業職']}
+};
+/* 4グループ × 5五行 = 20通りの仕事での重なり方 */
+var TEMP_GOGYO_CAREER={
+ NT:{木:'戦略性と成長志向が合わさり、新規事業や仕組みづくりなど「ゼロから設計して育てる」仕事で力を発揮します。',火:'論理性と行動力が合わさり、説得力のあるプレゼンや交渉が求められる仕事で強みになります。',土:'構造的思考と安定志向が合わさり、長期計画を立てて着実に実行するマネジメント業務に向いています。',金:'論理性と精度へのこだわりが合わさり、専門性の高い技術職・研究職で本領を発揮します。',水:'知的探求心と思考の深さが合わさり、データ分析や研究など「深く掘り下げる」仕事に向いています。'},
+ NF:{木:'理念と成長志向が合わさり、人材育成や教育など「人を育てる」仕事に強い適性があります。',火:'共感力と表現力が合わさり、人の心を動かすクリエイティブ・発信系の仕事に向いています。',土:'誠実さと安定感が合わさり、長期的な信頼関係を築く対人支援系の仕事と好相性です。',金:'理想の高さと専門性へのこだわりが合わさり、質を追求するクリエイティブ職に向いています。',水:'感受性と洞察力が合わさり、カウンセリングや執筆など「心の機微を扱う」仕事に強みがあります。'},
+ SJ:{木:'責任感と成長志向が合わさり、着実にキャリアを積み上げる専門職・公務員系の仕事に向いています。',火:'実行力と行動力が合わさり、スピード感を持って業務を回す現場管理の仕事で力を発揮します。',土:'安定志向が二重に重なり、長く同じ場所で信頼を積み上げる仕事で最も安定した成果を出せます。',金:'規律性と精度が合わさり、正確さが求められる経理・品質管理などの仕事に高い適性があります。',水:'責任感と慎重さが合わさり、リスク管理や法務など「間違いを防ぐ」仕事に向いています。'},
+ SP:{木:'フットワークの軽さと成長志向が合わさり、現場で経験を積みながらスキルアップする仕事に向いています。',火:'行動力が二重に重なり、営業やイベントなど「動きながら結果を出す」仕事で最大限に輝きます。',土:'実践力と安定感が合わさり、職人技術や専門技能を地道に磨いていく仕事に向いています。',金:'判断力の速さと精度が合わさり、緊急対応や技術職など「素早く正確に」が求められる仕事に強みがあります。',水:'柔軟な対応力が合わさり、変化の多い環境でも臨機応変にこなせる仕事に向いています。'}
+};
+function mbtiHTML(cd){
+  if(!cd.mbti)return '<div class="reading-card mbti-prompt" onclick="go(\'settings\')"><div class="rc-title">🧭 MBTIも登録してみませんか？</div><div class="rc-text">MBTIを登録すると、四柱推命の本質とMBTIの性格タイプを組み合わせた、より立体的な性格分析が見られます。設定 → 命式を編集 から追加できます。</div></div>';
+  var grp=mbtiGroupOf(cd.mbti),syn=grp?TEMP_GOGYO_PERSONA[grp][cd.dGogyo]:'';
+  return '<div class="reading-card"><div class="rc-title">🧭 MBTI「'+cd.mbti+'」（'+MBTI_NAME[cd.mbti]+'）</div><div class="rc-text">'+MBTI_DESC[cd.mbti]+'</div></div>'
+   +'<div class="reading-card"><div class="rc-title">✨ MBTI×四柱推命のあなたの本質</div><div class="rc-sub" style="margin-bottom:4px"><div class="rc-label">'+(MBTI_GROUP_NAME[grp]||'')+' × 日主「'+cd.dGogyo+'」</div></div><div class="rc-text">'+syn+'</div></div>';
+}
+function mbtiCareerHTML(cd){
+  if(!cd.mbti)return '';
+  var grp=mbtiGroupOf(cd.mbti),syn=grp?TEMP_GOGYO_CAREER[grp][cd.dGogyo]:'',C=MBTI_CAREER[cd.mbti];
+  return '<div class="reading-card"><div class="rc-title">🧭 MBTI「'+cd.mbti+'」から見る適職</div><div class="rc-text">'+C.text+'</div>'+rcList(C.jobs)+'<div class="rc-sub"><div class="rc-label">四柱推命と組み合わせると</div>'+syn+'</div></div>';
+}
+function personaHTML(cd){
+  var rows=cd.pillars.map(function(p){var f=PILLAR_FACE[p.label];return '<div style="margin-bottom:10px"><div class="rc-label">'+p.label+'柱（'+p.stem+p.branch+'）：'+f.label+'</div><div class="rc-text" style="margin-bottom:3px">'+f.desc+'</div><div class="rc-text" style="color:var(--gold-soft);font-size:12px">'+(KAN_KEYWORD[p.stem]||'')+'</div></div>';}).join('');
+  return '<div class="reading-card"><div class="rc-title">🎭 各柱に見る性格の多面性</div><div class="rc-sub" style="margin-bottom:6px">人は一つの顔だけでなく、場面によって違う一面を見せます。四柱それぞれに表れる「顔」を見てみましょう。</div>'+rows+'</div>';
+}
+function swHTML(cd){var S=GOGYO_SW[cd.dGogyo];return '<div class="reading-card"><div class="rc-title">⚖️ 強み・弱みのまとめ</div><div class="rc-sub"><div class="rc-label">強み</div>'+rcList(S.strength)+'</div><div class="rc-sub"><div class="rc-label">弱み（注意したいクセ）</div>'+rcList(S.weakness)+'</div></div>';}
+function commHTML(cd){return '<div class="reading-card"><div class="rc-title">💬 人との接し方・コミュニケーションスタイル</div><div class="rc-text">'+GOGYO_COMM[cd.dGogyo]+'</div></div>';}
+
+/* ── 健康タブ拡張用データ ── */
+var GOGYO_EXERCISE={
+ 木:['ウォーキング・ジョギングなどの有酸素運動','ヨガ・ストレッチで筋肉の緊張をほぐす','朝の散歩で自律神経を整える','ストレス発散になる球技もおすすめ'],
+ 火:['水泳・ヨガなど体温を上げすぎない運動','ダンスなど楽しみながら動ける運動','激しい運動の後はしっかりクールダウン','瞑想・深呼吸で興奮した神経を落ち着ける'],
+ 土:['ウォーキングなど無理のない運動を習慣に','食後すぐの運動は避けてゆっくり休む','腹式呼吸で胃腸の働きをサポート','規則正しい生活リズムを最優先に'],
+ 金:['筋トレなど引き締める運動と相性◎','呼吸法（深呼吸・腹式呼吸）を習慣に','乾燥する季節は運動後の保湿を忘れずに','適度な運動で免疫力を維持'],
+ 水:['体を冷やさない室内運動がおすすめ','入浴・温活を兼ねた軽い運動','腰や骨に負担をかけすぎない運動を選ぶ','夜更かしを避け睡眠の質を優先']
+};
+var GOGYO_DIET={
+ 木:{good:['緑黄色野菜（ほうれん草・ブロッコリーなど）','酸味のある食品（柑橘類・梅干しなど）','良質なタンパク質'],avoid:['アルコールの摂りすぎ','脂っこい食事の連続','過度なカフェイン摂取']},
+ 火:{good:['赤い食材（トマト・パプリカなど）','苦味のある食品（ゴーヤ・緑茶など）','水分をこまめに補給'],avoid:['カフェインの摂りすぎ','刺激の強い香辛料の摂りすぎ','寝る直前の食事']},
+ 土:{good:['黄色い食材（かぼちゃ・とうもろこしなど）','甘味のある自然な食品（さつまいもなど）','よく噛んでゆっくり食べる'],avoid:['冷たい飲食物の摂りすぎ','早食い・ながら食べ','間食の摂りすぎ']},
+ 金:{good:['白い食材（大根・れんこん・豆腐など）','辛味のある食品（生姜・ねぎなど）','タンパク質をしっかり摂る'],avoid:['乾燥する時期の水分不足','刺激物の摂りすぎ','不規則な食事時間']},
+ 水:{good:['黒い食材（黒豆・ひじき・きくらげなど）','塩味のきいた自然な味付け','体を温めるスープ・鍋料理'],avoid:['冷たいものの摂りすぎ','過度な水分制限','夜遅い時間の食事']}
+};
+function dietHTML(cd){var D=GOGYO_DIET[cd.dGogyo];return '<div class="reading-card"><div class="rc-title">🍽 健康にいい食事・控えたい食事</div><div class="rc-sub"><div class="rc-label">積極的に摂りたい</div>'+rcList(D.good)+'</div><div class="rc-sub"><div class="rc-label">控えめにしたい</div>'+rcList(D.avoid)+'</div></div>';}
+function exerciseHTML(cd){return '<div class="reading-card"><div class="rc-title">🏃 おすすめの運動・セルフケア</div>'+rcList(GOGYO_EXERCISE[cd.dGogyo])+'</div>';}
+
+/* ── 才能タブ拡張用データ ── */
+var GOGYO_TALENT_GROW={
+ 木:'新しいことに挑戦する機会をたくさん用意してあげると、才能が伸びやすいタイプです。「やってみたい」という気持ちが出たときに、すぐ挑戦できる環境を整えるのが一番の後押しになります。結果よりもまず挑戦したこと自体を認めてあげると、次の意欲につながります。',
+ 火:'人前で表現する機会があるほど才能が開花します。発表会・コンテスト・人前で話す場など、注目される経験を積ませてあげましょう。結果が出なくても「やりきったこと」「楽しんでいたこと」を褒めると、表現することへの自信が育ちます。',
+ 土:'急かさず、じっくり取り組める環境が才能を伸ばします。コツコツ積み上げる過程そのものを認めてあげることが大切です。結果を急がず、「続けていること」自体を褒めると、地道な努力が自信に変わっていきます。',
+ 金:'高い基準にチャレンジする機会が才能を伸ばします。資格・検定・コンクールなど、目標がはっきりしたものに取り組ませると力を発揮しやすいタイプです。ただし完璧を求めすぎず、「挑戦したこと」「できるようになったこと」を具体的に認めてあげましょう。',
+ 水:'たくさんの情報や経験に触れさせてあげることが才能を育てます。本・自然・新しい場所など、好奇心を刺激する環境がおすすめです。すぐに結果や言葉で表現できなくても、頭の中でじっくり考える時間を尊重してあげることが大切です。'
+};
+function talentGrowHTML(cd){return '<div class="reading-card"><div class="rc-title">🌱 才能を伸ばすサポートのヒント</div><div class="rc-text">'+GOGYO_TALENT_GROW[cd.dGogyo]+'</div></div>';}
+var FAMILY_RICH={
+ 年:'祖父母・両親・家系のルーツとの縁を表す柱。幼少期に置かれた環境や、目上・年長者から受け継ぐもの、社会的なスタート地点に影響します。ここが整っていると、ルーツや周囲の支援を追い風にできます。',
+ 月:'両親・きょうだい・職場など「身近で日常的に関わる人」との縁、そして社会人としての土台を表す中心的な柱。働き方や対人関係の基本スタンス、社会での立ち位置がここに表れます。',
+ 日:'あなた自身と、配偶者・パートナーとの縁を表す柱。日支は結婚・家庭の領域でもあり、私生活や最も近い人との関係性の質、距離の取り方を映します。',
+ 時:'子ども・後輩・部下との縁、そして将来・夢・晩年との縁を表す柱。育てる対象や、次の世代へ受け渡していくものに関わります。時刻が分かると、より詳しく読めます。'
+};
+var FAMILY_ICON={年:'🌳',月:'🏠',日:'💑',時:'🌱'};
 function mTsu(cd){var t=cd.pillars[1]&&cd.pillars[1].tsu;return (t&&t!=='日主')?t:null;}
 function rcList(arr){return '<ul class="rc-list">'+arr.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul>';}
 function studyHTML(cd){var S=STUDY_GOGYO[cd.dGogyo],jt=mTsu(cd);return '<div class="reading-card"><div class="rc-title">📚 学び・資格（日主'+cd.dGogyo+'）</div>'+
@@ -1547,9 +1705,25 @@ function renderReading(mainGogyo){
   if(t==='seikaku'){
     html+='<div class="reading-card"><div class="rc-title">👤 あなたの本質</div><div class="rc-text">'+KAN_PERSONALITY[cd.dStem]+'</div></div>';
     html+='<div class="reading-card"><div class="rc-title">🔥 際立つ五行：'+mainGogyo+'</div><div class="rc-text">命式の中で「'+mainGogyo+'」のエネルギーが最も強く出ています。'+GOGYO_SAIDACHI[mainGogyo]+'</div><div class="rc-sub"><div class="rc-label">活かし方</div>この五行の性質が、あなたの行動や判断の軸になります。意識して活かすほど、持ち味が強みに変わります。</div></div>';
+    html+=personaHTML(cd);
+    html+=swHTML(cd);
+    html+=commHTML(cd);
+    html+=mbtiHTML(cd);
+  } else if(t==='jukkami'){
+    html+=studyHTML(cd);
+    html+='<div class="reading-card"><div class="rc-title">✨ あなたの才能（十神）</div>';
+    var shown={};
+    cd.pillars.forEach(function(p){if(p.tsu&&p.tsu!=='日主'&&!shown[p.tsu]){shown[p.tsu]=1;html+='<div style="margin-bottom:10px"><div class="rc-label">'+p.label+'柱：'+p.tsu+'</div><div class="rc-text">'+(JUKKAMI_DESC[p.tsu]||'')+'</div></div>';}});
+    html+='</div>';
+    html+=talentGrowHTML(cd);
   } else if(t==='tekishoku'){
     html+='<div class="reading-card"><div class="rc-title">💼 向いている仕事・適職</div><div class="rc-text">'+GOGYO_WORK[cd.dGogyo]+'</div><div class="rc-sub"><div class="rc-label">用神を活かすなら</div>用神「'+y.primaryYojin+'」の方向性も、運を開く働き方として意識すると良いでしょう。</div></div>';
-    html+=studyHTML(cd);
+    html+=jobsHTML(cd);
+    html+=successHTML(cd);
+    html+=majorHTML(cd);
+    html+=careerHTML(cd);
+    html+=ageHTML(cd);
+    html+=mbtiCareerHTML(cd);
   } else if(t==='renai'){
     var lyin=(TG.indexOf(cd.dStem)%2===0)?0:1,ls=calcLove(cd.dGogyo,lyin);
     var en=cd.pillars[1].tsu,enText=(en&&en!=='日主'&&JUKKAMI_DESC[en])?('命式の月柱に「'+en+'」が出ています。'+JUKKAMI_DESC[en]+'この傾向は、人との縁の結び方にも自然と表れます。'):('月柱（'+cd.pillars[1].stem+cd.pillars[1].branch+'）のエネルギーが、人との縁に影響しています。');
@@ -1565,11 +1739,9 @@ function renderReading(mainGogyo){
       '<div class="health-item"><b>不調のサイン</b>'+h.weak+'</div>'+
       '<div class="health-item"><b>おすすめのケア</b>'+h.care+'</div>'+
       '<div class="health-item"><b>相性の良い食事</b>'+h.food+'</div></div>';
-  } else if(t==='jukkami'){
-    html+='<div class="reading-card"><div class="rc-title">✨ あなたの才能（十神）</div>';
-    var shown={};
-    cd.pillars.forEach(function(p){if(p.tsu&&p.tsu!=='日主'&&!shown[p.tsu]){shown[p.tsu]=1;html+='<div style="margin-bottom:10px"><div class="rc-label">'+p.label+'柱：'+p.tsu+'</div><div class="rc-text">'+(JUKKAMI_DESC[p.tsu]||'')+'</div></div>';}});
-    html+='</div>';
+    html+=dietHTML(cd);
+    html+=exerciseHTML(cd);
+    html+=stressHTML(cd);
   } else if(t==='kazoku'){
     if(cd.noTime)html+='<div class="fumei-note"><span>⏱</span><span>時刻不明のため、時柱（子ども・夢との縁）は対象外です。三柱の縁を表示します。</span></div>';
     html+='<div class="reading-card"><div class="rc-title">👨‍👩‍👧 家族・縁の地図</div><div class="rc-text">四柱はそれぞれ異なる人間関係の領域を映します。年柱＝家系のルーツ、月柱＝身近な縁、日柱＝伴侶、時柱＝次世代。各柱の干支のエネルギーから、縁の質を読み解きます。</div></div>';
@@ -3332,6 +3504,7 @@ function renderAddForm(el){
   html+='<div class="check-row" onclick="toggleFormNoTime()"><div class="check-box'+(APP.formNoTime?' on':'')+'">'+( APP.formNoTime?'✓':'')+'</div><div><div class="check-label">出生時刻が分からない</div><div class="check-sub">時柱を除いた三柱（年・月・日）で鑑定します</div></div></div>';
   html+='<div class="fld"><label>性別</label><select id="f-sex"><option value="M"'+(ed&&ed.sex==='M'?' selected':'')+'>男性</option><option value="F"'+(ed&&ed.sex==='F'?' selected':'')+'>女性</option></select></div>';
   html+='<div class="fld"><label>出生地の座標 <span style="font-size:11px;color:var(--text3);font-weight:400">（省略可・時刻補正に使用）</span></label><input type="text" id="f-coords" value="'+(ed?esc(ed.coords||''):'')+'" placeholder="35.6895, 139.6917（緯度, 経度）"></div>';
+  html+='<div class="fld"><label>MBTI <span style="font-size:11px;color:var(--text3);font-weight:400">（省略可・性格タブで四柱推命と組み合わせた鑑定が見られます）</span></label><select id="f-mbti"><option value="">設定しない</option>'+MBTI_TYPES.map(function(m){return '<option value="'+m+'"'+(ed&&ed.mbti===m?' selected':'')+'>'+m+'（'+MBTI_NAME[m]+'）</option>';}).join('')+'</select></div>';
   html+='<div class="fld"><label>メモ <span style="font-size:11px;color:var(--text3);font-weight:400">（省略可）</span></label><textarea id="f-memo" placeholder="この命式の特徴や鑑定のメモなど自由に…">'+(ed?esc(ed.memo||''):'')+'</textarea></div>';
   html+='<div style="display:flex;gap:8px;margin-top:10px"><button class="btn" onclick="cancelAdd()">キャンセル</button><button class="btn btn-primary" onclick="saveProfile()">'+(ed?'変更を保存する':'保存して鑑定を始める')+'</button></div>';
   el.innerHTML=html;
@@ -3343,7 +3516,7 @@ function saveProfile(){
   var name=document.getElementById('f-name').value.trim()||'名称未設定';
   var date=document.getElementById('f-date').value;if(!date){alert('生年月日を入力してください');return;}
   var time=APP.formNoTime?null:document.getElementById('f-time').value;
-  var data={name:name,birthDate:date,birthTime:time,sex:document.getElementById('f-sex').value,coords:document.getElementById('f-coords').value,memo:document.getElementById('f-memo').value.trim()};
+  var data={name:name,birthDate:date,birthTime:time,sex:document.getElementById('f-sex').value,coords:document.getElementById('f-coords').value,mbti:document.getElementById('f-mbti').value,memo:document.getElementById('f-memo').value.trim()};
   if(APP.editingProfile){Store.update(APP.editingProfile,data);APP.editingProfile=null;}
   else{Store.add(data);try{localStorage.setItem('kimon_onboarded','1');}catch(e){}}
   APP.viewMode='list';APP.formNoTime=false;
