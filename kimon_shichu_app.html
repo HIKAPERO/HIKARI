@@ -369,7 +369,7 @@
   .home-active{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;color:var(--text2);background:var(--surface2);border:0.5px solid var(--line);border-radius:10px;padding:9px 13px;margin-bottom:12px;cursor:pointer}
   .home-active b{color:var(--paper,var(--text))}
   .home-active .ha-date{font-size:12px;color:var(--text3)}
-  .ms-actions{display:flex;gap:6px;margin-bottom:12px}
+  .ms-actions{display:none!important;gap:6px;margin-bottom:12px}
   .ms-act{flex:1;font-size:12px;padding:9px 6px;border:0.5px solid var(--line2);border-radius:10px;background:var(--surface2);color:var(--text2);cursor:pointer;font-family:inherit}
   .ms-act:active{background:var(--surface)}
   .modal.gloss{max-height:82vh;overflow:auto;text-align:left}
@@ -915,16 +915,16 @@
 .nh-act{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#2c6a52;background:var(--green-bg);border:1px solid var(--green-line);border-radius:20px;padding:8px 13px;font-weight:600}
 
 /* --- 一言アドバイス（紺の星空フッター） --- */
-.nh-advice{position:relative;border-radius:16px;padding:16px 16px 16px 56px;margin-bottom:8px;overflow:hidden;color:#e7e0cf;
-  background:
-   radial-gradient(1.3px 1.3px at 76% 30%,rgba(255,255,255,.8),transparent),
-   radial-gradient(1.2px 1.2px at 88% 64%,rgba(255,255,255,.6),transparent),
-   radial-gradient(1.1px 1.1px at 64% 78%,rgba(255,255,255,.5),transparent),
-   linear-gradient(120deg,#1b2350,#28335f);
-  border:1px solid rgba(205,169,79,.4)}
-.nh-advice-ic{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:30px;height:30px;border-radius:50%;border:1px solid rgba(205,169,79,.6);display:flex;align-items:center;justify-content:center;font-size:15px}
-.nh-advice-cap{font-size:11px;color:#e6cd83;letter-spacing:.06em;margin-bottom:4px}
-.nh-advice-txt{font-size:12.5px;line-height:1.7;color:#dfe2f0}
+.nh-advice{position:relative;border-radius:16px;padding:16px 16px 16px 56px;margin-bottom:8px;overflow:hidden;color:#e7e0cf;isolation:isolate;
+  background:radial-gradient(75% 60% at 82% 12%,rgba(150,110,200,.32),transparent 60%),linear-gradient(120deg,#171b42,#1f254e 55%,#2a2a58);
+  border:1px solid rgba(205,169,79,.4);box-shadow:0 6px 18px rgba(14,12,36,.28)}
+.nh-advice .ndsky{position:absolute;inset:0;z-index:0;pointer-events:none}
+.nh-advice .ndsky i{position:absolute;width:2px;height:2px;border-radius:50%;background:#fff;opacity:.6;animation:nhtw var(--d,3s) ease-in-out var(--dl,0s) infinite}
+.nh-advice .ndmoon{position:absolute;right:12px;top:10px;width:26px;height:26px;opacity:.8;z-index:0;filter:drop-shadow(0 0 6px rgba(244,221,154,.3))}
+.nh-advice-ic{position:relative;z-index:2;position:absolute;left:16px;top:50%;transform:translateY(-50%);width:30px;height:30px;border-radius:50%;border:1px solid rgba(205,169,79,.6);display:flex;align-items:center;justify-content:center;font-size:15px;background:rgba(20,18,46,.3)}
+.nh-advice-cap{position:relative;z-index:2;font-size:11px;color:#e6cd83;letter-spacing:.06em;margin-bottom:4px}
+.nh-advice-txt{position:relative;z-index:2;font-size:12.5px;line-height:1.7;color:#dfe2f0}
+@media (prefers-reduced-motion: reduce){.nh-advice .ndsky i{animation:none!important}}
 .nh-section{font-family:"Shippori Mincho B1",serif;font-size:13px;font-weight:700;color:var(--gold-dim);margin:16px 2px 9px;display:flex;align-items:center;gap:6px}
 .nh-pair{display:grid;grid-template-columns:1fr;gap:11px}
 
@@ -3990,6 +3990,7 @@ function homeKimonReason(cd){
     +'</div></details>';
 }
 var WA_MOON='<svg class="nhh-moon" viewBox="0 0 64 64"><defs><radialGradient id="nhmg" cx="62%" cy="42%" r="70%"><stop offset="0" stop-color="#fff7da"/><stop offset="1" stop-color="#e8c873"/></radialGradient><mask id="nhcres"><circle cx="33" cy="32" r="21" fill="#fff"/><circle cx="21" cy="32" r="20.5" fill="#000"/></mask></defs><circle cx="33" cy="32" r="21" fill="url(#nhmg)" mask="url(#nhcres)"/></svg>';
+var ND_MOON='<svg class="ndmoon" viewBox="0 0 64 64"><defs><radialGradient id="ndmg" cx="62%" cy="42%" r="70%"><stop offset="0" stop-color="#fff7da"/><stop offset="1" stop-color="#e8c873"/></radialGradient><mask id="ndcres"><circle cx="33" cy="32" r="21" fill="#fff"/><circle cx="21" cy="32" r="20.5" fill="#000"/></mask></defs><circle cx="33" cy="32" r="21" fill="url(#ndmg)" mask="url(#ndcres)"/></svg>';
 var WA_LOGO='<svg class="nhh-logo" viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="none" stroke="#e8c873" stroke-width="1.5"/><path d="M20 6 L24 20 L20 34 L16 20 Z" fill="#e8c873"/><path d="M6 20 L20 16 L34 20 L20 24 Z" fill="rgba(232,200,115,.55)"/><circle cx="20" cy="20" r="2.4" fill="#fff7da"/></svg>';
 var WA_STAR='<svg class="wa-capic" viewBox="0 0 16 16"><path d="M8 0.5 L9.5 6.5 L15.5 8 L9.5 9.5 L8 15.5 L6.5 9.5 L0.5 8 L6.5 6.5 Z" fill="#f4dd9a"/></svg>';
 var WA_CLOUD_BR='<svg class="wa-cloud br" viewBox="0 0 160 70"><g fill="none" stroke="#e8c873" stroke-width="1.3" stroke-linecap="round"><path d="M14 16 q22 -10 44 0 t44 0 t44 0"/><path d="M2 32 q24 -11 48 0 t48 0 t48 0"/><path d="M20 48 q22 -10 44 0 t44 0"/><path d="M16 32 a7 7 0 1 1 -3 -6"/></g></svg>';
@@ -4015,6 +4016,7 @@ function nhFillDots(el,n){if(!el)return;el.innerHTML='';for(var i=0;i<n;i++){var
 function nhHeroAnim(score,starsN){
   var hero=document.getElementById('nhHero');if(!hero)return;
   nhFillDots(document.querySelector('.nh-skydots'),44);nhFillDots(hero.querySelector('.wsky'),30);
+  var adv=document.getElementById('nhAdvice');if(adv)nhFillDots(adv.querySelector('.ndsky'),22);
   var g=document.getElementById('nhSpk');if(g){var h='';for(var k=0;k<16;k++){var a=k/16*Math.PI*2,r=66,x=70+r*Math.cos(a),y=70+r*Math.sin(a),sz=(k%3===0)?2.2:1.3;h+='<circle class="wa-spk" cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="'+sz+'"><animate attributeName="opacity" values="'+(0.3+Math.random()*0.3).toFixed(2)+';1;'+(0.3+Math.random()*0.3).toFixed(2)+'" dur="'+(2+Math.random()*2).toFixed(1)+'s" begin="'+(Math.random()*2).toFixed(1)+'s" repeatCount="indefinite"/></circle>';}g.innerHTML=h;}
   var dust=hero.querySelector('.wa-dust'),p=Math.max(0,Math.min(1,(score-68)/32));dust.style.opacity=p;var n=Math.round(p*22);dust.innerHTML='';for(var i=0;i<n;i++){var bb=document.createElement('b');bb.style.left=(Math.random()*100)+'%';var dur=(4+Math.random()*4).toFixed(2);bb.style.animationDuration=dur+'s';bb.style.animationDelay=(-Math.random()*dur)+'s';dust.appendChild(bb);}
   hero.querySelectorAll('.wa-stars .s').forEach(function(s,i){s.classList.remove('lit');if(i<starsN){setTimeout(function(){s.classList.add('lit');},250+i*120);}});
@@ -4067,7 +4069,7 @@ renderHome=function(){
   html+='<div class="nh-section">🚀 今日の開運アクション</div><div class="nh-panel"><div class="nh-acts">'+acts.map(function(a){return '<span class="nh-act">'+(ACTIC[a]||'✓')+' '+a+'</span>';}).join('')+'</div></div>';
   html+='<div class="nh-section">🔍 今日の奇門遁甲</div>'+homeKimonReason(cd);
   var adv=overall>=4?'午前から積極的に動いて吉。小さな一歩が大きな幸運につながります。':overall<=2?'午前は控えめに、午後から徐々に。守りを固める一日に。':'焦らず一定のペースで。整えることが次の運を呼びます。';
-  html+='<div class="nh-advice"><div class="nh-advice-ic">🪶</div><div class="nh-advice-cap">今日の一言アドバイス</div><div class="nh-advice-txt">'+adv+'</div></div>';
+  html+='<div class="nh-advice" id="nhAdvice"><div class="ndsky"></div>'+ND_MOON+'<div class="nh-advice-ic">🪶</div><div class="nh-advice-cap">今日の一言アドバイス</div><div class="nh-advice-txt">'+adv+'</div></div>';
   el.innerHTML=html;
   nhHeroAnim(score,overall);
   populateProfileSelect();
