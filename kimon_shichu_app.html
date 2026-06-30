@@ -1454,6 +1454,17 @@ function loveRadarSVG(vals){
   var lbl='';for(var i=0;i<N;i++){var pl=pt(R+22,ang(i)),ca=Math.cos(ang(i)),an=ca>0.1?'start':ca<-0.1?'end':'middle';lbl+='<text x="'+pl[0].toFixed(1)+'" y="'+(pl[1]+4).toFixed(1)+'" fill="#cbbfa0" font-size="11" text-anchor="'+an+'">'+LBL[i]+'</text>';}
   return '<div class="love-radar"><svg viewBox="0 0 '+S+' '+S+'" style="width:230px;max-width:100%;height:auto;overflow:visible">'+g+'<path d="'+path+'" fill="rgba(205,169,79,0.20)" stroke="#cda94f" stroke-width="1.5"/>'+dots+lbl+'</svg></div>';
 }
+function mbtiRadarSVG(vals,labels){
+  var S=230,C=S/2,R=78,N=4;
+  function ang(i){return Math.PI*2*i/N-Math.PI/2;}
+  function pt(r,a){return [C+r*Math.cos(a),C+r*Math.sin(a)];}
+  var g='';[20,40,60,80,100].forEach(function(v,i){g+='<circle cx="'+C+'" cy="'+C+'" r="'+(R*v/100).toFixed(1)+'" fill="none" stroke="rgba(205,169,79,'+(0.10+i*0.04).toFixed(2)+')" stroke-width="1"/>';});
+  for(var i=0;i<N;i++){var pa=pt(R,ang(i));g+='<line x1="'+C+'" y1="'+C+'" x2="'+pa[0].toFixed(1)+'" y2="'+pa[1].toFixed(1)+'" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>';}
+  var path='',dots='';for(var i=0;i<N;i++){var rr=R*Math.max(10,Math.min(100,vals[i]))/100,pp=pt(rr,ang(i));path+=(i?'L':'M')+pp[0].toFixed(1)+' '+pp[1].toFixed(1);dots+='<circle cx="'+pp[0].toFixed(1)+'" cy="'+pp[1].toFixed(1)+'" r="3.5" fill="#e6cd83"/>';}path+=' Z';
+  var lbl='';for(var i=0;i<N;i++){var pl=pt(R+26,ang(i)),ca=Math.cos(ang(i)),an=ca>0.1?'start':ca<-0.1?'end':'middle';lbl+='<text x="'+pl[0].toFixed(1)+'" y="'+(pl[1]+4).toFixed(1)+'" fill="#cbbfa0" font-size="11" text-anchor="'+an+'">'+labels[i]+'</text>';}
+  return '<div class="love-radar"><svg viewBox="0 0 '+S+' '+S+'" style="width:230px;max-width:100%;height:auto;overflow:visible">'+g+'<path d="'+path+'" fill="rgba(205,169,79,0.20)" stroke="#cda94f" stroke-width="1.5"/>'+dots+lbl+'</svg></div>';
+}
+function mbtiAxisValues(m){return [m[0]==='E'?78:22,m[1]==='N'?78:22,m[2]==='T'?78:22,m[3]==='J'?78:22];}
 /* ===== 詳細鑑定データ（学び・お金・落とし穴・ストレス・年齢・環境・家族）===== */
 var GOGYO_SAIDACHI={
  木:'「成長・チャレンジ・しなやかさ」が持ち味。新しいことを始める推進力と、状況に合わせてしなやかに伸びる適応力があります。理想に向かって人や物事を育てる力が強く、前進を選ぶときに本来の輝きが出ます。',
@@ -1618,10 +1629,68 @@ var TEMP_GOGYO_CAREER={
  SJ:{木:'責任感と成長志向が合わさり、着実にキャリアを積み上げる専門職・公務員系の仕事に向いています。',火:'実行力と行動力が合わさり、スピード感を持って業務を回す現場管理の仕事で力を発揮します。',土:'安定志向が二重に重なり、長く同じ場所で信頼を積み上げる仕事で最も安定した成果を出せます。',金:'規律性と精度が合わさり、正確さが求められる経理・品質管理などの仕事に高い適性があります。',水:'責任感と慎重さが合わさり、リスク管理や法務など「間違いを防ぐ」仕事に向いています。'},
  SP:{木:'フットワークの軽さと成長志向が合わさり、現場で経験を積みながらスキルアップする仕事に向いています。',火:'行動力が二重に重なり、営業やイベントなど「動きながら結果を出す」仕事で最大限に輝きます。',土:'実践力と安定感が合わさり、職人技術や専門技能を地道に磨いていく仕事に向いています。',金:'判断力の速さと精度が合わさり、緊急対応や技術職など「素早く正確に」が求められる仕事に強みがあります。',水:'柔軟な対応力が合わさり、変化の多い環境でも臨機応変にこなせる仕事に向いています。'}
 };
+/* 才能タブ用 */
+var TEMP_GOGYO_TALENT={
+ NT:{木:'分析力と成長志向が合わさり、理屈を理解してから一気に伸びるタイプ。納得できる挑戦には粘り強く取り組めます。',火:'理論派の思考と行動力が掛け合わさり、考えをすぐ試して検証しながら伸びるタイプです。',土:'論理的思考と安定志向が合わさり、体系立てて着実にスキルを積み上げるタイプです。',金:'分析力と精度へのこだわりが重なり、完璧に理解できるまで深掘りして極めるタイプです。',水:'知的探求心と思考の深さが共鳴し、納得できるまでとことん考え抜いて才能を伸ばすタイプです。'},
+ NF:{木:'理想を追う力と成長志向が合わさり、好きなことを通してぐんぐん伸びるタイプです。',火:'共感力と表現力が掛け合わさり、人前で表現する経験を通して才能が開花するタイプです。',土:'誠実さと安定感が合わさり、信頼できる環境でじっくり力を伸ばすタイプです。',金:'理想の高さとこだわりが重なり、自分の納得がいくまで丁寧に磨き上げるタイプです。',水:'感受性と洞察力が共鳴し、自分の内側にあるものを掘り下げながら才能を育てるタイプです。'},
+ SJ:{木:'責任感と成長志向が合わさり、決められた目標に向けて着実にステップアップするタイプです。',火:'実行力と行動力が掛け合わさり、決めたことをテンポよく実践しながら才能を伸ばすタイプです。',土:'安定志向が二重に重なり、繰り返しの練習でじっくり力をつける最も粘り強いタイプです。',金:'規律性と精度が合わさり、基礎を丁寧に固めてから着実に実力をつけるタイプです。',水:'責任感と慎重さが合わさり、しっかり準備してから一歩ずつ力を伸ばすタイプです。'},
+ SP:{木:'フットワークの軽さと成長志向が合わさり、まずやってみることで才能が開花するタイプです。',火:'行動力が二重に重なり、実践と挑戦をくり返すことで一気に力をつけるタイプです。',土:'実践力と安定感が合わさり、現場で経験を積みながら着実に技術を磨くタイプです。',金:'判断力の速さと精度が合わさり、実戦の中で素早く正確な技術を身につけるタイプです。',水:'柔軟な対応力が合わさり、様々な経験を通して臨機応変に力をつけるタイプです。'}
+};
+function mbtiTalentHTML(cd){if(!cd.mbti)return '';var grp=mbtiGroupOf(cd.mbti);return '<div class="reading-card"><div class="rc-title">🧭 MBTI×才能の伸ばし方</div><div class="rc-text">'+TEMP_GOGYO_TALENT[grp][cd.dGogyo]+'</div></div>';}
+
+/* 恋愛タブ用 */
+var TEMP_GOGYO_LOVE={
+ NT:{木:'理屈で納得できる相手に心を開くタイプ。恋愛でも成長し合える関係を求めます。',火:'クールに見えて、心を動かされると一気に積極的になるタイプです。',土:'じっくり信頼を積み重ねてから心を開く、誠実な恋愛スタイルです。',金:'理想が高く、本質的に合う相手を見極めてから関係を深めるタイプです。',水:'深く考えてから動くため恋愛のスタートは慎重ですが、一度好きになると一途です。'},
+ NF:{木:'理想の恋愛像に向かって、相手と一緒に成長していきたいタイプです。',火:'感情表現が豊かで、想いをまっすぐ言葉や態度で伝えるタイプです。',土:'じっくり関係を育てる、誠実で安定感のある恋愛スタイルです。',金:'理想と美意識が高く、心から納得できる相手を大切にするタイプです。',水:'相手の気持ちを深く汲み取る、繊細で共感力の高い恋愛スタイルです。'},
+ SJ:{木:'信頼できる相手と着実に関係を育てていきたいタイプです。',火:'好きになったらまっすぐ行動する、誠実でテンポの良い恋愛スタイルです。',土:'安定と誠実さを最も大切にする、ブレない恋愛スタイルです。',金:'誠実さと一途さを兼ね備えた、信頼を大切にする恋愛スタイルです。',水:'じっくり考えて選んだ相手を、長く大切にするタイプです。'},
+ SP:{木:'出会いを楽しみながら自然体で関係を育てていくタイプです。',火:'情熱的でテンポの良い、楽しさを大切にする恋愛スタイルです。',土:'一緒にいて心地よい、自然体の関係を大切にするタイプです。',金:'好きになったらまっすぐ、判断も行動も早い恋愛スタイルです。',水:'相手に合わせて柔軟に関係を築く、臨機応変な恋愛スタイルです。'}
+};
+function mbtiLoveHTML(cd){if(!cd.mbti)return '';var grp=mbtiGroupOf(cd.mbti);return '<div class="reading-card"><div class="rc-title">🧭 MBTI×恋愛スタイル</div><div class="rc-text">'+TEMP_GOGYO_LOVE[grp][cd.dGogyo]+'</div></div>';}
+
+/* 健康タブ用 */
+var TEMP_GOGYO_HEALTH2={
+ NT:{木:'考えすぎて眠れなくなることがあるタイプ。新しい刺激でリフレッシュすると◎。',火:'頭をフル回転させた後は、しっかり体を動かして発散するのが効果的です。',土:'一人で抱え込みやすいタイプ。決まった休息リズムを作ると安定します。',金:'完璧を求めすぎて気を張り詰めやすいタイプ。意識的な脱力時間が必要です。',水:'考えごとが止まらなくなりやすいタイプ。睡眠の質を最優先にしましょう。'},
+ NF:{木:'理想と現実のギャップにストレスを感じやすいタイプ。小さな達成感を大切に。',火:'感情の波が出やすいタイプ。表現する場を持つことで発散できます。',土:'人の感情を受け止めすぎて疲れやすいタイプ。一人の時間を確保しましょう。',金:'理想が高く自分を責めやすいタイプ。完璧でなくていいと意識して。',水:'感受性が強く、感情を溜め込みやすいタイプ。書き出す習慣がおすすめです。'},
+ SJ:{木:'頑張りすぎて気づいたら限界、というパターンに注意。定期的な休息を。',火:'予定の詰め込みすぎに注意。意識的に余白の時間を作りましょう。',土:'真面目さゆえに無理をしやすいタイプ。決まった休養日を作ると安定します。',金:'完璧主義から疲労が溜まりやすいタイプ。基準を少し緩めることも大切です。',水:'心配性から不安を抱えやすいタイプ。信頼できる人に相談する習慣を。'},
+ SP:{木:'じっとしているとストレスが溜まるタイプ。体を動かす習慣が効果的です。',火:'刺激を求めすぎて疲労が蓄積しやすいタイプ。意識的な休息が必要です。',土:'無理のないペースを意識すると、安定した体調を保てるタイプです。',金:'テンポよく動くことでストレス発散できるタイプ。軽い運動がおすすめです。',水:'気分転換が上手なタイプですが、たまにはじっくり休む時間も大切です。'}
+};
+function mbtiHealthHTML(cd){if(!cd.mbti)return '';var grp=mbtiGroupOf(cd.mbti);return '<div class="reading-card"><div class="rc-title">🧭 MBTI×ストレス傾向</div><div class="rc-text">'+TEMP_GOGYO_HEALTH2[grp][cd.dGogyo]+'</div></div>';}
+
+/* 家族タブ用 */
+var TEMP_GOGYO_FAMILY={
+ NT:{木:'家族にも成長を促す関わり方をするタイプ。期待が強くなりすぎないよう意識を。',火:'家族にも率直に意見を伝えるタイプ。言い方をやわらげると関係がより良くなります。',土:'家族の安定を論理的に支えるタイプ。感情面のフォローも意識すると◎。',金:'家族にも高い基準を求めがちなタイプ。期待を言葉にしすぎないよう注意。',水:'家族の気持ちを深く理解しようとするタイプ。言葉にして伝える練習も大切です。'},
+ NF:{木:'家族の可能性を信じて応援する、温かいサポータータイプです。',火:'家族に愛情をまっすぐ表現する、感情豊かな関わり方をします。',土:'家族との絆をじっくり育てる、誠実で安定した関わり方です。',金:'家族のためを思うあまり、理想を押し付けすぎないよう意識しましょう。',水:'家族の気持ちを敏感に察する、共感力の高い関わり方をします。'},
+ SJ:{木:'家族の成長を着実にサポートする、頼れる存在になるタイプです。',火:'家族のために行動で示す、頼もしいタイプです。',土:'家族の安定を最も大切にする、家庭的なタイプです。',金:'家族にルールや規律を求めがちなタイプ。柔軟さも意識すると◎。',水:'家族のことを慎重に考え、リスクから守ろうとするタイプです。'},
+ SP:{木:'家族と一緒に新しいことを楽しむ、自由な関わり方をするタイプです。',火:'家族と過ごす時間を全力で楽しむ、明るいムードメーカーです。',土:'家族との時間を大切にする、地に足のついた関わり方をします。',金:'家族のために素早く動く、頼れる行動派タイプです。',水:'家族の状況に応じて柔軟に対応する、臨機応変なタイプです。'}
+};
+function mbtiFamilyHTML(cd){if(!cd.mbti)return '';var grp=mbtiGroupOf(cd.mbti);return '<div class="reading-card"><div class="rc-title">🧭 MBTI×家族との関わり方</div><div class="rc-text">'+TEMP_GOGYO_FAMILY[grp][cd.dGogyo]+'</div></div>';}
+
+/* お金タブ用 */
+var TEMP_GOGYO_MONEY={
+ NT:{木:'投資や新しい挑戦にお金を使う、戦略的な使い方をするタイプです。',火:'勝算があると思えば思い切って使う、メリハリのある使い方をします。',土:'計画的に資産を積み上げる、堅実な使い方をするタイプです。',金:'コストパフォーマンスを徹底的に分析してから使うタイプです。',水:'情報や知識への投資を惜しまない、知的好奇心型の使い方です。'},
+ NF:{木:'理想や成長のためにお金を使う、価値観重視のタイプです。',火:'人や体験のためにお金を使う、感情豊かな使い方をします。',土:'誠実にコツコツ貯める、安定志向の使い方をするタイプです。',金:'本当に価値があると思うものにこだわって使うタイプです。',水:'自分の世界観を大切にするものにお金を使う傾向があります。'},
+ SJ:{木:'目標に向けて計画的に貯める、堅実な使い方をするタイプです。',火:'決めた予算内でテンポよく使う、メリハリのあるタイプです。',土:'最も堅実に貯蓄できる、安定志向の強いタイプです。',金:'無駄を徹底的に省く、規律のある使い方をするタイプです。',水:'将来のリスクに備えて慎重に貯めるタイプです。'},
+ SP:{木:'経験への投資を惜しまない、フットワークの軽い使い方です。',火:'今を楽しむことにお金を使う、勢いのあるタイプです。',土:'実用的なものに堅実にお金を使うタイプです。',金:'効率よく必要なものに使う、無駄のないタイプです。',水:'状況に応じて柔軟にお金の使い方を変えるタイプです。'}
+};
+function mbtiMoneyHTML(cd){if(!cd.mbti)return '';var grp=mbtiGroupOf(cd.mbti);return '<div class="reading-card"><div class="rc-title">🧭 MBTI×お金の使い方</div><div class="rc-text">'+TEMP_GOGYO_MONEY[grp][cd.dGogyo]+'</div></div>';}
+
+/* 深掘りタブ用 */
+var TEMP_GOGYO_PITFALL={
+ NT:{木:'正しさにこだわりすぎて孤立しやすい傾向。柔軟さを意識すると視野が広がります。',火:'勢いで決めて後から後悔しやすい傾向。一呼吸置く習慣が役立ちます。',土:'慎重になりすぎてチャンスを逃しやすい傾向。小さな一歩から始めてみましょう。',金:'完璧を求めすぎて動けなくなる傾向。70点で動き出す勇気も大切です。',水:'考えすぎて行動が遅れる傾向。考えながら同時に動く練習が効果的です。'},
+ NF:{木:'理想が高すぎて現実とのギャップに苦しみやすい傾向。小さな達成を認めましょう。',火:'感情に振り回されて疲れやすい傾向。客観視する時間を作ると安定します。',土:'人に合わせすぎて自分を見失いやすい傾向。本音を出す練習が大切です。',金:'理想と違う現実を受け入れにくい傾向。完璧でなくていいと意識しましょう。',水:'内に溜め込みすぎて爆発しやすい傾向。定期的に吐き出す場を持ちましょう。'},
+ SJ:{木:'変化への抵抗が強くなりやすい傾向。新しいことを少しずつ試してみましょう。',火:'予定通りにいかないとストレスを感じやすい傾向。柔軟さを意識しましょう。',土:'保守的になりすぎてチャンスを逃しやすい傾向。たまには冒険も大切です。',金:'厳格になりすぎて自分にも他人にも厳しくなる傾向。許容範囲を広げましょう。',水:'心配しすぎて動けなくなる傾向。最悪のケースばかり考えないようにしましょう。'},
+ SP:{木:'飽きっぽく長続きしない傾向。小さな目標を積み重ねる工夫が役立ちます。',火:'勢いで動きすぎて後先を考えない傾向。一度立ち止まる習慣が大切です。',土:'目先のことに気を取られて長期計画が苦手な傾向。先を見据える練習を。',金:'効率を求めすぎて丁寧さを欠く傾向。たまにはじっくり取り組みましょう。',水:'その場の気分に流されやすい傾向。軸を持つ意識をすると安定します。'}
+};
+function mbtiPitfallHTML(cd){if(!cd.mbti)return '';var grp=mbtiGroupOf(cd.mbti);return '<div class="reading-card"><div class="rc-title">🧭 MBTI×成長のためのヒント</div><div class="rc-text">'+TEMP_GOGYO_PITFALL[grp][cd.dGogyo]+'</div></div>';}
+
 function mbtiHTML(cd){
   if(!cd.mbti)return '<div class="reading-card mbti-prompt" onclick="go(\'settings\')"><div class="rc-title">🧭 MBTIも登録してみませんか？</div><div class="rc-text">MBTIを登録すると、四柱推命の本質とMBTIの性格タイプを組み合わせた、より立体的な性格分析が見られます。設定 → 命式を編集 から追加できます。</div></div>';
   var grp=mbtiGroupOf(cd.mbti),syn=grp?TEMP_GOGYO_PERSONA[grp][cd.dGogyo]:'';
+  var ax=mbtiAxisValues(cd.mbti);
+  var AXLBL=[(cd.mbti[0]==='E'?'外向 E':'内向 I'),(cd.mbti[1]==='N'?'直感 N':'感覚 S'),(cd.mbti[2]==='T'?'思考 T':'感情 F'),(cd.mbti[3]==='J'?'判断 J':'知覚 P')];
+  var radarCard='<div class="reading-card"><div class="rc-title">📊 MBTI 4軸バランス</div>'+mbtiRadarSVG(ax,AXLBL)+'<div class="love-bars">'+loveBar(AXLBL[0],ax[0])+loveBar(AXLBL[1],ax[1])+loveBar(AXLBL[2],ax[2])+loveBar(AXLBL[3],ax[3])+'</div><div class="rc-sub" style="margin-top:6px;font-size:11px;color:var(--text3)">※ タイプ判定に基づく目安の傾向値です。実際の性格テストの数値とは異なります。</div></div>';
   return '<div class="reading-card"><div class="rc-title">🧭 MBTI「'+cd.mbti+'」（'+MBTI_NAME[cd.mbti]+'）</div><div class="rc-text">'+MBTI_DESC[cd.mbti]+'</div></div>'
+   +radarCard
    +'<div class="reading-card"><div class="rc-title">✨ MBTI×四柱推命のあなたの本質</div><div class="rc-sub" style="margin-bottom:4px"><div class="rc-label">'+(MBTI_GROUP_NAME[grp]||'')+' × 日主「'+cd.dGogyo+'」</div></div><div class="rc-text">'+syn+'</div></div>';
 }
 function mbtiCareerHTML(cd){
@@ -1716,6 +1785,7 @@ function renderReading(mainGogyo){
     cd.pillars.forEach(function(p){if(p.tsu&&p.tsu!=='日主'&&!shown[p.tsu]){shown[p.tsu]=1;html+='<div style="margin-bottom:10px"><div class="rc-label">'+p.label+'柱：'+p.tsu+'</div><div class="rc-text">'+(JUKKAMI_DESC[p.tsu]||'')+'</div></div>';}});
     html+='</div>';
     html+=talentGrowHTML(cd);
+    html+=mbtiTalentHTML(cd);
   } else if(t==='tekishoku'){
     html+='<div class="reading-card"><div class="rc-title">💼 向いている仕事・適職</div><div class="rc-text">'+GOGYO_WORK[cd.dGogyo]+'</div><div class="rc-sub"><div class="rc-label">用神を活かすなら</div>用神「'+y.primaryYojin+'」の方向性も、運を開く働き方として意識すると良いでしょう。</div></div>';
     html+=jobsHTML(cd);
@@ -1732,6 +1802,7 @@ function renderReading(mainGogyo){
     html+='<div class="reading-card"><div class="rc-title">🌹 相性の良いアプローチ</div><div class="rc-text">'+ls.approach+'</div></div>';
     html+='<div class="reading-card"><div class="rc-title">💑 恋愛・パートナーシップの傾向</div><div class="rc-text">'+GOGYO_LOVE[cd.dGogyo]+'</div></div>';
     html+='<div class="reading-card"><div class="rc-title">🤝 人間関係の縁</div><div class="rc-text">'+enText+'</div></div>';
+    html+=mbtiLoveHTML(cd);
   } else if(t==='kenko'){
     var h=GOGYO_HEALTH[cd.dGogyo];
     html+='<div class="reading-card"><div class="rc-title">🩺 健康・体質（日主'+cd.dGogyo+'）</div>'+
@@ -1742,15 +1813,19 @@ function renderReading(mainGogyo){
     html+=dietHTML(cd);
     html+=exerciseHTML(cd);
     html+=stressHTML(cd);
+    html+=mbtiHealthHTML(cd);
   } else if(t==='kazoku'){
     if(cd.noTime)html+='<div class="fumei-note"><span>⏱</span><span>時刻不明のため、時柱（子ども・夢との縁）は対象外です。三柱の縁を表示します。</span></div>';
     html+='<div class="reading-card"><div class="rc-title">👨‍👩‍👧 家族・縁の地図</div><div class="rc-text">四柱はそれぞれ異なる人間関係の領域を映します。年柱＝家系のルーツ、月柱＝身近な縁、日柱＝伴侶、時柱＝次世代。各柱の干支のエネルギーから、縁の質を読み解きます。</div></div>';
     cd.pillars.forEach(function(p){html+='<div class="reading-card"><div class="rc-title">'+(FAMILY_ICON[p.label]||'🔸')+' '+p.label+'柱（'+p.stem+p.branch+'）</div><div class="rc-text">'+(FAMILY_RICH[p.label]||'')+'</div>'+((p.tsu&&p.tsu!=='日主'&&JUKKAMI_DESC[p.tsu])?'<div class="rc-sub"><div class="rc-label">この柱に出る縁の質「'+p.tsu+'」</div>'+JUKKAMI_DESC[p.tsu]+'</div>':'')+'</div>';});
+    html+=mbtiFamilyHTML(cd);
   } else if(t==='money'){
     html+=moneyHTML(cd);
+    html+=mbtiMoneyHTML(cd);
   } else if(t==='fukabori'){
     html+='<div class="reading-card" style="background:transparent;padding:0 2px 4px"><div class="rc-text" style="color:var(--text2);font-size:12.5px">日主「'+cd.dGogyo+'」の気質から、つまずきやすい点・ストレス・人生の節目・力が出る環境を読み解きます。弱点ではなく「扱い方を知っておくと楽になるクセ」として捉えてください。</div></div>';
     html+=pitfallHTML(cd)+stressHTML(cd)+ageHTML(cd)+successHTML(cd);
+    html+=mbtiPitfallHTML(cd);
   }
   document.getElementById('readingArea').innerHTML=html;
 }
