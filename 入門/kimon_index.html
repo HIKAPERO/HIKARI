@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>奇門遁甲 入門 ─ はじめての人のための学習サイト</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0e1018;--ink-2:#161a28;--ink-3:#1f2435;--ink-4:#272d42;
+  --line:#2e3550;--line-soft:#232940;
+  --gold:#cda94f;--gold-soft:#e6cd83;--gold-dim:#8a7637;
+  --paper:#ece6d6;--paper-dim:#9a967f;--paper-faint:#6c6a5d;
+  --shu:#c0432f;--shu-soft:#d96a55;
+  --wood:#5aa884;--fire:#d06d46;--earth:#cda94f;--metal:#c2c7d2;--water:#5a86bf;
+  --font-disp:"Shippori Mincho B1","Noto Serif JP",serif;
+  --font-body:"Noto Sans JP",system-ui,sans-serif;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;}
+body{
+  background:radial-gradient(1000px 560px at 50% -12%,rgba(205,169,79,.09),transparent 62%),
+    radial-gradient(700px 600px at 110% 18%,rgba(90,134,191,.06),transparent 60%),var(--ink);
+  color:var(--paper);font-family:var(--font-body);line-height:1.78;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:880px;margin:0 auto;padding:0 22px 90px;}
+a{color:inherit;}
+
+/* ---------- Hero ---------- */
+.hero{text-align:center;padding:56px 0 34px;border-bottom:1px solid var(--line-soft);}
+.luoshu{width:96px;height:96px;margin:0 auto 22px;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);
+  border:1px solid var(--gold-dim);border-radius:10px;overflow:hidden;
+  background:linear-gradient(180deg,rgba(205,169,79,.12),rgba(205,169,79,.02));box-shadow:0 0 40px -14px rgba(205,169,79,.5);}
+.luoshu span{display:flex;align-items:center;justify-content:center;font-family:var(--font-disp);font-size:19px;
+  color:var(--gold-soft);border:.5px solid rgba(205,169,79,.18);opacity:.9;}
+.luoshu span.c{color:var(--shu-soft);opacity:1;font-weight:700;}
+.hero .eyebrow{font-size:11.5px;letter-spacing:.34em;color:var(--paper-faint);text-transform:uppercase;}
+.hero h1{font-family:var(--font-disp);font-weight:800;margin:10px 0 0;font-size:clamp(34px,8vw,56px);letter-spacing:.16em;
+  text-shadow:0 1px 0 rgba(0,0,0,.4);}
+.hero h1 .o{color:var(--gold);}
+.hero .sub{font-family:var(--font-disp);color:var(--paper-dim);font-size:15px;letter-spacing:.1em;margin-top:6px;}
+.hero p.thesis{max-width:600px;margin:22px auto 0;font-size:15px;color:var(--paper);}
+.hero p.thesis .em{color:var(--gold-soft);font-family:var(--font-disp);}
+
+/* ---------- 3つの顔 ---------- */
+.faces{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:34px 0 8px;}
+.face{background:var(--ink-2);border:1px solid var(--line-soft);border-radius:12px;padding:18px 14px;text-align:center;border-top:3px solid var(--c);}
+.face .fk{font-family:var(--font-disp);font-size:20px;letter-spacing:.08em;color:var(--c);}
+.face .fl{font-size:11px;color:var(--paper-faint);letter-spacing:.12em;margin:2px 0 8px;}
+.face .fd{font-size:12.5px;color:var(--paper-dim);line-height:1.65;}
+.face.boku{--c:var(--water);}
+.face.houi{--c:var(--gold);}
+.face.suimei{--c:var(--wood);}
+
+/* ---------- section heads ---------- */
+.shead{display:flex;align-items:baseline;gap:12px;margin:48px 0 6px;}
+.shead h2{font-family:var(--font-disp);font-weight:700;font-size:22px;letter-spacing:.06em;margin:0;}
+.shead .en{font-size:11px;letter-spacing:.2em;color:var(--paper-faint);text-transform:uppercase;}
+.shint{color:var(--paper-dim);font-size:13.5px;margin:0 0 22px;}
+
+/* ---------- chapters ---------- */
+.chapter{display:grid;grid-template-columns:74px 1fr;gap:18px;padding:20px 0;border-top:1px solid var(--line-soft);}
+.chapter:first-of-type{border-top:none;}
+.ch-num{font-family:var(--font-disp);font-weight:800;font-size:34px;line-height:1;color:var(--accent);
+  border-right:1px solid var(--line);padding-top:4px;padding-right:14px;text-align:right;}
+.ch-num small{display:block;font-size:10px;letter-spacing:.18em;color:var(--paper-faint);font-weight:400;margin-top:8px;}
+.ch-body h3{font-family:var(--font-disp);font-size:19px;margin:0 0 3px;letter-spacing:.04em;}
+.ch-body .cd{font-size:13px;color:var(--paper-dim);margin:0 0 12px;}
+.pages{display:flex;flex-direction:column;gap:7px;}
+.pg{display:flex;align-items:center;gap:10px;text-decoration:none;padding:7px 10px;border-radius:8px;
+  background:var(--ink-2);border:1px solid var(--line-soft);transition:.13s;}
+.pg:hover{border-color:var(--gold-dim);background:var(--ink-3);}
+.pg:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+.pg .pno{font-size:11px;color:var(--paper-faint);font-family:var(--font-disp);min-width:26px;}
+.pg .pt{font-size:14px;color:var(--paper);font-family:var(--font-disp);}
+.pg .badge{margin-left:auto;font-size:10.5px;letter-spacing:.05em;padding:2px 9px;border-radius:99px;white-space:nowrap;}
+.pg .badge.live{color:var(--gold-soft);border:1px solid var(--gold-dim);background:rgba(205,169,79,.08);}
+.pg .badge.note{color:var(--paper-dim);border:1px solid var(--line);}
+.pg.is-live .pt{color:var(--gold-soft);}
+.pg .arrow{margin-left:auto;color:var(--gold-dim);font-size:13px;}
+.pg.is-live .badge.live + .arrow,.pg .badge + .arrow{margin-left:8px;}
+
+/* accents per chapter */
+.c-gold{--accent:var(--gold);}.c-wood{--accent:var(--wood);}.c-water{--accent:var(--water);}
+.c-earth{--accent:var(--earth);}.c-metal{--accent:var(--metal);}.c-fire{--accent:var(--fire);}
+.c-muted{--accent:var(--paper-faint);}
+
+/* ---------- how to read ---------- */
+.howto{margin-top:50px;background:linear-gradient(180deg,var(--ink-2),rgba(20,24,38,.5));
+  border:1px solid var(--line);border-radius:14px;padding:22px 24px;}
+.howto h2{font-family:var(--font-disp);font-size:18px;margin:0 0 12px;letter-spacing:.05em;}
+.howto ol{margin:0;padding-left:20px;font-size:14px;color:var(--paper-dim);}
+.howto ol li{margin-bottom:7px;}
+.howto ol li b{color:var(--gold-soft);font-weight:500;font-family:var(--font-disp);}
+
+footer{margin-top:42px;text-align:center;font-size:11.5px;color:var(--paper-faint);line-height:1.85;}
+
+@media(max-width:640px){
+  .faces{grid-template-columns:1fr;}
+  .chapter{grid-template-columns:54px 1fr;gap:14px;}
+  .ch-num{font-size:28px;padding-right:10px;}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="luoshu" aria-hidden="true">
+      <span>4</span><span>9</span><span>2</span>
+      <span>3</span><span class="c">5</span><span>7</span>
+      <span>8</span><span>1</span><span>6</span>
+    </div>
+    <div class="eyebrow">はじめての人のための</div>
+    <h1>奇門遁甲 <span class="o">入門</span></h1>
+    <div class="sub">きもん とんこう</div>
+    <p class="thesis">
+      奇門遁甲は、<span class="em">時間と方位</span>から物事の吉凶を読む東洋占術。
+      「<span class="em">三式</span>」と呼ばれる最高峰の術のひとつで、古来「帝王の学」とも称されました。
+      用語は多いけれど、順番に積めば必ず読めるようになります。下の目次を上から辿ってください。
+    </p>
+  </div>
+
+  <div class="faces">
+    <div class="face boku"><div class="fk">卜占</div><div class="fl">QUESTION</div>
+      <div class="fd">立てた問いに対し、成否・吉凶・時期を読む。奇門の中心的な使い方。</div></div>
+    <div class="face houi"><div class="fk">方位</div><div class="fl">DIRECTION</div>
+      <div class="fd">良い時に良い方位へ動いて運を取りにいく。日本で発達した使い方。</div></div>
+    <div class="face suimei"><div class="fk">推命</div><div class="fl">DESTINY</div>
+      <div class="fd">生まれの盤から、その人の性質や運の流れを読む応用的な使い方。</div></div>
+  </div>
+
+  <div class="shead">
+    <h2>目次</h2><span class="en">Curriculum</span>
+  </div>
+  <p class="shint">第0〜2章は読み物（導入）、第3章からは解説（リファレンス）です。<span style="color:var(--gold-soft)">金色のページ</span>は、いま開けるインタラクティブ教材です。</p>
+
+  <div id="toc"></div>
+
+  <div class="howto">
+    <h2>このサイトの歩き方</h2>
+    <ol>
+      <li><b>まず第0章</b>で「何の術で、何ができるか」を掴む。専門用語はまだ覚えなくて大丈夫。</li>
+      <li><b>第1章の五行（相生・相剋）</b>だけは先に馴染んでおくと、後がぐっと楽になります。</li>
+      <li><b>第3章の構成要素</b>は学習盤で眺めながら、辞書のように何度も戻ってOK。</li>
+      <li><b>盤を作る（第4章）</b>のは概念を知れば十分。実際の作盤はツールやアプリに任せて、読み方（第5章）に集中しましょう。</li>
+    </ol>
+  </div>
+
+  <footer>
+    内容は初学者向けの整理です。作盤法・用語・吉凶の解釈は流派により異なります。<br>
+    占術は意思決定の参考であり、結果を保証するものではありません。
+  </footer>
+</div>
+
+<script>
+/* =========================================================
+   目次データ ── ここを編集すれば構成を変えられます。
+   pages の href は、同じフォルダに置く各ページのファイル名。
+   live:true … いま開けるインタラクティブ教材（既存ファイル）
+   badge … 'live'(金) / 'note'(灰) の補足ラベル
+   ========================================================= */
+const CURRICULUM = [
+ {ch:'0', label:'はじめに', cls:'c-gold', title:'はじめに', desc:'まず全体像をつかむ導入',
+  pages:[
+   {t:'奇門遁甲とは何か', href:'00-1-about.html'},
+   {t:'何ができるのか（卜占・方位・推命）', href:'00-2-uses.html'},
+   {t:'三式の中での位置づけ', href:'00-3-sanshiki.html'},
+   {t:'歴史と由来', href:'00-4-history.html'},
+   {t:'学ぶ前に ── 心構えと流派の前提', href:'00-5-mindset.html'},
+  ]},
+ {ch:'1', label:'土台', cls:'c-wood', title:'土台となる東洋思想', desc:'盤を読むための共通言語',
+  pages:[
+   {t:'陰陽', href:'01-1-inyo.html'},
+   {t:'五行と相生・相剋', href:'01-2-gogyo.html', badge:'note', badgeText:'最重要'},
+   {t:'天干・地支', href:'01-3-kanshi.html'},
+   {t:'八卦', href:'01-4-hakke.html'},
+   {t:'九宮・洛書', href:'01-5-kyukyu.html'},
+   {t:'二十四節気と暦', href:'01-6-sekki.html'},
+  ]},
+ {ch:'2', label:'全体像', cls:'c-water', title:'盤の全体像', desc:'盤がどんな層でできているか',
+  pages:[
+   {t:'盤とは ── 地盤・天盤・人盤・神盤', href:'02-1-ban.html'},
+   {t:'各層が表すもの', href:'02-2-layers.html'},
+   {t:'中宮と寄宮', href:'02-3-chukyu.html'},
+  ]},
+ {ch:'3', label:'部品', cls:'c-earth', title:'盤の構成要素', desc:'八門・九星・八神・天地盤干・特殊判定',
+  pages:[
+   {t:'はじめに ── 構成要素の歩き方', href:'03-0-elements.html'},
+   {t:'インタラクティブ学習盤で各要素を見る', href:'kimon_tree.html', live:true, badge:'live', badgeText:'教材を開く'},
+  ]},
+ {ch:'4', label:'起局', cls:'c-metal', title:'盤の作り方（起局）', desc:'仕組みは概念だけ。作盤はツールに任せる',
+  pages:[
+   {t:'局の決め方（節気・陰陽遁・三元）', href:'04-1-kyoku.html', badge:'note', badgeText:'概念のみ'},
+   {t:'地盤・天盤・八門・九星・八神の流れ', href:'04-2-flow.html', badge:'note', badgeText:'概念のみ'},
+   {t:'値符・値使とは', href:'04-3-chifu.html'},
+   {t:'転盤式と飛宮式の違い', href:'04-4-tenban.html'},
+   {t:'実務メモ ── 作盤ツール・アプリの使い方', href:'04-5-tools.html'},
+  ]},
+ {ch:'5', label:'読む', cls:'c-fire', title:'読み方・判断の基礎', desc:'盤から答えを引き出す',
+  pages:[
+   {t:'用神を立てる', href:'05-1-yojin.html'},
+   {t:'落宮を見る', href:'05-2-rakkyu.html'},
+   {t:'旺相休囚死（五行の強弱）', href:'05-3-osho.html'},
+   {t:'宮と宮の生剋を読む（周氏 複数宮ロジック）', href:'05-4-seikoku.html', badge:'note', badgeText:'教材あり'},
+   {t:'格局入門（吉格・凶格）', href:'05-5-kakkyoku.html'},
+   {t:'特殊判定（空亡・反吟・伏吟ほか）', href:'05-6-special.html'},
+   {t:'〔発展〕暗干', href:'05-7-angan.html', badge:'note', badgeText:'教材あり'},
+  ]},
+ {ch:'6', label:'使う', cls:'c-wood', title:'用途別の使い方', desc:'卜占・方位・推命の実践',
+  pages:[
+   {t:'卜占の手順', href:'06-1-bokusen.html'},
+   {t:'方位術 ── 立向盤・座山盤', href:'06-2-houi.html', badge:'note', badgeText:'教材あり'},
+   {t:'奇門推命のさわり', href:'06-3-suimei.html'},
+   {t:'開運・調整への応用', href:'06-4-kaiun.html'},
+  ]},
+ {ch:'7', label:'発展', cls:'c-water', title:'流派と次の一歩', desc:'広い地図と学習の続け方',
+  pages:[
+   {t:'主な流派（中国・韓国・日本・陰盤）', href:'07-1-schools.html'},
+   {t:'気学・方位術との違い', href:'07-2-kigaku.html'},
+   {t:'「数値化アプリ」と伝統判断', href:'07-3-app.html'},
+   {t:'次に読む本・学習リソース', href:'07-4-next.html'},
+  ]},
+ {ch:'付', label:'付録', cls:'c-muted', title:'付録', desc:'いつでも引ける道具箱',
+  pages:[
+   {t:'用語集', href:'a-glossary.html'},
+   {t:'早見表（八門/九星/八神/五行）', href:'b-tables.html'},
+   {t:'よくある誤解と注意', href:'c-notes.html'},
+  ]},
+];
+
+const toc=document.getElementById('toc');
+CURRICULUM.forEach(c=>{
+  const wrap=document.createElement('div');
+  wrap.className='chapter '+c.cls;
+  // page rows
+  let rows='';
+  c.pages.forEach((p,i)=>{
+    const live=p.live?' is-live':'';
+    const target=p.live?' target="_blank" rel="noopener"':'';
+    let badge='';
+    if(p.badge==='live') badge=`<span class="badge live">${p.badgeText||'教材'}</span>`;
+    else if(p.badge==='note') badge=`<span class="badge note">${p.badgeText||''}</span>`;
+    const arrow=`<span class="arrow">${p.live?'↗':'›'}</span>`;
+    const pno=c.ch+'-'+(i+1);
+    rows+=`<a class="pg${live}" href="${p.href}"${target}>
+      <span class="pno">${pno}</span><span class="pt">${p.t}</span>${badge}${arrow}</a>`;
+  });
+  wrap.innerHTML=`
+    <div class="ch-num">${c.ch}<small>${c.label}</small></div>
+    <div class="ch-body">
+      <h3>${c.title}</h3>
+      <p class="cd">${c.desc}</p>
+      <div class="pages">${rows}</div>
+    </div>`;
+  toc.appendChild(wrap);
+});
+</script>
+</body>
+</html>

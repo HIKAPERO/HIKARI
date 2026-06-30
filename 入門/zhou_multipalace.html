@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>周氏奇門 ─ 複数宮ロジック</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0e1018;--ink-2:#161a28;--ink-3:#1f2435;--ink-4:#272d42;
+  --line:#2e3550;--line-soft:#232940;
+  --gold:#cda94f;--gold-soft:#e6cd83;--gold-dim:#8a7637;
+  --paper:#ece6d6;--paper-dim:#9a967f;--paper-faint:#6c6a5d;
+  --shu:#c0432f;--shu-soft:#d96a55;
+  --wood:#5aa884;--fire:#d06d46;--earth:#cda94f;--metal:#c2c7d2;--water:#5a86bf;
+  --font-disp:"Shippori Mincho B1","Noto Serif JP",serif;
+  --font-body:"Noto Sans JP",system-ui,sans-serif;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;}
+body{
+  background:radial-gradient(900px 500px at 12% -8%,rgba(205,169,79,.07),transparent 60%),
+    radial-gradient(700px 600px at 108% 10%,rgba(90,134,191,.06),transparent 60%),var(--ink);
+  color:var(--paper);font-family:var(--font-body);line-height:1.75;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:860px;margin:0 auto;padding:0 20px 80px;}
+
+header.top{display:flex;align-items:center;gap:18px;padding:30px 2px 24px;border-bottom:1px solid var(--line-soft);}
+.luoshu{flex:0 0 auto;width:58px;height:58px;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);
+  border:1px solid var(--gold-dim);border-radius:7px;overflow:hidden;background:linear-gradient(180deg,rgba(205,169,79,.10),rgba(205,169,79,.02));}
+.luoshu span{display:flex;align-items:center;justify-content:center;font-family:var(--font-disp);font-size:13px;color:var(--gold-soft);border:.5px solid rgba(205,169,79,.18);opacity:.85;}
+.luoshu span.c{color:var(--shu-soft);opacity:1;font-weight:700;}
+.htxt .eyebrow{font-size:11px;letter-spacing:.24em;color:var(--paper-faint);text-transform:uppercase;}
+.htxt h1{font-family:var(--font-disp);font-weight:800;margin:3px 0 0;font-size:clamp(24px,5vw,34px);letter-spacing:.08em;}
+.htxt h1 .o{color:var(--gold);}
+
+.thesis{margin:26px 0 8px;padding:20px 22px;border:1px solid var(--line);border-left:3px solid var(--gold);
+  border-radius:10px;background:linear-gradient(180deg,var(--ink-2),rgba(22,26,40,.5));font-size:15.5px;}
+.thesis b{color:var(--gold-soft);font-family:var(--font-disp);}
+
+section{margin-top:40px;}
+h2{font-family:var(--font-disp);font-weight:700;font-size:21px;letter-spacing:.05em;margin:0 0 4px;display:flex;align-items:center;gap:10px;}
+h2 .no{font-size:12px;color:var(--shu-soft);border:1px solid rgba(192,67,47,.4);border-radius:99px;padding:2px 9px;letter-spacing:.1em;font-family:var(--font-body);}
+.lead{color:var(--paper-dim);font-size:14px;margin:0 0 18px;}
+p{font-size:14.5px;}
+.em{color:var(--gold-soft);font-family:var(--font-disp);}
+.shu{color:var(--shu-soft);}
+
+/* compare grids */
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.cpane{background:var(--ink-2);border:1px solid var(--line-soft);border-radius:12px;padding:16px 16px 18px;}
+.cpane h3{margin:0 0 4px;font-family:var(--font-disp);font-size:16px;letter-spacing:.04em;}
+.cpane .tag{font-size:11.5px;color:var(--paper-faint);margin-bottom:14px;}
+.cpane.jp h3{color:var(--paper);}
+.cpane.cn h3{color:var(--gold);}
+.grid9{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;aspect-ratio:1;max-width:230px;margin:0 auto 12px;}
+.cell{display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--ink-3);
+  border:1px solid var(--line-soft);border-radius:7px;font-size:11px;color:var(--paper-faint);position:relative;}
+.cell .dir{font-family:var(--font-disp);font-size:13px;color:var(--paper-dim);}
+.cell.center{background:var(--ink-4);}
+.cell.self{background:rgba(205,169,79,.14);border-color:var(--gold-dim);}
+.cell.self .dir{color:var(--gold-soft);font-weight:700;}
+.cell.target{background:rgba(192,67,47,.14);border-color:rgba(192,67,47,.45);}
+.cell.target .dir{color:var(--shu-soft);}
+.cell.rel{box-shadow:inset 0 0 0 1px rgba(205,169,79,.25);}
+.cell.rel::after{content:"↔";position:absolute;top:3px;right:5px;font-size:10px;color:var(--gold-dim);}
+.cpane .note{font-size:12.5px;color:var(--paper-dim);}
+
+/* simulator */
+.sim{background:linear-gradient(180deg,var(--ink-2),rgba(20,24,38,.5));border:1px solid var(--line);border-radius:14px;padding:22px;}
+.sim-row{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:center;}
+.picker{}
+.picker .pl{font-size:12px;color:var(--paper-dim);margin-bottom:8px;text-align:center;letter-spacing:.06em;}
+.picker .pl b{color:var(--gold-soft);font-family:var(--font-disp);}
+.opts{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;}
+.opt{width:40px;height:40px;border-radius:9px;border:1px solid var(--line);background:var(--ink-3);
+  color:var(--paper);font-family:var(--font-disp);font-size:18px;cursor:pointer;transition:.12s;display:flex;align-items:center;justify-content:center;}
+.opt:hover{border-color:var(--gold-dim);}
+.opt:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+.opt.on{box-shadow:0 0 0 2px currentColor inset;}
+.opt[data-el="木"]{color:var(--wood);}.opt[data-el="火"]{color:var(--fire);}
+.opt[data-el="土"]{color:var(--earth);}.opt[data-el="金"]{color:var(--metal);}.opt[data-el="水"]{color:var(--water);}
+.opt.on[data-el="木"]{background:rgba(90,168,132,.16);}.opt.on[data-el="火"]{background:rgba(208,109,70,.16);}
+.opt.on[data-el="土"]{background:rgba(205,169,79,.16);}.opt.on[data-el="金"]{background:rgba(194,199,210,.16);}.opt.on[data-el="水"]{background:rgba(90,134,191,.16);}
+.vs{font-family:var(--font-disp);color:var(--paper-faint);font-size:13px;text-align:center;}
+.vs small{display:block;font-size:10px;letter-spacing:.1em;}
+.verdict{margin-top:20px;border-top:1px solid var(--line);padding-top:18px;text-align:center;min-height:96px;}
+.verdict .ph{color:var(--paper-faint);font-size:13px;padding:18px 0;}
+.vrel{font-family:var(--font-disp);font-size:15px;color:var(--paper-dim);letter-spacing:.06em;}
+.vmain{font-family:var(--font-disp);font-weight:800;font-size:26px;margin:6px 0 4px;letter-spacing:.08em;}
+.vmain.good{color:var(--gold-soft);}.vmain.bad{color:var(--shu-soft);}.vmain.mid{color:var(--paper);}
+.vdesc{font-size:13.5px;color:var(--paper-dim);max-width:520px;margin:6px auto 0;}
+
+/* pattern cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;}
+.card{background:var(--ink-2);border:1px solid var(--line-soft);border-radius:11px;padding:14px;border-top:3px solid var(--line);}
+.card.good{border-top-color:var(--gold);}.card.bad{border-top-color:var(--shu);}.card.mid{border-top-color:var(--paper-faint);}
+.card .ttl{font-family:var(--font-disp);font-size:16px;margin-bottom:2px;}
+.card .sub{font-size:11px;color:var(--paper-faint);letter-spacing:.05em;margin-bottom:8px;}
+.card .vd{font-size:13px;color:var(--paper-dim);}
+.card .vd b.good{color:var(--gold-soft);}.card .vd b.bad{color:var(--shu-soft);}.card .vd b.mid{color:var(--paper);}
+
+.caveat{margin-top:14px;font-size:13px;color:var(--paper-dim);background:rgba(192,67,47,.06);
+  border:1px solid rgba(192,67,47,.22);border-radius:10px;padding:14px 16px;}
+.caveat b{color:var(--shu-soft);}
+footer{margin-top:46px;text-align:center;font-size:11.5px;color:var(--paper-faint);line-height:1.8;}
+
+@media(max-width:680px){
+  .compare{grid-template-columns:1fr;}
+  .sim-row{grid-template-columns:1fr;}
+  .vs{transform:rotate(90deg);}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="luoshu" aria-hidden="true">
+      <span>4</span><span>9</span><span>2</span>
+      <span>3</span><span class="c">5</span><span>7</span>
+      <span>8</span><span>1</span><span>6</span>
+    </div>
+    <div class="htxt">
+      <div class="eyebrow">奇門遁甲 学習シリーズ</div>
+      <h1>周氏奇門 ─ <span class="o">複数宮ロジック</span></h1>
+    </div>
+  </header>
+
+  <div class="thesis">
+    日本の方位術が「<b>行きたい方位の宮だけ</b>」を見るのに対し、周氏奇門は複数の宮（八卦の宮）を関係づけて読む。
+    なかでも要は <b>自分（日干）と、その方位の宮との五行関係</b>。方位から剋されれば損、自分が方位を剋せば利──
+    この宮どうしの相剋関係をロジックで積み上げるのが周氏奇門です。
+  </div>
+
+  <section>
+    <h2><span class="no">視点</span>単宮を見るか、関係を見るか</h2>
+    <p class="lead">同じ盤を前にしても、「どこを・どう見るか」が流派で違います。</p>
+    <div class="compare">
+      <div class="cpane jp">
+        <h3>日本式（方位術）</h3>
+        <div class="tag">行きたい方位の一宮で吉凶を決める</div>
+        <div class="grid9" id="grid-jp"></div>
+        <p class="note">「その宮に吉門・吉星・吉格が揃っているか」を中心に判断。シンプルで方位取りに使いやすい一方、<span class="shu">自分との関係</span>は読みに入りにくい。</p>
+      </div>
+      <div class="cpane cn">
+        <h3>中国式（周氏奇門）</h3>
+        <div class="tag">自分の宮と方位の宮の「関係」を読む</div>
+        <div class="grid9" id="grid-cn"></div>
+        <p class="note">中央＝<span class="em">自分（日干）</span>を起点に、方位の宮との<span class="em">五行関係・生剋</span>を見る。盤を「関係のネットワーク」として読むので、同じ吉門でも結論が変わりうる。</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="no">核心</span>「我剋（がこく）＝財」の発想</h2>
+    <p class="lead">なぜ「自分が方位を剋すと得」なのか。これは東洋占術共通の <span class="em">我剋者（われこくするもの）＝財</span> の考え方です。</p>
+    <p>五行には相手を抑え込む <span class="em">相剋</span> の関係があります（木剋土・土剋水・水剋火・火剋金・金剋金）。占術では「<span class="em">自分がコントロールできる相手＝自分の財（取りに行ける利益）</span>」とみなします。だから──</p>
+    <p>方位の五行を <span class="em">自分（日干）が剋している</span>なら、その方位は「自分が御せる財」。行けば<span class="em">利益を得て、自分が上位に立つ</span>。逆に方位の側が<span class="shu">自分を剋している</span>なら、行った先で<span class="shu">抑えつけられ、損をする</span>。たとえ吉門が立っていても、この関係が悪ければ手放しでは喜べない、というわけです。</p>
+  </section>
+
+  <section>
+    <h2><span class="no">体験</span>自分 × 方位 五行シミュレータ</h2>
+    <p class="lead">「自分（日干）の五行」と「行きたい方位の五行」を選ぶと、両者の関係と基本判断が出ます。</p>
+    <div class="sim">
+      <div class="sim-row">
+        <div class="picker">
+          <div class="pl"><b>自分</b>（日干）の五行</div>
+          <div class="opts" id="selfOpts"></div>
+        </div>
+        <div class="vs">対<small>vs</small></div>
+        <div class="picker">
+          <div class="pl">行きたい<b>方位</b>の五行</div>
+          <div class="opts" id="dirOpts"></div>
+        </div>
+      </div>
+      <div class="verdict" id="verdict">
+        <div class="ph">上の五行を一つずつ選んでください。</div>
+      </div>
+    </div>
+    <div class="caveat">
+      <b>注意　</b>これは <span class="em">基本原理</span>（我剋者為財）を体験するための簡略モデルです。実際の周氏奇門では、用神の<span class="em">旺衰（旺相休囚死）</span>、複数宮にまたがる生剋の連鎖、格局・空亡・暗干などを重ねて総合判断します。一つの関係だけで結論は出ません。
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="no">早見</span>五行関係の5パターン</h2>
+    <p class="lead">自分（S）から見た、方位（T）との関係。方位取りの文脈での基本的な読みです。</p>
+    <div class="cards" id="patternCards"></div>
+  </section>
+
+  <section>
+    <h2><span class="no">まとめ</span>周氏奇門が「ロジック」と呼ばれる理由</h2>
+    <p>単独の宮の吉凶（門・星・神が吉か凶か）を足し算するのではなく、<span class="em">自分の宮を基準に、関係する複数の宮の生剋を理屈で追って</span>結論を導く。だから「ロジックで判断する流派」と言われます。方位取りも、その関係構造から「行って得か損か」を読むひとつの応用、という位置づけです。</p>
+  </section>
+
+  <footer>
+    五行配当・判断は学習用の基本モデルです。流派・占的により読みは異なります。<br>
+    実占では盤全体（用神の旺衰・格局・空亡など）を併せて総合判断してください。
+  </footer>
+</div>
+
+<script>
+const EL=['木','火','土','金','水'];
+const ELC={木:'wood',火:'fire',土:'earth',金:'metal',水:'water'};
+/* 相生: a生b */
+const SHENG={木:'火',火:'土',土:'金',金:'水',水:'木'};
+/* 相剋: a剋b */
+const KE={木:'土',土:'水',水:'火',火:'金',金:'木'};
+
+/* 九宮（後天）の方位ラベル */
+const JIU=[
+  {d:'巽 東南'},{d:'離 南'},{d:'坤 南西'},
+  {d:'震 東'},{d:'中 央',center:true},{d:'兌 西'},
+  {d:'艮 東北'},{d:'坎 北'},{d:'乾 北西'}
+];
+function buildGrid(elId,mode){
+  const g=document.getElementById(elId);
+  JIU.forEach((c,i)=>{
+    const div=document.createElement('div');
+    div.className='cell'+(c.center?' center':'');
+    if(mode==='jp'){ if(i===8) div.classList.add('target'); }       // 北西を行き先に
+    if(mode==='cn'){
+      if(c.center) div.classList.add('self');
+      else if(i===8) div.classList.add('target');
+      else if(!c.center) div.classList.add('rel');
+    }
+    let label=c.d;
+    if(mode==='cn'&&c.center) label='自分';
+    if(mode==='jp'&&i===8) label='行先';
+    if(mode==='cn'&&i===8) label='方位';
+    div.innerHTML='<span class="dir">'+label+'</span>';
+    g.appendChild(div);
+  });
+}
+buildGrid('grid-jp','jp');
+buildGrid('grid-cn','cn');
+
+/* シミュレータ */
+let selfEl=null,dirEl=null;
+function buildOpts(elId,which){
+  const box=document.getElementById(elId);
+  EL.forEach(e=>{
+    const b=document.createElement('button');
+    b.className='opt';b.dataset.el=e;b.textContent=e;
+    b.setAttribute('aria-label',e+'行');
+    b.onclick=()=>{
+      box.querySelectorAll('.opt').forEach(o=>o.classList.remove('on'));
+      b.classList.add('on');
+      if(which==='self') selfEl=e; else dirEl=e;
+      render();
+    };
+    box.appendChild(b);
+  });
+}
+buildOpts('selfOpts','self');
+buildOpts('dirOpts','dir');
+
+function relation(S,T){
+  if(S===T) return {key:'比和',rel:'比和（同じ五行・対等）',main:'平〜小吉',cls:'mid',
+    desc:'対等な力関係。協力・横並びには良いが、抜きん出た利益にはなりにくい。'};
+  if(KE[S]===T) return {key:'我剋',rel:'我剋（自分が方位を剋す）＝財',main:'利益・吉',cls:'good',
+    desc:'方位はあなたが御せる「財」。行けば利を得て、あなたが上位に立つ。周氏奇門が最も重く見る吉の形。'};
+  if(KE[T]===S) return {key:'剋我',rel:'剋我（方位に剋される）',main:'損・凶',cls:'bad',
+    desc:'行った先で抑えつけられ、損をしやすい。吉門が立っていても手放しでは喜べない。'};
+  if(SHENG[T]===S) return {key:'生我',rel:'生我（方位が自分を生じる）＝印・援助',main:'助け・吉',cls:'good',
+    desc:'方位があなたを養い助ける。支援・学び・後ろ盾を受け取る形。受動的な吉。'};
+  if(SHENG[S]===T) return {key:'我生',rel:'我生（自分が方位を生じる）＝洩気',main:'消耗・平',cls:'mid',
+    desc:'あなたの力が外へ流れ出る。生み出す・与える面はあるが、コスト・消耗を伴う。'};
+}
+function render(){
+  const v=document.getElementById('verdict');
+  if(!selfEl||!dirEl){v.innerHTML='<div class="ph">上の五行を一つずつ選んでください。</div>';return;}
+  const r=relation(selfEl,dirEl);
+  v.innerHTML=`<div class="vrel">自分〔<span style="color:var(--${ELC[selfEl]})">${selfEl}</span>〕 → 方位〔<span style="color:var(--${ELC[dirEl]})">${dirEl}</span>〕：${r.rel}</div>
+    <div class="vmain ${r.cls}">${r.main}</div><div class="vdesc">${r.desc}</div>`;
+}
+
+/* 5パターンカード */
+const PATTERNS=[
+  {ttl:'我剋',sub:'自分が方位を剋す ＝ 財',vd:'<b class="good">利益・吉</b>／取りに行ける。自分が上位に立つ。',cls:'good'},
+  {ttl:'生我',sub:'方位が自分を生じる ＝ 印',vd:'<b class="good">援助・吉</b>／支え・学び・後ろ盾を受ける。',cls:'good'},
+  {ttl:'比和',sub:'同じ五行 ＝ 対等',vd:'<b class="mid">平〜小吉</b>／協力・横並び。突出はしにくい。',cls:'mid'},
+  {ttl:'我生',sub:'自分が方位を生じる ＝ 洩気',vd:'<b class="mid">消耗・平</b>／与える・生むがコストを伴う。',cls:'mid'},
+  {ttl:'剋我',sub:'方位が自分を剋す',vd:'<b class="bad">損・凶</b>／抑えられる。吉門でも甘く見ない。',cls:'bad'},
+];
+const pc=document.getElementById('patternCards');
+PATTERNS.forEach(p=>{
+  const d=document.createElement('div');d.className='card '+p.cls;
+  d.innerHTML=`<div class="ttl">${p.ttl}</div><div class="sub">${p.sub}</div><div class="vd">${p.vd}</div>`;
+  pc.appendChild(d);
+});
+</script>
+</body>
+</html>

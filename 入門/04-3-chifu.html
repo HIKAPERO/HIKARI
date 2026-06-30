@@ -1,0 +1,104 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>値符・値使とは ｜ 奇門遁甲 入門</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet"><style>
+:root{
+  --ink:#0e1018;--ink-2:#161a28;--ink-3:#1f2435;--ink-4:#272d42;
+  --line:#2e3550;--line-soft:#232940;
+  --gold:#cda94f;--gold-soft:#e6cd83;--gold-dim:#8a7637;
+  --paper:#ece6d6;--paper-dim:#9a967f;--paper-faint:#6c6a5d;
+  --shu:#c0432f;--shu-soft:#d96a55;
+  --wood:#5aa884;--fire:#d06d46;--earth:#cda94f;--metal:#c2c7d2;--water:#5a86bf;
+  --font-disp:"Shippori Mincho B1","Noto Serif JP",serif;
+  --font-body:"Noto Sans JP",system-ui,sans-serif;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;}
+body{background:radial-gradient(900px 500px at 12% -8%,rgba(205,169,79,.07),transparent 60%),
+  radial-gradient(700px 600px at 108% 12%,rgba(90,134,191,.06),transparent 60%),var(--ink);
+  color:var(--paper);font-family:var(--font-body);line-height:1.85;-webkit-font-smoothing:antialiased;}
+a{color:inherit;}
+.wrap{max-width:760px;margin:0 auto;padding:0 22px 80px;}
+
+.site-nav{display:flex;align-items:center;gap:12px;padding:16px 2px;border-bottom:1px solid var(--line-soft);
+  position:sticky;top:0;background:rgba(14,16,24,.82);backdrop-filter:blur(8px);z-index:10;}
+.site-nav .ls{width:30px;height:30px;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);
+  border:1px solid var(--gold-dim);border-radius:5px;overflow:hidden;flex:0 0 auto;}
+.site-nav .ls i{border:.5px solid rgba(205,169,79,.16);}
+.site-nav a.brand{font-family:var(--font-disp);font-weight:700;letter-spacing:.08em;text-decoration:none;color:var(--paper);font-size:15px;}
+.site-nav a.brand .o{color:var(--gold);}
+.site-nav .crumb{margin-left:auto;font-size:11.5px;color:var(--paper-faint);letter-spacing:.04em;text-align:right;}
+
+.article{padding:38px 0 0;}
+.eyebrow{font-size:11px;letter-spacing:.22em;color:var(--shu-soft);text-transform:uppercase;}
+h1{font-family:var(--font-disp);font-weight:800;font-size:clamp(28px,6vw,40px);letter-spacing:.05em;margin:8px 0 0;line-height:1.25;}
+.lead{font-size:16px;color:var(--paper);margin:16px 0 6px;font-family:var(--font-disp);}
+h2{font-family:var(--font-disp);font-weight:700;font-size:20px;letter-spacing:.04em;margin:34px 0 6px;display:flex;align-items:center;gap:10px;}
+h2::before{content:"";width:16px;height:1px;background:var(--gold-dim);flex:0 0 auto;}
+p{font-size:15px;margin:10px 0;}
+.em{color:var(--gold-soft);font-family:var(--font-disp);}
+.shu{color:var(--shu-soft);}
+
+.callout{background:linear-gradient(180deg,var(--ink-2),rgba(22,26,40,.5));border:1px solid var(--line);
+  border-left:3px solid var(--gold);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:14px;}
+.callout b{color:var(--gold-soft);font-family:var(--font-disp);}
+.note{background:rgba(192,67,47,.06);border:1px solid rgba(192,67,47,.22);border-radius:10px;padding:13px 16px;margin:18px 0;font-size:13.5px;color:var(--paper-dim);}
+.note b{color:var(--shu-soft);}
+
+.kvs{display:flex;flex-direction:column;gap:8px;margin:16px 0;}
+.kv{display:grid;grid-template-columns:54px 1fr;gap:14px;align-items:start;background:var(--ink-2);border:1px solid var(--line-soft);border-radius:10px;padding:13px 15px;}
+.kv .k{font-family:var(--font-disp);font-size:26px;font-weight:800;color:var(--gold);text-align:center;line-height:1.1;}
+.kv .v{font-size:13.5px;color:var(--paper-dim);}
+.kv .v b{color:var(--paper);font-weight:500;font-family:var(--font-disp);}
+
+.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0;}
+.c3{background:var(--ink-2);border:1px solid var(--line-soft);border-radius:12px;padding:16px 14px;border-top:3px solid var(--ca);}
+.c3 .t{font-family:var(--font-disp);font-size:19px;letter-spacing:.06em;color:var(--ca);}
+.c3 .l{font-size:10px;color:var(--paper-faint);letter-spacing:.14em;margin:2px 0 8px;}
+.c3 .d{font-size:12.5px;color:var(--paper-dim);line-height:1.65;}
+.ca-water{--ca:var(--water);}.ca-gold{--ca:var(--gold);}.ca-wood{--ca:var(--wood);}.ca-fire{--ca:var(--fire);}.ca-earth{--ca:var(--earth);}.ca-metal{--ca:var(--metal);}
+
+table.dt{width:100%;border-collapse:collapse;font-size:13px;margin:16px 0;}
+table.dt th,table.dt td{border:1px solid var(--line-soft);padding:7px 9px;text-align:center;}
+table.dt th{background:var(--ink-3);color:var(--gold);font-family:var(--font-disp);font-weight:500;letter-spacing:.03em;}
+table.dt td{color:var(--paper-dim);}
+table.dt td.lead-cell{color:var(--paper);font-family:var(--font-disp);font-size:16px;}
+.el-wood{color:var(--wood)!important;}.el-fire{color:var(--fire)!important;}.el-earth{color:var(--earth)!important;}.el-metal{color:var(--metal)!important;}.el-water{color:var(--water)!important;}
+
+.grid-bagua{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:340px;margin:18px auto;}
+.bg{background:var(--ink-2);border:1px solid var(--line-soft);border-radius:9px;padding:11px 6px;text-align:center;}
+.bg.center{background:var(--ink-4);border-color:var(--gold-dim);}
+.bg .gua{font-size:22px;line-height:1;color:var(--gold-soft);}
+.bg .nm{font-size:12px;color:var(--paper);margin-top:4px;font-family:var(--font-disp);}
+.bg .dr{font-size:10px;color:var(--paper-faint);margin-top:1px;}
+
+.luoshu-big{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:350px;margin:18px auto;}
+.lq{aspect-ratio:1;background:var(--ink-2);border:1px solid var(--line-soft);border-radius:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:4px;}
+.lq.center{background:var(--ink-4);border-color:var(--gold-dim);}
+.lq .num{font-family:var(--font-disp);font-size:26px;font-weight:800;line-height:1;}
+.lq .dir2{font-size:11px;color:var(--paper);font-family:var(--font-disp);}
+.lq .meta{font-size:9.5px;color:var(--paper-faint);}
+
+.pager{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:46px;padding-top:22px;border-top:1px solid var(--line-soft);}
+.pg{display:flex;flex-direction:column;gap:3px;text-decoration:none;padding:14px 16px;border-radius:11px;background:var(--ink-2);border:1px solid var(--line-soft);transition:.13s;}
+.pg:hover{border-color:var(--gold-dim);background:var(--ink-3);}
+.pg:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+.pg .dir{font-size:11px;color:var(--paper-faint);letter-spacing:.08em;}
+.pg .ttl{font-family:var(--font-disp);font-size:15px;color:var(--gold-soft);}
+.pg.next{text-align:right;}
+.pg.prev .ttl{color:var(--paper);}
+.toc-link{display:block;text-align:center;margin-top:16px;font-size:12.5px;color:var(--paper-dim);text-decoration:none;letter-spacing:.05em;}
+.toc-link:hover{color:var(--gold-soft);}
+footer{margin-top:40px;text-align:center;font-size:11px;color:var(--paper-faint);line-height:1.8;}
+@media(max-width:560px){.cards3{grid-template-columns:1fr;}.pager{grid-template-columns:1fr;}.pg.next{text-align:left;}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;}}
+</style></head><body><div class="site-nav"><span class="ls" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><a class="brand" href="kimon_index.html">奇門遁甲 <span class="o">入門</span></a><span class="crumb">第4章 起局 › 4-3</span></div><div class="wrap"><article class="article"><div class="eyebrow">第4章 起局 ・ 4-3</div><h1>値符・値使とは</h1><p class="lead">盤の司令塔。値符は九星のリーダー、値使は八門のリーダーです。</p>
+<p>盤には <span class="em">司令塔</span> がいます。それが <span class="em">値符（ちふ）</span> と <span class="em">値使（ちし）</span>。判断は、しばしばこの二つの宮から始めます。</p>
+
+<h2>値符 ── 九星のリーダー</h2>
+<p>その時刻を率いる九星が値符です。時刻が属する「旬（じゅん）」の先頭干（旬首＝六儀のいずれか）が示す星で、盤全体の <span class="em">主役・中心・自分側</span> を表すことが多い。八神の筆頭（値符神）も同じ名で、最高の守護とされます。</p>
+
+<h2>値使 ── 八門のリーダー</h2>
+<p>値符と対になる、その時刻を率いる八門が値使です。<span class="em">事の動き・成り行き</span> を表し、方位術では「行動の門」として重視されます。</p>
+
+<h2>旬首とのつながり</h2>
+<p>時刻はいずれかの「旬」に属し、その旬を率いるのが六儀のひとつ＝旬首。値符（星）と値使（門）は、この旬首が地盤に乗る宮を起点に決まります。難しければ <span class="em">「時刻ごとに、その場の隊長役の星と門が決まる」</span> と捉えれば十分です。</p>
+<div class="callout"><b>読みの起点　</b>用神（自分・相手を何に見るか／第5章）を立てるとき、<span class="em">値符＝全体運や自分の主</span>、<span class="em">値使＝事の運び</span> と結びつけて読むのが、判断の基本の一歩になります。</div>
+<nav class="pager"><a class="pg prev" href="04-2-flow.html"><span class="dir">‹ 前へ</span><span class="ttl">盤を組み立てる流れ</span></a><a class="pg next" href="04-4-tenban.html"><span class="dir">次へ ›</span><span class="ttl">転盤式と飛宮式</span></a></nav><a class="toc-link" href="kimon_index.html">目次に戻る</a></article><footer>初学者向けの整理です。作盤法・用語・解釈は流派により異なります。<br>占術は意思決定の参考であり、結果を保証するものではありません。</footer></div></body></html>

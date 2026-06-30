@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>奇門遁甲 学習盤</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0e1018; --ink-2:#161a28; --ink-3:#1f2435; --ink-4:#272d42;
+  --line:#2e3550; --line-soft:#232940;
+  --gold:#cda94f; --gold-soft:#e6cd83; --gold-dim:#8a7637;
+  --paper:#ece6d6; --paper-dim:#9a967f; --paper-faint:#6c6a5d;
+  --shu:#c0432f; --shu-soft:#d96a55;
+  --wood:#5aa884; --fire:#d06d46; --earth:#cda94f; --metal:#c2c7d2; --water:#5a86bf;
+  --font-disp:"Shippori Mincho B1","Noto Serif JP",serif;
+  --font-body:"Noto Sans JP",system-ui,-apple-system,sans-serif;
+  --r:10px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;height:100%;}
+body{
+  background:
+    radial-gradient(900px 500px at 15% -8%, rgba(205,169,79,.07), transparent 60%),
+    radial-gradient(700px 600px at 105% 12%, rgba(90,134,191,.06), transparent 60%),
+    var(--ink);
+  color:var(--paper);
+  font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased;
+  line-height:1.6;
+}
+.app{max-width:1180px;margin:0 auto;min-height:100%;padding:0 18px 60px;}
+
+/* ---------- Header ---------- */
+header.top{
+  display:flex;align-items:center;gap:20px;
+  padding:26px 4px 22px;border-bottom:1px solid var(--line-soft);
+  position:relative;
+}
+.luoshu{flex:0 0 auto;width:62px;height:62px;display:grid;
+  grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);
+  border:1px solid var(--gold-dim);border-radius:7px;overflow:hidden;
+  background:linear-gradient(180deg,rgba(205,169,79,.10),rgba(205,169,79,.02));}
+.luoshu span{display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-disp);font-size:14px;color:var(--gold-soft);
+  border:.5px solid rgba(205,169,79,.18);opacity:.85;}
+.luoshu span.c{color:var(--shu-soft);opacity:1;font-weight:700;}
+.htxt h1{font-family:var(--font-disp);font-weight:800;margin:0;
+  font-size:clamp(26px,5vw,38px);letter-spacing:.14em;color:var(--paper);
+  text-shadow:0 1px 0 rgba(0,0,0,.4);}
+.htxt h1 .o{color:var(--gold);}
+.htxt p{margin:5px 0 0;color:var(--paper-dim);font-size:13px;letter-spacing:.06em;}
+
+/* ---------- Toolbar ---------- */
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+  padding:16px 2px 14px;}
+.search{position:relative;flex:1 1 230px;max-width:360px;}
+.search input{width:100%;background:var(--ink-2);border:1px solid var(--line);
+  color:var(--paper);border-radius:99px;padding:9px 14px 9px 36px;font-size:14px;
+  font-family:var(--font-body);outline:none;transition:border-color .15s;}
+.search input:focus{border-color:var(--gold-dim);}
+.search input::placeholder{color:var(--paper-faint);}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);
+  width:15px;height:15px;color:var(--paper-faint);}
+.tbtn{background:var(--ink-2);border:1px solid var(--line);color:var(--paper-dim);
+  border-radius:99px;padding:8px 15px;font-size:13px;cursor:pointer;
+  font-family:var(--font-body);transition:.15s;white-space:nowrap;}
+.tbtn:hover{border-color:var(--gold-dim);color:var(--paper);}
+.tbtn:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+
+/* ---------- Legend ---------- */
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;padding:0 2px 14px;font-size:12px;color:var(--paper-dim);}
+.legend b{display:inline-flex;align-items:center;gap:5px;font-weight:400;}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block;box-shadow:0 0 6px -1px currentColor;}
+.el-wood .dot,.dot.wood{background:var(--wood);color:var(--wood);}
+.el-fire .dot,.dot.fire{background:var(--fire);color:var(--fire);}
+.el-earth .dot,.dot.earth{background:var(--earth);color:var(--earth);}
+.el-metal .dot,.dot.metal{background:var(--metal);color:var(--metal);}
+.el-water .dot,.dot.water{background:var(--water);color:var(--water);}
+
+/* ---------- Main grid ---------- */
+.main{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:22px;align-items:start;}
+
+/* ---------- Tree ---------- */
+.tree-wrap{background:linear-gradient(180deg,var(--ink-2),rgba(22,26,40,.6));
+  border:1px solid var(--line-soft);border-radius:var(--r);padding:10px 8px 14px;}
+.tree{font-size:15px;}
+.node>.row{display:flex;align-items:center;gap:8px;width:100%;text-align:left;
+  background:none;border:none;color:var(--paper);font-family:var(--font-body);
+  font-size:inherit;cursor:pointer;padding:7px 8px;border-radius:8px;
+  position:relative;transition:background .12s;}
+.node>.row:hover{background:var(--ink-3);}
+.node>.row:focus-visible{outline:2px solid var(--gold);outline-offset:-2px;}
+.node>.row.sel{background:var(--ink-4);box-shadow:inset 2px 0 0 var(--gold);}
+.toggle{flex:0 0 auto;width:16px;height:16px;display:flex;align-items:center;
+  justify-content:center;color:var(--gold-dim);font-size:11px;transition:transform .18s;}
+.node.open>.row .toggle{transform:rotate(90deg);}
+.toggle.leaf{color:transparent;}
+.row .nm{font-family:var(--font-disp);font-weight:500;letter-spacing:.04em;}
+.row.depth0 .nm{font-size:18px;font-weight:800;color:var(--gold);}
+.row .rd{font-size:11px;color:var(--paper-faint);margin-left:1px;}
+.row .el-dot{flex:0 0 auto;width:8px;height:8px;border-radius:50%;}
+.row .mini-rank{margin-left:auto;font-size:11px;letter-spacing:.05em;
+  padding:1px 7px;border-radius:99px;border:1px solid var(--line);color:var(--paper-dim);}
+.rank-vgood{color:var(--gold-soft);border-color:var(--gold-dim);}
+.rank-good{color:var(--wood);border-color:rgba(90,168,132,.4);}
+.rank-mid{color:var(--paper-dim);}
+.rank-bad{color:var(--shu-soft);border-color:rgba(192,67,47,.4);}
+.rank-vbad{color:var(--shu);border-color:rgba(192,67,47,.55);background:rgba(192,67,47,.08);}
+.children{margin-left:16px;padding-left:14px;border-left:1px solid var(--line-soft);
+  overflow:hidden;}
+.node:not(.open)>.children{display:none;}
+.row.hl .nm{color:var(--gold-soft);text-decoration:underline;text-underline-offset:3px;}
+.dim{opacity:.32;}
+
+/* ---------- Detail ---------- */
+.detail{background:linear-gradient(180deg,var(--ink-2),rgba(20,24,38,.55));
+  border:1px solid var(--line-soft);border-radius:var(--r);padding:0;
+  position:sticky;top:14px;overflow:hidden;}
+.detail-inner{padding:22px 22px 26px;}
+.d-close{display:none;}
+.d-head{position:relative;padding-bottom:16px;margin-bottom:18px;
+  border-bottom:1px solid var(--line);}
+.d-eyebrow{font-size:11px;letter-spacing:.22em;color:var(--paper-faint);text-transform:uppercase;}
+.d-title{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-top:4px;}
+.d-title h2{font-family:var(--font-disp);font-weight:800;margin:0;
+  font-size:clamp(30px,6vw,42px);letter-spacing:.08em;line-height:1;}
+.d-title .rd2{color:var(--paper-dim);font-size:13px;margin-bottom:3px;}
+.d-badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+.badge{font-size:12px;padding:3px 11px;border-radius:99px;border:1px solid var(--line);
+  display:inline-flex;align-items:center;gap:6px;letter-spacing:.04em;}
+.badge .dot{box-shadow:none;}
+.badge.el-wood{border-color:rgba(90,168,132,.5);color:var(--wood);}
+.badge.el-fire{border-color:rgba(208,109,70,.5);color:var(--fire);}
+.badge.el-earth{border-color:rgba(205,169,79,.5);color:var(--earth);}
+.badge.el-metal{border-color:rgba(194,199,210,.5);color:var(--metal);}
+.badge.el-water{border-color:rgba(90,134,191,.5);color:var(--water);}
+
+.rate{display:flex;align-items:center;gap:12px;margin:4px 0 22px;}
+.stars{display:flex;gap:3px;}
+.star{width:19px;height:19px;}
+.star.on{color:var(--gold);}.star.off{color:var(--line);}
+.rate .rk{font-family:var(--font-disp);font-weight:700;font-size:17px;letter-spacing:.1em;}
+.rk.vgood{color:var(--gold-soft);}.rk.good{color:var(--wood);}.rk.mid{color:var(--paper-dim);}
+.rk.bad{color:var(--shu-soft);}.rk.vbad{color:var(--shu);}
+
+.sec{margin-bottom:20px;}
+.sec h3{font-size:12px;letter-spacing:.18em;color:var(--gold);margin:0 0 10px;
+  font-weight:700;display:flex;align-items:center;gap:8px;}
+.sec h3::before{content:"";width:14px;height:1px;background:var(--gold-dim);}
+.chips{display:flex;flex-wrap:wrap;gap:7px;}
+.chip{background:var(--ink-3);border:1px solid var(--line);border-radius:7px;
+  padding:5px 11px;font-size:13.5px;color:var(--paper);font-family:var(--font-disp);}
+.chip.use{border-style:dashed;color:var(--paper);}
+.desc{font-size:14px;color:var(--paper);line-height:1.85;}
+.desc .em{color:var(--gold-soft);font-family:var(--font-disp);}
+
+.compat{display:flex;flex-direction:column;gap:8px;}
+.cmp{display:flex;align-items:center;gap:12px;padding:8px 11px;border-radius:8px;
+  background:var(--ink-3);border:1px solid var(--line-soft);}
+.cmp .cn{font-family:var(--font-disp);font-size:15px;flex:0 0 auto;min-width:48px;}
+.cmp .cs{display:flex;gap:2px;}
+.cmp .cs .star{width:15px;height:15px;}
+.cmp .ct{margin-left:auto;font-size:12px;color:var(--paper-dim);}
+
+.quicklist{display:flex;flex-wrap:wrap;gap:7px;}
+.ql{background:var(--ink-3);border:1px solid var(--line);border-radius:7px;
+  padding:6px 12px;font-size:14px;font-family:var(--font-disp);cursor:pointer;
+  color:var(--paper);transition:.12s;display:inline-flex;align-items:center;gap:7px;}
+.ql:hover{border-color:var(--gold-dim);color:var(--gold-soft);}
+.ql:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+
+.note{font-size:12.5px;color:var(--paper-dim);background:rgba(192,67,47,.06);
+  border:1px solid rgba(192,67,47,.22);border-radius:8px;padding:11px 13px;line-height:1.7;}
+.note b{color:var(--shu-soft);font-weight:700;}
+
+footer{margin-top:30px;text-align:center;font-size:11.5px;color:var(--paper-faint);
+  letter-spacing:.04em;line-height:1.8;}
+
+/* ---------- Mobile ---------- */
+@media(max-width:860px){
+  .main{grid-template-columns:1fr;}
+  .detail{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:50;
+    border-radius:18px 18px 0 0;border-bottom:none;max-height:82vh;overflow-y:auto;
+    transform:translateY(102%);transition:transform .28s cubic-bezier(.4,0,.2,1);
+    box-shadow:0 -16px 40px -10px rgba(0,0,0,.6);}
+  .detail.is-open{transform:translateY(0);}
+  .detail-inner{padding-top:30px;}
+  .d-close{display:flex;position:absolute;top:12px;right:14px;width:34px;height:34px;
+    align-items:center;justify-content:center;background:var(--ink-3);
+    border:1px solid var(--line);border-radius:50%;color:var(--paper);cursor:pointer;font-size:18px;z-index:2;}
+  .detail::before{content:"";position:absolute;top:9px;left:50%;transform:translateX(-50%);
+    width:40px;height:4px;border-radius:99px;background:var(--line);}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="luoshu" aria-hidden="true">
+      <span>4</span><span>9</span><span>2</span>
+      <span>3</span><span class="c">5</span><span>7</span>
+      <span>8</span><span>1</span><span>6</span>
+    </div>
+    <div class="htxt">
+      <h1>奇門遁甲 <span class="o">学習盤</span></h1>
+      <p>八門・九星・八神・天盤干・地盤干 ── クリックで枝を開き、各要素の意味と相性を学ぶ</p>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="search" type="search" placeholder="要素名で検索（例：生門、天心、六合）" autocomplete="off">
+    </div>
+    <button class="tbtn" id="expandAll">すべて開く</button>
+    <button class="tbtn" id="collapseAll">すべて閉じる</button>
+  </div>
+
+  <div class="legend">
+    <span style="color:var(--paper-faint)">五行：</span>
+    <b class="el-wood"><i class="dot"></i>木</b>
+    <b class="el-fire"><i class="dot"></i>火</b>
+    <b class="el-earth"><i class="dot"></i>土</b>
+    <b class="el-metal"><i class="dot"></i>金</b>
+    <b class="el-water"><i class="dot"></i>水</b>
+    <span style="color:var(--paper-faint);margin-left:6px">／ 吉凶度 ★ が多いほど吉</span>
+  </div>
+
+  <div class="main">
+    <div class="tree-wrap">
+      <div class="tree" id="tree"></div>
+    </div>
+    <aside class="detail" id="detail" aria-live="polite">
+      <button class="d-close" id="dClose" aria-label="閉じる">×</button>
+      <div class="detail-inner" id="detailInner"></div>
+    </aside>
+  </div>
+
+  <footer>
+    吉凶・相性・五行配当は学習用の目安です。流派・占的により解釈は異なります。<br>
+    実占では盤全体（格局・空亡・門迫・反吟伏吟）を併せて総合判断してください。
+  </footer>
+</div>
+
+<script>
+/* ===== 五行ヘルパ ===== */
+const EL = {木:'wood',火:'fire',土:'earth',金:'metal',水:'water'};
+const RANKCLASS = s => s>=5?'vgood':s>=4?'good':s>=3?'mid':s>=2?'bad':'vbad';
+const RANKLABEL = {5:'大吉',4:'吉',3:'平',2:'凶',1:'大凶'};
+
+/* ===== データ ===== */
+const DATA = {
+  id:'root', name:'奇門遁甲盤', reading:'きもんとんこう ばん', depth:0, expanded:true,
+  overview:'時間と方位の吉凶を読む盤。<span class="em">地盤干</span>（不動の下地）の上に<span class="em">天盤干・九星・八門・八神</span>が巡り、九宮（洛書）の各宮に配置される。下の枝を開いて、構成要素を一つずつ学べる。',
+  children:[
+    /* ───── 八門 ───── */
+    {id:'gate', name:'八門', reading:'はちもん', expanded:false,
+     overview:'人事の<span class="em">行動・動き</span>を司る八つの門。出行・求財・面会など「何をするか」の吉凶を最も直接に示す。生門・開門・休門が三吉門。',
+     children:[
+      {id:'g-kyu', name:'休門', reading:'きゅうもん', element:'水', score:4,
+        meanings:['休息','安定','人間関係','名声','貴人'],
+        uses:['面会','和解','就職','休養','貴人に会う'],
+        compat:[{n:'天心',s:5},{n:'天蓬',s:4},{n:'太陰',s:4},{n:'死門',s:1}],
+        note:'三吉門の一つ。穏やかで吉だが勢いは弱め。急ぐ事より「整える・繋ぐ」事に向く。'},
+      {id:'g-sei', name:'生門', reading:'せいもん', element:'土', score:5,
+        meanings:['財運','商売','健康','生命力'],
+        uses:['開業','営業','投資','旅行','引越','求財'],
+        compat:[{n:'天任',s:5},{n:'九地',s:5},{n:'六合',s:4},{n:'白虎',s:2}],
+        note:'最も実利的な大吉門。財と健康に直結し、求財・開業の第一候補。'},
+      {id:'g-sho', name:'傷門', reading:'しょうもん', element:'木', score:2,
+        meanings:['争い','損失','訴訟','ケガ'],
+        uses:['債権回収','狩猟','賭け事','攻めの一手'],
+        compat:[{n:'天冲',s:3},{n:'白虎',s:1},{n:'騰蛇',s:1}],
+        note:'凶門。正業には不利だが、取り立て・攻撃・賭けなど「奪う」事には逆用されることも。'},
+      {id:'g-to', name:'杜門', reading:'ともん', element:'木', score:2,
+        meanings:['閉じる','隠す','防御','隠遁'],
+        uses:['秘密保持','技術習得','防御','身を隠す'],
+        compat:[{n:'太陰',s:4},{n:'玄武',s:3},{n:'死門',s:1}],
+        note:'閉塞の凶門。だが「隠す・守る・籠って学ぶ」には適し、逃避・潜伏に用いる。'},
+      {id:'g-kei', name:'景門', reading:'けいもん', element:'火', score:3,
+        meanings:['文書','情報','宣伝','芸術','血光'],
+        uses:['受験','契約','面接','PR','計画提示'],
+        compat:[{n:'天英',s:4},{n:'九天',s:4},{n:'騰蛇',s:3}],
+        note:'半吉の門。華やかで人目を引く。試験・宣伝・表現に向くが、虚飾・血光の暗示も。'},
+      {id:'g-shi', name:'死門', reading:'しもん', element:'土', score:1,
+        meanings:['死','停滞','終わり','弔事'],
+        uses:['弔問','墓関連','狩猟','漁','物事の終結'],
+        compat:[{n:'弔事のみ可',s:3},{n:'生門',s:1},{n:'開門',s:1}],
+        note:'最凶の門。新規・前進はほぼ全て不可。終わらせる事・弔事・狩猟漁のみ用いる。'},
+      {id:'g-kyo', name:'驚門', reading:'きょうもん', element:'金', score:2,
+        meanings:['驚き','口舌','訴訟','恐怖'],
+        uses:['訴訟','捕り物','神経戦','口頭交渉'],
+        compat:[{n:'天柱',s:1},{n:'白虎',s:1},{n:'玄武',s:1}],
+        note:'凶門。驚愕・トラブル・口論の暗示。基本は避け、争訟や捕縛など限定的に用いる。'},
+      {id:'g-kai', name:'開門', reading:'かいもん', element:'金', score:5,
+        meanings:['開始','出発','公務','栄達'],
+        uses:['開業','就職','出行','官庁手続','起業'],
+        compat:[{n:'天心',s:5},{n:'九天',s:5},{n:'値符',s:5},{n:'死門',s:1}],
+        note:'大吉門の筆頭。事の「始まり」と公的・社会的成功に最も強い。求官・開業に最良。'},
+     ]},
+    /* ───── 九星 ───── */
+    {id:'star', name:'九星', reading:'きゅうせい', expanded:false,
+     overview:'天の気＝<span class="em">才能・性質・場の質</span>を司る九つの星。事の「能力・適性・背景」を示す。天心・天禽・天輔が代表的な吉星。',
+     children:[
+      {id:'s-bo', name:'天蓬', reading:'てんぽう', element:'水', score:2,
+        meanings:['武勇','盗賊','激しさ','水難'],
+        uses:['闘争','博打','急事','攻撃'],
+        compat:[{n:'休門',s:4},{n:'傷門',s:3},{n:'開門',s:1}],
+        note:'凶星（大煞星）。猛々しく荒い。正業には不利だが武・博打・急襲には力を持つ。'},
+      {id:'s-nin', name:'天任', reading:'てんにん', element:'土', score:4,
+        meanings:['安定','蓄財','不動産','忍耐'],
+        uses:['蓄財','不動産','地道な事業','長期計画'],
+        compat:[{n:'生門',s:5},{n:'開門',s:4}],
+        note:'吉星。どっしりと安定し、こつこつ蓄える事に強い。生門との組合せは堅実な大吉。'},
+      {id:'s-chu', name:'天冲', reading:'てんちゅう', element:'木', score:3,
+        meanings:['行動','武','スピード','短気'],
+        uses:['迅速な行動','出兵','復讐','即断'],
+        compat:[{n:'傷門',s:3},{n:'開門',s:4}],
+        note:'小吉（半凶）。動きが速く決断的。勢いはあるが激しさ・短慮に注意。'},
+      {id:'s-ho', name:'天輔', reading:'てんぽ', element:'木', score:4,
+        meanings:['文書','学問','教育','誠実'],
+        uses:['学問','文書','結婚','移転'],
+        compat:[{n:'開門',s:5},{n:'生門',s:4}],
+        note:'吉星。文教・学問・契約に強く、誠実で品がある。婚姻・進学に好適。'},
+      {id:'s-ei', name:'天英', reading:'てんえい', element:'火', score:3,
+        meanings:['文明','華やか','宣伝','血光'],
+        uses:['宣伝','芸術','面接','表現'],
+        compat:[{n:'景門',s:4},{n:'生門',s:3}],
+        note:'半吉（虚名の星）。明るく華やかで人目を引くが、過熱・虚栄・血光の側面も。'},
+      {id:'s-zei', name:'天芮', reading:'てんぜい', element:'土', score:2,
+        meanings:['病気','師弟','受動','湿'],
+        uses:['治療側の医療','学ぶ','受け身の事'],
+        compat:[{n:'死門',s:1},{n:'生門',s:2}],
+        note:'凶星（病符）。疾病・停滞を司る。一般に凶だが、師に学ぶ・受動的な事には可。'},
+      {id:'s-chu2', name:'天柱', reading:'てんちゅう', element:'金', score:2,
+        meanings:['破壊','口舌','退守','隠す'],
+        uses:['守備','撤退','破壊工作','隠匿'],
+        compat:[{n:'驚門',s:1},{n:'杜門',s:3}],
+        note:'凶星。壊す・退く・口論の星。進攻には凶だが、守り・撤収・破棄には用いる。'},
+      {id:'s-shin', name:'天心', reading:'てんしん', element:'金', score:5,
+        meanings:['医薬','リーダー','知恵','庇護'],
+        uses:['医療','治療','求医','統率事'],
+        compat:[{n:'開門',s:5},{n:'休門',s:5}],
+        note:'大吉星。智慧と医薬、保護の星。求医・治療・指導者の事に最良。開門と組めば最上。'},
+      {id:'s-kin', name:'天禽', reading:'てんきん', element:'土', score:5,
+        meanings:['中央','統率','公正','万能'],
+        uses:['あらゆる正事','調停','統率','中核業務'],
+        compat:[{n:'開門',s:5},{n:'生門',s:5}],
+        note:'中央の吉星（万能）。公正で力強く、ほぼ全ての正業に吉。値符を伴うと特に強い。'},
+     ]},
+    /* ───── 八神 ───── */
+    {id:'god', name:'八神', reading:'はっしん', expanded:false,
+     overview:'神秘的な<span class="em">作用・場の雰囲気・後ろ盾</span>を司る八つの神将。事の「霊的・無形の力」を示す。値符・六合・太陰・九天が吉神。',
+     children:[
+      {id:'n-chi', name:'値符', reading:'ちふ', element:'土', score:5,
+        meanings:['貴人','首領','最高の守護','尊貴'],
+        uses:['求貴人','起業','重要事','昇進'],
+        compat:[{n:'開門',s:5},{n:'天心',s:5}],
+        note:'八神の最尊。最も貴く強い守護神。在る所、万事に力を加える。'},
+      {id:'n-to', name:'騰蛇', reading:'とうだ', element:'火', score:2,
+        meanings:['虚驚','変化','うそ','怪異'],
+        uses:['変事','霊的な事','驚かす'],
+        compat:[{n:'景門',s:3},{n:'杜門',s:3}],
+        note:'凶神。実体のない驚き・虚言・まやかしの神。心の動揺・怪異を示す。'},
+      {id:'n-tai', name:'太陰', reading:'たいいん', element:'金', score:4,
+        meanings:['陰徳','隠密','計画','庇護'],
+        uses:['秘密事','計画','陰の助力','参謀'],
+        compat:[{n:'休門',s:4},{n:'杜門',s:5}],
+        note:'吉神。陰ながらの助け・密計・庇護の神。表に出ない謀・準備に強い。'},
+      {id:'n-riku', name:'六合', reading:'りくごう', element:'木', score:4,
+        meanings:['和合','結婚','協力','仲介'],
+        uses:['結婚','契約','交渉','提携'],
+        compat:[{n:'生門',s:5},{n:'休門',s:4}],
+        note:'吉神。和合・縁結びの神。婚姻・協力・交渉成立に最も好適。'},
+      {id:'n-byak', name:'白虎', reading:'びゃっこ', element:'金', score:2,
+        meanings:['武','争い','凶猛','道路'],
+        uses:['軍事','争い事','道中の事'],
+        compat:[{n:'傷門',s:1},{n:'生門',s:2}],
+        note:'凶神。猛々しい武・争い・血光・交通の神。一般に凶、武事には力を持つ。'},
+      {id:'n-gen', name:'玄武', reading:'げんぶ', element:'水', score:2,
+        meanings:['盗難','欺き','暗','逃亡'],
+        uses:['隠遁','追跡','暗中の事'],
+        compat:[{n:'杜門',s:3},{n:'死門',s:1}],
+        note:'凶神。盗み・偽り・暗がりの神。詐欺・紛失に注意。逃亡・潜伏には用いる。'},
+      {id:'n-kuchi', name:'九地', reading:'きゅうち', element:'土', score:4,
+        meanings:['守り','堅固','蓄積','地道'],
+        uses:['守備','蓄財','待機','不動産'],
+        compat:[{n:'生門',s:5},{n:'太陰',s:4}],
+        note:'吉神（陰）。大地のように守り固める神。防御・蓄積・じっと待つ事に吉。'},
+      {id:'n-kute', name:'九天', reading:'きゅうてん', element:'金', score:4,
+        meanings:['高い','拡大','攻め','遠方'],
+        uses:['起業','出行','拡大','攻勢'],
+        compat:[{n:'開門',s:5},{n:'景門',s:4}],
+        note:'吉神（陽）。天高く伸びる神。前進・攻め・遠出・拡張に勢いを与える。'},
+     ]},
+    /* ───── 天盤干 ───── */
+    {id:'tenban', name:'天盤干', reading:'てんばんかん', expanded:false,
+     overview:'盤の上で<span class="em">巡り、作用する天の十干</span>。事の「これから動く力・現れ」を示す。<span class="em">三奇</span>（乙丙丁）と<span class="em">六儀</span>（戊己庚辛壬癸）に分かれる。',
+     children:[
+      {id:'sanki', name:'三奇', reading:'さんき', expanded:false,
+       overview:'天盤干の中でも特に貴い三つの干＝<span class="em">乙（日奇）・丙（月奇）・丁（星奇）</span>。吉門・吉星と組めば吉作用を強く増幅する。',
+       children:[
+        {id:'k-otsu', name:'乙', reading:'いつ（日奇）', element:'木', score:4,
+          meanings:['柔','医薬','草木','潜伏','貴人'],
+          uses:['逃亡','隠遁','医療','柔軟な交渉'],
+          compat:[{n:'休門',s:4},{n:'生門',s:4}],
+          note:'日奇。しなやかな陰木。身を隠す・難を避ける・医に吉。三奇の筆頭。'},
+        {id:'k-hei', name:'丙', reading:'へい（月奇）', element:'火', score:4,
+          meanings:['威光','権威','明','神助'],
+          uses:['威を示す','神事','速攻','障害突破'],
+          compat:[{n:'景門',s:4},{n:'開門',s:4}],
+          note:'月奇。明るく激しい陽火。威光・神助・速攻に強い。庚（敵）を撃つ力も。'},
+        {id:'k-tei', name:'丁', reading:'てい（星奇）', element:'火', score:4,
+          meanings:['文書','知性','玉女','縁'],
+          uses:['文書','婚姻','人を求める','学術'],
+          compat:[{n:'景門',s:4},{n:'六合',s:4}],
+          note:'星奇。やわらかな陰火（灯火）。文・縁・玉女の星。求人・文書・婚姻に吉。'},
+       ]},
+      {id:'rokugi', name:'六儀', reading:'ろくぎ', expanded:false,
+       overview:'三奇以外の六つの天盤干＝<span class="em">戊己庚辛壬癸</span>。甲（首領）が遁れ隠れる器（儀）であり、それぞれ象意を持つ。',
+       children:[
+        {id:'k-bo', name:'戊', reading:'ぼ', element:'土', score:3,
+          meanings:['財','資本','天門','どっしり'],
+          uses:['求財の基準','資金','安定'],
+          compat:[{n:'生門',s:4},{n:'開門',s:3}],
+          note:'陽土。財・資本の象。求財判断の重要な基準干。'},
+        {id:'k-ki', name:'己', reading:'き', element:'土', score:3,
+          meanings:['地戸','陰土','隠す','畑'],
+          uses:['守り','隠匿','培う'],
+          compat:[{n:'杜門',s:3},{n:'九地',s:3}],
+          note:'陰土（地戸）。柔らかく内に蔵す土。隠す・育てる象。'},
+        {id:'k-ko', name:'庚', reading:'こう', element:'金', score:2,
+          meanings:['阻隔','障害','敵','道路'],
+          uses:['障害の象','戦い','対立'],
+          compat:[{n:'傷門',s:2},{n:'白虎',s:2}],
+          note:'凶の代表干。阻み・敵・障害・道路の象。庚が動くと事は塞がる。'},
+        {id:'k-shin', name:'辛', reading:'しん', element:'金', score:2,
+          meanings:['過失','罪','誤り','宝石'],
+          uses:['訴訟','過ちの象','改める'],
+          compat:[{n:'驚門',s:2},{n:'天柱',s:2}],
+          note:'陰金。過失・罪・誤りの象。鋭く傷つける刃。訴訟・過誤に関わる。'},
+        {id:'k-jin', name:'壬', reading:'じん', element:'水', score:2,
+          meanings:['動','流れ','淫','蛇'],
+          uses:['流動の象','不安定','移ろい'],
+          compat:[{n:'玄武',s:2},{n:'休門',s:3}],
+          note:'陽水。大いに流れ動く象。活発だが不安定・移り気・淫らさの暗示。'},
+        {id:'k-ki2', name:'癸', reading:'き', element:'水', score:2,
+          meanings:['隠','終','天網','陰湿'],
+          uses:['隠匿','終結','網の象'],
+          compat:[{n:'玄武',s:2},{n:'死門',s:2}],
+          note:'陰水（天網）。隠れる・終わる・搦め捕る象。終局・隠遁・陰湿。'},
+       ]},
+     ]},
+    /* ───── 地盤干 ───── */
+    {id:'chiban', name:'地盤干', reading:'ちばんかん', expanded:false,
+     overview:'各宮に固定された<span class="em">不動の下地＝環境・基盤</span>を示す十干。天盤干が「これから」なら、地盤干は「すでにある土台・背景」。十干が九宮に布かれる。',
+     children:[
+      {id:'c-ko', name:'甲', reading:'こう', element:'木', score:3,
+        meanings:['陽木','首領','大樹','基盤'],
+        uses:['物事の主体・首領の象'],
+        compat:[{n:'六儀に遁れ隠れる',s:3}],
+        note:'遁甲の「甲」。最も尊い首領だが盤上に直接は現れず、六儀（戊〜癸）に隠れる。'},
+      {id:'c-otsu', name:'乙', reading:'いつ', element:'木', score:4,
+        meanings:['陰木','草花','柔','下地としての柔軟さ'],
+        uses:['しなやかな土台'],compat:[{n:'三奇・日奇',s:4}],
+        note:'地盤の乙は柔軟で穏やかな下地。天盤の乙（日奇）と重なれば伏吟に注意。'},
+      {id:'c-hei', name:'丙', reading:'へい', element:'火', score:3,
+        meanings:['陽火','太陽','明','熱い下地'],uses:['明るい環境の象'],
+        compat:[{n:'三奇・月奇',s:4}],note:'地盤の丙は明るく勢いある土台。'},
+      {id:'c-tei', name:'丁', reading:'てい', element:'火', score:3,
+        meanings:['陰火','灯火','文','温かな下地'],uses:['文・縁の環境'],
+        compat:[{n:'三奇・星奇',s:4}],note:'地盤の丁はやわらかな温もりの土台。'},
+      {id:'c-bo', name:'戊', reading:'ぼ', element:'土', score:3,
+        meanings:['陽土','財','どっしりした基盤'],uses:['資本・財の土台'],
+        compat:[{n:'生門',s:3}],note:'地盤の戊は財の基盤・安定した下地。'},
+      {id:'c-ki', name:'己', reading:'き', element:'土', score:3,
+        meanings:['陰土','畑','内に蔵す下地'],uses:['育む環境'],
+        compat:[{n:'九地',s:3}],note:'地盤の己は柔らかく内に蓄える土台。'},
+      {id:'c-ko2', name:'庚', reading:'こう', element:'金', score:2,
+        meanings:['陽金','障害','硬い下地'],uses:['障害・対立の地'],
+        compat:[{n:'傷門',s:2}],note:'地盤の庚は障害・敵を孕む下地。庚の宮は要注意。'},
+      {id:'c-shin', name:'辛', reading:'しん', element:'金', score:2,
+        meanings:['陰金','刃','鋭い下地'],uses:['過誤・刷新の地'],
+        compat:[{n:'驚門',s:2}],note:'地盤の辛は鋭く傷つける性の下地。'},
+      {id:'c-jin', name:'壬', reading:'じん', element:'水', score:2,
+        meanings:['陽水','流れ','動く下地'],uses:['流動的な環境'],
+        compat:[{n:'玄武',s:2}],note:'地盤の壬は流れ動いて定まらぬ下地。'},
+      {id:'c-ki2', name:'癸', reading:'き', element:'水', score:2,
+        meanings:['陰水','雨露','陰湿な下地'],uses:['隠れた・終わりの環境'],
+        compat:[{n:'天網',s:2}],note:'地盤の癸は陰り隠れる性の下地（天網）。'},
+     ]},
+    /* ───── 特殊判定 ───── */
+    {id:'special', name:'特殊判定', reading:'とくしゅはんてい', expanded:false,
+     overview:'個々の門星神だけでなく、<span class="em">盤全体の状態</span>から吉凶を読む高度な判定。実占ではこれらを併せて総合する。',
+     children:[
+      {id:'sp-kaku', name:'格局', reading:'かっきょく', element:null, score:3,
+        meanings:['組合せの型','吉格','凶格','象意の名'],
+        uses:['総合吉凶の判定','象意の読み取り'],
+        compat:[{n:'青龍返首(吉)',s:5},{n:'飛鳥跌穴(吉)',s:5},{n:'白虎猖狂(凶)',s:1}],
+        note:'干・門・星・神の組合せが作る吉凶パターンの総称。青龍返首・飛鳥跌穴などの吉格、白虎猖狂・螣蛇夭矯などの凶格がある。'},
+      {id:'sp-ku', name:'空亡', reading:'くうぼう', element:null, score:3,
+        meanings:['旬空','力が抜ける','虚','保留'],
+        uses:['待機','逃避','凶を緩める'],
+        compat:[{n:'吉は半減',s:2},{n:'凶は緩む',s:3}],
+        note:'旬空にあたる宮は力が抜け落ちる。吉作用は半減し、凶作用も和らぐ。待つ・避ける・先延ばしに用いられる。'},
+      {id:'sp-paku', name:'門迫', reading:'もんぱく', element:null, score:2,
+        meanings:['門が宮に剋される','圧迫','発揮できず'],
+        uses:['吉門の力が削がれる状況の判定'],
+        compat:[{n:'吉門でも力減',s:2}],
+        note:'門の五行が、その宮（地盤）の五行に剋される状態。たとえ吉門でも作用が圧迫され、十分に発揮されない。'},
+      {id:'sp-han', name:'反吟', reading:'はんぎん', element:null, score:1,
+        meanings:['対冲','動揺','変化','繰り返し'],
+        uses:['急変・破談・不安定の判定'],
+        compat:[{n:'動・変の凶',s:1}],
+        note:'盤が向かい合って冲する配置。激しい動き・変化・繰り返し・破談を示す凶。落ち着かず事が覆りやすい。'},
+      {id:'sp-fuku', name:'伏吟', reading:'ふくぎん', element:null, score:1,
+        meanings:['元の宮に伏す','停滞','沈滞','憂い'],
+        uses:['停滞・うつ・動けぬ状況の判定'],
+        compat:[{n:'静・滞の凶',s:1}],
+        note:'干が元の宮に伏したまま動かない配置。停滞・沈滞・憂鬱・繰り返しを示す凶。物事が前に進まない。'},
+     ]},
+  ]
+};
+
+/* ===== ツリー描画 ===== */
+const tree = document.getElementById('tree');
+const byId = {};
+function buildNode(node, depth){
+  byId[node.id] = node;
+  const wrap = document.createElement('div');
+  wrap.className = 'node' + (node.expanded?' open':'');
+  wrap.dataset.id = node.id;
+
+  const row = document.createElement('button');
+  row.className = 'row depth'+depth + (node.element?(' el-'+EL[node.element]):'');
+  row.dataset.id = node.id;
+  const hasKids = node.children && node.children.length;
+  row.setAttribute('aria-expanded', hasKids? (node.expanded?'true':'false') : 'false');
+
+  // toggle
+  const tg = document.createElement('span');
+  tg.className = 'toggle' + (hasKids?'':' leaf');
+  tg.innerHTML = hasKids? '▶' : '◦';
+  row.appendChild(tg);
+
+  // element dot
+  if(node.element){
+    const d=document.createElement('span');
+    d.className='el-dot'; d.style.background='var(--'+EL[node.element]+')';
+    row.appendChild(d);
+  }
+  // name + reading
+  const nm=document.createElement('span'); nm.className='nm'; nm.textContent=node.name; row.appendChild(nm);
+  if(depth>0 && node.reading){
+    const rd=document.createElement('span'); rd.className='rd'; rd.textContent=node.reading; row.appendChild(rd);
+  }
+  // mini rank (leaf with score)
+  if(typeof node.score==='number' && (!node.children)){
+    const mr=document.createElement('span');
+    mr.className='mini-rank rank-'+RANKCLASS(node.score);
+    mr.textContent=RANKLABEL[node.score];
+    row.appendChild(mr);
+  }
+  wrap.appendChild(row);
+
+  if(hasKids){
+    const kids=document.createElement('div'); kids.className='children';
+    node.children.forEach(c=>kids.appendChild(buildNode(c, depth+1)));
+    wrap.appendChild(kids);
+  }
+  return wrap;
+}
+tree.appendChild(buildNode(DATA,0));
+
+/* ===== 詳細描画 ===== */
+const detail=document.getElementById('detail');
+const detailInner=document.getElementById('detailInner');
+const starSVG = on => `<svg class="star ${on?'on':'off'}" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5l2.9 6.2 6.8.8-5 4.6 1.4 6.7L12 17.9 5.9 21.4 7.3 14.7l-5-4.6 6.8-.8z"/></svg>`;
+function starsRow(score){let s='';for(let i=1;i<=5;i++)s+=starSVG(i<=score);return s;}
+
+function renderDetail(node){
+  const isLeaf = !node.children;
+  let html='';
+  const eyebrow = node.id==='root' ? '奇門遁甲' :
+    (node.element? '五行：'+node.element : (isLeaf?'要素':'分類'));
+  const elClass = node.element? 'el-'+EL[node.element] : '';
+
+  html += `<div class="d-head"><div class="d-eyebrow">${eyebrow}</div>
+    <div class="d-title"><h2>${node.name}</h2><span class="rd2">${node.reading||''}</span></div>`;
+  // badges
+  let badges='';
+  if(node.element) badges+=`<span class="badge ${elClass}"><span class="dot" style="background:var(--${EL[node.element]})"></span>${node.element}行</span>`;
+  if(typeof node.score==='number') badges+=`<span class="badge rk ${RANKCLASS(node.score)}">${RANKLABEL[node.score]}</span>`;
+  if(node.children) badges+=`<span class="badge">枝 ${node.children.length}</span>`;
+  if(badges) html+=`<div class="d-badges">${badges}</div>`;
+  html+=`</div>`;
+
+  // rating for leaves
+  if(typeof node.score==='number' && isLeaf){
+    html+=`<div class="rate"><div class="stars">${starsRow(node.score)}</div>
+      <span class="rk ${RANKCLASS(node.score)}">${RANKLABEL[node.score]}</span></div>`;
+  }
+  // overview (categories)
+  if(node.overview){
+    html+=`<div class="sec"><h3>概要</h3><p class="desc">${node.overview}</p></div>`;
+  }
+  // meanings
+  if(node.meanings){
+    html+=`<div class="sec"><h3>意味・象意</h3><div class="chips">`+
+      node.meanings.map(m=>`<span class="chip">${m}</span>`).join('')+`</div></div>`;
+  }
+  // uses
+  if(node.uses){
+    html+=`<div class="sec"><h3>向く用途</h3><div class="chips">`+
+      node.uses.map(u=>`<span class="chip use">${u}</span>`).join('')+`</div></div>`;
+  }
+  // compat
+  if(node.compat){
+    html+=`<div class="sec"><h3>相性</h3><div class="compat">`+
+      node.compat.map(c=>`<div class="cmp"><span class="cn">${c.n}</span>
+        <span class="cs">${starsRow(c.s)}</span>
+        <span class="ct">${RANKLABEL[c.s]}</span></div>`).join('')+`</div></div>`;
+  }
+  // note
+  if(node.note){
+    html+=`<div class="sec"><div class="note"><b>ポイント　</b>${node.note}</div></div>`;
+  }
+  // children quicklinks (categories)
+  if(node.children){
+    html+=`<div class="sec"><h3>枝（クリックで詳細）</h3><div class="quicklist">`+
+      node.children.map(c=>{
+        const dot=c.element?`<span class="el-dot" style="background:var(--${EL[c.element]})"></span>`:'';
+        return `<button class="ql" data-jump="${c.id}">${dot}${c.name}</button>`;
+      }).join('')+`</div></div>`;
+  }
+  detailInner.innerHTML=html;
+}
+
+/* ===== 選択・開閉 ===== */
+let selId=null;
+function selectNode(id){
+  selId=id;
+  document.querySelectorAll('.row.sel').forEach(r=>r.classList.remove('sel'));
+  const row=tree.querySelector('.row[data-id="'+id+'"]');
+  if(row) row.classList.add('sel');
+  renderDetail(byId[id]);
+  if(window.innerWidth<=860) detail.classList.add('is-open');
+}
+function toggleNode(id){
+  const wrap=tree.querySelector('.node[data-id="'+id+'"]');
+  if(!wrap) return;
+  const open=wrap.classList.toggle('open');
+  const row=wrap.querySelector(':scope > .row');
+  if(row) row.setAttribute('aria-expanded', open?'true':'false');
+}
+
+tree.addEventListener('click', e=>{
+  const row=e.target.closest('.row'); if(!row) return;
+  const id=row.dataset.id; const node=byId[id];
+  if(node.children) toggleNode(id);
+  selectNode(id);
+});
+
+/* quicklinks inside detail */
+detailInner.addEventListener('click', e=>{
+  const b=e.target.closest('[data-jump]'); if(!b) return;
+  const id=b.dataset.jump; const node=byId[id];
+  // open ancestors so it's visible
+  openAncestors(id);
+  if(node.children) { const w=tree.querySelector('.node[data-id="'+id+'"]'); if(w&&!w.classList.contains('open')) toggleNode(id); }
+  selectNode(id);
+  const row=tree.querySelector('.row[data-id="'+id+'"]');
+  if(row) row.scrollIntoView({block:'center',behavior:'smooth'});
+});
+function openAncestors(id){
+  let n=tree.querySelector('.node[data-id="'+id+'"]');
+  while(n){ n=n.parentElement.closest('.node'); if(n){ n.classList.add('open');
+    const r=n.querySelector(':scope > .row'); if(r) r.setAttribute('aria-expanded','true'); } }
+}
+
+/* close (mobile) */
+document.getElementById('dClose').addEventListener('click',()=>detail.classList.remove('is-open'));
+
+/* expand / collapse all */
+document.getElementById('expandAll').addEventListener('click',()=>{
+  document.querySelectorAll('.node').forEach(n=>{ if(n.querySelector(':scope > .children')){
+    n.classList.add('open'); const r=n.querySelector(':scope > .row'); if(r) r.setAttribute('aria-expanded','true'); }});
+});
+document.getElementById('collapseAll').addEventListener('click',()=>{
+  document.querySelectorAll('.node').forEach(n=>{
+    if(n.dataset.id==='root') return;
+    n.classList.remove('open'); const r=n.querySelector(':scope > .row'); if(r&&n.querySelector(':scope > .children')) r.setAttribute('aria-expanded','false'); });
+});
+
+/* ===== 検索 ===== */
+const search=document.getElementById('search');
+search.addEventListener('input',()=>{
+  const q=search.value.trim();
+  document.querySelectorAll('.row .nm').forEach(nm=>nm.parentElement.classList.remove('hl'));
+  document.querySelectorAll('.node').forEach(n=>n.classList.remove('dim'));
+  if(!q){ return; }
+  const matchedIds=[];
+  Object.values(byId).forEach(node=>{
+    const hay=(node.name||'')+(node.reading||'');
+    if(hay.includes(q)) matchedIds.push(node.id);
+  });
+  // dim all, then un-dim matches + ancestors, open ancestors, highlight
+  document.querySelectorAll('.node').forEach(n=>n.classList.add('dim'));
+  matchedIds.forEach(id=>{
+    const row=tree.querySelector('.row[data-id="'+id+'"]'); if(row) row.classList.add('hl');
+    let n=tree.querySelector('.node[data-id="'+id+'"]');
+    while(n){ n.classList.remove('dim');
+      if(n.querySelector(':scope > .children')){ n.classList.add('open');
+        const r=n.querySelector(':scope > .row'); if(r) r.setAttribute('aria-expanded','true'); }
+      n=n.parentElement.closest('.node'); }
+  });
+  if(matchedIds.length){
+    const first=tree.querySelector('.row[data-id="'+matchedIds[0]+'"]');
+    if(first) first.scrollIntoView({block:'center',behavior:'smooth'});
+  }
+});
+
+/* 初期表示：ルート概要 */
+selectNode('root');
+</script>
+</body>
+</html>

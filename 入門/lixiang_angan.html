@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>立向盤・座山盤 と 暗干</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0e1018;--ink-2:#161a28;--ink-3:#1f2435;--ink-4:#272d42;
+  --line:#2e3550;--line-soft:#232940;
+  --gold:#cda94f;--gold-soft:#e6cd83;--gold-dim:#8a7637;
+  --paper:#ece6d6;--paper-dim:#9a967f;--paper-faint:#6c6a5d;
+  --shu:#c0432f;--shu-soft:#d96a55;
+  --wood:#5aa884;--fire:#d06d46;--earth:#cda94f;--metal:#c2c7d2;--water:#5a86bf;
+  --font-disp:"Shippori Mincho B1","Noto Serif JP",serif;
+  --font-body:"Noto Sans JP",system-ui,sans-serif;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;}
+body{
+  background:radial-gradient(900px 500px at 12% -8%,rgba(205,169,79,.07),transparent 60%),
+    radial-gradient(700px 600px at 108% 10%,rgba(90,134,191,.06),transparent 60%),var(--ink);
+  color:var(--paper);font-family:var(--font-body);line-height:1.75;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:860px;margin:0 auto;padding:0 20px 80px;}
+
+header.top{display:flex;align-items:center;gap:18px;padding:30px 2px 24px;border-bottom:1px solid var(--line-soft);}
+.luoshu{flex:0 0 auto;width:58px;height:58px;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);
+  border:1px solid var(--gold-dim);border-radius:7px;overflow:hidden;background:linear-gradient(180deg,rgba(205,169,79,.10),rgba(205,169,79,.02));}
+.luoshu span{display:flex;align-items:center;justify-content:center;font-family:var(--font-disp);font-size:13px;color:var(--gold-soft);border:.5px solid rgba(205,169,79,.18);opacity:.85;}
+.luoshu span.c{color:var(--shu-soft);opacity:1;font-weight:700;}
+.htxt .eyebrow{font-size:11px;letter-spacing:.24em;color:var(--paper-faint);text-transform:uppercase;}
+.htxt h1{font-family:var(--font-disp);font-weight:800;margin:3px 0 0;font-size:clamp(22px,5vw,32px);letter-spacing:.06em;}
+.htxt h1 .o{color:var(--gold);}
+
+.intro{margin:24px 0 6px;font-size:15px;color:var(--paper);}
+.intro .em{color:var(--gold-soft);font-family:var(--font-disp);}
+
+/* part tabs */
+.tabs{display:flex;gap:8px;margin:28px 0 24px;border-bottom:1px solid var(--line-soft);}
+.tab{background:none;border:none;color:var(--paper-dim);font-family:var(--font-disp);font-size:16px;
+  padding:10px 16px;cursor:pointer;border-bottom:2px solid transparent;letter-spacing:.04em;transition:.15s;}
+.tab:hover{color:var(--paper);}
+.tab.on{color:var(--gold);border-bottom-color:var(--gold);}
+.tab:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:6px;}
+.part{display:none;}
+.part.on{display:block;animation:fade .25s ease;}
+@keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+
+h2{font-family:var(--font-disp);font-weight:700;font-size:20px;letter-spacing:.05em;margin:34px 0 4px;}
+.lead{color:var(--paper-dim);font-size:14px;margin:0 0 16px;}
+p{font-size:14.5px;}
+.em{color:var(--gold-soft);font-family:var(--font-disp);}
+.shu{color:var(--shu-soft);}
+
+/* compass */
+.compass-box{background:linear-gradient(180deg,var(--ink-2),rgba(20,24,38,.5));border:1px solid var(--line);
+  border-radius:14px;padding:20px;text-align:center;}
+.toggle{display:inline-flex;background:var(--ink-3);border:1px solid var(--line);border-radius:99px;padding:4px;margin:0 auto 6px;}
+.toggle button{background:none;border:none;color:var(--paper-dim);font-family:var(--font-disp);font-size:15px;
+  padding:8px 22px;border-radius:99px;cursor:pointer;transition:.15s;letter-spacing:.06em;}
+.toggle button.on{background:var(--ink-4);color:var(--gold-soft);box-shadow:0 1px 0 rgba(0,0,0,.3);}
+.toggle button:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+svg.compass{max-width:330px;width:100%;height:auto;margin:6px auto 4px;display:block;}
+.cap{font-size:13.5px;color:var(--paper-dim);max-width:560px;margin:8px auto 0;min-height:42px;}
+.cap b{font-family:var(--font-disp);}
+.cap b.move{color:var(--gold-soft);}.cap b.still{color:var(--water);}
+
+/* two-col compare */
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px;}
+.dcard{background:var(--ink-2);border:1px solid var(--line-soft);border-radius:11px;padding:16px;border-top:3px solid var(--gold);}
+.dcard.still{border-top-color:var(--water);}
+.dcard h3{margin:0 0 2px;font-family:var(--font-disp);font-size:17px;}
+.dcard.move h3{color:var(--gold-soft);}.dcard.still h3{color:var(--water);}
+.dcard .yin{font-size:11.5px;color:var(--paper-faint);letter-spacing:.08em;margin-bottom:10px;}
+.dcard ul{margin:0;padding-left:18px;font-size:13.5px;color:var(--paper-dim);}
+.dcard ul li{margin-bottom:5px;}
+.dcard ul li b{color:var(--paper);font-weight:500;}
+
+table.plates{width:100%;border-collapse:collapse;margin-top:18px;font-size:13px;}
+table.plates th,table.plates td{border:1px solid var(--line-soft);padding:8px 10px;text-align:left;}
+table.plates th{background:var(--ink-3);color:var(--gold);font-weight:500;font-family:var(--font-disp);letter-spacing:.04em;}
+table.plates td{color:var(--paper-dim);}
+
+/* 暗干 */
+.def{background:linear-gradient(180deg,var(--ink-2),rgba(22,26,40,.5));border:1px solid var(--line);
+  border-left:3px solid var(--gold);border-radius:10px;padding:18px 20px;margin:6px 0 10px;font-size:15px;}
+.def b{color:var(--gold-soft);font-family:var(--font-disp);}
+
+.honggu{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:300px;margin:14px auto;}
+.hg{background:var(--ink-3);border:1px solid var(--line-soft);border-radius:8px;padding:9px 6px;text-align:center;}
+.hg.empty{background:transparent;border-style:dashed;border-color:var(--line-soft);}
+.hg .gate{font-family:var(--font-disp);font-size:16px;color:var(--gold-soft);}
+.hg .pal{font-size:11px;color:var(--paper-dim);margin-top:2px;}
+.hg .dirn{font-size:10px;color:var(--paper-faint);}
+
+/* flip demo */
+.flip-wrap{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px;}
+.flip{background:var(--ink-2);border:1px solid var(--line-soft);border-radius:12px;padding:16px;}
+.flip .surface{font-size:13px;color:var(--paper-dim);margin-bottom:12px;}
+.flip .surface .lab{font-size:11px;color:var(--paper-faint);letter-spacing:.08em;display:block;margin-bottom:3px;}
+.flip .verdict-s{font-family:var(--font-disp);font-size:18px;font-weight:700;}
+.flip .reveal{margin-top:12px;border-top:1px dashed var(--line);padding-top:12px;display:none;}
+.flip.open .reveal{display:block;animation:fade .3s;}
+.flip .hidden-stem{font-family:var(--font-disp);font-size:15px;}
+.flip .verdict-f{font-family:var(--font-disp);font-size:18px;font-weight:700;margin-top:4px;}
+.good{color:var(--gold-soft);}.bad{color:var(--shu-soft);}
+.flip . frev{}
+.flipbtn{margin-top:12px;width:100%;background:var(--ink-3);border:1px solid var(--line);color:var(--paper);
+  font-family:var(--font-disp);font-size:14px;padding:9px;border-radius:8px;cursor:pointer;transition:.12s;}
+.flipbtn:hover{border-color:var(--gold-dim);color:var(--gold-soft);}
+.flipbtn:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+.rulechips{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;}
+.rchip{font-size:13px;font-family:var(--font-disp);padding:6px 13px;border-radius:8px;border:1px solid var(--line);}
+.rchip.k{color:var(--gold-soft);border-color:var(--gold-dim);background:rgba(205,169,79,.08);}
+.rchip.x{color:var(--shu-soft);border-color:rgba(192,67,47,.4);background:rgba(192,67,47,.07);}
+
+.caveat{margin-top:16px;font-size:13px;color:var(--paper-dim);background:rgba(192,67,47,.06);
+  border:1px solid rgba(192,67,47,.22);border-radius:10px;padding:14px 16px;}
+.caveat b{color:var(--shu-soft);}
+footer{margin-top:46px;text-align:center;font-size:11.5px;color:var(--paper-faint);line-height:1.8;}
+
+@media(max-width:680px){.duo,.flip-wrap{grid-template-columns:1fr;}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="luoshu" aria-hidden="true">
+      <span>4</span><span>9</span><span>2</span>
+      <span>3</span><span class="c">5</span><span>7</span>
+      <span>8</span><span>1</span><span>6</span>
+    </div>
+    <div class="htxt">
+      <div class="eyebrow">奇門遁甲 学習シリーズ</div>
+      <h1>立向盤・座山盤 と <span class="o">暗干</span></h1>
+    </div>
+  </header>
+
+  <p class="intro">
+    どちらも前回の投稿で名前の挙がった概念です。<span class="em">立向盤・座山盤</span>は日本の<span class="em">透派</span>が用いる二種の方位盤、
+    <span class="em">暗干</span>は天盤干・地盤干に隠れた「第三の干」。下のタブで切り替えてどうぞ。
+  </p>
+
+  <div class="tabs" role="tablist">
+    <button class="tab on" id="t1" role="tab" aria-selected="true">立向盤・座山盤</button>
+    <button class="tab" id="t2" role="tab" aria-selected="false">暗干とは</button>
+  </div>
+
+  <!-- ============ PART 1 ============ -->
+  <div class="part on" id="p1" role="tabpanel">
+    <h2>気は「出ていく」のか「入ってくる」のか</h2>
+    <p class="lead">透派は方位盤を二枚に分けます。ボタンで気の向きを切り替えてみてください。</p>
+
+    <div class="compass-box">
+      <div class="toggle" role="group" aria-label="盤の切り替え">
+        <button id="bMove" class="on">立向盤（動）</button>
+        <button id="bStill">座山盤（静）</button>
+      </div>
+      <svg class="compass" id="compass" viewBox="0 0 340 340" xmlns="http://www.w3.org/2000/svg" aria-label="八方位の気の流れ図">
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#cda94f"/>
+          </marker>
+        </defs>
+        <circle cx="170" cy="170" r="150" fill="none" stroke="#232940" stroke-width="1"/>
+        <g id="arrows"></g>
+        <circle cx="170" cy="170" r="34" fill="#272d42" stroke="#8a7637" stroke-width="1"/>
+        <text x="170" y="166" text-anchor="middle" font-family="'Shippori Mincho B1',serif" font-size="14" fill="#e6cd83">基点</text>
+        <text x="170" y="182" text-anchor="middle" font-size="9" fill="#6c6a5d">自宅・拠点</text>
+      </svg>
+      <div class="cap" id="cap"></div>
+    </div>
+
+    <div class="duo">
+      <div class="dcard move">
+        <h3>立向盤（りっこうばん）</h3>
+        <div class="yin">動 ─ 自分が出ていく</div>
+        <ul>
+          <li>基点から<b>八方位へ向かう</b>気の吉凶を見る</li>
+          <li><b>自分が動く</b>場面に使う：旅行・引越・出店・受験・交渉</li>
+          <li>「その方位の門をくぐると<b>何が広がるか</b>」を読む</li>
+          <li>盤の作り方は中国奇門と同じ<b>活盤式（排宮）</b></li>
+        </ul>
+      </div>
+      <div class="dcard still">
+        <h3>座山盤（ざざんばん）</h3>
+        <div class="yin">静 ─ 居ながら受ける</div>
+        <ul>
+          <li>八方位から<b>基点へ入ってくる</b>気の吉凶を見る</li>
+          <li><b>動かず受ける</b>場面に使う：増改築・土地・拠点の気・相手分析</li>
+          <li>「その方位の門から<b>何が訪れるか</b>」を読む</li>
+          <li>透派独自の概念で、<b>飛宮式</b>を用いる</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>年・月・日・時 × 立向・座山</h2>
+    <p class="lead">透派ではそれぞれの時間単位に二枚ずつ盤があり、用途で使い分けます（持続期間は透派の説）。</p>
+    <table class="plates">
+      <tr><th>盤</th><th>主な用途</th><th>効果の目安</th></tr>
+      <tr><td>年盤</td><td>不動産購入・大きな人生計画</td><td>長期（約60年とも）</td></tr>
+      <tr><td>月盤</td><td>引越・出店・支店</td><td>中期（約5年とも）</td></tr>
+      <tr><td>日盤</td><td>旅行・開運の方位取り</td><td>短期（約60日とも）</td></tr>
+      <tr><td>時盤</td><td>出発時刻・その場の行動</td><td>一時的</td></tr>
+    </table>
+
+    <div class="caveat">
+      <b>背景　</b>立向盤・座山盤は日本の<span class="em">透派</span>で発達した考え方で、日本では<span class="em">佐藤六龍</span>（香草社）らが広めました（源流に台湾出身の<span class="em">張耀文</span>）。前回の投稿者は「両盤を知っていても本来の盤理解が薄い」と批判していましたが、これは中国奇門側の立場からの評で、透派には透派の体系があります。
+    </div>
+  </div>
+
+  <!-- ============ PART 2 ============ -->
+  <div class="part" id="p2" role="tabpanel">
+    <h2>天盤・地盤に隠れた「第三の干」</h2>
+    <div class="def">
+      <b>暗干（あんかん）</b>とは、盤面に見える<span class="em">天盤干</span>（九星が帯びる干）と<span class="em">地盤干</span>に加えて、
+      <span class="em">人盤＝八門</span>が裏に隠し持つ干のこと。別名 <span class="em">隠干（いんかん）・陰干・暗奇</span>とも。
+      古来の1080局譜には書き込まれない<span class="em">秘法</span>で、近年これを重視する若手の流派が出てきた、というのが前回の話でした。
+    </div>
+
+    <h2>求め方（代表的な一法）</h2>
+    <p class="lead">八門の<span class="em">本宮（先天の定位置）</span>に、いま乗っている地盤干が、その門の暗干になります。</p>
+    <p>例：<span class="em">生門</span>の本宮は<span class="em">艮（8）宮</span>。盤上で生門がどこへ飛んでいても、「いまの艮宮の地盤干」が生門の暗干です。同様に<span class="em">傷門</span>の本宮は震宮なので、震宮の地盤に庚があれば、傷門の暗干は庚。下が八門と本宮の対応です。</p>
+
+    <div class="honggu" id="honggu"></div>
+
+    <h2>役割 ── 吉中に凶を蔵し、凶中に吉を蔵す</h2>
+    <p class="lead">暗干の妙味は、表面の盤だけでは見えない「内実」を映すこと。下の二例で、暗干をめくってみてください。</p>
+
+    <div class="flip-wrap">
+      <div class="flip" id="flipA">
+        <div class="surface">
+          <span class="lab">表面の盤</span>
+          値使門が主星を生じる──<b style="color:var(--paper)">条件は整い、見栄えはよい</b>
+          <div class="verdict-s good">表向き：吉</div>
+        </div>
+        <div class="reveal">
+          <div class="hidden-stem">めくると…暗干に <span class="bad">庚（障害・敵）</span> が来ていた</div>
+          <div class="verdict-f bad">内実：外吉内凶</div>
+          <p style="font-size:12.5px;color:var(--paper-dim);margin:8px 0 0">外見は申し分ないのに、内側で阻まれ難渋する。手応えのわりに進まない盤。</p>
+        </div>
+        <button class="flipbtn" data-t="flipA">暗干をめくる</button>
+      </div>
+
+      <div class="flip" id="flipB">
+        <div class="surface">
+          <span class="lab">表面の盤</span>
+          値使門が主星を剋す──<b style="color:var(--paper)">条件が悪く、見た目は不利</b>
+          <div class="verdict-s bad">表向き：凶</div>
+        </div>
+        <div class="reveal">
+          <div class="hidden-stem">めくると…暗干に <span class="good">三奇（乙・丙・丁）</span> が来ていた</div>
+          <div class="verdict-f good">内実：外凶内吉</div>
+          <p style="font-size:12.5px;color:var(--paper-dim);margin:8px 0 0">表は険しいが、内に暗護がある。見かけほど悪くならず、助けが入る盤。</p>
+        </div>
+        <button class="flipbtn" data-t="flipB">暗干をめくる</button>
+      </div>
+    </div>
+
+    <div class="rulechips">
+      <span class="rchip k">奇（乙丙丁）を帯びれば 吉</span>
+      <span class="rchip x">庚を帯びれば 凶</span>
+    </div>
+
+    <h2>何が読めるのか</h2>
+    <p>暗干は<span class="em">隠れた原因・背後の人物や力・本当の意図（来意）・水面下のつながり</span>を映すとされます。表の盤が「結果や建前」なら、暗干は「裏事情や本音」。だから占的を深掘りするとき、「誰が・何が裏で絡んでいるか」を見るのに使われます。古文には<span class="em">「若隠若現、若有若無（あるようでなく、ないようである）」</span>と表現されます。</p>
+
+    <div class="caveat">
+      <b>用語の注意　</b>「暗干」と「隠干」は流派で使い分けが揺れます。上の<span class="em">八門の本宮地盤干</span>を暗干（または隠干）と呼ぶ流儀のほか、<span class="em">時干を値使門に加えて飛宮する</span>別法を暗干（飛干）と呼び、本宮地盤干の方を隠干とする流儀もあります。求め方も意味づけも一様ではないので、学ぶ際は「どの定義の暗干か」を最初に確認してください。
+    </div>
+  </div>
+
+  <footer>
+    内容は学習用の整理です。作盤法・用語・解釈は流派により異なります。<br>
+    立向盤・座山盤は透派、暗干は中国系奇門で主に扱われる概念です。
+  </footer>
+</div>
+
+<script>
+/* ---- タブ ---- */
+const tabs={t1:'p1',t2:'p2'};
+Object.keys(tabs).forEach(tid=>{
+  document.getElementById(tid).onclick=()=>{
+    Object.keys(tabs).forEach(o=>{
+      document.getElementById(o).classList.toggle('on',o===tid);
+      document.getElementById(o).setAttribute('aria-selected',o===tid);
+      document.getElementById(tabs[o]).classList.toggle('on',o===tid);
+    });
+  };
+});
+
+/* ---- コンパス ---- */
+const CX=170,CY=170,RIN=42,ROUT=128;
+const DIRS=[
+  {n:'北',a:-90},{n:'北東',a:-45},{n:'東',a:0},{n:'南東',a:45},
+  {n:'南',a:90},{n:'南西',a:135},{n:'西',a:180},{n:'北西',a:-135}
+];
+function pt(angle,r){const rad=angle*Math.PI/180;return [CX+r*Math.cos(rad),CY+r*Math.sin(rad)];}
+function drawArrows(mode){ // 'move' = out, 'still' = in
+  const g=document.getElementById('arrows');g.innerHTML='';
+  DIRS.forEach(d=>{
+    const [ix,iy]=pt(d.a,RIN+4);
+    const [ox,oy]=pt(d.a,ROUT);
+    const x1=mode==='move'?ix:ox, y1=mode==='move'?iy:oy;
+    const x2=mode==='move'?ox:ix, y2=mode==='move'?oy:iy;
+    const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',x1);line.setAttribute('y1',y1);
+    line.setAttribute('x2',x2);line.setAttribute('y2',y2);
+    line.setAttribute('stroke','#8a7637');
+    line.setAttribute('stroke-width','2');
+    line.setAttribute('marker-end','url(#arrow)');
+    line.setAttribute('opacity','.9');
+    g.appendChild(line);
+    // direction label
+    const [lx,ly]=pt(d.a,ROUT+18);
+    const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x',lx);t.setAttribute('y',ly+4);t.setAttribute('text-anchor','middle');
+    t.setAttribute('font-size','12');t.setAttribute('fill','#9a967f');
+    t.setAttribute('font-family',"'Shippori Mincho B1',serif");
+    t.textContent=d.n;
+    g.appendChild(t);
+  });
+}
+const cap=document.getElementById('cap');
+function setMode(mode){
+  document.getElementById('bMove').classList.toggle('on',mode==='move');
+  document.getElementById('bStill').classList.toggle('on',mode==='still');
+  drawArrows(mode);
+  cap.innerHTML = mode==='move'
+    ? '<b class="move">立向盤（動）</b>：気は基点から八方位へ<b class="move">出ていく</b>。自分がその方位へ赴いて吉意を得る盤。旅行・引越・受験など「動く」行動に。'
+    : '<b class="still">座山盤（静）</b>：気は八方位から基点へ<b class="still">入ってくる</b>。動かず拠点に居ながら、その方位の気を受け取る盤。増改築・土地・相手分析に。';
+}
+document.getElementById('bMove').onclick=()=>setMode('move');
+document.getElementById('bStill').onclick=()=>setMode('still');
+setMode('move');
+
+/* ---- 八門 × 本宮 ---- */
+const GATES=[
+  {g:'杜門',p:'巽4',d:'東南'},{g:'景門',p:'離9',d:'南'},{g:'死門',p:'坤2',d:'南西'},
+  {g:'傷門',p:'震3',d:'東'},{empty:true},{g:'驚門',p:'兌7',d:'西'},
+  {g:'生門',p:'艮8',d:'東北'},{g:'休門',p:'坎1',d:'北'},{g:'開門',p:'乾6',d:'北西'}
+];
+const hg=document.getElementById('honggu');
+GATES.forEach(x=>{
+  const d=document.createElement('div');
+  if(x.empty){d.className='hg empty';d.innerHTML='<div class="pal" style="color:var(--paper-faint)">中5<br><span style="font-size:9px">門なし</span></div>';}
+  else{d.className='hg';d.innerHTML=`<div class="gate">${x.g}</div><div class="pal">本宮 ${x.p}</div><div class="dirn">${x.d}</div>`;}
+  hg.appendChild(d);
+});
+
+/* ---- めくり ---- */
+document.querySelectorAll('.flipbtn').forEach(b=>{
+  b.onclick=()=>{
+    const f=document.getElementById(b.dataset.t);
+    const open=f.classList.toggle('open');
+    b.textContent=open?'裏を閉じる':'暗干をめくる';
+  };
+});
+</script>
+</body>
+</html>

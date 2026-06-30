@@ -1,0 +1,131 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>局の決め方（節気・陰陽遁・三元） ｜ 奇門遁甲 入門</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet"><style>
+:root{
+  --ink:#0e1018;--ink-2:#161a28;--ink-3:#1f2435;--ink-4:#272d42;
+  --line:#2e3550;--line-soft:#232940;
+  --gold:#cda94f;--gold-soft:#e6cd83;--gold-dim:#8a7637;
+  --paper:#ece6d6;--paper-dim:#9a967f;--paper-faint:#6c6a5d;
+  --shu:#c0432f;--shu-soft:#d96a55;
+  --wood:#5aa884;--fire:#d06d46;--earth:#cda94f;--metal:#c2c7d2;--water:#5a86bf;
+  --font-disp:"Shippori Mincho B1","Noto Serif JP",serif;
+  --font-body:"Noto Sans JP",system-ui,sans-serif;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;}
+body{background:radial-gradient(900px 500px at 12% -8%,rgba(205,169,79,.07),transparent 60%),
+  radial-gradient(700px 600px at 108% 12%,rgba(90,134,191,.06),transparent 60%),var(--ink);
+  color:var(--paper);font-family:var(--font-body);line-height:1.85;-webkit-font-smoothing:antialiased;}
+a{color:inherit;}
+.wrap{max-width:760px;margin:0 auto;padding:0 22px 80px;}
+
+.site-nav{display:flex;align-items:center;gap:12px;padding:16px 2px;border-bottom:1px solid var(--line-soft);
+  position:sticky;top:0;background:rgba(14,16,24,.82);backdrop-filter:blur(8px);z-index:10;}
+.site-nav .ls{width:30px;height:30px;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);
+  border:1px solid var(--gold-dim);border-radius:5px;overflow:hidden;flex:0 0 auto;}
+.site-nav .ls i{border:.5px solid rgba(205,169,79,.16);}
+.site-nav a.brand{font-family:var(--font-disp);font-weight:700;letter-spacing:.08em;text-decoration:none;color:var(--paper);font-size:15px;}
+.site-nav a.brand .o{color:var(--gold);}
+.site-nav .crumb{margin-left:auto;font-size:11.5px;color:var(--paper-faint);letter-spacing:.04em;text-align:right;}
+
+.article{padding:38px 0 0;}
+.eyebrow{font-size:11px;letter-spacing:.22em;color:var(--shu-soft);text-transform:uppercase;}
+h1{font-family:var(--font-disp);font-weight:800;font-size:clamp(28px,6vw,40px);letter-spacing:.05em;margin:8px 0 0;line-height:1.25;}
+.lead{font-size:16px;color:var(--paper);margin:16px 0 6px;font-family:var(--font-disp);}
+h2{font-family:var(--font-disp);font-weight:700;font-size:20px;letter-spacing:.04em;margin:34px 0 6px;display:flex;align-items:center;gap:10px;}
+h2::before{content:"";width:16px;height:1px;background:var(--gold-dim);flex:0 0 auto;}
+p{font-size:15px;margin:10px 0;}
+.em{color:var(--gold-soft);font-family:var(--font-disp);}
+.shu{color:var(--shu-soft);}
+
+.callout{background:linear-gradient(180deg,var(--ink-2),rgba(22,26,40,.5));border:1px solid var(--line);
+  border-left:3px solid var(--gold);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:14px;}
+.callout b{color:var(--gold-soft);font-family:var(--font-disp);}
+.note{background:rgba(192,67,47,.06);border:1px solid rgba(192,67,47,.22);border-radius:10px;padding:13px 16px;margin:18px 0;font-size:13.5px;color:var(--paper-dim);}
+.note b{color:var(--shu-soft);}
+
+.kvs{display:flex;flex-direction:column;gap:8px;margin:16px 0;}
+.kv{display:grid;grid-template-columns:54px 1fr;gap:14px;align-items:start;background:var(--ink-2);border:1px solid var(--line-soft);border-radius:10px;padding:13px 15px;}
+.kv .k{font-family:var(--font-disp);font-size:26px;font-weight:800;color:var(--gold);text-align:center;line-height:1.1;}
+.kv .v{font-size:13.5px;color:var(--paper-dim);}
+.kv .v b{color:var(--paper);font-weight:500;font-family:var(--font-disp);}
+
+.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0;}
+.c3{background:var(--ink-2);border:1px solid var(--line-soft);border-radius:12px;padding:16px 14px;border-top:3px solid var(--ca);}
+.c3 .t{font-family:var(--font-disp);font-size:19px;letter-spacing:.06em;color:var(--ca);}
+.c3 .l{font-size:10px;color:var(--paper-faint);letter-spacing:.14em;margin:2px 0 8px;}
+.c3 .d{font-size:12.5px;color:var(--paper-dim);line-height:1.65;}
+.ca-water{--ca:var(--water);}.ca-gold{--ca:var(--gold);}.ca-wood{--ca:var(--wood);}.ca-fire{--ca:var(--fire);}.ca-earth{--ca:var(--earth);}.ca-metal{--ca:var(--metal);}
+
+table.dt{width:100%;border-collapse:collapse;font-size:13px;margin:16px 0;}
+table.dt th,table.dt td{border:1px solid var(--line-soft);padding:7px 9px;text-align:center;}
+table.dt th{background:var(--ink-3);color:var(--gold);font-family:var(--font-disp);font-weight:500;letter-spacing:.03em;}
+table.dt td{color:var(--paper-dim);}
+table.dt td.lead-cell{color:var(--paper);font-family:var(--font-disp);font-size:16px;}
+.el-wood{color:var(--wood)!important;}.el-fire{color:var(--fire)!important;}.el-earth{color:var(--earth)!important;}.el-metal{color:var(--metal)!important;}.el-water{color:var(--water)!important;}
+
+.grid-bagua{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:340px;margin:18px auto;}
+.bg{background:var(--ink-2);border:1px solid var(--line-soft);border-radius:9px;padding:11px 6px;text-align:center;}
+.bg.center{background:var(--ink-4);border-color:var(--gold-dim);}
+.bg .gua{font-size:22px;line-height:1;color:var(--gold-soft);}
+.bg .nm{font-size:12px;color:var(--paper);margin-top:4px;font-family:var(--font-disp);}
+.bg .dr{font-size:10px;color:var(--paper-faint);margin-top:1px;}
+
+.luoshu-big{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:350px;margin:18px auto;}
+.lq{aspect-ratio:1;background:var(--ink-2);border:1px solid var(--line-soft);border-radius:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:4px;}
+.lq.center{background:var(--ink-4);border-color:var(--gold-dim);}
+.lq .num{font-family:var(--font-disp);font-size:26px;font-weight:800;line-height:1;}
+.lq .dir2{font-size:11px;color:var(--paper);font-family:var(--font-disp);}
+.lq .meta{font-size:9.5px;color:var(--paper-faint);}
+
+.pager{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:46px;padding-top:22px;border-top:1px solid var(--line-soft);}
+.pg{display:flex;flex-direction:column;gap:3px;text-decoration:none;padding:14px 16px;border-radius:11px;background:var(--ink-2);border:1px solid var(--line-soft);transition:.13s;}
+.pg:hover{border-color:var(--gold-dim);background:var(--ink-3);}
+.pg:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+.pg .dir{font-size:11px;color:var(--paper-faint);letter-spacing:.08em;}
+.pg .ttl{font-family:var(--font-disp);font-size:15px;color:var(--gold-soft);}
+.pg.next{text-align:right;}
+.pg.prev .ttl{color:var(--paper);}
+.toc-link{display:block;text-align:center;margin-top:16px;font-size:12.5px;color:var(--paper-dim);text-decoration:none;letter-spacing:.05em;}
+.toc-link:hover{color:var(--gold-soft);}
+footer{margin-top:40px;text-align:center;font-size:11px;color:var(--paper-faint);line-height:1.8;}
+@media(max-width:560px){.cards3{grid-template-columns:1fr;}.pager{grid-template-columns:1fr;}.pg.next{text-align:left;}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;}}
+
+.flow{margin:22px 0;display:flex;flex-direction:column;align-items:center;}
+.fstep{width:100%;max-width:470px;background:var(--ink-2);border:1px solid var(--line-soft);border-left:3px solid var(--gold-dim);border-radius:11px;padding:13px 16px;}
+.fstep .sn{font-family:var(--font-disp);font-size:11px;letter-spacing:.12em;color:var(--gold-soft);}
+.fstep .st{font-family:var(--font-disp);font-size:16px;color:var(--paper);margin-top:2px;}
+.fstep .sd{font-size:12.5px;color:var(--paper-dim);margin-top:4px;}
+.farrow{width:1px;height:22px;background:var(--gold-dim);position:relative;margin:2px 0;}
+.farrow::after{content:"▼";position:absolute;left:50%;bottom:-3px;transform:translateX(-50%);color:var(--gold-dim);font-size:10px;}
+.pills{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;}
+.pill{font-size:12px;font-family:var(--font-disp);padding:3px 12px;border-radius:99px;border:1px solid var(--line);}
+.pill.yo{color:var(--gold-soft);border-color:var(--gold-dim);}
+.pill.in{color:var(--water);border-color:rgba(90,134,191,.4);}
+.fstep.final{border-color:var(--gold-dim);background:linear-gradient(180deg,rgba(205,169,79,.13),var(--ink-2));}
+.fstep.final .st{color:var(--gold-soft);font-weight:800;font-size:19px;}
+</style></head><body><div class="site-nav"><span class="ls" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><a class="brand" href="kimon_index.html">奇門遁甲 <span class="o">入門</span></a><span class="crumb">第4章 起局 › 4-1</span></div><div class="wrap"><article class="article"><div class="eyebrow">第4章 起局 ・ 4-1</div><h1>局の決め方（節気・陰陽遁・三元）</h1><p class="lead">盤の第一歩は「局」を決めること。決まり方の筋道だけ押さえます。</p>
+<p>盤を立てる最初の一歩は、<span class="em">「局（きょく）」を決める</span>ことです。奇門の盤は全部で <span class="em">18種類（陽遁9・陰遁9）</span>あり、占う日時から、そのどれを使うかを割り出します。ここでは <span class="em">流れだけ</span>を押さえます。実際の計算はツールがやってくれます。</p>
+
+<h2>局が決まるまでの流れ</h2>
+
+<div class="flow">
+  <div class="fstep"><div class="sn">入力</div><div class="st">占う 年月日時</div><div class="sd">時家奇門なら「時」まで。これが出発点。</div></div>
+  <div class="farrow"></div>
+  <div class="fstep"><div class="sn">① 節気</div><div class="st">どの節気か → 陰遁・陽遁が決まる</div>
+    <div class="pills"><span class="pill yo">冬至以降 ＝ 陽遁</span><span class="pill in">夏至以降 ＝ 陰遁</span></div></div>
+  <div class="farrow"></div>
+  <div class="fstep"><div class="sn">② 三元</div><div class="st">上元・中元・下元 のどれか</div><div class="sd">一節気（約15日）を約5日ずつに三分割。符頭（甲・己の日）が目印。</div></div>
+  <div class="farrow"></div>
+  <div class="fstep"><div class="sn">③ 局数</div><div class="st">「節気 × 三元」で 局数（1〜9）が定まる</div><div class="sd">節気ごとに決まった局数表を引く。</div></div>
+  <div class="farrow"></div>
+  <div class="fstep final"><div class="sn">確定</div><div class="st">局が決まる（例：陽遁 七局）</div><div class="sd">18種（陽9・陰9）のうちの一つ。</div></div>
+</div>
+
+<p>ポイントは三段。①<span class="em">節気</span>で陰遁か陽遁かが決まる。②節気の中の <span class="em">三元（上・中・下）</span>で位置が決まる。③「節気×三元」に対応する <span class="em">局数（1〜9）</span>が決まった表から定まる――これで「陽遁七局」のように局が確定します。</p>
+
+<h2>三元と符頭（ふとう）</h2>
+<p>一つの節気（約15日）は、上元・中元・下元の三つ（各約5日）に分かれます。その切り替わりの目印が <span class="em">符頭＝甲または己の日</span>。どの符頭に属するかで三元が決まります。</p>
+
+<div class="note"><b>端の処理と種類は流派差　</b>節気と符頭がずれる「境目」の扱いには置閏法・拆補法などの方式があり、流派で異なります。また奇門には時家・日家・月家・年家があり、<span class="em">最も一般的なのは時刻ごとに立てる時家奇門</span>です。いずれも具体的な計算はツールに任せて大丈夫です。</div>
+<div class="callout"><b>概念だけでOK　</b>局数表や符頭の計算を暗記する必要はありません。「節気→陰陽遁→三元→局数」という<span class="em">決まり方の筋道</span>さえ分かっていれば、ツールの出力を正しく読めます。</div>
+<nav class="pager"><a class="pg prev" href="03-0-elements.html"><span class="dir">‹ 前へ</span><span class="ttl">盤の構成要素</span></a><a class="pg next" href="04-2-flow.html"><span class="dir">次へ ›</span><span class="ttl">盤を組み立てる流れ</span></a></nav><a class="toc-link" href="kimon_index.html">目次に戻る</a></article><footer>初学者向けの整理です。作盤法・用語・解釈は流派により異なります。<br>占術は意思決定の参考であり、結果を保証するものではありません。</footer></div></body></html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>奇門遁甲とは何か ｜ 奇門遁甲 入門</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet"><style>
+:root{
+  --ink:#0e1018;--ink-2:#161a28;--ink-3:#1f2435;--ink-4:#272d42;
+  --line:#2e3550;--line-soft:#232940;
+  --gold:#cda94f;--gold-soft:#e6cd83;--gold-dim:#8a7637;
+  --paper:#ece6d6;--paper-dim:#9a967f;--paper-faint:#6c6a5d;
+  --shu:#c0432f;--shu-soft:#d96a55;
+  --wood:#5aa884;--fire:#d06d46;--earth:#cda94f;--metal:#c2c7d2;--water:#5a86bf;
+  --font-disp:"Shippori Mincho B1","Noto Serif JP",serif;
+  --font-body:"Noto Sans JP",system-ui,sans-serif;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;}
+body{background:radial-gradient(900px 500px at 12% -8%,rgba(205,169,79,.07),transparent 60%),
+  radial-gradient(700px 600px at 108% 12%,rgba(90,134,191,.06),transparent 60%),var(--ink);
+  color:var(--paper);font-family:var(--font-body);line-height:1.85;-webkit-font-smoothing:antialiased;}
+a{color:inherit;}
+.wrap{max-width:760px;margin:0 auto;padding:0 22px 80px;}
+
+/* top nav */
+.site-nav{display:flex;align-items:center;gap:12px;padding:16px 2px;border-bottom:1px solid var(--line-soft);
+  position:sticky;top:0;background:rgba(14,16,24,.82);backdrop-filter:blur(8px);z-index:10;}
+.site-nav .ls{width:30px;height:30px;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);
+  border:1px solid var(--gold-dim);border-radius:5px;overflow:hidden;flex:0 0 auto;}
+.site-nav .ls i{border:.5px solid rgba(205,169,79,.16);}
+.site-nav a.brand{font-family:var(--font-disp);font-weight:700;letter-spacing:.08em;text-decoration:none;color:var(--paper);font-size:15px;}
+.site-nav a.brand .o{color:var(--gold);}
+.site-nav .crumb{margin-left:auto;font-size:11.5px;color:var(--paper-faint);letter-spacing:.04em;text-align:right;}
+
+/* article */
+.article{padding:38px 0 0;}
+.eyebrow{font-size:11px;letter-spacing:.22em;color:var(--shu-soft);text-transform:uppercase;}
+h1{font-family:var(--font-disp);font-weight:800;font-size:clamp(28px,6vw,40px);letter-spacing:.05em;margin:8px 0 0;line-height:1.25;}
+.lead{font-size:16px;color:var(--paper);margin:16px 0 6px;font-family:var(--font-disp);}
+h2{font-family:var(--font-disp);font-weight:700;font-size:20px;letter-spacing:.04em;margin:34px 0 6px;
+  display:flex;align-items:center;gap:10px;}
+h2::before{content:"";width:16px;height:1px;background:var(--gold-dim);flex:0 0 auto;}
+p{font-size:15px;margin:10px 0;}
+.em{color:var(--gold-soft);font-family:var(--font-disp);}
+.shu{color:var(--shu-soft);}
+
+.callout{background:linear-gradient(180deg,var(--ink-2),rgba(22,26,40,.5));border:1px solid var(--line);
+  border-left:3px solid var(--gold);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:14px;}
+.callout b{color:var(--gold-soft);font-family:var(--font-disp);}
+.note{background:rgba(192,67,47,.06);border:1px solid rgba(192,67,47,.22);border-radius:10px;
+  padding:13px 16px;margin:18px 0;font-size:13.5px;color:var(--paper-dim);}
+.note b{color:var(--shu-soft);}
+
+.kvs{display:flex;flex-direction:column;gap:8px;margin:16px 0;}
+.kv{display:grid;grid-template-columns:54px 1fr;gap:14px;align-items:start;background:var(--ink-2);
+  border:1px solid var(--line-soft);border-radius:10px;padding:13px 15px;}
+.kv .k{font-family:var(--font-disp);font-size:26px;font-weight:800;color:var(--gold);text-align:center;line-height:1.1;}
+.kv .v{font-size:13.5px;color:var(--paper-dim);}
+.kv .v b{color:var(--paper);font-weight:500;font-family:var(--font-disp);}
+
+.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0;}
+.c3{background:var(--ink-2);border:1px solid var(--line-soft);border-radius:12px;padding:16px 14px;border-top:3px solid var(--ca);}
+.c3 .t{font-family:var(--font-disp);font-size:19px;letter-spacing:.06em;color:var(--ca);}
+.c3 .l{font-size:10px;color:var(--paper-faint);letter-spacing:.14em;margin:2px 0 8px;}
+.c3 .d{font-size:12.5px;color:var(--paper-dim);line-height:1.65;}
+.ca-water{--ca:var(--water);}.ca-gold{--ca:var(--gold);}.ca-wood{--ca:var(--wood);}.ca-fire{--ca:var(--fire);}
+
+/* pager */
+.pager{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:46px;padding-top:22px;border-top:1px solid var(--line-soft);}
+.pg{display:flex;flex-direction:column;gap:3px;text-decoration:none;padding:14px 16px;border-radius:11px;
+  background:var(--ink-2);border:1px solid var(--line-soft);transition:.13s;}
+.pg:hover{border-color:var(--gold-dim);background:var(--ink-3);}
+.pg:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+.pg .dir{font-size:11px;color:var(--paper-faint);letter-spacing:.08em;}
+.pg .ttl{font-family:var(--font-disp);font-size:15px;color:var(--gold-soft);}
+.pg.next{text-align:right;}
+.pg.prev .ttl{color:var(--paper);}
+.toc-link{display:block;text-align:center;margin-top:16px;font-size:12.5px;color:var(--paper-dim);text-decoration:none;letter-spacing:.05em;}
+.toc-link:hover{color:var(--gold-soft);}
+
+footer{margin-top:40px;text-align:center;font-size:11px;color:var(--paper-faint);line-height:1.8;}
+@media(max-width:560px){.cards3{grid-template-columns:1fr;}.pager{grid-template-columns:1fr;}.pg.next{text-align:left;}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;}}
+</style></head><body><div class="site-nav"><span class="ls" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><a class="brand" href="kimon_index.html">奇門遁甲 <span class="o">入門</span></a><span class="crumb">第0章 はじめに › 0-1</span></div><div class="wrap"><article class="article"><div class="eyebrow">第0章 はじめに ・ 0-1</div><h1>奇門遁甲とは何か</h1><p class="lead">ひとことで言えば、「時間」と「方位」から物事の成り行きを読む、東洋の占術です。</p>
+<p>奇門遁甲（きもんとんこう）は、<span class="em">いつ・どの方角が、どんな気に満ちているか</span>を盤に表し、そこから物事の吉凶や成り行きを読む術です。中国で生まれ、はじめは軍隊の配置（排兵布陣）に使われたとされ、のちに人の運勢や経営・人事の判断にも広く用いられるようになりました。</p>
+
+<h2>名前の意味</h2>
+<p>「奇門遁甲」という四文字は、それぞれが盤の部品を指しています。名前自体が、この術の骨格を言い表しているのです。</p>
+<div class="kvs">
+  <div class="kv"><div class="k">奇</div><div class="v"><b>三奇（さんき）</b>。乙・丙・丁という三つの貴い干（かん）。盤を吉に傾ける鍵。</div></div>
+  <div class="kv"><div class="k">門</div><div class="v"><b>八門（はちもん）</b>。休・生・傷・杜・景・死・驚・開の八つの門。人の行動の吉凶を司る。</div></div>
+  <div class="kv"><div class="k">遁甲</div><div class="v"><b>甲が遁（のが）れ隠れる</b>。最も尊い干「甲」は盤上に直接は現れず、六儀（戊〜癸）の陰に隠れる――この仕掛けが術の名の由来。</div></div>
+</div>
+<p>つまり「三奇と八門があり、甲が隠れる盤」――それが奇門遁甲です。</p>
+
+<h2>どんな形をしているか</h2>
+<p>奇門遁甲の舞台は <span class="em">九宮（きゅうきゅう）</span> と呼ばれる3×3のマス目です。これは古代中国の魔方陣「<span class="em">洛書（らくしょ）</span>」に由来し、八方位＋中央を表します。この各マスに、十干や八門・九星・八神を、占う日時に応じて配置したものが <span class="em">遁甲盤（とんこうばん）</span>。盤を立てて、マスとマスの関係を読む――これが基本動作です。</p>
+<div class="callout"><b>式占（しきせん）　</b>盤を「立てて」読む占術を式占といいます。奇門遁甲は、太乙・六壬と並ぶ式占の代表格です（くわしくは <span class="em">0-3</span>）。</div>
+
+<h2>「方位の占い」ではない</h2>
+<p>日本では奇門遁甲＝吉方位を選ぶ「方位術」というイメージが強いですが、本来は<span class="em">問いを立てて成り行きを占う卜占（ぼくせん）</span>が中心で、方位取りはその応用のひとつにすぎません。では具体的に何ができるのか、次のページで見ていきましょう。</p>
+<nav class="pager"><a class="pg prev" href="kimon_index.html"><span class="dir">‹ 前へ</span><span class="ttl">目次</span></a><a class="pg next" href="00-2-uses.html"><span class="dir">次へ ›</span><span class="ttl">何ができるのか</span></a></nav><a class="toc-link" href="kimon_index.html">目次に戻る</a></article><footer>初学者向けの整理です。作盤法・用語・解釈は流派により異なります。<br>占術は意思決定の参考であり、結果を保証するものではありません。</footer></div></body></html>

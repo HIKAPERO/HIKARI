@@ -1,0 +1,210 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>五行と相生・相剋 ｜ 奇門遁甲 入門</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet"><style>
+:root{
+  --ink:#0e1018;--ink-2:#161a28;--ink-3:#1f2435;--ink-4:#272d42;
+  --line:#2e3550;--line-soft:#232940;
+  --gold:#cda94f;--gold-soft:#e6cd83;--gold-dim:#8a7637;
+  --paper:#ece6d6;--paper-dim:#9a967f;--paper-faint:#6c6a5d;
+  --shu:#c0432f;--shu-soft:#d96a55;
+  --wood:#5aa884;--fire:#d06d46;--earth:#cda94f;--metal:#c2c7d2;--water:#5a86bf;
+  --font-disp:"Shippori Mincho B1","Noto Serif JP",serif;
+  --font-body:"Noto Sans JP",system-ui,sans-serif;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;}
+body{background:radial-gradient(900px 500px at 12% -8%,rgba(205,169,79,.07),transparent 60%),
+  radial-gradient(700px 600px at 108% 12%,rgba(90,134,191,.06),transparent 60%),var(--ink);
+  color:var(--paper);font-family:var(--font-body);line-height:1.85;-webkit-font-smoothing:antialiased;}
+a{color:inherit;}
+.wrap{max-width:760px;margin:0 auto;padding:0 22px 80px;}
+
+.site-nav{display:flex;align-items:center;gap:12px;padding:16px 2px;border-bottom:1px solid var(--line-soft);
+  position:sticky;top:0;background:rgba(14,16,24,.82);backdrop-filter:blur(8px);z-index:10;}
+.site-nav .ls{width:30px;height:30px;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);
+  border:1px solid var(--gold-dim);border-radius:5px;overflow:hidden;flex:0 0 auto;}
+.site-nav .ls i{border:.5px solid rgba(205,169,79,.16);}
+.site-nav a.brand{font-family:var(--font-disp);font-weight:700;letter-spacing:.08em;text-decoration:none;color:var(--paper);font-size:15px;}
+.site-nav a.brand .o{color:var(--gold);}
+.site-nav .crumb{margin-left:auto;font-size:11.5px;color:var(--paper-faint);letter-spacing:.04em;text-align:right;}
+
+.article{padding:38px 0 0;}
+.eyebrow{font-size:11px;letter-spacing:.22em;color:var(--shu-soft);text-transform:uppercase;}
+h1{font-family:var(--font-disp);font-weight:800;font-size:clamp(28px,6vw,40px);letter-spacing:.05em;margin:8px 0 0;line-height:1.25;}
+.lead{font-size:16px;color:var(--paper);margin:16px 0 6px;font-family:var(--font-disp);}
+h2{font-family:var(--font-disp);font-weight:700;font-size:20px;letter-spacing:.04em;margin:34px 0 6px;display:flex;align-items:center;gap:10px;}
+h2::before{content:"";width:16px;height:1px;background:var(--gold-dim);flex:0 0 auto;}
+p{font-size:15px;margin:10px 0;}
+.em{color:var(--gold-soft);font-family:var(--font-disp);}
+.shu{color:var(--shu-soft);}
+
+.callout{background:linear-gradient(180deg,var(--ink-2),rgba(22,26,40,.5));border:1px solid var(--line);
+  border-left:3px solid var(--gold);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:14px;}
+.callout b{color:var(--gold-soft);font-family:var(--font-disp);}
+.note{background:rgba(192,67,47,.06);border:1px solid rgba(192,67,47,.22);border-radius:10px;padding:13px 16px;margin:18px 0;font-size:13.5px;color:var(--paper-dim);}
+.note b{color:var(--shu-soft);}
+
+.kvs{display:flex;flex-direction:column;gap:8px;margin:16px 0;}
+.kv{display:grid;grid-template-columns:54px 1fr;gap:14px;align-items:start;background:var(--ink-2);border:1px solid var(--line-soft);border-radius:10px;padding:13px 15px;}
+.kv .k{font-family:var(--font-disp);font-size:26px;font-weight:800;color:var(--gold);text-align:center;line-height:1.1;}
+.kv .v{font-size:13.5px;color:var(--paper-dim);}
+.kv .v b{color:var(--paper);font-weight:500;font-family:var(--font-disp);}
+
+.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0;}
+.c3{background:var(--ink-2);border:1px solid var(--line-soft);border-radius:12px;padding:16px 14px;border-top:3px solid var(--ca);}
+.c3 .t{font-family:var(--font-disp);font-size:19px;letter-spacing:.06em;color:var(--ca);}
+.c3 .l{font-size:10px;color:var(--paper-faint);letter-spacing:.14em;margin:2px 0 8px;}
+.c3 .d{font-size:12.5px;color:var(--paper-dim);line-height:1.65;}
+.ca-water{--ca:var(--water);}.ca-gold{--ca:var(--gold);}.ca-wood{--ca:var(--wood);}.ca-fire{--ca:var(--fire);}.ca-earth{--ca:var(--earth);}.ca-metal{--ca:var(--metal);}
+
+table.dt{width:100%;border-collapse:collapse;font-size:13px;margin:16px 0;}
+table.dt th,table.dt td{border:1px solid var(--line-soft);padding:7px 9px;text-align:center;}
+table.dt th{background:var(--ink-3);color:var(--gold);font-family:var(--font-disp);font-weight:500;letter-spacing:.03em;}
+table.dt td{color:var(--paper-dim);}
+table.dt td.lead-cell{color:var(--paper);font-family:var(--font-disp);font-size:16px;}
+.el-wood{color:var(--wood)!important;}.el-fire{color:var(--fire)!important;}.el-earth{color:var(--earth)!important;}.el-metal{color:var(--metal)!important;}.el-water{color:var(--water)!important;}
+
+.grid-bagua{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:340px;margin:18px auto;}
+.bg{background:var(--ink-2);border:1px solid var(--line-soft);border-radius:9px;padding:11px 6px;text-align:center;}
+.bg.center{background:var(--ink-4);border-color:var(--gold-dim);}
+.bg .gua{font-size:22px;line-height:1;color:var(--gold-soft);}
+.bg .nm{font-size:12px;color:var(--paper);margin-top:4px;font-family:var(--font-disp);}
+.bg .dr{font-size:10px;color:var(--paper-faint);margin-top:1px;}
+
+.luoshu-big{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:350px;margin:18px auto;}
+.lq{aspect-ratio:1;background:var(--ink-2);border:1px solid var(--line-soft);border-radius:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:4px;}
+.lq.center{background:var(--ink-4);border-color:var(--gold-dim);}
+.lq .num{font-family:var(--font-disp);font-size:26px;font-weight:800;line-height:1;}
+.lq .dir2{font-size:11px;color:var(--paper);font-family:var(--font-disp);}
+.lq .meta{font-size:9.5px;color:var(--paper-faint);}
+
+.pager{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:46px;padding-top:22px;border-top:1px solid var(--line-soft);}
+.pg{display:flex;flex-direction:column;gap:3px;text-decoration:none;padding:14px 16px;border-radius:11px;background:var(--ink-2);border:1px solid var(--line-soft);transition:.13s;}
+.pg:hover{border-color:var(--gold-dim);background:var(--ink-3);}
+.pg:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+.pg .dir{font-size:11px;color:var(--paper-faint);letter-spacing:.08em;}
+.pg .ttl{font-family:var(--font-disp);font-size:15px;color:var(--gold-soft);}
+.pg.next{text-align:right;}
+.pg.prev .ttl{color:var(--paper);}
+.toc-link{display:block;text-align:center;margin-top:16px;font-size:12.5px;color:var(--paper-dim);text-decoration:none;letter-spacing:.05em;}
+.toc-link:hover{color:var(--gold-soft);}
+footer{margin-top:40px;text-align:center;font-size:11px;color:var(--paper-faint);line-height:1.8;}
+@media(max-width:560px){.cards3{grid-template-columns:1fr;}.pager{grid-template-columns:1fr;}.pg.next{text-align:left;}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;}}
+
+.wx{background:linear-gradient(180deg,var(--ink-2),rgba(20,24,38,.5));border:1px solid var(--line);border-radius:14px;padding:18px;text-align:center;margin:20px 0;}
+.wx-toggle{display:inline-flex;background:var(--ink-3);border:1px solid var(--line);border-radius:99px;padding:4px;margin-bottom:6px;}
+.wx-toggle button{background:none;border:none;color:var(--paper-dim);font-family:var(--font-disp);font-size:14px;padding:7px 18px;border-radius:99px;cursor:pointer;transition:.15s;letter-spacing:.04em;}
+.wx-toggle button.on{background:var(--ink-4);color:var(--gold-soft);}
+.wx-toggle button:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+svg.wxsvg{max-width:330px;width:100%;height:auto;display:block;margin:4px auto;}
+.wxnode{cursor:pointer;}
+.wxnode text{font-family:var(--font-disp);font-size:22px;font-weight:700;pointer-events:none;}
+.wx-info{font-size:13.5px;color:var(--paper-dim);min-height:64px;max-width:520px;margin:8px auto 0;line-height:1.7;}
+.wx-info .h{font-family:var(--font-disp);font-size:16px;}
+.wx-info .rel{display:block;margin-top:5px;}
+.wx-info .g{color:var(--wood);}.wx-info .k{color:var(--shu-soft);}
+</style></head><body><div class="site-nav"><span class="ls" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><a class="brand" href="kimon_index.html">奇門遁甲 <span class="o">入門</span></a><span class="crumb">第1章 土台 › 1-2</span></div><div class="wrap"><article class="article"><div class="eyebrow">第1章 土台 ・ 1-2</div><h1>五行と相生・相剋</h1><p class="lead">木・火・土・金・水。この五つの関係が、奇門のすべての判断の核になります。</p>
+<p>五行（ごぎょう）は、万物を <span class="em">木・火・土・金・水</span> という五つの「働き」で捉える考え方です。物質そのものというより、<span class="em">性質・はたらきの型</span>だと思ってください。奇門遁甲の判断は、突き詰めればこの五つの関係を読むことに尽きます。<b>ここだけは先に馴染んでおきましょう。</b></p>
+<table class="dt">
+  <tr><th>五行</th><th>はたらき</th><th>季節・象徴</th></tr>
+  <tr><td class="lead-cell el-wood">木</td><td>伸びる・成長</td><td>春・草木・風</td></tr>
+  <tr><td class="lead-cell el-fire">火</td><td>昇る・広がる</td><td>夏・炎・熱</td></tr>
+  <tr><td class="lead-cell el-earth">土</td><td>安定・中和</td><td>季節の変わり目・大地</td></tr>
+  <tr><td class="lead-cell el-metal">金</td><td>固める・収める</td><td>秋・金属・刃</td></tr>
+  <tr><td class="lead-cell el-water">水</td><td>下る・蓄える</td><td>冬・水・闇</td></tr>
+</table>
+
+<h2>二つの循環 ── 相生と相剋</h2>
+<p>五行には、互いを<span class="em">育てる流れ（相生）</span>と、互いを<span class="em">抑える流れ（相剋）</span>の二つがあります。下のボタンで切り替え、各行をタップして関係を確かめてください。</p>
+
+<div class="wx">
+  <div class="wx-toggle" role="group" aria-label="五行の関係を切り替え">
+    <button id="wxSheng" class="on">相生（生む）</button>
+    <button id="wxKe">相剋（抑える）</button>
+  </div>
+  <svg class="wxsvg" id="wxSvg" viewBox="0 0 320 300" xmlns="http://www.w3.org/2000/svg" aria-label="五行の相生相剋図">
+    <defs>
+      <marker id="aSheng" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#6fae8f"/></marker>
+      <marker id="aKe" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#c0432f"/></marker>
+    </defs>
+    <g id="wxEdges"></g><g id="wxNodes"></g>
+  </svg>
+  <div class="wx-info" id="wxInfo">五行のどれかをタップすると、その関係が表示されます。</div>
+</div>
+<script>
+(function(){
+  var EL=[
+    {k:'木',c:'#5aa884',d:'成長・伸びる力'},
+    {k:'火',c:'#d06d46',d:'上昇・拡散する力'},
+    {k:'土',c:'#cda94f',d:'安定・中和する力'},
+    {k:'金',c:'#c2c7d2',d:'収斂・固める力'},
+    {k:'水',c:'#5a86bf',d:'下降・蓄える力'}
+  ];
+  var cx=160,cy=145,R=100,nr=30,mode='sheng',sel=null;
+  function pos(i){var a=(-90+i*72)*Math.PI/180;return [cx+R*Math.cos(a),cy+R*Math.sin(a)];}
+  var edges=document.getElementById('wxEdges');
+  var nodes=document.getElementById('wxNodes');
+  function gen(i){return (i+4)%5;}      // 自分を生む行
+  function ctrl(i){return (i+3)%5;}     // 自分を剋す行
+  function drawEdges(){
+    edges.innerHTML='';
+    for(var i=0;i<5;i++){
+      var j = mode==='sheng' ? (i+1)%5 : (i+2)%5;
+      var A=pos(i),B=pos(j);
+      var dx=B[0]-A[0],dy=B[1]-A[1],L=Math.hypot(dx,dy),ux=dx/L,uy=dy/L;
+      var x1=A[0]+ux*nr,y1=A[1]+uy*nr,x2=B[0]-ux*nr,y2=B[1]-uy*nr;
+      var ln=document.createElementNS('http://www.w3.org/2000/svg','line');
+      ln.setAttribute('x1',x1);ln.setAttribute('y1',y1);ln.setAttribute('x2',x2);ln.setAttribute('y2',y2);
+      ln.setAttribute('stroke',mode==='sheng'?'#6fae8f':'#c0432f');
+      ln.setAttribute('stroke-width','2');
+      ln.setAttribute('marker-end',mode==='sheng'?'url(#aSheng)':'url(#aKe)');
+      var lit = sel===null || sel===i || sel===j;
+      ln.setAttribute('opacity', lit?'0.95':'0.18');
+      edges.appendChild(ln);
+    }
+  }
+  function drawNodes(){
+    nodes.innerHTML='';
+    for(var i=0;i<5;i++){
+      var p=pos(i),e=EL[i];
+      var g=document.createElementNS('http://www.w3.org/2000/svg','g');
+      g.setAttribute('class','wxnode');g.setAttribute('tabindex','0');
+      g.setAttribute('role','button');g.setAttribute('aria-label',e.k+'行');
+      var dim = sel!==null && sel!==i;
+      var c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+      c.setAttribute('cx',p[0]);c.setAttribute('cy',p[1]);c.setAttribute('r',nr);
+      c.setAttribute('fill', sel===i ? e.c : '#1a1f2e');
+      c.setAttribute('stroke',e.c);c.setAttribute('stroke-width','2');
+      c.setAttribute('opacity',dim?'0.4':'1');
+      var t=document.createElementNS('http://www.w3.org/2000/svg','text');
+      t.setAttribute('x',p[0]);t.setAttribute('y',p[1]+8);t.setAttribute('text-anchor','middle');
+      t.setAttribute('fill', sel===i ? '#0e1018' : e.c);
+      t.setAttribute('opacity',dim?'0.4':'1');
+      t.textContent=e.k;
+      g.appendChild(c);g.appendChild(t);
+      (function(idx){g.addEventListener('click',function(){select(idx);});
+        g.addEventListener('keydown',function(ev){if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();select(idx);}});})(i);
+      nodes.appendChild(g);
+    }
+  }
+  function select(i){ sel = (sel===i?null:i); render(); info(); }
+  function info(){
+    var box=document.getElementById('wxInfo');
+    if(sel===null){box.innerHTML='五行のどれかをタップすると、その関係が表示されます。';return;}
+    var e=EL[sel], s=EL[(sel+1)%5], k=EL[(sel+2)%5], gi=EL[gen(sel)], ci=EL[ctrl(sel)];
+    box.innerHTML='<span class="h" style="color:'+e.c+'">'+e.k+'</span>　'+e.d
+      +'<span class="rel"><b class="g">生</b>　'+e.k+'は '+s.k+' を生む　／　'+gi.k+' が '+e.k+' を生む</span>'
+      +'<span class="rel"><b class="k">剋</b>　'+e.k+'は '+k.k+' を剋す　／　'+ci.k+' が '+e.k+' を剋す</span>';
+  }
+  function render(){drawEdges();drawNodes();}
+  document.getElementById('wxSheng').addEventListener('click',function(){mode='sheng';this.classList.add('on');document.getElementById('wxKe').classList.remove('on');render();});
+  document.getElementById('wxKe').addEventListener('click',function(){mode='ke';this.classList.add('on');document.getElementById('wxSheng').classList.remove('on');render();});
+  render();
+})();
+</script>
+
+<p><span class="em">相生（そうしょう）</span>は「生む」順送りの輪：木は火を生み、火は土を、土は金を、金は水を、水は木を生む。<span class="shu">相剋（そうこく）</span>は「抑える」関係：木は土を、土は水を、水は火を、火は金を、金は木を剋（こく）します。星形に交差するのが特徴です。</p>
+
+<h2>奇門での使いどころ</h2>
+<p>盤上の宮・干・門・星には、それぞれ五行が割り当てられています。奇門の判断は、<span class="em">それらの五行どうしが生じ合うか・剋し合うか</span>を読むことが土台になります。たとえば「自分が相手を剋す関係は利益（財）になる」といった見方は、この相剋から来ています（くわしくは第5章）。</p>
+<div class="callout"><b>覚え方　</b>相生は円をなぞる「順送り」、相剋は一つ飛ばしで星を描く「抑え込み」。図の形で覚えると忘れません。</div>
+<nav class="pager"><a class="pg prev" href="01-1-inyo.html"><span class="dir">‹ 前へ</span><span class="ttl">陰陽</span></a><a class="pg next" href="01-3-kanshi.html"><span class="dir">次へ ›</span><span class="ttl">天干・地支</span></a></nav><a class="toc-link" href="kimon_index.html">目次に戻る</a></article><footer>初学者向けの整理です。作盤法・用語・解釈は流派により異なります。<br>占術は意思決定の参考であり、結果を保証するものではありません。</footer></div></body></html>
