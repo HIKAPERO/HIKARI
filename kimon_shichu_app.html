@@ -993,6 +993,77 @@
 .stg-back-row{display:flex;align-items:center;gap:12px;margin-bottom:14px}
 .stg-back-btn{width:34px;height:34px;border-radius:10px;border:0.5px solid var(--line2);background:var(--surface);color:var(--text);font-size:19px;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;line-height:1;flex-shrink:0}
 .stg-page-title{font-family:"Shippori Mincho B1","Noto Serif JP",serif;font-size:17px;font-weight:700;color:var(--text)}
+/* ====== 通知設定 ====== */
+.notif-banner{display:flex;align-items:flex-start;gap:8px;background:var(--blue-bg);border:0.5px solid var(--blue-line);border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:var(--blue-d);line-height:1.65}
+.notif-item{border-top:0.5px solid var(--line);overflow:hidden}
+.notif-item:first-child{border-top:none}
+.notif-row{display:flex;align-items:center;gap:12px;padding:13px 14px;cursor:pointer;-webkit-tap-highlight-color:rgba(0,0,0,.03)}
+.notif-row:active{background:var(--surface2)}
+.notif-body{flex:1;min-width:0}
+.notif-title{font-size:13px;font-weight:600;color:var(--text)}
+.notif-desc{font-size:11px;color:var(--text2);margin-top:1px;line-height:1.4}
+.notif-sw{flex-shrink:0;width:44px;height:26px;border-radius:26px;background:var(--line2);position:relative;transition:background .25s;cursor:pointer}
+.notif-item.notif-on .notif-sw{background:var(--green)}
+.notif-sl{position:absolute;width:20px;height:20px;border-radius:50%;background:#fff;top:3px;left:3px;transition:transform .25s;box-shadow:0 1px 3px rgba(0,0,0,.22)}
+.notif-item.notif-on .notif-sl{transform:translateX(18px)}
+.notif-opts{padding:12px 14px;background:var(--surface2);border-top:0.5px solid var(--line)}
+.notif-opt-row{padding:8px 0;border-bottom:0.5px solid var(--line)}
+.notif-opt-row:last-child{border-bottom:none;padding-bottom:2px}
+.notif-opt-label{font-size:11px;font-weight:600;color:var(--text2);margin-bottom:7px}
+.notif-time-input{font-size:14px;padding:7px 11px;border:0.5px solid var(--line2);border-radius:9px;background:var(--surface);color:var(--text);font-family:inherit;width:130px}
+.notif-segs{display:flex;gap:5px;flex-wrap:wrap}
+.notif-seg{font-size:11.5px;padding:6px 13px;border:0.5px solid var(--line2);border-radius:20px;background:var(--surface);color:var(--text2);cursor:pointer;font-family:inherit;transition:all .15s}
+.notif-seg.on{background:var(--green-bg);color:var(--green-d);border-color:var(--green-line);font-weight:600}
+.notif-chips{display:flex;flex-wrap:wrap;gap:6px}
+.notif-chip{font-size:12px;padding:6px 13px;border:0.5px solid var(--line2);border-radius:16px;background:var(--surface);color:var(--text2);cursor:pointer;font-family:inherit;transition:all .15s}
+.notif-chip.on{background:var(--blue-bg);color:var(--blue-d);border-color:var(--blue-line);font-weight:600}
+.notif-empty{font-size:12px;color:var(--text3)}
+/* ====== ヘルプ画面 ====== */
+.help-header{display:flex;align-items:center;gap:12px;padding:16px 0 14px;border-bottom:0.5px solid var(--line);margin-bottom:16px}
+.help-back{width:34px;height:34px;border-radius:10px;border:0.5px solid var(--line2);background:var(--surface);color:var(--text);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.help-title{font-family:"Shippori Mincho B1","Noto Serif JP",serif;font-size:18px;font-weight:700;color:var(--text)}
+.help-sec{margin-bottom:14px}
+.help-sec-head{display:flex;align-items:center;gap:9px;padding:10px 0 8px}
+.help-sec-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;background:var(--gold-soft)}
+.help-sec-title{font-size:15px;font-weight:700;color:var(--text)}
+.help-card{background:var(--surface);border:0.5px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:8px}
+.help-det{overflow:hidden}
+.help-det+.help-det{border-top:0.5px solid var(--line)}
+.help-sum{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:13px 14px;-webkit-tap-highlight-color:rgba(0,0,0,.03)}
+.help-sum:active{background:var(--surface2)}
+.help-sum::-webkit-details-marker{display:none}
+.help-sum-ic{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.help-sum-ic.gold{background:rgba(205,169,79,.16);color:var(--gold-soft)}
+.help-sum-ic.blue{background:var(--blue-bg);color:var(--blue-d)}
+.help-sum-ic.green{background:var(--green-bg);color:var(--green-d)}
+.help-sum-ic.red{background:var(--red-bg);color:var(--red-d)}
+.help-sum-ic.gray{background:var(--surface2);color:var(--text2)}
+.help-sum-ic.purple{background:rgba(138,95,166,.14);color:#7a4f96}
+.help-sum-body{flex:1;min-width:0}
+.help-sum-title{font-size:13px;font-weight:600;color:var(--text)}
+.help-sum-sub{font-size:11px;color:var(--text2);margin-top:1px}
+.help-chev{font-size:18px;color:var(--text3);transition:transform .2s;flex-shrink:0}
+.help-det[open] .help-chev{transform:rotate(90deg)}
+.help-body{padding:4px 14px 16px;background:var(--surface2);border-top:0.5px solid var(--line)}
+.help-body p{font-size:13px;color:var(--text);line-height:1.85;margin:10px 0 4px}
+.help-body b{color:var(--gold-soft)}
+.help-step{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:0.5px solid var(--line)}
+.help-step:last-child{border-bottom:none}
+.help-step-num{width:22px;height:22px;border-radius:50%;background:var(--gold-soft);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.help-step-body{flex:1}
+.help-step-title{font-size:13px;font-weight:600;color:var(--text)}
+.help-step-desc{font-size:12px;color:var(--text2);line-height:1.7;margin-top:3px}
+.help-tip{display:flex;gap:7px;background:rgba(205,169,79,.10);border-left:2.5px solid var(--gold-dim);border-radius:0 8px 8px 0;padding:9px 11px;margin:10px 0 4px;font-size:12px;color:var(--text2);line-height:1.7}
+.help-qa{padding:10px 0;border-bottom:0.5px solid var(--line)}
+.help-qa:last-child{border-bottom:none}
+.help-q{font-size:13px;font-weight:600;color:var(--text);display:flex;gap:8px;align-items:flex-start}
+.help-q::before{content:'Q';color:var(--gold-soft);font-weight:700;flex-shrink:0;font-size:14px}
+.help-a{font-size:12.5px;color:var(--text2);line-height:1.75;margin:6px 0 0 22px}
+.help-term{padding:10px 0;border-bottom:0.5px solid var(--line)}
+.help-term:last-child{border-bottom:none}
+.help-term-name{font-size:13px;font-weight:700;color:var(--text)}
+.help-term-read{font-size:11px;color:var(--text3);margin-left:6px;font-weight:400}
+.help-term-desc{font-size:12px;color:var(--text2);line-height:1.75;margin-top:4px}
 .stg-coords-row{background:var(--surface);border:0.5px solid var(--line2);border-radius:10px;padding:10px 12px;margin-top:8px}
 .stg-coords-toggle{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);cursor:pointer;list-style:none}
 .stg-coords-toggle::-webkit-details-marker{display:none}
@@ -1044,6 +1115,7 @@
     <div class="screen" id="screen-aisho"></div>
     <div class="screen" id="screen-settings"></div>
     <div class="screen" id="screen-catdetail"></div>
+    <div class="screen" id="screen-help"></div>
   </main>
   <div class="bottom-nav">
     <div class="nav-item active" data-screen="home" onclick="go('home')"><span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg></span><span>ホーム</span></div>
@@ -1228,12 +1300,22 @@ var Store={
 var APP={chartData:null,ritsuunMode:'round',built:{home:false,meishiki:false,unsei:false,kimon:false,trip:false,aisho:false},
   kimonTab:'shi',kimonDateStr:'',kimonTimeStr:'',_kimonScan:null,baseId:'home',destId:'',tripOut:'',tripRet:'',tripTab:'ri',tripMode:'check',destSearchId:'',destBase:'home',destTrip:'one',destNights:1,destNightsMax:1,destPeriod:'1m',destPurpose:'all',destView:'list',destFilter:'all',destStart:'',destEnd:'',_destCache:null,luckProfile:'money',luckPeriod:'1m',luckView:'cal',luckAction:'宝くじ・くじ運',groupMembers:[],groupDest:'',groupBase:'home',groupMemberMode:'same',groupMemberBase:{},groupTrip:'one',groupNights:1,groupNightsMax:1,groupPeriod:'1m',groupView:'list',aishoA:'',aishoB:'',aishoRel:'renai',homeCoords:'',readingTab:'seikaku',openMonth:-1,diaryMonth:0,diaryPick:null,googleKey:'',_geo:{results:{},timers:{}},scrollPos:{},
   formNoTime:false,heading:0,sensorOn:false,
-  viewMode:'list',pendingDelete:null,editingMemo:null,editingProfile:null};
+  viewMode:'list',pendingDelete:null,editingMemo:null,editingProfile:null,
+  notif:{
+    summary:  {on:false,time:'07:00',profiles:[]},
+    luckyDir: {on:false,profiles:[]},
+    badDir:   {on:false,profiles:[]},
+    greatDay: {on:false,threshold:4,profiles:[]},
+    badDay:   {on:false,threshold:2,profiles:[]},
+    daiyun:   {on:false,profiles:[]},
+    birthday: {on:false,daysBefore:7,targets:[]}
+  }
+};
 
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function initials(name){return name?name.slice(0,2):'？';}
-function persist(){try{localStorage.setItem('kimon_app_data',JSON.stringify({v:1,profiles:Store.profiles,activeId:Store.activeId,pseq:Store._seq,places:Places.list,plseq:Places._seq,homeCoords:APP.homeCoords,ritsuunMode:APP.ritsuunMode,googleKey:APP.googleKey}));}catch(e){}}
-function restore(){try{var d=JSON.parse(localStorage.getItem('kimon_app_data')||'null');if(!d)return false;if(d.profiles&&d.profiles.length){Store.profiles=d.profiles;Store.activeId=d.activeId||d.profiles[0].id;Store._seq=d.pseq||(d.profiles.length+1);}if(d.places){Places.list=d.places;Places._seq=d.plseq||(d.places.length+1);}if(typeof d.homeCoords==='string')APP.homeCoords=d.homeCoords;if(d.ritsuunMode)APP.ritsuunMode=d.ritsuunMode;if(typeof d.googleKey==='string')APP.googleKey=d.googleKey;return true;}catch(e){return false;}}
+function persist(){try{localStorage.setItem('kimon_app_data',JSON.stringify({v:1,profiles:Store.profiles,activeId:Store.activeId,pseq:Store._seq,places:Places.list,plseq:Places._seq,homeCoords:APP.homeCoords,ritsuunMode:APP.ritsuunMode,googleKey:APP.googleKey,notif:APP.notif}));}catch(e){}}
+function restore(){try{var d=JSON.parse(localStorage.getItem('kimon_app_data')||'null');if(!d)return false;if(d.profiles&&d.profiles.length){Store.profiles=d.profiles;Store.activeId=d.activeId||d.profiles[0].id;Store._seq=d.pseq||(d.profiles.length+1);}if(d.places){Places.list=d.places;Places._seq=d.plseq||(d.places.length+1);}if(typeof d.homeCoords==='string')APP.homeCoords=d.homeCoords;if(d.ritsuunMode)APP.ritsuunMode=d.ritsuunMode;if(typeof d.googleKey==='string')APP.googleKey=d.googleKey;if(d.notif){var dn=d.notif,an=APP.notif;Object.keys(an).forEach(function(k){if(dn[k])Object.assign(an[k],dn[k]);});}return true;}catch(e){return false;}}
 
 function rebuildChart(){
   var p=Store.getActive();
@@ -2828,6 +2910,258 @@ function enableSensor(){
 function startSensor(){APP.sensorOn=true;window.addEventListener('deviceorientationabsolute',onOrient,true);window.addEventListener('deviceorientation',onOrient,true);}
 function onOrient(e){var h=null;if(e.webkitCompassHeading!=null)h=e.webkitCompassHeading;else if(e.alpha!=null)h=360-e.alpha;if(h!=null){APP.heading=h;drawCompass();}}
 
+/* ============ ヘルプ画面 ============ */
+function showHelp(){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  var el=document.getElementById('screen-help');
+  el.classList.add('active');
+  renderHelp();
+  window.scrollTo(0,0);
+}
+function renderHelp(){
+  var el=document.getElementById('screen-help');
+  function det(icClass,ic,title,sub,body){
+    return '<details class="help-det"><summary class="help-sum">'
+      +'<div class="help-sum-ic '+icClass+'"><span class="msr">'+ic+'</span></div>'
+      +'<div class="help-sum-body"><div class="help-sum-title">'+title+'</div>'+(sub?'<div class="help-sum-sub">'+sub+'</div>':'')+'</div>'
+      +'<span class="help-chev msr">chevron_right</span>'
+    +'</summary><div class="help-body">'+body+'</div></details>';
+  }
+  function step(n,title,desc){
+    return '<div class="help-step"><div class="help-step-num">'+n+'</div><div class="help-step-body"><div class="help-step-title">'+title+'</div><div class="help-step-desc">'+desc+'</div></div></div>';
+  }
+  function qa(q,a){return '<div class="help-qa"><div class="help-q">'+q+'</div><div class="help-a">'+a+'</div></div>';}
+  function term(name,read,desc){return '<div class="help-term"><div class="help-term-name">'+name+'<span class="help-term-read">'+read+'</span></div><div class="help-term-desc">'+desc+'</div></div>';}
+  function tip(t){return '<div class="help-tip"><span class="msr" style="font-size:16px;flex-shrink:0;color:var(--gold-soft)">lightbulb</span><span>'+t+'</span></div>';}
+
+  var h='<div class="help-header"><button class="help-back" onclick="go(\'settings\')"><span class="msr">arrow_back</span></button><div class="help-title">使い方・ヘルプ</div></div>';
+
+  /* ────── ① 初回セットアップ ────── */
+  h+='<div class="help-sec"><div class="help-sec-head"><div class="help-sec-num">1</div><div class="help-sec-title">初回セットアップ</div></div>';
+  h+='<div class="help-card">';
+  h+=det('gold','rocket_launch','はじめての設定（必須）','まず命式を登録しましょう',
+    step(1,'「設定」タブを開く','画面下のナビゲーションバーから「設定」をタップします。')
+    +step(2,'「新しく命式を登録」をタップ','名前・生年月日・出生時刻・性別を入力します。<br>出生時刻は分からなければ「出生時刻が分からない」にチェック。')
+    +step(3,'「保存して鑑定を始める」をタップ','これだけで鑑定が始まります！')
+    +tip('家族・友人の命式も同じ方法で追加できます。画面下のプルダウンで切り替えて、それぞれの鑑定が見られます。')
+  );
+  h+=det('green','location_on','出生地の座標を設定する（任意）','時刻補正の精度が上がります',
+    '<p>出生地の正確な時刻（真太陽時）を補正するために使います。設定しなくても鑑定はできます。</p>'
+    +step(1,'設定 → 命式一覧を開く','「登録済みの命式」を展開します。')
+    +step(2,'「出生地の座標」を開く','各命式カードの下部にある「📍 出生地の座標」をタップ。')
+    +step(3,'住所検索で座標を入力','出生地の住所や地名で検索すると自動入力されます。')
+    +tip('座標が分からない場合はGoogleマップで出生地を長押しすると緯度・経度が表示されます。')
+  );
+  h+=det('blue','home','自宅の場所を設定する（任意）','方位チェックの出発点になります',
+    '<p>旅行・引越の方位チェックで「どこから出発するか」の基点です。</p>'
+    +step(1,'設定 → よく行く場所・方位 → 自宅の場所','「自宅の場所」を展開します。')
+    +step(2,'住所検索または座標を直接入力','最寄り駅名や市区町村名で検索できます。')
+    +step(3,'「保存する」をタップ','')
+  );
+  h+='</div></div>';
+
+  /* ────── ② 各タブの使い方 ────── */
+  h+='<div class="help-sec"><div class="help-sec-head"><div class="help-sec-num">2</div><div class="help-sec-title">各タブの使い方</div></div>';
+  h+='<div class="help-card">';
+  h+=det('gold','home','ホーム','今日の運勢・ラッキーアイテムをチェック',
+    '<p>アプリを開いたとき最初に表示される画面です。</p>'
+    +'<div class="help-step" style="border:none"><div class="help-step-body"><div class="help-step-title">今日の運勢スコア</div><div class="help-step-desc">★1〜5で今日の運気の強さを表示。下にスクロールすると恋愛・仕事・金運など分野別のスコアも確認できます。</div></div></div>'
+    +'<div class="help-step" style="border:none"><div class="help-step-body"><div class="help-step-title">ラッキーカラー・アイテム・フード・ナンバー</div><div class="help-step-desc">その日のラッキーアイテムを表示。ラッキーカラーの宝石は実際の色で表示されます。</div></div></div>'
+    +'<div class="help-step" style="border:none"><div class="help-step-body"><div class="help-step-title">一言アドバイス</div><div class="help-step-desc">今日の奇門遁甲の状況をもとにした行動アドバイスです。</div></div></div>'
+    +tip('画面上部のプルダウンで命式を切り替えると、別の人の今日の運勢も確認できます。')
+  );
+  h+=det('gray','description','命式','四柱推命の詳細な命式を見る',
+    '<p>生年月日から算出した「命式（めいしき）」が表示されます。</p>'
+    +'<div class="help-step" style="border:none"><div class="help-step-body"><div class="help-step-title">四柱（年柱・月柱・日柱・時柱）</div><div class="help-step-desc">生年・生月・生日・生時それぞれの干支。日柱の天干が「日主（にっしゅ）」と呼ばれ、その人の本質を表します。</div></div></div>'
+    +'<div class="help-step" style="border:none"><div class="help-step-body"><div class="help-step-title">用神・大運</div><div class="help-step-desc">命式のバランスを補う要素（用神）と、10年ごとの大きな運気の流れ（大運）を表示します。</div></div></div>'
+    +tip('「用神」は自分に足りないエネルギーを補うもの。その五行の色を身につけると運気アップと言われています。')
+  );
+  h+=det('blue','trending_up','運勢','過去・未来の運気グラフを確認',
+    '<p>日・月・年・大運レベルの運気の波をグラフで可視化します。</p>'
+    +'<div class="help-step" style="border:none"><div class="help-step-body"><div class="help-step-title">グラフの見方</div><div class="help-step-desc">縦軸が運気の強さ、横軸が時間軸です。山（高い部分）が運気の良い時期、谷（低い部分）は守りの時期を表します。</div></div></div>'
+    +'<div class="help-step" style="border:none"><div class="help-step-body"><div class="help-step-title">人生の転機グラフ</div><div class="help-step-desc">学業・仕事・結婚・健康など8つの分野について、人生のどの時期が転機かをレーン別に表示します。</div></div></div>'
+    +tip('グラフの山と谷が重なる年は「人生の節目」になりやすい時期です。大きな決断の参考にしてみてください。')
+  );
+  h+=det('green','explore','奇門遁甲','吉方位・吉時間帯を調べる',
+    '<p>奇門遁甲は時間と方位の吉凶を読む占術です。</p>'
+    +'<div class="help-step" style="border:none"><div class="help-step-body"><div class="help-step-title">時盤・日盤・月盤・年盤</div><div class="help-step-desc">時間の単位（時間・日・月・年）ごとに方位盤が変わります。短期の外出なら「時盤」、旅行や引越なら「日盤」「月盤」を参考にします。</div></div></div>'
+    +'<div class="help-step" style="border:none"><div class="help-step-body"><div class="help-step-title">吉方位の見方</div><div class="help-step-desc">緑色が吉方位、赤色が凶方位です。各マスをタップすると星・門・神の詳細が見られます。</div></div></div>'
+    +tip('「開門＋生門」の方角への外出は特に吉とされています。毎朝チェックして、行動の参考にしてみてください。')
+  );
+  h+=det('purple','flight','旅行・方位','旅先・引越先の方位をチェック',
+    '<p>自宅から目的地の方位が吉か凶かを調べられます。</p>'
+    +'<div class="help-step" style="border:none"><div class="help-step-body"><div class="help-step-title">方位チェックの手順</div><div class="help-step-desc">①出発地（自宅）と目的地を設定 → ②旅行期間を選択 → ③方位スコアが自動計算されます。</div></div></div>'
+    +'<div class="help-step" style="border:none"><div class="help-step-body"><div class="help-step-title">吉方旅行・引越</div><div class="help-step-desc">吉方位への移動は運気の取り込みに良いとされています。複数の行き先を比較して最も吉の方位を選べます。</div></div></div>'
+    +tip('「よく行く場所」に実家・旅先などを登録しておくと、毎回入力せずにすぐ確認できます。')
+  );
+  h+=det('red','favorite','相性','二人の命式の相性を鑑定',
+    '<p>登録した命式同士の相性を五行バランスで分析します。</p>'
+    +'<div class="help-step" style="border:none"><div class="help-step-body"><div class="help-step-title">相性の見方</div><div class="help-step-desc">日主の五行関係（相生・相剋）から、二人の関係性の傾向を分析します。恋愛・友人・仕事など関係タイプ別の解説も表示されます。</div></div></div>'
+    +tip('相性が悪い組み合わせでも、お互いの用神を知ることで関係を良くするヒントが見つかります。')
+  );
+  h+=det('gray','settings','設定','命式の管理・バックアップ・通知設定',
+    '<div class="help-step" style="border:none"><div class="help-step-body"><div class="help-step-title">命式を管理</div><div class="help-step-desc">複数の命式の登録・編集・切り替えができます。</div></div></div>'
+    +'<div class="help-step" style="border:none"><div class="help-step-body"><div class="help-step-title">よく行く場所・方位</div><div class="help-step-desc">旅先や実家など、よく確認する地点を登録しておくと方位タブで素早くチェックできます。</div></div></div>'
+    +'<div class="help-step" style="border:none"><div class="help-step-body"><div class="help-step-title">データの共有・引き継ぎ</div><div class="help-step-desc">機種変更に備えてバックアップを取れます。「バックアップ（書き出し）」でテキストをコピーして保存しておきましょう。</div></div></div>'
+  );
+  h+='</div></div>';
+
+  /* ────── ③ よくある質問 ────── */
+  h+='<div class="help-sec"><div class="help-sec-head"><div class="help-sec-num">3</div><div class="help-sec-title">よくある質問</div></div>';
+  h+='<div class="help-card"><div class="help-body" style="padding-top:8px">';
+  h+=qa('出生時刻が分からない場合はどうすればいいですか？',
+    '登録時に「出生時刻が分からない」にチェックを入れてください。時柱を除いた三柱（年・月・日）で鑑定します。大半の鑑定は三柱でも十分な精度があります。');
+  h+=qa('座標はどうやって調べますか？',
+    'Googleマップで場所を長押しすると「緯度・経度」が表示されます（例：35.6895, 139.6917）。また設定画面の住所検索で地名を入力すると自動で座標を取得できます。');
+  h+=qa('家族・友人の命式も登録できますか？',
+    'はい、人数制限なく登録できます。設定 → 「新しく命式を登録」から追加してください。画面上部のプルダウンで表示する命式を切り替えられます。');
+  h+=qa('データはどこに保存されますか？',
+    'すべてのデータはこの端末のブラウザ内（LocalStorage）に保存されます。サーバーには送信されないため、インターネット接続がなくても使えます。');
+  h+=qa('機種変更したらデータはどうなりますか？',
+    '設定 → データの共有・引き継ぎ → 「バックアップ（書き出し）」でテキストをコピーしてメモアプリ等に保存してください。新しい端末でアプリを開き、「データを引き継ぐ（読み込み）」から貼り付けて復元できます。');
+  h+=qa('大運は何歳から何歳まで続きますか？',
+    '大運は通常10年ごとに切り替わります。何歳から始まるかは生まれた月と節入りの日数から計算されます。命式タブの「大運」セクションで各大運の開始年齢が確認できます。');
+  h+=qa('用神って何ですか？どう使えばいいですか？',
+    '用神（ようじん）とは、命式の五行バランスを整えるために必要な要素です。用神の五行に対応するカラー・食べ物・方位を取り入れることで運気の底上げができるとされています。');
+  h+=qa('奇門遁甲の時盤と日盤の違いは？',
+    '時盤はその時間（2時間単位）の方位の吉凶、日盤はその日全体の吉凶を表します。近所への外出は時盤、旅行や重要な外出は日盤や月盤を参考にするのが一般的です。');
+  h+=qa('吉方位に向かって何をすればいいですか？',
+    '吉方位の方角に向かって外出・食事・旅行・引越をするのが基本です。吉方位のパワーは距離が遠いほど、また長く滞在するほど強くなるとされています。');
+  h+='</div></div></div>';
+
+  /* ────── ④ 用語解説 ────── */
+  h+='<div class="help-sec"><div class="help-sec-head"><div class="help-sec-num">4</div><div class="help-sec-title">用語解説</div></div>';
+  h+='<div class="help-card">';
+
+  h+=det('gold','menu_book','四柱推命の基本用語','めいしき・にっしゅ・ようじんなど',
+    '<div style="padding-top:4px">'
+    +term('命式','めいしき','生年・月・日・時から算出した干支の組み合わせ。その人の運命の設計図とも呼ばれます。')
+    +term('四柱','しちゅう','命式を構成する年柱・月柱・日柱・時柱の4つのこと。それぞれに天干と地支があります。')
+    +term('天干','てっかん（てんかん）','十干（甲・乙・丙・丁・戊・己・庚・辛・壬・癸）のこと。陽のエネルギーを表します。')
+    +term('地支','ちし','十二支（子・丑・寅・卯・辰・巳・午・未・申・酉・戌・亥）のこと。陰のエネルギーを表します。')
+    +term('日主','にっしゅ','日柱の天干のこと。その人の本質・本性を表す最も重要な要素です。')
+    +term('五行','ごぎょう','木・火・土・金・水の5つのエネルギー。天干・地支はすべてどれかの五行に属します。')
+    +term('用神','ようじん','命式のバランスを整えるために必要な五行要素。用神を補うことで運気が安定すると言われます。')
+    +term('大運','だいうん','10年ごとに変わる大きな運気の流れ。人生の大きな波を表します。')
+    +term('年運','ねんうん','1年ごとの運気の変化。大運の中での細かな波を表します。')
+    +term('蔵干','ぞうかん','地支の中に隠れた天干のこと。表に出にくい潜在的な性質を表します。')
+    +'</div>'
+  );
+
+  h+=det('green','explore','奇門遁甲の基本用語','きもんとんこう・きゅう・もん・せいなど',
+    '<div style="padding-top:4px">'
+    +term('奇門遁甲','きもんとんこう','古代中国発祥の占術。時間と方位の吉凶を九宮（3×3の方位盤）で判断します。')
+    +term('九宮','きゅうきゅう','9つの方位区画（北・北東・東・東南・南・南西・西・北西・中央）のこと。')
+    +term('星（九星）','ほし（きゅうせい）','各宮に配置される天蓬・天芮・天冲・天輔・天禽・天心・天柱・天任・天英の9つ。')
+    +term('門（八門）','もん（はちもん）','休門・死門・傷門・杜門・開門・驚門・生門・景門の8つ。門の吉凶が方位の良し悪しに大きく影響します。')
+    +term('神（九神）','かみ（きゅうじん）','値符・螣蛇・太陰・六合・白虎・玄武・九地・九天・勾陳の9つ。')
+    +term('吉門','きちもん','開門・生門・休門の3つ。これらが配置された方位は吉方位とされます。')
+    +term('凶門','きょうもん','死門・傷門・驚門の3つ。これらが配置された方位は慎重に扱う方位とされます。')
+    +term('時盤','じばん','2時間単位で切り替わる方位盤。短時間の外出に使います。')
+    +term('日盤','にちばん','1日単位の方位盤。その日全体の吉凶方位を表します。')
+    +'</div>'
+  );
+
+  h+='</div></div>';
+  h+='<div style="height:24px"></div>';
+  el.innerHTML=h;
+}
+
+/* ============ 通知設定 ============ */
+function renderNotifSection(){
+  var profiles=Store.list(),n=APP.notif,h='';
+  h+='<div class="notif-banner"><span class="msr" style="font-size:18px;flex-shrink:0">info</span>'
+    +'<span>通知機能はAndroidアプリ公開時に有効化されます。設定はそのまま引き継がれます。</span></div>';
+
+  function profChips(key,targetKey){
+    if(!profiles.length)return '<div class="notif-empty">命式が登録されていません</div>';
+    var arr=n[key][targetKey||'profiles']||[];
+    return '<div class="notif-chips">'+profiles.map(function(p){
+      var on=arr.indexOf(p.id)>=0;
+      return '<button class="notif-chip'+(on?' on':'')+'" onclick="toggleNotifProfile(\''+key+'\',\''+p.id+'\',\''+(targetKey||'profiles')+'\')">'+esc(p.name.slice(0,10))+'</button>';
+    }).join('')+'</div>';
+  }
+  function optProfiles(key,label,targetKey){
+    return '<div class="notif-opt-row"><div class="notif-opt-label">'+(label||'通知する命式（複数選択可）')+'</div>'+profChips(key,targetKey)+'</div>';
+  }
+  function segs(key,field,items){
+    var cur=n[key][field];
+    return '<div class="notif-segs">'+items.map(function(it){
+      return '<button class="notif-seg'+(cur===it[0]?' on':'')+'" onclick="setNotifVal(\''+key+'\',\''+field+'\','+JSON.stringify(it[0])+')">'+esc(it[1])+'</button>';
+    }).join('')+'</div>';
+  }
+  function item(key,ic,icClass,title,desc,optsHtml){
+    var on=n[key]&&n[key].on;
+    return '<div class="notif-item'+(on?' notif-on':'')+'"><div class="notif-row" onclick="toggleNotifOn(\''+key+'\')">'
+      +'<div class="stg-row-ic '+icClass+'"><span class="msr">'+ic+'</span></div>'
+      +'<div class="notif-body"><div class="notif-title">'+title+'</div><div class="notif-desc">'+desc+'</div></div>'
+      +'<div class="notif-sw"><div class="notif-sl"></div></div>'
+    +'</div>'
+    +(on?'<div class="notif-opts">'+optsHtml+'</div>':'')
+    +'</div>';
+  }
+
+  /* 1. 朝の運勢サマリー */
+  h+=item('summary','wb_sunny','gold','朝の運勢サマリー','毎朝・運勢スコア＋吉方位＋吉時間帯を通知',
+    '<div class="notif-opt-row"><div class="notif-opt-label">通知時刻</div>'
+    +'<input type="time" class="notif-time-input" value="'+n.summary.time+'" onchange="setNotifVal(\'summary\',\'time\',this.value)"></div>'
+    +optProfiles('summary'));
+
+  /* 2. 吉方位リマインダー */
+  h+=item('luckyDir','explore','green','吉方位リマインダー','吉時間帯に合わせて吉方位を通知',
+    optProfiles('luckyDir'));
+
+  /* 3. 凶方位警告 */
+  h+=item('badDir','explore_off','red','凶方位警告','凶時間帯に合わせて凶方位を通知',
+    optProfiles('badDir'));
+
+  /* 4. 大吉日アラート */
+  h+=item('greatDay','auto_awesome','gold','大吉日アラート','前日夜に翌日の大吉日を通知',
+    '<div class="notif-opt-row"><div class="notif-opt-label">大吉日の基準</div>'
+    +segs('greatDay','threshold',[[3,'★3以上'],[4,'★4以上'],[5,'★5のみ']])
+    +'</div>'+optProfiles('greatDay'));
+
+  /* 5. 凶日アラート */
+  h+=item('badDay','warning','red','凶日アラート','当日朝に凶日を通知',
+    '<div class="notif-opt-row"><div class="notif-opt-label">凶日の基準</div>'
+    +segs('badDay','threshold',[[2,'★2以下'],[1,'★1のみ']])
+    +'</div>'+optProfiles('badDay'));
+
+  /* 6. 大運・年運の切替 */
+  h+=item('daiyun','autorenew','blue','大運・年運の切替通知','切替の1週間前に通知',
+    optProfiles('daiyun'));
+
+  /* 7. 誕生日前通知 */
+  h+=item('birthday','cake','purple','誕生日前通知','登録した人の誕生日前に通知',
+    '<div class="notif-opt-row"><div class="notif-opt-label">何日前に通知</div>'
+    +segs('birthday','daysBefore',[[3,'3日前'],[7,'7日前'],[14,'14日前'],[30,'30日前']])
+    +'</div>'
+    +'<div class="notif-opt-row"><div class="notif-opt-label">通知する相手（複数選択可）</div>'
+    +(profiles.length?profChips('birthday','targets'):'<div class="notif-empty">命式が登録されていません</div>')
+    +'</div>');
+
+  return h;
+}
+function toggleNotifOn(key){
+  if(!APP.notif||!APP.notif[key])return;
+  APP.notif[key].on=!APP.notif[key].on;
+  persist();renderSettings();
+}
+function setNotifVal(key,field,val){
+  if(!APP.notif||!APP.notif[key])return;
+  APP.notif[key][field]=val;
+  persist();renderSettings();
+}
+function toggleNotifProfile(key,id,targetKey){
+  if(!APP.notif||!APP.notif[key])return;
+  var tk=targetKey||'profiles';
+  var arr=APP.notif[key][tk]||[];
+  var idx=arr.indexOf(id);
+  if(idx>=0)arr.splice(idx,1);else arr.push(id);
+  APP.notif[key][tk]=arr;
+  persist();renderSettings();
+}
+
 /* ============ 設定タブ（プロファイル管理）============ */
 function stgSecHead(icClass,icon,title,sub){
   return '<div class="stg-sec-head"><div class="stg-sec-ic '+icClass+'"><span class="msr">'+icon+'</span></div><div class="stg-sec-texts"><div class="stg-sec-title">'+title+'</div>'+(sub?'<div class="stg-sec-sub">'+sub+'</div>':'')+'</div></div>';
@@ -2900,21 +3234,7 @@ function renderSettings(){
   });
   html+='</div></div></details></div>';
 
-  /* ── ③ データの共有・引き継ぎ ── */
-  html+=stgSecHead('blue','share','データの共有・引き継ぎ','スマホ機種変更時のバックアップや他の端末への引き継ぎ');
-  html+='<div class="stg-list-card">';
-  html+='<div class="stg-plain-row" onclick="showExportModal()">'
-    +stgRowIc('green','backup')
-    +'<div class="stg-row-body"><div class="stg-row-title">バックアップ（書き出し）</div><div class="stg-row-desc">命式・地点データをテキストで書き出します</div></div>'
-    +'<div class="stg-row-right">'+stgChev()+'</div>'
-  +'</div>';
-  html+='<div class="stg-plain-row" onclick="showImportModal()">'
-    +stgRowIc('gold','restore_page')
-    +'<div class="stg-row-body"><div class="stg-row-title">データを引き継ぐ（読み込み）</div><div class="stg-row-desc">バックアップデータを貼り付けて復元します</div></div>'
-    +'<div class="stg-row-right">'+stgChev()+'</div>'
-  +'</div></div>';
-
-  /* ── ④ よく行く場所・方位 ── */
+  /* ── ③ よく行く場所・方位 ── */
   html+=stgSecHead('green','location_on','よく行く場所・方位','旅行・引越の方位チェックで使う地点を登録します');
   html+='<div class="stg-list-card">';
   html+='<details class="stg-det"><summary class="stg-sum">'
@@ -2952,9 +3272,32 @@ function renderSettings(){
   if(APP.homeCoords)html+='<div style="font-size:12px;color:var(--green-d);margin-top:8px">✓ 保存済み：'+esc(APP.homeCoords)+'</div>';
   html+='</div></details></div>';
 
-  /* ── ⑤ 詳細設定 ── */
+  /* ── ④ データの共有・引き継ぎ ── */
+  html+=stgSecHead('blue','share','データの共有・引き継ぎ','スマホ機種変更時のバックアップや他の端末への引き継ぎ');
+  html+='<div class="stg-list-card">';
+  html+='<div class="stg-plain-row" onclick="showExportModal()">'
+    +stgRowIc('green','backup')
+    +'<div class="stg-row-body"><div class="stg-row-title">バックアップ（書き出し）</div><div class="stg-row-desc">命式・地点データをテキストで書き出します</div></div>'
+    +'<div class="stg-row-right">'+stgChev()+'</div>'
+  +'</div>';
+  html+='<div class="stg-plain-row" onclick="showImportModal()">'
+    +stgRowIc('gold','restore_page')
+    +'<div class="stg-row-body"><div class="stg-row-title">データを引き継ぐ（読み込み）</div><div class="stg-row-desc">バックアップデータを貼り付けて復元します</div></div>'
+    +'<div class="stg-row-right">'+stgChev()+'</div>'
+  +'</div></div>';
+
+  /* ── ⑤ 通知設定 ── */
+  html+=stgSecHead('gold','notifications','通知設定','Androidアプリ公開時に有効化されます');
+  html+='<div class="stg-list-card">'+renderNotifSection()+'</div>';
+
+  /* ── ⑥ 詳細設定 ── */
   html+=stgSecHead('gray','tune','詳細設定','計算方法や検索エンジンの細かい設定');
   html+='<div class="stg-list-card">';
+  html+='<div class="stg-plain-row" onclick="showHelp()">'
+    +stgRowIc('blue','help')
+    +'<div class="stg-row-body"><div class="stg-row-title">使い方・ヘルプ</div><div class="stg-row-desc">初回セットアップ・タブの説明・FAQ・用語解説</div></div>'
+    +'<div class="stg-row-right">'+stgChev()+'</div>'
+  +'</div></div>';
   var rlabel={round:'四捨五入',floor:'切り捨て',ceil:'切り上げ'}[APP.ritsuunMode||'round'];
   html+='<details class="stg-det"><summary class="stg-sum">'
     +stgRowIc('gray','calendar_month')
@@ -3180,7 +3523,7 @@ var LUCKY_ELEM={
    items:[['金属アクセ','✨','磨いて身につけると気が引き締まり運が冴えます。'],['白い小物','🤍','持ち物に白を足すと判断がクリアになります。'],['財布','💰','財布を整えると金運の巡りが良くなります。'],['手鏡','🪞','身だしなみを整えると人からの評価が上がります。']],
    foods:[['白身魚','🐟'],['大根料理','🥬'],['ナッツ','🥜']]},
  水:{colorUse:'青・紺・黒を取り入れると、思考が冴え人間関係も滑らかに。',
-   colors:[['藍青','#3a5f9a'],['紺','#1f3a6b'],['黒','#2b2620'],['水色','#6fa8dc']],
+   colors:[['藍青','#3a5f9a'],['紺碧','#2c4fa3'],['深藍','#1a3255'],['水色','#6fa8dc']],
    items:[['ガラス小物','🔮','透明な物を飾ると気の流れが澄みます。'],['青い傘・布','☂️','青を身近に置くと冷静さと縁が整います。'],['イヤホン','🎧','好きな音に浸ると気持ちがリセットされます。'],['水筒','🍶','こまめな水分補給が巡りと運気を支えます。']],
    foods:[['味噌汁','🍜'],['海の幸','🦐'],['黒豆・海藻','🫘']]}
 };
@@ -3190,6 +3533,35 @@ function luckyPick(cd,elem,salt){
   var E=LUCKY_ELEM[elem]||LUCKY_ELEM['土'],d=_doy(cd);salt=salt||0;
   var c=E.colors[(d+salt)%E.colors.length],it=E.items[(d+salt*2+1)%E.items.length],fd=E.foods[(d+salt+2)%E.foods.length];
   return {elem:elem,colorName:c[0],colorHex:c[1],colorUse:E.colorUse,itemName:it[0],itemEmoji:it[1],itemUse:it[2],foodName:fd[0],foodEmoji:fd[1]};
+}
+/* ラッキーカラーの宝石 SVG（ラッキーカラーで塗る） */
+function coloredGem(hex){
+  /* 暗い色は白ハイライトを強くして宝石感を出す */
+  var r=parseInt(hex.slice(1,3),16)||0,g=parseInt(hex.slice(3,5),16)||0,b=parseInt(hex.slice(5,7),16)||0;
+  var lum=(0.299*r+0.587*g+0.114*b)/255;
+  var dark=lum<0.3;
+  var hiA =dark?0.70:0.42;   /* 左面ハイライト */
+  var tabA=dark?0.52:0.28;   /* テーブル面 */
+  var pavA=dark?0.25:0.18;   /* パビリオン中央 */
+  var shdA=dark?0.04:0.12;   /* 影 */
+  var strA=dark?0.90:0.60;   /* アウトライン */
+  return '<svg viewBox="0 0 24 24" width="22" height="22" xmlns="http://www.w3.org/2000/svg" style="display:block;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.18))">'
+    /* 下部（パビリオン）*/
+    +'<polygon points="3,9 21,9 12,22.5" fill="'+hex+'" opacity="0.9"/>'
+    +'<polygon points="9,9 15,9 12,22.5" fill="rgba(255,255,255,'+pavA+')"/>'
+    +'<polygon points="3,9 9,9 12,22.5" fill="rgba(0,0,0,'+shdA+')"/>'
+    /* 上部（クラウン）*/
+    +'<polygon points="3,9 7,3 12,1.5 17,3 21,9" fill="'+hex+'"/>'
+    /* ハイライト（左面）*/
+    +'<polygon points="3,9 7,3 9,9" fill="rgba(255,255,255,'+hiA+')"/>'
+    /* 中央テーブル */
+    +'<polygon points="7,3 17,3 15,9 9,9" fill="rgba(255,255,255,'+tabA+')"/>'
+    /* 右面（暗め） */
+    +'<polygon points="17,3 21,9 15,9" fill="rgba(0,0,0,'+shdA+')"/>'
+    /* アウトライン */
+    +'<polygon points="3,9 7,3 12,1.5 17,3 21,9 12,22.5" fill="none" stroke="rgba(255,255,255,'+strA+')" stroke-width="0.7"/>'
+    +'<line x1="3" y1="9" x2="21" y2="9" stroke="rgba(255,255,255,'+strA+')" stroke-width="0.6"/>'
+    +'</svg>';
 }
 function nhLucky(cd){
   var lk=luckyPick(cd,cd.yojin.primaryYojin,0),d=_doy(cd);
@@ -3434,7 +3806,7 @@ renderHome=function(){
   html+='<div class="nh-panel"><div class="nh-ptitle">🧭 今日の最強方位</div><div class="nh-dirwrap"><div class="nh-compass">'+nhCompass(cd)+'</div><div class="nh-dirinfo"><div class="nh-dirbig"><b>'+(best?best.dir:'—')+'</b><span>が吉</span></div><div class="nh-dirdesc">'+(best?'運気を後押ししてくれる方位です。':'本日は際立った吉方位はありません。')+'</div><div class="nh-dirtag gold">☀ 金運アップ方位</div><div class="nh-dirval">'+(cd.wealthDirs[0]||'—')+'<span class="s">（'+cd.wealthEl+'の気）</span></div><div class="nh-dirtag red">⚠ 避けたい方位</div><div class="nh-dirval">'+(worst?worst.dir:'—')+'<span class="s">運気ダウン</span></div></div></div></div>';
   html+='<div class="nh-panel nh-ng"><div class="nh-ptitle">⚠️ 今日のNG方位・注意時間帯</div><div class="nh-ngrow"><div class="nh-nglab">🧭 避けたい方位</div><div class="nh-ngval">'+(worst?worst.dir:'—')+'</div><div class="nh-ngsub">この方位は運気ダウン</div></div><div class="nh-ngrow"><div class="nh-nglab">🕐 注意時間帯</div><div class="nh-ngval" id="home-ng-time"><span style="font-size:12px;color:var(--text3)">計算中…</span></div><div class="nh-ngsub">重要な決断・契約は控えめに</div></div></div>';
   html+='<div class="nh-section">🎁 今日のラッキーアイテム</div><div class="nh-panel"><div class="nh-lucky">'
-    +'<div class="nh-luck"><div class="nh-luck-h">ラッキーカラー</div><div class="nh-luck-sw" style="background:'+lk.colorHex+'22;border-color:'+lk.colorHex+'">💎</div><div class="nh-luck-v">'+lk.colorName+'</div></div>'
+    +'<div class="nh-luck"><div class="nh-luck-h">ラッキーカラー</div><div class="nh-luck-sw" style="background:'+lk.colorHex+'28;border-color:'+lk.colorHex+'88">'+coloredGem(lk.colorHex)+'</div><div class="nh-luck-v">'+lk.colorName+'</div></div>'
     +'<div class="nh-luck"><div class="nh-luck-h">ラッキーアイテム</div><div class="nh-luck-sw">'+lk.itemEmoji+'</div><div class="nh-luck-v">'+lk.item+'</div></div>'
     +'<div class="nh-luck"><div class="nh-luck-h">ラッキーフード</div><div class="nh-luck-sw">'+lk.foodEmoji+'</div><div class="nh-luck-v">'+lk.food+'</div></div>'
     +'<div class="nh-luck"><div class="nh-luck-h">ラッキーナンバー</div><div class="nh-luck-sw" style="border:none;background:none"><span class="nh-luck-num">'+lk.num+'</span></div></div>'
@@ -3466,6 +3838,8 @@ window.saveBirthCoords=saveBirthCoords;
 window.showEdit=showEdit;window.dismissOnboard=dismissOnboard;
 window.shareReading=shareReading;window.printReading=printReading;window.showGlossary=showGlossary;window.closeGlossary=closeGlossary;
 window.showExportModal=showExportModal;window.copyExportData=copyExportData;window.showImportModal=showImportModal;window.loadImportFile=loadImportFile;window.importData=importData;
+window.toggleNotifOn=toggleNotifOn;window.setNotifVal=setNotifVal;window.toggleNotifProfile=toggleNotifProfile;
+window.showHelp=showHelp;
 window.geoInput=geoInput;window.geoPick=geoPick;window.geoCurrent=geoCurrent;window.geoPickHist=geoPickHist;window.setGoogleKey=setGoogleKey;
 window.setBaseId=setBaseId;window.setDestId=setDestId;window.addPlace=addPlace;window.removePlace=removePlace;
 window.setTripDate=setTripDate;
