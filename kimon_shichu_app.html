@@ -355,6 +355,7 @@
   .geo-item:active{background:var(--surface)}
   .geo-nm{font-size:13px;color:var(--paper,var(--text))}
   .geo-co{font-size:10.5px;color:var(--text3);font-variant-numeric:tabular-nums}
+  .geo-addr{font-size:11px;color:var(--text2);font-variant-numeric:initial;line-height:1.4}
   .geo-hist{margin-top:7px;display:flex;flex-wrap:wrap;gap:5px;align-items:center}
   .geo-hl{font-size:11px;color:var(--text3)}
   .geo-chip{font-size:11px;padding:3px 9px;border:0.5px solid var(--line2);border-radius:14px;background:transparent;color:var(--text2);cursor:pointer;font-family:inherit}
@@ -1804,7 +1805,10 @@ function geocode(query,cb){
     ensureGoogle(function(ok){
       if(!ok||!_gGeocoder){cb(null,'Google初期化失敗（キーをご確認ください）');return;}
       _gGeocoder.geocode({address:query},function(results,status){
-        if(status==='OK'){cb((results||[]).map(function(x){return {name:x.formatted_address,lat:x.geometry.location.lat(),lng:x.geometry.location.lng()};}));}
+        if(status==='OK'){cb((results||[]).map(function(x){
+          var parts=(x.formatted_address||'').split(',').map(function(p){return p.trim();});
+          return {name:x.formatted_address,shortName:parts[0],address:parts.slice(1).filter(Boolean).join(' '),lat:x.geometry.location.lat(),lng:x.geometry.location.lng()};
+        }));}
         else if(status==='ZERO_RESULTS'){cb([]);}
         else{cb(null,status);}
       });
@@ -1812,16 +1816,32 @@ function geocode(query,cb){
   } else {
     fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&accept-language=ja&limit=6&q='+encodeURIComponent(query),{headers:{Accept:'application/json'}})
       .then(function(r){return r.json();})
-      .then(function(arr){cb((arr||[]).map(function(x){return {name:x.display_name,lat:parseFloat(x.lat),lng:parseFloat(x.lon)};}));})
+      .then(function(arr){cb((arr||[]).map(function(x){
+        var parts=(x.display_name||'').split(',').map(function(p){return p.trim();});
+        var addr=parts.slice(1).filter(function(p){return p&&p!=='日本'&&p!=='Japan';}).slice(0,3).join('、');
+        return {name:x.display_name,shortName:parts[0],address:addr,lat:parseFloat(x.lat),lng:parseFloat(x.lon)};
+      }));})
       .catch(function(){cb(null);});
   }
 }
-function geoShort(n){return (n||'').split(',')[0].trim().slice(0,28);}
+function geoShort(n){var s=(n||'').split(',')[0].trim();return s.slice(0,24);}
+function geoRenderResults(target,res){
+  var box=document.getElementById('geo-res-'+target);
+  if(!box)return;
+  if(!res||!res.length){box.innerHTML='';return;}
+  box.innerHTML=res.map(function(r,i){
+    var nm=r.shortName||geoShort(r.name);
+    var sub=r.address||(r.lat.toFixed(4)+', '+r.lng.toFixed(4));
+    return '<div class="geo-item" onclick="geoPick(\''+target+'\','+i+')">'
+      +'<span class="geo-nm">'+esc(nm)+'</span>'
+      +'<span class="geo-co geo-addr">'+esc(sub)+'</span>'
+    +'</div>';
+  }).join('');
+}
 function geoBox(target,ph){
   return '<div class="geo-box"><div class="geo-row"><input type="text" class="geo-input" id="geo-in-'+target+'" placeholder="'+ph+'" autocomplete="off" oninput="geoInput(this,\''+target+'\')"><button type="button" class="geo-cur" onclick="geoCurrent(\''+target+'\')" title="現在地を取得">📍</button></div><div class="geo-status" id="geo-st-'+target+'"></div><div class="geo-results" id="geo-res-'+target+'"></div>'+geoHistChips(target)+'</div>';
 }
 function geoStatus(target,msg){var el=document.getElementById('geo-st-'+target);if(el)el.textContent=msg||'';}
-function geoRenderResults(target,res){var box=document.getElementById('geo-res-'+target);if(!box)return;if(!res||!res.length){box.innerHTML='';return;}box.innerHTML=res.map(function(r,i){return '<div class="geo-item" onclick="geoPick(\''+target+'\','+i+')"><span class="geo-nm">'+esc(geoShort(r.name))+'</span><span class="geo-co">'+r.lat.toFixed(4)+', '+r.lng.toFixed(4)+'</span></div>';}).join('');}
 function geoInput(el,target){
   var q=el.value; clearTimeout(APP._geo.timers[target]);
   if(q.trim().length<2){geoStatus(target,'');geoRenderResults(target,[]);return;}
@@ -1835,8 +1855,9 @@ function geoInput(el,target){
 }
 function geoApply(target,r){
   var cs=r.lat.toFixed(6)+', '+r.lng.toFixed(6);
+  var nm=r.shortName||geoShort(r.name);
   if(target==='home'){var el=document.getElementById('home-coords');if(el)el.value=cs;setHomeCoords();}
-  else if(target==='place'){var pn=document.getElementById('pl-name'),pc=document.getElementById('pl-coords');if(pc)pc.value=cs;if(pn&&!pn.value.trim())pn.value=geoShort(r.name);geoStatus(target,'✓ 座標を入力しました。地点名を確認して「＋ 地点を追加」を押してください。');geoRenderResults(target,[]);}
+  else if(target==='place'){var pn=document.getElementById('pl-name'),pc=document.getElementById('pl-coords');if(pc)pc.value=cs;if(pn&&!pn.value.trim())pn.value=nm;geoStatus(target,'✓ 座標を入力しました。地点名を確認して「この地点を登録する」を押してください。');geoRenderResults(target,[]);}
   else if(target.indexOf('birth:')===0){var id=target.slice(6);var be=document.getElementById('bc-'+id);if(be)be.value=cs;saveBirthCoords(id);}
 }
 function geoPick(target,i){var r=(APP._geo.results[target]||[])[i];if(!r)return;geoHistAdd(r);geoApply(target,r);}
@@ -1846,8 +1867,8 @@ function geoCurrent(target){
   navigator.geolocation.getCurrentPosition(function(pos){var r={name:'現在地（GPS）',lat:pos.coords.latitude,lng:pos.coords.longitude};geoHistAdd(r);geoApply(target,r);},function(){geoStatus(target,'現在地の取得に失敗しました（位置情報の許可をご確認ください）');},{enableHighAccuracy:true,timeout:10000});
 }
 function geoHistLoad(){try{return JSON.parse(localStorage.getItem('kimon_geo_hist')||'[]');}catch(e){return [];}}
-function geoHistAdd(r){try{var h=geoHistLoad().filter(function(x){return !(Math.abs(x.lat-r.lat)<1e-6&&Math.abs(x.lng-r.lng)<1e-6);});h.unshift({name:r.name,lat:r.lat,lng:r.lng});localStorage.setItem('kimon_geo_hist',JSON.stringify(h.slice(0,12)));}catch(e){}}
-function geoHistChips(target){var h=geoHistLoad();if(!h.length)return '';return '<div class="geo-hist"><span class="geo-hl">最近：</span>'+h.slice(0,6).map(function(x,i){return '<button type="button" class="geo-chip" onclick="geoPickHist(\''+target+'\','+i+')">'+esc(geoShort(x.name))+'</button>';}).join('')+'</div>';}
+function geoHistAdd(r){try{var h=geoHistLoad().filter(function(x){return !(Math.abs(x.lat-r.lat)<1e-6&&Math.abs(x.lng-r.lng)<1e-6);});h.unshift({name:r.name,shortName:r.shortName,address:r.address,lat:r.lat,lng:r.lng});localStorage.setItem('kimon_geo_hist',JSON.stringify(h.slice(0,12)));}catch(e){}}
+function geoHistChips(target){var h=geoHistLoad();if(!h.length)return '';return '<div class="geo-hist"><span class="geo-hl">最近：</span>'+h.slice(0,6).map(function(x,i){var nm=x.shortName||geoShort(x.name);return '<button type="button" class="geo-chip" onclick="geoPickHist(\''+target+'\','+i+')">'+esc(nm.slice(0,14))+'</button>';}).join('')+'</div>';}
 function geoPickHist(target,i){var r=geoHistLoad()[i];if(!r)return;geoApply(target,r);}
 function setGoogleKey(){var el=document.getElementById('gkey');if(!el)return;APP.googleKey=el.value.trim();_gReady=false;_gGeocoder=null;persist();renderSettings();}
 function calcBearing(la1,lo1,la2,lo2){var p1=la1*Math.PI/180,p2=la2*Math.PI/180,dl=(lo2-lo1)*Math.PI/180;var yy=Math.sin(dl)*Math.cos(p2),xx=Math.cos(p1)*Math.sin(p2)-Math.sin(p1)*Math.cos(p2)*Math.cos(dl);return (Math.atan2(yy,xx)*180/Math.PI+360)%360;}
