@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
 <style>
   :root{
     --bg:#f4eee1; --surface:#fffdf8; --surface2:#ece3d1; --line:#e0d6bf; --line2:#d2c6aa;
@@ -932,6 +933,71 @@
 .set-acc-body{padding:0 14px 14px}
 .fld-group{padding:11px 0 2px;border-top:0.5px solid var(--line)}
 .fld-group-h{font-size:12.5px;font-weight:700;color:var(--text);margin-bottom:8px}
+/* ====== 設定画面 v2 ====== */
+.stg-profile-card{background:var(--surface);border:0.5px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px;display:flex;align-items:center;gap:14px;box-shadow:0 1px 6px rgba(0,0,0,.05)}
+.stg-profile-av{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:21px;font-weight:700;color:#fff;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.stg-profile-body{flex:1;min-width:0}
+.stg-profile-name{font-size:16px;font-weight:700;color:var(--text);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stg-profile-meta{font-size:11.5px;color:var(--text2);margin-top:1px}
+.stg-profile-yojin{font-size:11px;color:var(--text2);margin-top:3px}
+.stg-profile-yojin b{color:var(--gold-soft)}
+.stg-switch-btn{font-size:11.5px;font-weight:600;padding:7px 13px;border:0.5px solid var(--gold-dim);border-radius:20px;background:linear-gradient(135deg,rgba(205,169,79,.16),rgba(205,169,79,.08));color:var(--gold-soft);cursor:pointer;font-family:inherit;flex-shrink:0;white-space:nowrap}
+.stg-sec-head{display:flex;align-items:flex-start;gap:10px;padding:4px 2px 8px;margin-top:8px}
+.stg-sec-ic{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;margin-top:1px}
+.stg-sec-ic.gold{background:rgba(205,169,79,.18);color:var(--gold-soft)}
+.stg-sec-ic.blue{background:var(--blue-bg);color:var(--blue-d)}
+.stg-sec-ic.green{background:var(--green-bg);color:var(--green-d)}
+.stg-sec-ic.gray{background:var(--surface2);color:var(--text2)}
+.stg-sec-texts{flex:1}
+.stg-sec-title{font-size:14px;font-weight:700;color:var(--gold-soft)}
+.stg-sec-sub{font-size:11px;color:var(--text3);margin-top:1px;line-height:1.4}
+.stg-list-card{background:var(--surface);border:0.5px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.stg-det{overflow:hidden}
+.stg-det+.stg-det,.stg-plain-row+.stg-det,.stg-det+.stg-plain-row,.stg-plain-row+.stg-plain-row{border-top:0.5px solid var(--line)}
+.stg-sum{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:13px 14px;-webkit-tap-highlight-color:rgba(0,0,0,.04)}
+.stg-sum:active{background:var(--surface2)}
+.stg-sum::-webkit-details-marker{display:none}
+.stg-plain-row{display:flex;align-items:center;gap:12px;padding:13px 14px;cursor:pointer;-webkit-tap-highlight-color:rgba(0,0,0,.04)}
+.stg-plain-row:active{background:var(--surface2)}
+.stg-row-ic{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.stg-row-ic.gold{background:rgba(205,169,79,.16);color:var(--gold-soft)}
+.stg-row-ic.blue{background:var(--blue-bg);color:var(--blue-d)}
+.stg-row-ic.green{background:var(--green-bg);color:var(--green-d)}
+.stg-row-ic.red{background:var(--red-bg);color:var(--red-d)}
+.stg-row-ic.gray{background:var(--surface2);color:var(--text2)}
+.stg-row-ic.purple{background:rgba(138,95,166,.14);color:#7a4f96}
+/* Material Symbols */
+.msr{font-family:'Material Symbols Rounded';font-weight:400;font-style:normal;font-size:20px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;word-wrap:normal;direction:ltr;-webkit-font-feature-settings:'liga';font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;vertical-align:middle}
+.stg-sec-ic .msr{font-size:15px}
+.stg-row-ic .msr{font-size:20px}
+.pc-act-btn .msr{font-size:17px}
+.stg-chev.msr{font-size:19px;color:var(--text3)}
+.stg-badge-icon{font-size:12px;color:var(--text2)}
+.stg-chev{font-size:14px;color:var(--text3);line-height:1;transition:transform .2s}
+.stg-det[open] .stg-chev{transform:rotate(90deg)}
+.stg-row-body{flex:1;min-width:0}
+.stg-row-title{font-size:13px;font-weight:600;color:var(--text);line-height:1.3}
+.stg-row-desc{font-size:11px;color:var(--text2);margin-top:1.5px;line-height:1.4}
+.stg-row-right{display:flex;align-items:center;gap:7px;flex-shrink:0}
+.stg-badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:10px;background:var(--surface2);color:var(--text2);border:0.5px solid var(--line)}
+.stg-badge.green{background:var(--green-bg);color:var(--green-d);border-color:var(--green-line)}
+.stg-det-body{padding:4px 14px 14px;background:var(--surface2);border-top:0.5px solid var(--line)}
+.stg-hint{font-size:12px;color:var(--text2);line-height:1.75;background:rgba(0,0,0,.04);border-left:2px solid var(--line2);border-radius:0 8px 8px 0;padding:8px 10px;margin-bottom:10px}
+.stg-seg{display:flex;gap:5px;margin-bottom:2px}
+.stg-seg-b{flex:1;font-size:12px;padding:9px 4px;border:0.5px solid var(--line2);border-radius:9px;background:var(--surface);color:var(--text2);cursor:pointer;font-family:inherit;text-align:center;transition:all .15s}
+.stg-seg-b.on{background:rgba(205,169,79,.16);color:var(--gold-soft);border-color:var(--gold-dim);font-weight:600}
+.pc-act-row{display:flex;gap:5px;margin-top:10px}
+.pc-act-btn{flex:1;font-size:11.5px;padding:7px 4px;border:0.5px solid var(--line2);border-radius:8px;background:var(--surface);color:var(--text2);cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:4px;font-weight:500}
+.pc-act-btn.danger{color:var(--red-d);border-color:var(--red-line);background:var(--red-bg)}
+.stg-back-row{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.stg-back-btn{width:34px;height:34px;border-radius:10px;border:0.5px solid var(--line2);background:var(--surface);color:var(--text);font-size:19px;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;line-height:1;flex-shrink:0}
+.stg-page-title{font-family:"Shippori Mincho B1","Noto Serif JP",serif;font-size:17px;font-weight:700;color:var(--text)}
+.stg-coords-row{background:var(--surface);border:0.5px solid var(--line2);border-radius:10px;padding:10px 12px;margin-top:8px}
+.stg-coords-toggle{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);cursor:pointer;list-style:none}
+.stg-coords-toggle::-webkit-details-marker{display:none}
+.stg-coords-status{color:var(--green-d);font-weight:600}
+.stg-coords-toggle::after{content:'▾';margin-left:auto;color:var(--text3)}
+.stg-add-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;font-size:13px;font-weight:600;padding:12px;border:1.5px dashed rgba(63,116,172,.45);border-radius:10px;background:var(--blue-bg);color:var(--blue-d);cursor:pointer;font-family:inherit;margin-bottom:10px}
 .chip-wrap{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,#fffbf0,#f1e6cd);border:1px solid var(--gold);border-radius:20px;padding:4px 9px 4px 11px;color:#6a5320;max-width:185px}
 .chip-wrap .chip-ic{font-size:13px;flex-shrink:0}
 .chip-wrap .profile-select{border:none;background:transparent;color:#6a5320;font-family:inherit;font-size:12.5px;font-weight:700;padding:2px 0;cursor:pointer;max-width:140px}
@@ -2742,55 +2808,168 @@ function startSensor(){APP.sensorOn=true;window.addEventListener('deviceorientat
 function onOrient(e){var h=null;if(e.webkitCompassHeading!=null)h=e.webkitCompassHeading;else if(e.alpha!=null)h=360-e.alpha;if(h!=null){APP.heading=h;drawCompass();}}
 
 /* ============ 設定タブ（プロファイル管理）============ */
+function stgSecHead(icClass,icon,title,sub){
+  return '<div class="stg-sec-head"><div class="stg-sec-ic '+icClass+'"><span class="msr">'+icon+'</span></div><div class="stg-sec-texts"><div class="stg-sec-title">'+title+'</div>'+(sub?'<div class="stg-sec-sub">'+sub+'</div>':'')+'</div></div>';
+}
+function stgChev(){return '<span class="stg-chev msr">chevron_right</span>';}
+function stgRowIc(c,ic){return '<div class="stg-row-ic '+c+'"><span class="msr">'+ic+'</span></div>';}
+
 function renderSettings(){
   var el=document.getElementById('screen-settings');
   if(APP.viewMode==='add'){renderAddForm(el);return;}
   var profiles=Store.list(),active=Store.getActive(),html='';
-  html+='<div class="sec-label"><span class="si">👤</span>表示中の命式</div>';
-  if(active){var yj=buildChartData(active,APP.ritsuunMode);html+='<div class="yojin-card"><div class="yj-circle" style="background:'+GOGYO_COLOR[yj.dGogyo]+'">'+yj.dStem+'</div><div class="yj-text"><b>'+esc(active.name)+'</b>（日主'+yj.dStem+'・用神'+yj.yojin.primaryYojin+'）<br><span class="small">'+active.birthDate+(active.birthTime?' '+active.birthTime:'・時刻不明')+'</span></div></div>';}
-  else html+='<div class="empty"><span class="ei">👤</span>命式が未登録です。下から追加してください。</div>';
-  html+='<details class="set-acc"><summary>👥 保存した命式（'+profiles.length+'）</summary><div class="set-acc-body">';
-  html+='<button class="btn btn-primary" style="width:auto;padding:8px 14px;margin-bottom:10px" onclick="showAdd()">＋ 新規追加</button>';
-  html+='<div class="profile-list">';
+
+  /* ── ① 表示中の命式カード ── */
+  if(active){
+    var yj=buildChartData(active,APP.ritsuunMode);
+    html+='<div class="stg-profile-card">'
+      +'<div class="stg-profile-av" style="background:'+GOGYO_COLOR[yj.dGogyo]+'">'+yj.dStem+'</div>'
+      +'<div class="stg-profile-body">'
+        +'<div class="stg-profile-name">'+esc(active.name)+'</div>'
+        +'<div class="stg-profile-meta">'+active.birthDate+(active.birthTime?' '+active.birthTime:'・時刻不明')+'</div>'
+        +'<div class="stg-profile-yojin">日主：<b>'+yj.dStem+'（'+yj.dGogyo+'）</b>　用神：<b>'+yj.yojin.primaryYojin+'</b></div>'
+      +'</div>'
+      +'<button class="stg-switch-btn" onclick="var d=document.getElementById(\'stg-profiles-det\');if(d){d.open=true;setTimeout(function(){d.scrollIntoView({behavior:\'smooth\',block:\'start\'});},80);}">切り替え</button>'
+    +'</div>';
+  } else {
+    html+='<div class="empty"><span class="ei">👤</span>命式が未登録です。<br>下の「新しく登録する」から追加してください。</div>';
+  }
+
+  /* ── ② 命式を管理 ── */
+  html+=stgSecHead('gold','group','命式を管理','自分や家族・友人の命式を登録・切り替えできます');
+  html+='<div class="stg-list-card">';
+  html+='<div class="stg-plain-row" onclick="showAdd()">'
+    +stgRowIc('gold','person_add')
+    +'<div class="stg-row-body"><div class="stg-row-title">新しく命式を登録</div><div class="stg-row-desc">自分・家族・友人の命式を追加します</div></div>'
+    +'<div class="stg-row-right">'+stgChev()+'</div>'
+  +'</div>';
+  html+='<details class="stg-det" id="stg-profiles-det"><summary class="stg-sum">'
+    +stgRowIc('gray','manage_accounts')
+    +'<div class="stg-row-body"><div class="stg-row-title">登録済みの命式</div><div class="stg-row-desc">タップして表示する命式を切り替え</div></div>'
+    +'<div class="stg-row-right"><span class="stg-badge">'+profiles.length+'人</span>'+stgChev()+'</div>'
+  +'</summary><div class="stg-det-body"><div class="profile-list">';
   profiles.forEach(function(p){
-    var isA=p.id===Store.activeId,yj=buildChartData(p,APP.ritsuunMode);
-    html+='<div class="profile-card'+(isA?' active':'')+'"><div class="pc-top" onclick="selectProfile(\''+p.id+'\')"><div class="pc-avatar">'+esc(initials(p.name))+'</div><div class="pc-info"><div class="pc-name">'+esc(p.name)+(isA?'<span class="pc-active-mark">表示中</span>':'')+'</div><div class="pc-meta">'+p.birthDate+(p.birthTime?'':'・時刻不明')+' ・ 用神'+yj.yojin.primaryYojin+'</div></div><div class="pc-actions"><button class="pc-icon-btn" onclick="event.stopPropagation();showEdit(\''+p.id+'\')">✏️</button><button class="pc-icon-btn" onclick="event.stopPropagation();editMemo(\''+p.id+'\')">📝</button><button class="pc-icon-btn" onclick="event.stopPropagation();askDelete(\''+p.id+'\')">🗑</button></div></div>';
-    if(APP.editingMemo===p.id)html+='<div style="margin-top:8px"><textarea id="memoInput" placeholder="鑑定の記録や誰の命式かをメモ...">'+esc(p.memo)+'</textarea><div style="display:flex;gap:6px;margin-top:6px"><button class="btn" style="padding:6px 12px;font-size:12px" onclick="cancelMemo()">取消</button><button class="btn btn-green" style="padding:6px 12px;font-size:12px" onclick="saveMemo(\''+p.id+'\')">保存</button></div></div>';
-    else if(p.memo)html+='<div class="pc-memo">📝 '+esc(p.memo)+'</div>';
-    else html+='<div class="pc-memo-empty" onclick="editMemo(\''+p.id+'\')">＋ メモを追加</div>';
-    html+=birthCoordsRow(p);
+    var isA=p.id===Store.activeId,yj2=buildChartData(p,APP.ritsuunMode);
+    html+='<div class="profile-card'+(isA?' active':'')+'"><div class="pc-top" onclick="selectProfile(\''+p.id+'\')">'
+      +'<div class="pc-avatar">'+esc(initials(p.name))+'</div>'
+      +'<div class="pc-info"><div class="pc-name">'+esc(p.name)+(isA?'<span class="pc-active-mark">表示中</span>':'')+'</div>'
+      +'<div class="pc-meta">'+p.birthDate+(p.birthTime?'':'・時刻不明')+' ／ 用神：'+yj2.yojin.primaryYojin+'</div></div>'
+      +(isA?'':'<span style="font-size:11px;color:var(--blue);font-weight:600;flex-shrink:0">切替 ›</span>')
+    +'</div>';
+    html+='<div class="pc-act-row">'
+      +'<button class="pc-act-btn" onclick="event.stopPropagation();showEdit(\''+p.id+'\')"><span class="msr">edit</span> 編集</button>'
+      +'<button class="pc-act-btn" onclick="event.stopPropagation();editMemo(\''+p.id+'\')"><span class="msr">sticky_note_2</span> メモ</button>'
+      +'<button class="pc-act-btn danger" onclick="event.stopPropagation();askDelete(\''+p.id+'\')"><span class="msr">delete</span> 削除</button>'
+    +'</div>';
+    if(APP.editingMemo===p.id){
+      html+='<div style="margin-top:8px"><textarea id="memoInput" placeholder="この命式についてのメモ（誰の命式か、鑑定の記録など）">'+esc(p.memo)+'</textarea>';
+      html+='<div style="display:flex;gap:6px;margin-top:6px"><button class="btn" style="padding:6px 12px;font-size:12px" onclick="cancelMemo()">取消</button><button class="btn btn-green" style="padding:6px 12px;font-size:12px" onclick="saveMemo(\''+p.id+'\')">保存</button></div></div>';
+    } else if(p.memo){
+      html+='<div class="pc-memo">📝 '+esc(p.memo)+'</div>';
+    } else {
+      html+='<div class="pc-memo-empty" onclick="editMemo(\''+p.id+'\')">＋ メモを追加</div>';
+    }
+    html+='<details style="margin-top:8px"><summary class="stg-coords-toggle">📍 出生地の座標'
+      +(p.coords?'<span class="stg-coords-status"> ✓ 設定済み</span>':'<span style="color:var(--text3)"> 未設定（省略可）</span>')
+    +'</summary>'
+    +'<div style="margin-top:8px;background:var(--surface2);border-radius:10px;padding:10px">'
+    +'<div class="stg-hint">時刻の補正（真太陽時）に使います。設定しなくても鑑定できます。</div>'
+    +birthCoordsRow(p)+'</div></details>';
     html+='</div>';
   });
-  html+='</div></div></details>';
-  html+='<details class="set-acc"><summary>📍 地点を追加（'+Places.list.length+'）</summary><div class="set-acc-body">';
-  html+='<div class="fld-group" style="border-top:none;padding-top:2px"><div class="fld-group-h">📍 地点を追加</div><div style="display:flex;gap:6px;margin-bottom:8px"><select id="pl-preset" style="flex:1"><option value="">主要都市から選ぶ…</option>'+CITIES.map(function(c,i){return '<option value="'+i+'">'+esc(c.name)+'</option>';}).join('')+'</select><button class="btn btn-primary" style="width:auto;padding:9px 14px" onclick="addPresetPlace()">＋ 追加</button></div>'+geoBox('place','住所・施設名で検索（例：出雲大社）')+'<div class="fld"><label>地点名</label><input type="text" id="pl-name" placeholder="例：実家、軽井沢の宿"></div><div class="fld"><label>緯度, 経度</label><input type="text" id="pl-coords" placeholder="35.69, 139.69"></div><button class="btn btn-primary" onclick="addPlace()">＋ 地点を追加</button></div>';
-  html+='<div class="fld-group"><div class="fld-group-h">登録済みの地点</div><div class="profile-list">';
-  if(!Places.list.length)html+='<div class="empty"><span class="ei">📍</span>まだ登録地点がありません。上のフォームから追加できます。</div>';
-  Places.list.forEach(function(pl){
-    html+='<div class="profile-card"><div class="pc-top"><div class="pc-avatar">📍</div><div class="pc-info"><div class="pc-name">'+esc(pl.name)+'</div><div class="pc-meta">'+pl.lat.toFixed(4)+', '+pl.lng.toFixed(4)+'</div></div><div class="pc-actions"><button class="pc-icon-btn" onclick="removePlace(\''+pl.id+'\')">🗑</button></div></div></div>';
-  });
-  html+='</div></div>';
+  html+='</div></div></details></div>';
+
+  /* ── ③ データの共有・引き継ぎ ── */
+  html+=stgSecHead('blue','share','データの共有・引き継ぎ','スマホ機種変更時のバックアップや他の端末への引き継ぎ');
+  html+='<div class="stg-list-card">';
+  html+='<div class="stg-plain-row" onclick="showExportModal()">'
+    +stgRowIc('green','backup')
+    +'<div class="stg-row-body"><div class="stg-row-title">バックアップ（書き出し）</div><div class="stg-row-desc">命式・地点データをテキストで書き出します</div></div>'
+    +'<div class="stg-row-right">'+stgChev()+'</div>'
+  +'</div>';
+  html+='<div class="stg-plain-row" onclick="showImportModal()">'
+    +stgRowIc('gold','restore_page')
+    +'<div class="stg-row-body"><div class="stg-row-title">データを引き継ぐ（読み込み）</div><div class="stg-row-desc">バックアップデータを貼り付けて復元します</div></div>'
+    +'<div class="stg-row-right">'+stgChev()+'</div>'
+  +'</div></div>';
+
+  /* ── ④ よく行く場所・方位 ── */
+  html+=stgSecHead('green','location_on','よく行く場所・方位','旅行・引越の方位チェックで使う地点を登録します');
+  html+='<div class="stg-list-card">';
+  html+='<details class="stg-det"><summary class="stg-sum">'
+    +stgRowIc('green','add_location_alt')
+    +'<div class="stg-row-body"><div class="stg-row-title">地点を追加・管理</div><div class="stg-row-desc">旅先・実家・よく行く場所を登録</div></div>'
+    +'<div class="stg-row-right"><span class="stg-badge'+(Places.list.length?' green':'')+'">'+Places.list.length+'件</span>'+stgChev()+'</div>'
+  +'</summary><div class="stg-det-body">';
+  html+='<div class="stg-hint">住所やスポット名で検索して登録できます。「旅行・方位」タブの方位チェックで使います。</div>';
+  html+=geoBox('place','住所・スポット名（例：出雲大社、実家の最寄り駅）');
+  html+='<div class="fld"><label>地点名 <span style="font-size:11px;color:var(--text3);font-weight:400">（省略可）</span></label><input type="text" id="pl-name" placeholder="例：実家、軽井沢の宿、近所の神社"></div>';
+  html+='<div class="fld"><label>緯度・経度 <span style="font-size:11px;color:var(--text3);font-weight:400">（検索すると自動入力されます）</span></label><input type="text" id="pl-coords" placeholder="35.69, 139.69"></div>';
+  html+='<button class="btn btn-primary" style="margin-bottom:12px" onclick="addPlace()">この地点を登録する</button>';
+  html+='<details><summary style="list-style:none;cursor:pointer;font-size:12px;color:var(--text3);padding:5px 0;display:flex;align-items:center;gap:4px">▾ 主要都市から選ぶ</summary>'
+    +'<div style="margin-top:8px;display:flex;gap:6px"><select id="pl-preset" style="flex:1"><option value="">都市を選んでください…</option>'+CITIES.map(function(c,i){return '<option value="'+i+'">'+esc(c.name)+'</option>';}).join('')+'</select>'
+    +'<button class="btn btn-primary" style="width:auto;padding:9px 14px" onclick="addPresetPlace()">追加</button></div></details>';
+  if(Places.list.length){
+    html+='<div style="margin-top:14px;font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px">登録済みの地点</div><div class="profile-list">';
+    Places.list.forEach(function(pl){
+      html+='<div class="profile-card"><div class="pc-top"><div class="pc-avatar">📍</div><div class="pc-info"><div class="pc-name">'+esc(pl.name)+'</div><div class="pc-meta">'+pl.lat.toFixed(4)+', '+pl.lng.toFixed(4)+'</div></div><div class="pc-actions"><button class="pc-icon-btn" onclick="removePlace(\''+pl.id+'\')"><span class="msr" style="font-size:17px">delete</span></button></div></div></div>';
+    });
+    html+='</div>';
+  } else {
+    html+='<div class="empty" style="padding:14px 10px;margin-top:8px;font-size:12px"><span class="ei" style="font-size:22px">📍</span>まだ登録地点がありません</div>';
+  }
   html+='</div></details>';
-  html+='<details class="set-acc"><summary>🏠 自宅の座標</summary><div class="set-acc-body">';
-  html+='<div class="hint" style="margin:0 0 8px">方位計算の基点に使う座標です（命式の出生地とは別に設定できます）。</div>';
-  html+=geoBox('home','住所・施設名で検索（例：東京駅）')+'<div class="fld"><label>座標（検索で自動入力／直接入力も可）</label><input type="text" id="home-coords" value="'+esc(APP.homeCoords||(Store.getActive()&&Store.getActive().coords)||'')+'" placeholder="35.7510, 139.9127"></div><button class="btn btn-primary" style="width:auto;padding:9px 14px" onclick="setHomeCoords()">反映</button>'+(APP.homeCoords?'<div style="font-size:12px;color:var(--green-d);margin-top:8px">✓ 保存済み：'+esc(APP.homeCoords)+'</div>':'');
-  html+='</div></details>';
-  html+='<details class="set-acc"><summary>⚙️ 詳細設定</summary><div class="set-acc-body">';
-  html+='<div class="set-item" style="padding-top:2px"><span class="set-label">立運数の端数処理</span><div class="seg"><button class="'+(APP.ritsuunMode==='round'?'active':'')+'" onclick="setRitsuun(\'round\')">四捨五入</button><button class="'+(APP.ritsuunMode==='floor'?'active':'')+'" onclick="setRitsuun(\'floor\')">切捨</button><button class="'+(APP.ritsuunMode==='ceil'?'active':'')+'" onclick="setRitsuun(\'ceil\')">切上</button></div></div>';
-  html+='<div class="fld-group"><div class="fld-group-h">住所検索エンジン</div><div class="fld"><label>Google APIキー（任意・空欄でOpenStreetMap）</label><input type="text" id="gkey" value="'+esc(APP.googleKey||'')+'" placeholder="未入力ならOpenStreetMap（無料）"></div><button class="btn btn-primary" style="width:auto;padding:9px 14px" onclick="setGoogleKey()">保存</button></div>';
-  html+='</div></details>';
+  html+='<details class="stg-det"><summary class="stg-sum">'
+    +stgRowIc('gold','home')
+    +'<div class="stg-row-body"><div class="stg-row-title">自宅の場所</div><div class="stg-row-desc">方位計算の出発点になります</div></div>'
+    +'<div class="stg-row-right">'+(APP.homeCoords?'<span class="stg-badge green">設定済み</span>':'<span class="stg-badge">未設定</span>')+stgChev()+'</div>'
+  +'</summary><div class="stg-det-body">';
+  html+='<div class="stg-hint">「旅行・方位」タブで方位をチェックするとき、どこから出発するかの基点になります。命式の出生地とは別に設定できます。</div>';
+  html+=geoBox('home','住所・施設名（例：最寄り駅名、市区町村名）');
+  html+='<div class="fld"><label>座標 <span style="font-size:11px;color:var(--text3);font-weight:400">（検索すると自動入力されます）</span></label><input type="text" id="home-coords" value="'+esc(APP.homeCoords||(Store.getActive()&&Store.getActive().coords)||'')+'" placeholder="35.7510, 139.9127"></div>';
+  html+='<button class="btn btn-primary" style="width:auto;padding:9px 14px" onclick="setHomeCoords()">保存する</button>';
+  if(APP.homeCoords)html+='<div style="font-size:12px;color:var(--green-d);margin-top:8px">✓ 保存済み：'+esc(APP.homeCoords)+'</div>';
+  html+='</div></details></div>';
+
+  /* ── ⑤ 詳細設定 ── */
+  html+=stgSecHead('gray','tune','詳細設定','計算方法や検索エンジンの細かい設定');
+  html+='<div class="stg-list-card">';
+  var rlabel={round:'四捨五入',floor:'切り捨て',ceil:'切り上げ'}[APP.ritsuunMode||'round'];
+  html+='<details class="stg-det"><summary class="stg-sum">'
+    +stgRowIc('gray','calendar_month')
+    +'<div class="stg-row-body"><div class="stg-row-title">大運の開始年齢の計算方法</div><div class="stg-row-desc">大運（10年の運気の流れ）の始まりをいつとするか</div></div>'
+    +'<div class="stg-row-right"><span class="stg-badge">'+rlabel+'</span>'+stgChev()+'</div>'
+  +'</summary><div class="stg-det-body">';
+  html+='<div class="stg-hint">大運が何歳から始まるかの計算方法です。四捨五入が一般的ですが、流派によって異なります。どれを選んでも鑑定内容への影響は小さいです。</div>';
+  html+='<div class="stg-seg">'
+    +'<button class="stg-seg-b'+(APP.ritsuunMode==='round'?' on':'')+'" onclick="setRitsuun(\'round\')">四捨五入</button>'
+    +'<button class="stg-seg-b'+(APP.ritsuunMode==='floor'?' on':'')+'" onclick="setRitsuun(\'floor\')">切り捨て</button>'
+    +'<button class="stg-seg-b'+(APP.ritsuunMode==='ceil'?' on':'')+'" onclick="setRitsuun(\'ceil\')">切り上げ</button>'
+  +'</div></div></details>';
+  html+='<details class="stg-det"><summary class="stg-sum">'
+    +stgRowIc('blue','search')
+    +'<div class="stg-row-body"><div class="stg-row-title">住所検索エンジン</div><div class="stg-row-desc">'+(APP.googleKey?'Google Maps API を使用中':'OpenStreetMap を使用中（無料）')+'</div></div>'
+    +'<div class="stg-row-right">'+stgChev()+'</div>'
+  +'</summary><div class="stg-det-body">';
+  html+='<div class="stg-hint">デフォルトはOpenStreetMap（無料・登録不要）です。Googleマップ並みの検索精度が必要な場合は、Google Maps APIキーを設定してください。</div>';
+  html+='<div class="fld"><label>Google Maps APIキー <span style="font-size:11px;color:var(--text3);font-weight:400">（省略するとOpenStreetMapを使用）</span></label><input type="text" id="gkey" value="'+esc(APP.googleKey||'')+'" placeholder="AIzaSy…（省略可）"></div>';
+  html+='<button class="btn" style="width:auto;padding:9px 14px" onclick="setGoogleKey()">保存</button>';
+  html+='</div></details></div>';
+
+  html+='<div style="height:6px"></div>';
   el.innerHTML=html;
 }
 function renderAddForm(el){
   var ed=APP.editingProfile?Store.list().filter(function(x){return x.id===APP.editingProfile;})[0]:null;
-  var html='<div class="sec-label"><span class="si">'+(ed?'✏️':'＋')+'</span>命式を'+(ed?'編集':'新規追加')+'</div>';
-  html+='<div class="fld"><label>名前・ラベル</label><input type="text" id="f-name" value="'+(ed?esc(ed.name):'')+'" placeholder="例：自分、田中さん、母"></div>';
-  html+='<div class="row2"><div class="fld"><label>生年月日</label><input type="date" id="f-date" value="'+(ed?ed.birthDate:'1990-05-15')+'"></div><div class="fld"><label>出生時刻</label><input type="time" id="f-time" value="'+(ed&&ed.birthTime?ed.birthTime:'10:30')+'"'+(APP.formNoTime?' disabled':'')+'></div></div>';
-  html+='<div class="check-row" onclick="toggleFormNoTime()"><div class="check-box'+(APP.formNoTime?' on':'')+'">'+(APP.formNoTime?'✓':'')+'</div><div><div class="check-label">出生時刻が不明</div><div class="check-sub">時柱を除いた三柱で鑑定します</div></div></div>';
+  var html='<div class="stg-back-row"><button class="stg-back-btn" onclick="cancelAdd()">←</button><div class="stg-page-title">'+(ed?'命式を編集':'新しく命式を登録')+'</div></div>';
+  if(!ed)html+='<div class="stg-hint" style="margin-bottom:12px">生年月日などを入力して「保存する」を押すと、あなた専用の鑑定が始まります。</div>';
+  html+='<div class="fld"><label>名前・ラベル <span style="font-size:11px;color:var(--text3);font-weight:400">（誰の命式か分かるように）</span></label><input type="text" id="f-name" value="'+(ed?esc(ed.name):'')+'" placeholder="例：わたし、田中さん、お母さん"></div>';
+  html+='<div class="row2"><div class="fld"><label>生年月日</label><input type="date" id="f-date" value="'+(ed?ed.birthDate:'1990-05-15')+'"></div><div class="fld"><label>出生時刻 <span style="font-size:11px;color:var(--text3);font-weight:400">（任意）</span></label><input type="time" id="f-time" value="'+(ed&&ed.birthTime?ed.birthTime:'10:30')+'"'+(APP.formNoTime?' disabled':'')+'></div></div>';
+  html+='<div class="check-row" onclick="toggleFormNoTime()"><div class="check-box'+(APP.formNoTime?' on':'')+'">'+( APP.formNoTime?'✓':'')+'</div><div><div class="check-label">出生時刻が分からない</div><div class="check-sub">時柱を除いた三柱（年・月・日）で鑑定します</div></div></div>';
   html+='<div class="fld"><label>性別</label><select id="f-sex"><option value="M"'+(ed&&ed.sex==='M'?' selected':'')+'>男性</option><option value="F"'+(ed&&ed.sex==='F'?' selected':'')+'>女性</option></select></div>';
-  html+='<div class="fld"><label>出生地の座標（任意・真太陽時補正に使用）</label><input type="text" id="f-coords" value="'+(ed?esc(ed.coords||''):'')+'" placeholder="35.6895, 139.6917"></div>';
-  html+='<div class="fld"><label>メモ（任意）</label><textarea id="f-memo" placeholder="鑑定の記録や誰の命式かを自由に...">'+(ed?esc(ed.memo||''):'')+'</textarea></div>';
-  html+='<div style="display:flex;gap:8px;margin-top:6px"><button class="btn" onclick="cancelAdd()">キャンセル</button><button class="btn btn-primary" onclick="saveProfile()">'+(ed?'更新して表示':'保存して表示')+'</button></div>';
+  html+='<div class="fld"><label>出生地の座標 <span style="font-size:11px;color:var(--text3);font-weight:400">（省略可・時刻補正に使用）</span></label><input type="text" id="f-coords" value="'+(ed?esc(ed.coords||''):'')+'" placeholder="35.6895, 139.6917（緯度, 経度）"></div>';
+  html+='<div class="fld"><label>メモ <span style="font-size:11px;color:var(--text3);font-weight:400">（省略可）</span></label><textarea id="f-memo" placeholder="この命式の特徴や鑑定のメモなど自由に…">'+(ed?esc(ed.memo||''):'')+'</textarea></div>';
+  html+='<div style="display:flex;gap:8px;margin-top:10px"><button class="btn" onclick="cancelAdd()">キャンセル</button><button class="btn btn-primary" onclick="saveProfile()">'+(ed?'変更を保存する':'保存して鑑定を始める')+'</button></div>';
   el.innerHTML=html;
 }
 function showAdd(){APP.editingProfile=null;APP.formNoTime=false;APP.viewMode='add';renderSettings();}
@@ -2848,6 +3027,65 @@ function shareReading(){
   else{alert(t);}
 }
 function printReading(){window.print();}
+
+/* ============ バックアップ・引き継ぎ ============ */
+function showExportModal(){
+  var raw=localStorage.getItem('kimon_app_data')||'{}';
+  var obj;try{obj=JSON.parse(raw);}catch(e){obj={};}
+  var json=JSON.stringify(obj);
+  var pCount=(obj.profiles||[]).length,plCount=(obj.places||[]).length;
+  var mr=document.getElementById('modalRoot');
+  mr.innerHTML='<div class="modal-overlay"><div class="modal" style="max-width:400px;text-align:left">'
+    +'<h4 style="display:flex;align-items:center;gap:8px"><span class="msr" style="font-size:22px;color:var(--green-d)">backup</span>バックアップ</h4>'
+    +'<p style="font-size:12.5px;color:var(--text2);line-height:1.75;margin:10px 0">命式 <b>'+pCount+'人</b>・地点 <b>'+plCount+'件</b> のデータを書き出します。<br>下のテキストをすべてコピーして、メモアプリやクラウドに保存しておいてください。</p>'
+    +'<textarea id="export-ta" readonly style="width:100%;height:110px;font-size:10px;resize:none;font-family:monospace;background:var(--surface2);border:0.5px solid var(--line);border-radius:8px;padding:9px;color:var(--text2)">'+esc(json)+'</textarea>'
+    +'<div class="modal-actions" style="margin-top:12px">'
+      +'<button class="btn" onclick="document.getElementById(\'modalRoot\').innerHTML=\'\'">閉じる</button>'
+      +'<button class="btn btn-primary" id="copy-export-btn" onclick="copyExportData()"><span class="msr" style="font-size:16px;vertical-align:middle">content_copy</span> コピーする</button>'
+    +'</div></div></div>';
+  setTimeout(function(){var ta=document.getElementById('export-ta');if(ta){ta.focus();ta.select();}},120);
+}
+function copyExportData(){
+  var ta=document.getElementById('export-ta');if(!ta)return;
+  ta.select();
+  var btn=document.getElementById('copy-export-btn');
+  var ok=function(){if(btn){btn.innerHTML='<span class="msr" style="font-size:16px;vertical-align:middle">check</span> コピーしました';btn.style.background='var(--green)';setTimeout(function(){if(btn){btn.innerHTML='<span class="msr" style="font-size:16px;vertical-align:middle">content_copy</span> コピーする';btn.style.background='';}},2200);}};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(ta.value).then(ok).catch(function(){try{document.execCommand('copy');ok();}catch(e){}});}
+  else{try{document.execCommand('copy');ok();}catch(e){alert('コピーに失敗しました。テキストを手動でコピーしてください。');}}
+}
+function showImportModal(){
+  var mr=document.getElementById('modalRoot');
+  mr.innerHTML='<div class="modal-overlay"><div class="modal" style="max-width:400px;text-align:left">'
+    +'<h4 style="display:flex;align-items:center;gap:8px"><span class="msr" style="font-size:22px;color:var(--gold-soft)">restore_page</span>データを引き継ぐ</h4>'
+    +'<p style="font-size:12.5px;color:var(--text2);line-height:1.75;margin:10px 0">バックアップのテキストをここに貼り付けて、「読み込む」を押してください。</p>'
+    +'<div style="background:var(--red-bg);border:0.5px solid var(--red-line);border-radius:8px;padding:9px 11px;margin-bottom:10px;font-size:12px;color:var(--red-d);display:flex;gap:7px;align-items:flex-start"><span class="msr" style="font-size:17px;flex-shrink:0">warning</span><span>現在のデータはすべて上書きされます。<br>必要であれば先にバックアップしてください。</span></div>'
+    +'<textarea id="import-ta" style="width:100%;height:110px;font-size:10px;resize:none;font-family:monospace;background:var(--surface2);border:0.5px solid var(--line2);border-radius:8px;padding:9px;color:var(--text)" placeholder="バックアップデータをここに貼り付け…"></textarea>'
+    +'<div style="margin-top:8px;margin-bottom:2px;font-size:12px;color:var(--text3)">またはファイルから選択：</div>'
+    +'<input type="file" id="import-file" accept=".json,.txt" style="font-size:12px;width:100%;margin-bottom:4px" onchange="loadImportFile(this)">'
+    +'<div class="modal-actions" style="margin-top:10px">'
+      +'<button class="btn" onclick="document.getElementById(\'modalRoot\').innerHTML=\'\'">キャンセル</button>'
+      +'<button class="btn btn-primary" onclick="importData()"><span class="msr" style="font-size:16px;vertical-align:middle">download</span> 読み込む</button>'
+    +'</div></div></div>';
+}
+function loadImportFile(input){
+  var file=input.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){var ta=document.getElementById('import-ta');if(ta)ta.value=e.target.result;};
+  reader.readAsText(file,'UTF-8');
+}
+function importData(){
+  var ta=document.getElementById('import-ta');if(!ta)return;
+  var json=ta.value.trim();
+  if(!json){alert('データが入力されていません。');return;}
+  var obj;
+  try{obj=JSON.parse(json);}catch(e){alert('形式が正しくありません。\nコピーし直してもう一度お試しください。\n\nエラー：'+e.message);return;}
+  if(!obj.profiles||!Array.isArray(obj.profiles)){alert('バックアップデータが見つかりません。\n正しいバックアップデータかご確認ください。');return;}
+  var msg='次のデータを読み込みます：\n・命式：'+obj.profiles.length+'人\n・地点：'+(obj.places?obj.places.length:0)+'件\n\n現在のデータはすべて上書きされます。\n続けますか？';
+  if(!confirm(msg))return;
+  try{localStorage.setItem('kimon_app_data',json);}catch(e){alert('保存に失敗しました：'+e.message);return;}
+  alert('読み込みが完了しました。\nアプリを再読み込みします。');
+  location.reload();
+}
 var GLOSSARY=[
  ['用神','命式の中で、その人の運を最も良い方向へ導く五行。これが巡る方位・時期・人が開運の鍵になります。'],
  ['日主（日干）','生まれた日の十干。あなた自身の本質を表す、命式の主役です。'],
@@ -3206,6 +3444,7 @@ window.cancelMemo=cancelMemo;window.saveMemo=saveMemo;window.setRitsuun=setRitsu
 window.saveBirthCoords=saveBirthCoords;
 window.showEdit=showEdit;window.dismissOnboard=dismissOnboard;
 window.shareReading=shareReading;window.printReading=printReading;window.showGlossary=showGlossary;window.closeGlossary=closeGlossary;
+window.showExportModal=showExportModal;window.copyExportData=copyExportData;window.showImportModal=showImportModal;window.loadImportFile=loadImportFile;window.importData=importData;
 window.geoInput=geoInput;window.geoPick=geoPick;window.geoCurrent=geoCurrent;window.geoPickHist=geoPickHist;window.setGoogleKey=setGoogleKey;
 window.setBaseId=setBaseId;window.setDestId=setDestId;window.addPlace=addPlace;window.removePlace=removePlace;
 window.setTripDate=setTripDate;
