@@ -11,8 +11,8 @@
 <style>
   :root{
     --bg:#f4eee1; --surface:#fffdf8; --surface2:#ece3d1; --line:#e0d6bf; --line2:#d2c6aa;
-    --text:#2b2620; --text2:#6e634f; --text3:#9c9078; --paper:#2b2620;
-    --gold:#a9821f; --gold-soft:#b88a2e; --gold-dim:#8a7637; --shu:#c0432f;
+    --text:#2b2620; --text2:#6e634f; --text3:#766b56; --paper:#2b2620;
+    --gold:#a9821f; --gold-soft:#7f5f20; --gold-dim:#8a7637; --shu:#c0432f;
     --green:#2f9070; --green-d:#2c7a5d; --green-bg:rgba(47,144,112,.12); --green-line:rgba(47,144,112,.40);
     --blue:#3f74ac; --blue-d:#2f5f95; --blue-bg:rgba(63,116,172,.12); --blue-line:rgba(63,116,172,.40);
     --red:#c0432f; --red-d:#a93824; --red-bg:rgba(192,67,47,.10); --red-line:rgba(192,67,47,.38);
@@ -979,7 +979,7 @@
 .set-acc{background:var(--surface);border:0.5px solid var(--line);border-radius:var(--r);margin:8px 0;overflow:hidden}
 .set-acc>summary{list-style:none;cursor:pointer;padding:12px 16px;font-size:13.5px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px}
 .set-acc>summary::-webkit-details-marker{display:none}
-.set-acc>summary::after{content:'＋';margin-left:auto;font-size:16px;color:var(--gold,#a9821f);font-weight:400}
+.set-acc>summary::after{content:'＋';margin-left:auto;font-size:16px;color:var(--gold,var(--gold));font-weight:400}
 .set-acc[open]>summary::after{content:'−'}
 .set-acc-body{padding:0 16px 16px}
 .fld-group{padding:12px 0 2px;border-top:0.5px solid var(--line)}
@@ -1023,10 +1023,10 @@
 .rc-ic-badge .msr{font-size:15px;color:var(--gold-soft);flex-shrink:0}
 .rc-title .msr{font-size:16px;color:var(--gold-soft);flex-shrink:0}
 .nh-cat-ic .msr{font-size:22px;color:inherit}
-.nh-cat.c-money .nh-cat-ic .msr{color:#a9821f}
+.nh-cat.c-money .nh-cat-ic .msr{color:var(--gold)}
 .nh-cat.c-love .nh-cat-ic .msr{color:#c0577a}
-.nh-cat.c-work .nh-cat-ic .msr{color:#3f74ac}
-.nh-cat.c-health .nh-cat-ic .msr{color:#2f9070}
+.nh-cat.c-work .nh-cat-ic .msr{color:var(--blue)}
+.nh-cat.c-health .nh-cat-ic .msr{color:var(--green)}
 .nh-cat.c-study .nh-cat-ic .msr{color:#7a5aa8}
 .nh-cat.c-kankei .nh-cat-ic .msr{color:#b8722e}
 .nh-cat.c-money .nh-cat-ic{background:radial-gradient(circle at 32% 28%,#f9edc8,#f0dca0)}
@@ -1150,32 +1150,32 @@
 .chip-wrap .profile-select{border:none;background:transparent;color:#6a5320;font-family:inherit;font-size:12.5px;font-weight:700;padding:2px 0;cursor:pointer;max-width:140px}
 .chip-wrap.dark{margin-right:36px;background:rgba(255,255,255,.05);border-color:rgba(232,200,115,.6);color:#f1e6cd}
 .chip-wrap.dark .profile-select{color:#f1e6cd}
-.chip-wrap.dark .profile-select option{color:#2b2620}
-.lt-intro{font-size:11.5px;color:var(--text2,#6e634f);margin:0 2px 8px;line-height:1.7}
-.lt-wrap{display:flex;align-items:stretch;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fffdf8}
-.lt-labels{flex-shrink:0;width:42px;position:relative;background:#fffdf8;border-right:1px solid var(--line)}
+.chip-wrap.dark .profile-select option{color:var(--text)}
+.lt-intro{font-size:11.5px;color:var(--text2,var(--text2));margin:0 2px 8px;line-height:1.7}
+.lt-wrap{display:flex;align-items:stretch;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+.lt-labels{flex-shrink:0;width:42px;position:relative;background:var(--surface);border-right:1px solid var(--line)}
 .lt-labels span{position:absolute;left:0;right:0;text-align:center;font-size:13px;transform:translateY(-50%)}
-.lt-labels .lt-tlab{font-size:8.5px;color:#6e634f;font-weight:700;line-height:1.15}
-.lt-scroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;background:#fffdf8;flex:1}
+.lt-labels .lt-tlab{font-size:8.5px;color:var(--text2);font-weight:700;line-height:1.15}
+.lt-scroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;background:var(--surface);flex:1}
 .lt-scroll svg{display:block;touch-action:pan-x}
 .lt-scroll::-webkit-scrollbar{height:7px}
 .lt-scroll::-webkit-scrollbar-thumb{background:#dcd0b3;border-radius:7px}
 .lt-hint{font-size:11px;color:var(--text3,#9a8e76);text-align:center;margin:4px 0 2px}
-.lt-legend{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:10.5px;color:var(--text2,#6e634f);margin:8px 2px 2px}
+.lt-legend{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:10.5px;color:var(--text2,var(--text2));margin:8px 2px 2px}
 .lt-legend span{display:inline-flex;align-items:center;gap:5px}
 .lt-badge{width:18px;height:18px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 1px 2px rgba(0,0,0,.12)}
 .lt-badge .msr{font-size:12px;color:#fff}
 .lt-dot{width:9px;height:9px;border-radius:3px;display:inline-block}
-.lt-detail{font-size:12.5px;color:var(--text,#2b2620);background:#fbf6ea;border:1px solid var(--line);border-radius:12px;padding:12px 12px;margin-top:8px;min-height:38px}
+.lt-detail{font-size:12.5px;color:var(--text,var(--text));background:#fbf6ea;border:1px solid var(--line);border-radius:12px;padding:12px 12px;margin-top:8px;min-height:38px}
 .lt-detail b{font-family:"Shippori Mincho B1",serif}
 .lt-t3-row{display:flex;gap:12px;align-items:flex-start;padding:8px 4px;border-top:1px solid var(--line)}
 .lt-t3-row:first-child{border-top:none}
 .lt-t3-when{flex-shrink:0;text-align:center;min-width:54px}
-.lt-t3-when .yr{font-family:"Shippori Mincho B1",serif;font-weight:800;font-size:16px;color:var(--gold,#a9821f)}
-.lt-t3-when .ag{font-size:10px;color:var(--text2,#6e634f)}
+.lt-t3-when .yr{font-family:"Shippori Mincho B1",serif;font-weight:800;font-size:16px;color:var(--gold,var(--gold))}
+.lt-t3-when .ag{font-size:10px;color:var(--text2,var(--text2))}
 .lt-t3-icons{font-size:15px;display:flex;gap:6px}
 .lt-labels span.msr{font-size:15px}
-.lt-t3-why{font-size:11.5px;color:var(--text2,#6e634f);margin-top:1px}/* ============ マイクロインタラクション：押下フィードバック（優先度確保のため末尾に配置） ============ */
+.lt-t3-why{font-size:11.5px;color:var(--text2,var(--text2));margin-top:1px}/* ============ マイクロインタラクション：押下フィードバック（優先度確保のため末尾に配置） ============ */
 .btn,.rtab,.seg-b,.stg-seg-b,.notif-seg,.notif-chip,.nav-item,.geo-chip,.pc-act-btn,
 .stg-plain-row,.stg-sum,.help-sum,.nh-cat,.profile-card .pc-top,.mbti-prompt,
 .cd-act,.diary-cell,.diary-nav,.stg-back-btn,.help-back,.act-btn,.la-chip,
@@ -2125,7 +2125,7 @@ function ltRender(cd){
   rin.forEach(function(r){path+=' L '+ltAx(r.age).toFixed(1)+' '+(LT.AY1-(LT.AY1-LT.AY0)*r.total).toFixed(1);});
   path+=' L '+ltAx(LT.AGE1)+' '+LT.AY1+' Z';
   s+='<defs><linearGradient id="ltar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cda94f" stop-opacity="0.85"/><stop offset="1" stop-color="#cda94f" stop-opacity="0.12"/></linearGradient></defs>';
-  s+='<path d="'+path+'" fill="url(#ltar)" stroke="#a9821f" stroke-width="1.3"/>';
+  s+='<path d="'+path+'" fill="url(#ltar)" stroke="var(--gold)" stroke-width="1.3"/>';
   var cw=(LT.PR-LT.PL)/(LT.AGE1-LT.AGE0);
   LT_CATS.forEach(function(cat,ci){var ly=LT.LY0+ci*LT.LH;
     s+='<rect x="'+LT.PL+'" y="'+ly+'" width="'+(LT.PR-LT.PL)+'" height="'+(LT.LH-3)+'" fill="#faf5e8" stroke="#eee3c9" stroke-width="0.5" rx="3"/>';
@@ -2133,8 +2133,8 @@ function ltRender(cd){
       s+='<rect x="'+x.toFixed(1)+'" y="'+ly+'" width="'+(cw+0.6).toFixed(1)+'" height="'+(LT.LH-3)+'" fill="'+ltRgba(cat.color,0.18+0.72*v)+'"/>';});});
   var nowAge=D.nowAge;
   if(nowAge>=LT.AGE0&&nowAge<=LT.AGE1){var nx=ltAx(nowAge);
-    s+='<line x1="'+nx+'" y1="'+(LT.AY0-6)+'" x2="'+nx+'" y2="'+laneH+'" stroke="#c0432f" stroke-width="1.6"/>';
-    s+='<text x="'+nx+'" y="'+(LT.AY0-9)+'" font-size="9" fill="#c0432f" text-anchor="middle" font-weight="700">今 '+nowAge+'歳</text>';}
+    s+='<line x1="'+nx+'" y1="'+(LT.AY0-6)+'" x2="'+nx+'" y2="'+laneH+'" stroke="var(--shu)" stroke-width="1.6"/>';
+    s+='<text x="'+nx+'" y="'+(LT.AY0-9)+'" font-size="9" fill="var(--shu)" text-anchor="middle" font-weight="700">今 '+nowAge+'歳</text>';}
   s+='<rect id="lt-selCol" x="0" y="'+LT.AY0+'" width="0" height="'+(laneH-LT.AY0)+'" fill="rgba(192,67,47,0.10)"/>';
   rin.forEach(function(r){var x=ltAx(r.age)-cw/2;
     s+='<rect class="lt-hit" data-age="'+r.age+'" x="'+x.toFixed(1)+'" y="'+LT.AY0+'" width="'+(cw+0.6).toFixed(1)+'" height="'+(laneH-LT.AY0)+'" fill="transparent"/>';});
@@ -2170,9 +2170,9 @@ function ltShowDetail(age){
   var parts=LT_CATS.map(function(c){var v=r[c.key];if(v<0.05)return '';
     var bar='●'.repeat(Math.round(v*5))+'○'.repeat(5-Math.round(v*5));
     var why=r.why[c.key].join('、');
-    return '<div style="margin-top:4px"><span style="color:'+c.color+'"><span class="msr">'+c.icon+'</span> '+c.label+'</span> <span style="color:#9a8e76">'+bar+'</span>'+(why?'<br><span style="font-size:11px;color:#6e634f">'+why+'</span>':'')+'</div>';
+    return '<div style="margin-top:4px"><span style="color:'+c.color+'"><span class="msr">'+c.icon+'</span> '+c.label+'</span> <span style="color:#9a8e76">'+bar+'</span>'+(why?'<br><span style="font-size:11px;color:var(--text2)">'+why+'</span>':'')+'</div>';
   }).filter(Boolean).join('');
-  document.getElementById('lt-detail').innerHTML='<b>'+r.year+'年（'+age+'歳・'+r.gz+'）</b>'+(r.switch?' <span style="font-size:11px;color:#a9821f">◆大運の節目</span>':'')+(parts||'<div style="margin-top:4px;color:#9a8e76">大きな転機の要素は弱め。落ち着いた年回りです。</div>');
+  document.getElementById('lt-detail').innerHTML='<b>'+r.year+'年（'+age+'歳・'+r.gz+'）</b>'+(r.switch?' <span style="font-size:11px;color:var(--gold)">◆大運の節目</span>':'')+(parts||'<div style="margin-top:4px;color:#9a8e76">大きな転機の要素は弱め。落ち着いた年回りです。</div>');
 }
 function renderUnsei(){
   var el=document.getElementById('screen-unsei');
@@ -2593,11 +2593,11 @@ function calcAisho(cdA,cdB){
   else bal={type:'五行は似た傾向',score:7,desc:'五行の傾向が近く、同じ強み・同じ弱みを持ちやすい関係。外の力を一緒に借りると安定します。'};
   var total=stem.score+branch.score+yo.score+bal.score;
   var v;
-  if(total>=88)v={t:'運命的な相性',c:'var(--green-d)'};
-  else if(total>=74)v={t:'とても良い相性',c:'var(--green-d)'};
-  else if(total>=60)v={t:'良い相性',c:'var(--gold-soft)'};
-  else if(total>=46)v={t:'ふつうの相性',c:'var(--gold-soft)'};
-  else v={t:'歩み寄りが鍵の相性',c:'var(--shu,#c0432f)'};
+  if(total>=88)v={t:'運命的な相性',c:'var(--green-d)',ringC:'var(--green)'};
+  else if(total>=74)v={t:'とても良い相性',c:'var(--green-d)',ringC:'var(--green)'};
+  else if(total>=60)v={t:'良い相性',c:'var(--gold-soft)',ringC:'var(--gold)'};
+  else if(total>=46)v={t:'ふつうの相性',c:'var(--gold-soft)',ringC:'var(--gold)'};
+  else v={t:'歩み寄りが鍵の相性',c:'var(--shu,var(--shu))',ringC:'var(--red)'};
   return{total:Math.round(total),verdict:v,stem:stem,branch:branch,yojin:yo,balance:bal};
 }
 function aishoBar(label,v,max,type){var pct=Math.round(v/max*100);return '<div class="ab-row"><div class="ab-head"><span class="ab-label">'+label+'</span><span class="ab-type">'+type+'</span></div><div class="ab-track"><div class="ab-fill" style="width:'+pct+'%"></div></div></div>';}
@@ -2675,7 +2675,7 @@ function renderAisho(){
   var opt=function(sel){return profs.map(function(p){return '<option value="'+p.id+'"'+(p.id===sel?' selected':'')+'>'+esc(p.name)+'</option>';}).join('');};
   var html='';
   html+='<div class="aisho-pick"><div class="ap-col"><label>A（自分）</label><select onchange="setAishoA(this.value)">'+opt(aId)+'</select></div><div class="ap-x">×</div><div class="ap-col"><label>B（相手）</label><select onchange="setAishoB(this.value)">'+opt(bId)+'</select></div></div>';
-  html+='<div class="aisho-score"><div class="as-ring" style="--p:'+r.total+';--c:'+r.verdict.c+'"><div class="as-num">'+r.total+'<span>点</span></div></div><div class="as-verdict" style="color:'+r.verdict.c+'">'+r.verdict.t+'</div><div class="as-names">'+esc(pa.name)+'（日主'+cdA.dStem+'）× '+esc(pb.name)+'（日主'+cdB.dStem+'）</div></div>';
+  html+='<div class="aisho-score"><div class="as-ring" style="--p:'+r.total+';--c:'+r.verdict.ringC+'"><div class="as-num">'+r.total+'<span>点</span></div></div><div class="as-verdict" style="color:'+r.verdict.c+'">'+r.verdict.t+'</div><div class="as-names">'+esc(pa.name)+'（日主'+cdA.dStem+'）× '+esc(pb.name)+'（日主'+cdB.dStem+'）</div></div>';
   html+='<div class="aisho-rel">'+REL_TYPES.map(function(t){return '<button class="art'+(APP.aishoRel===t[0]?' active':'')+'" onclick="setAishoRel(\''+t[0]+'\')">'+t[1]+'</button>';}).join('')+'</div>';
   html+='<div class="topic green"><div class="topic-title"><span class="msr">chat_bubble</span> '+REL_LABEL[APP.aishoRel]+'としての相性</div><div class="tp-body">'+aishoComment(APP.aishoRel,r)+'</div></div>';
   var la=aishoActions(APP.aishoRel,r,cdA,cdB);
@@ -3254,11 +3254,11 @@ function drawCompass(){
   var s='<svg viewBox="0 0 240 240" width="220" height="220" xmlns="http://www.w3.org/2000/svg">';
   s+='<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="var(--surface)" stroke="var(--line)" stroke-width="1"/>';
   s+='<circle cx="'+cx+'" cy="'+cy+'" r="'+(r*0.62)+'" fill="none" stroke="var(--line)" stroke-width="0.5" stroke-dasharray="3 3"/>';
-  if(WORST!=null){var z1=sp(WORST-22,r),z2=sp(WORST+22,r);s+='<path d="M '+cx+' '+cy+' L '+z1[0]+' '+z1[1]+' A '+r+' '+r+' 0 0 1 '+z2[0]+' '+z2[1]+' Z" fill="rgba(192,67,47,0.22)" stroke="#c0432f" stroke-width="1" stroke-dasharray="4 3"/>';}
+  if(WORST!=null){var z1=sp(WORST-22,r),z2=sp(WORST+22,r);s+='<path d="M '+cx+' '+cy+' L '+z1[0]+' '+z1[1]+' A '+r+' '+r+' 0 0 1 '+z2[0]+' '+z2[1]+' Z" fill="rgba(192,67,47,0.22)" stroke="var(--shu)" stroke-width="1" stroke-dasharray="4 3"/>';}
   var labels=[['北',0],['北東',45],['東',90],['南東',135],['南',180],['南西',225],['西',270],['北西',315]];
   labels.forEach(function(L){var p=sp(L[1],r+13);var isN=L[1]===0,isT=(TARGET!=null&&L[1]===TARGET),isW=(WORST!=null&&L[1]===WORST);var col=isT?'#82c9a8':isW?'#df7a66':isN?'#df7a66':'var(--text2)';var w=(isT||isW||isN)?'700':'400';s+='<text x="'+p[0]+'" y="'+(p[1]+4)+'" text-anchor="middle" font-size="11" font-weight="'+w+'" fill="'+col+'">'+L[0]+'</text>';});
   for(var i=0;i<72;i++){var p1=sp(i*5,r),p2=sp(i*5,r-(i%2===0?7:4));s+='<line x1="'+p1[0]+'" y1="'+p1[1]+'" x2="'+p2[0]+'" y2="'+p2[1]+'" stroke="var(--line)" stroke-width="0.5"/>';}
-  if(WORST!=null){var wp=sp(WORST,r*0.72);s+='<circle cx="'+wp[0]+'" cy="'+wp[1]+'" r="10" fill="rgba(192,67,47,0.18)" stroke="#c0432f" stroke-width="2"/><line x1="'+(wp[0]-4.5)+'" y1="'+(wp[1]-4.5)+'" x2="'+(wp[0]+4.5)+'" y2="'+(wp[1]+4.5)+'" stroke="#d96a55" stroke-width="2"/>';}
+  if(WORST!=null){var wp=sp(WORST,r*0.72);s+='<circle cx="'+wp[0]+'" cy="'+wp[1]+'" r="10" fill="rgba(192,67,47,0.18)" stroke="var(--shu)" stroke-width="2"/><line x1="'+(wp[0]-4.5)+'" y1="'+(wp[1]-4.5)+'" x2="'+(wp[0]+4.5)+'" y2="'+(wp[1]+4.5)+'" stroke="#d96a55" stroke-width="2"/>';}
   if(TARGET!=null){var tp=sp(TARGET,r*0.74);s+='<line x1="'+cx+'" y1="'+cy+'" x2="'+tp[0]+'" y2="'+tp[1]+'" stroke="#4a9d7f" stroke-width="3"/><circle cx="'+tp[0]+'" cy="'+tp[1]+'" r="9" fill="#4a9d7f"/><text x="'+tp[0]+'" y="'+(tp[1]+3.5)+'" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">吉</text>';}
   s+='<line x1="'+cx+'" y1="'+cy+'" x2="'+cx+'" y2="'+(cy-r*0.5)+'" stroke="#185fa5" stroke-width="2" stroke-dasharray="3 2" opacity="0.5"/><circle cx="'+cx+'" cy="'+cy+'" r="6" fill="#185fa5"/>';
   s+='</svg>';
@@ -3871,12 +3871,12 @@ function nhCompass(cd){
     var b=bearing[d],c=cellOf[d]||{luck:0},cls;
     if(d===best)cls='best';else if(d===money)cls='money';else if(d===worst)cls='bad';
     else if(c.yojinDir&&c.luck>=1)cls='good';else if(c.kishinDir||c.luck<=-1)cls='warn';else cls='neutral';
-    segs+='<path d="'+sector(b)+'" fill="'+fills[cls]+'" stroke="#fffdf8" stroke-width="1.5"/>';
-    var lp=pt(rO+12,b),big=(d===best)?'font-weight:800;fill:#1c7a52;font-size:13px':'fill:#6e634f;font-size:11px';
+    segs+='<path d="'+sector(b)+'" fill="'+fills[cls]+'" stroke="var(--surface)" stroke-width="1.5"/>';
+    var lp=pt(rO+12,b),big=(d===best)?'font-weight:800;fill:#1c7a52;font-size:13px':'fill:var(--text2);font-size:11px';
     labels+='<text x="'+lp[0].toFixed(1)+'" y="'+(lp[1]+3).toFixed(1)+'" text-anchor="middle" style="font-family:\'Shippori Mincho B1\',serif;'+big+'">'+d+'</text>';
     if(d===money||d===worst){var ep=pt((rO+rI)/2+4,b);labels+='<text x="'+ep[0].toFixed(1)+'" y="'+(ep[1]+4).toFixed(1)+'" text-anchor="middle" font-size="13" font-family=\'Material Symbols Rounded\' style="font-feature-settings:\'liga\'">'+(d===money?'payments':'warning')+'</text>';}
   });
-  return '<svg viewBox="-8 -8 192 192">'+segs+'<circle cx="'+cx+'" cy="'+cy+'" r="'+(rI-3)+'" fill="#fffdf8" stroke="#e0d6bf"/><text x="'+cx+'" y="'+(cy+7)+'" text-anchor="middle" font-size="18" font-family=\'Material Symbols Rounded\' style="font-feature-settings:\'liga\'" fill="#8a7637">home</text>'+labels+'</svg>';
+  return '<svg viewBox="-8 -8 192 192">'+segs+'<circle cx="'+cx+'" cy="'+cy+'" r="'+(rI-3)+'" fill="var(--surface)" stroke="var(--line)"/><text x="'+cx+'" y="'+(cy+7)+'" text-anchor="middle" font-size="18" font-family=\'Material Symbols Rounded\' style="font-feature-settings:\'liga\'" fill="var(--gold-dim)">home</text>'+labels+'</svg>';
 }
 
 var LUCKY_ELEM={
@@ -3986,23 +3986,23 @@ var CAT={
    avoid:{hi:['駆け引きのしすぎ','話を盛ること'],mid:['既読スルー','上から目線の言い方'],lo:['感情的な議論','重い話の切り出し','別れ話']},
    advice:{hi:'今日は気持ちが通じやすい日。素直さがいちばんの魅力になります。',mid:'背伸びせず自然体で。聞く姿勢が好印象を呼びます。',lo:'言葉のトゲに注意。受け止め役に回ると関係が安定します。'}},
  work:{label:'仕事運',cls:'cat-work',cat:'#3a6ea5',track:'#cfdcf0',ring:'#5a86bf',peak:11,mk:'💼',
-   color:['ネイビー','#2f5f95'],colorUse:'ネクタイ・手帳・バッグなど"信頼を示す場面"に。落ち着きと説得力が増します。',
+   color:['ネイビー','var(--blue-d)'],colorUse:'ネクタイ・手帳・バッグなど"信頼を示す場面"に。落ち着きと説得力が増します。',
    item:['手帳','📓'],itemUse:'朝にTo Doを書き出し、優先順位を3つに絞ると集中力が上がります。',
    head:{hi:'成果が出やすい日',mid:'淡々と前進する日',lo:'守りに徹する日'},
    desc:{hi:'集中力が高まり、努力が評価されやすい日です。新しい挑戦も成功につながります。',mid:'派手さはなくても積み重ねが形になる日。手順を丁寧に進めましょう。',lo:'重要な決断や交渉は見送りが無難。準備と整理にあてましょう。'},
    acts:{hi:['新しい企画を提案する','タスクの優先順位をつける','支えてくれた人に感謝を伝える'],mid:['報連相を一つ丁寧に','ToDoを棚卸しする','デスクを片付ける'],lo:['確認作業を二重チェック','無理な約束を避ける','早めに切り上げる']},
    avoid:{hi:['手柄の独り占め','根回しを飛ばすこと'],mid:['後回し癖','曖昧な返事'],lo:['重要な決断・契約','大きな交渉','勢いだけの即決']},
    advice:{hi:'アイデアが光る日。発言が信頼につながります。',mid:'着実さが武器に。一つずつ確実に片付けましょう。',lo:'今日は土台固め。攻めより整えることが次に活きます。'}},
- health:{label:'健康運',cls:'cat-health',cat:'#2f9070',track:'#cae6d3',ring:'#4a9d7f',peak:13,mk:'🍀',
-   color:['グリーン','#2f9070'],colorUse:'部屋に観葉植物や緑の小物を。視界に緑があると自律神経が整いやすくなります。',
+ health:{label:'健康運',cls:'cat-health',cat:'var(--green)',track:'#cae6d3',ring:'#4a9d7f',peak:13,mk:'🍀',
+   color:['グリーン','var(--green)'],colorUse:'部屋に観葉植物や緑の小物を。視界に緑があると自律神経が整いやすくなります。',
    item:['ハーブティー','🍵'],itemUse:'カフェインを控えめに、温かいハーブティーで一息。睡眠の質が上がります。',
    head:{hi:'心身が整いやすい日',mid:'安定して過ごせる日',lo:'リラックスを心がけて'},
    desc:{hi:'体が軽く、運動や健康習慣を始めるのに好機。心も前向きになりやすい日です。',mid:'体調は安定。無理のない範囲で体を動かすと整います。',lo:'無理をせず心と体を休めるのが大切な日です。規則正しい生活を意識しましょう。'},
    acts:{hi:['軽い運動・ストレッチをする','水分をしっかりとる','早めに寝る準備をする'],mid:['散歩で気分転換する','姿勢を意識する','腹八分を心がける'],lo:['ゆっくり入浴する','消化に良い食事にする','早めに休む']},
    avoid:{hi:['ハードすぎる運動','夜更かし'],mid:['暴飲暴食','長時間の同じ姿勢'],lo:['無理な予定詰め込み','冷たいものの摂りすぎ','睡眠を削ること']},
    advice:{hi:'巡りが良い日。軽い運動から始めると一日が整います。',mid:'リズムを一定に。整えることが運気アップの鍵です。',lo:'今日は休養が最優先。ゆっくりお風呂に浸かるのもおすすめです。'}},
- study:{label:'学び運',cls:'cat-study',cat:'#8a5fa6',track:'#ddccf0',ring:'#b98ad0',peak:10,mk:'🎓',
-   color:['パープル','#8a5fa6'],colorUse:'ペン・ノート・しおりなど学びの道具に。集中と直感のバランスが整います。',
+ study:{label:'学び運',cls:'cat-study',cat:'var(--purple)',track:'#ddccf0',ring:'#b98ad0',peak:10,mk:'🎓',
+   color:['パープル','var(--purple)'],colorUse:'ペン・ノート・しおりなど学びの道具に。集中と直感のバランスが整います。',
    item:['ノート','📒'],itemUse:'学んだ要点を1ページにまとめると記憶が定着。見返す習慣で差がつきます。',
    head:{hi:'吸収力が高い日',mid:'コツコツ積み上がる日',lo:'復習に向く日'},
    desc:{hi:'新しい知識やスキルが身につきやすい日です。興味のあることに積極的に取り組みましょう。',mid:'地道な学びが力になる日。少しずつでも続けると効いてきます。',lo:'詰め込みは避け、これまでの復習や整理に向く日です。'},
@@ -4050,7 +4050,7 @@ function catChart2(cd,key,C){
   var blab=[[8.5,'朝'],[13,'昼'],[16.5,'夕'],[21,'夜']].map(function(b){return '<text x="'+X(b[0]).toFixed(1)+'" y="'+(padT-9)+'" text-anchor="middle" font-size="10" fill="#9c9078">'+b[1]+'</text>';}).join('');
   var ticks=[0,6,12,18,24].map(function(h){return '<text x="'+X(h).toFixed(1)+'" y="'+(H-8)+'" text-anchor="middle" font-size="9" fill="#9c9078">'+h+'時</text>';}).join('');
   var nowH=cd.now.getHours()+cd.now.getMinutes()/60;
-  var now='<line x1="'+X(nowH).toFixed(1)+'" y1="'+(padT-4)+'" x2="'+X(nowH).toFixed(1)+'" y2="'+(padT+ch)+'" stroke="#c0432f" stroke-width="1.5" stroke-dasharray="3 3"/><text x="'+X(nowH).toFixed(1)+'" y="'+(padT-16)+'" text-anchor="middle" font-size="9" fill="#c0432f" font-weight="700">今</text>';
+  var now='<line x1="'+X(nowH).toFixed(1)+'" y1="'+(padT-4)+'" x2="'+X(nowH).toFixed(1)+'" y2="'+(padT+ch)+'" stroke="var(--shu)" stroke-width="1.5" stroke-dasharray="3 3"/><text x="'+X(nowH).toFixed(1)+'" y="'+(padT-16)+'" text-anchor="middle" font-size="9" fill="var(--shu)" font-weight="700">今</text>';
   var pk=pts[sc.bestIdx];
   var pkm='<circle cx="'+X(pk[0]).toFixed(1)+'" cy="'+Y(pk[1]).toFixed(1)+'" r="4" fill="'+C.cat+'"/><text x="'+X(pk[0]).toFixed(1)+'" y="'+(Y(pk[1])-9).toFixed(1)+'" text-anchor="middle" font-size="15">'+C.mk+'</text>';
   return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid meet"><defs><linearGradient id="cg2-'+key+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+C.cat+'" stop-opacity="0.3"/><stop offset="1" stop-color="'+C.cat+'" stop-opacity="0.02"/></linearGradient></defs>'+bsvg+blab+'<path d="'+area+'" fill="url(#cg2-'+key+')"/><path d="'+line+'" fill="none" stroke="'+C.cat+'" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>'+pkm+now+ticks+'</svg>';
