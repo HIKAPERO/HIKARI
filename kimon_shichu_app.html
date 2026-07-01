@@ -19,7 +19,7 @@
     --amber:#9a7a1e; --amber-bg:rgba(169,130,31,.13); --purple:#8a5fa6;
     --r:14px; --r-sm:10px;
   }
-  /* ====== テーマカラー：HIKARI（パープル） ====== */
+  /* ====== テーマカラー：パープル ====== */
   body.theme-hikari{
     --bg:#f0eeff; --surface:#ffffff; --surface2:#f5f3ff; --line:#ddd6fe; --line2:#c4b5fd;
     --text:#2a1a5e; --text2:#5040c8; --text3:#6a5bd0; --paper:#2a1a5e;
@@ -29,7 +29,7 @@
     --red:#c0432f; --red-d:#a93824; --red-bg:rgba(192,67,47,.10); --red-line:rgba(192,67,47,.38);
     --amber:#9a7a1e; --amber-bg:rgba(169,130,31,.13); --purple:#8a5fa6;
   }
-  /* ====== テーマカラー：HIKARI（ダーク） ====== */
+  /* ====== テーマカラー：ダーク ====== */
   body.theme-hikari-dark{
     --bg:#08080f; --surface:#15151f; --surface2:#1c1c2a; --line:#26263a; --line2:#34344a;
     --text:#d0cce8; --text2:#a89fd4; --text3:#8a7fc0; --paper:#d0cce8;
@@ -3747,10 +3747,10 @@ function renderSettings(){
   html+='<div class="stg-list-card"><div style="padding:16px">';
   html+='<div class="theme-swatches">';
   html+='<div class="theme-sw'+(APP.theme==='wa'||!APP.theme?' on':'')+'" onclick="setTheme(\'wa\')"><div class="theme-sw-preview theme-prev-wa"></div><div class="theme-sw-name">和<br>ゴールド</div>'+((APP.theme==='wa'||!APP.theme)?'<span class="msr theme-sw-check">check_circle</span>':'')+'</div>';
-  html+='<div class="theme-sw'+(APP.theme==='hikari'?' on':'')+'" onclick="setTheme(\'hikari\')"><div class="theme-sw-preview theme-prev-hikari"></div><div class="theme-sw-name">HIKARI<br>パープル</div>'+(APP.theme==='hikari'?'<span class="msr theme-sw-check">check_circle</span>':'')+'</div>';
-  html+='<div class="theme-sw'+(APP.theme==='hikari-dark'?' on':'')+'" onclick="setTheme(\'hikari-dark\')"><div class="theme-sw-preview theme-prev-hikari-dark"></div><div class="theme-sw-name">HIKARI<br>ダーク</div>'+(APP.theme==='hikari-dark'?'<span class="msr theme-sw-check">check_circle</span>':'')+'</div>';
+  html+='<div class="theme-sw'+(APP.theme==='hikari'?' on':'')+'" onclick="setTheme(\'hikari\')"><div class="theme-sw-preview theme-prev-hikari"></div><div class="theme-sw-name">パープル<br>ライト</div>'+(APP.theme==='hikari'?'<span class="msr theme-sw-check">check_circle</span>':'')+'</div>';
+  html+='<div class="theme-sw'+(APP.theme==='hikari-dark'?' on':'')+'" onclick="setTheme(\'hikari-dark\')"><div class="theme-sw-preview theme-prev-hikari-dark"></div><div class="theme-sw-name">パープル<br>ダーク</div>'+(APP.theme==='hikari-dark'?'<span class="msr theme-sw-check">check_circle</span>':'')+'</div>';
   html+='</div>';
-  html+='<div class="stg-hint" style="margin-top:12px">HIKARIテーマは <b>hikapero.github.io/HIKARI</b> の配色（ライト／ダーク）を再現したものです。夜空の演出（ホーム画面のヒーロー部分）は現在どのテーマでも同じ配色です。</div>';
+  html+='<div class="stg-hint" style="margin-top:12px">お好みの配色を選べます。ライト・ダークどちらでも見やすいよう調整済みです。夜空の演出（ホーム画面のヒーロー部分）は現在どのテーマでも同じ配色です。</div>';
   html+='</div></div>';
 
   /* ── ⑥ 詳細設定 ── */
