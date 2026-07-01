@@ -60,6 +60,17 @@
   body.theme-hikari-dark .nh-cat.c-study .nh-cat-ic .msr{color:#c7a3f0}
   body.theme-hikari-dark .nh-cat.c-kankei .nh-cat-ic .msr{color:#f0b880}
   body.theme-hikari-dark .nh-herow{background:radial-gradient(85% 55% at 78% 16%,rgba(150,110,200,.35),transparent 60%),linear-gradient(180deg,#1c1740 0%,#201a44 42%,#221c40 56%,#1c1836 72%,#141128 87%,#0c0a1a 100%)}
+  body.theme-hikari-dark .header{background:rgba(21,21,31,.88)!important;border-bottom-color:var(--line)}
+  body.theme-hikari-dark .bottom-nav{background:rgba(21,21,31,.94)!important;border-top-color:var(--line)}
+  body.theme-hikari-dark .profile-chip{background:linear-gradient(135deg,#241f3e,#1c1832)!important;border:1px solid var(--gold-dim)!important;color:var(--gold-soft)!important;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+  body.theme-hikari-dark .chip-wrap .profile-select{color:var(--gold-soft)!important}
+  body.theme-hikari-dark .nhcp-best{fill:#3d9e76}
+  body.theme-hikari-dark .nhcp-good{fill:#2a5e46}
+  body.theme-hikari-dark .nhcp-money{fill:#b8944a}
+  body.theme-hikari-dark .nhcp-bad{fill:#b8503c}
+  body.theme-hikari-dark .nhcp-warn{fill:#5c342e}
+  body.theme-hikari-dark .nhcp-neutral{fill:#221e38}
+  body.theme-hikari-dark .nhcp-best-lab{fill:#6fd9a8}
   body.theme-hikari-dark .nh-topsky{background:radial-gradient(120% 70% at 80% 0%,rgba(90,70,150,.35),transparent 50%),linear-gradient(180deg,#0a0c22 0%,#0b0e24 52%,#0e0f26 62%,#0d0d20 72%,#0a0916 82%,#08070f 90%,#08080f 96%,var(--bg) 100%)}
   *{box-sizing:border-box;margin:0;padding:0}
   html{scrollbar-gutter:stable}
@@ -915,6 +926,14 @@
 @keyframes nhbreathe{0%,100%{opacity:.4}50%{opacity:.7}}
 .nh-herow .wsky{position:absolute;inset:0;z-index:1}
 .nh-herow .wsky i{position:absolute;width:2px;height:2px;border-radius:50%;background:#fff;opacity:.5;animation:nhtw var(--d,3s) ease-in-out var(--dl,0s) infinite}
+/* 方位ホイールの配色（テーマ連動） */
+.nhcp-best{fill:#5bb487}
+.nhcp-good{fill:#c3e4d0}
+.nhcp-money{fill:#e3c264}
+.nhcp-bad{fill:#df8f7e}
+.nhcp-warn{fill:#f1d2ca}
+.nhcp-neutral{fill:#efe7d4}
+.nhcp-best-lab{fill:#1c7a52}
 .wa-ornt{position:absolute;width:30px;height:30px;z-index:6;opacity:.85}
 .wa-ornt.tl{top:7px;left:7px}.wa-ornt.tr{top:7px;right:7px;transform:scaleX(-1)}.wa-ornt.bl{bottom:7px;left:7px;transform:scaleY(-1)}.wa-ornt.br{bottom:7px;right:7px;transform:scale(-1,-1)}
 .wa-cloud{position:absolute;z-index:2;opacity:.5;pointer-events:none}
@@ -1219,7 +1238,7 @@
 .lt-badge{width:18px;height:18px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 1px 2px rgba(0,0,0,.12)}
 .lt-badge .msr{font-size:12px;color:#fff}
 .lt-dot{width:9px;height:9px;border-radius:3px;display:inline-block}
-.lt-detail{font-size:12.5px;color:var(--text,var(--text));background:#fbf6ea;border:1px solid var(--line);border-radius:12px;padding:12px 12px;margin-top:8px;min-height:38px}
+.lt-detail{font-size:12.5px;color:var(--text,var(--text));background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:12px 12px;margin-top:8px;min-height:38px}
 .lt-detail b{font-family:"Shippori Mincho B1",serif}
 .lt-t3-row{display:flex;gap:12px;align-items:flex-start;padding:8px 4px;border-top:1px solid var(--line)}
 .lt-t3-row:first-child{border-top:none}
@@ -2170,10 +2189,10 @@ function ltRender(cd){
   var laneH=LT.LY0+LT_CATS.length*LT.LH, H=laneH+30;
   var s='<svg width="'+LT.W+'" height="'+H+'" viewBox="0 0 '+LT.W+' '+H+'" xmlns="http://www.w3.org/2000/svg">';
   for(var ag=0;ag<=80;ag+=5){var x=ltAx(ag);
-    s+='<line x1="'+x+'" y1="'+LT.AY0+'" x2="'+x+'" y2="'+laneH+'" stroke="#e7ddc6" stroke-width="1"/>';
-    s+='<text x="'+x+'" y="'+(laneH+14)+'" font-size="9" fill="#9a8e76" text-anchor="middle">'+ag+'歳</text>';}
+    s+='<line x1="'+x+'" y1="'+LT.AY0+'" x2="'+x+'" y2="'+laneH+'" stroke="var(--line)" stroke-width="1"/>';
+    s+='<text x="'+x+'" y="'+(laneH+14)+'" font-size="9" fill="var(--text3)" text-anchor="middle">'+ag+'歳</text>';}
   D.daiun.forEach(function(a){if(a<LT.AGE0||a>LT.AGE1)return;var x=ltAx(a);
-    s+='<line x1="'+x+'" y1="'+LT.AY0+'" x2="'+x+'" y2="'+laneH+'" stroke="#cdbf9a" stroke-width="1" stroke-dasharray="2 3"/>';});
+    s+='<line x1="'+x+'" y1="'+LT.AY0+'" x2="'+x+'" y2="'+laneH+'" stroke="var(--line2)" stroke-width="1" stroke-dasharray="2 3"/>';});
   var rin=rows.filter(function(r){return r.age>=LT.AGE0&&r.age<=LT.AGE1;});
   var path='M '+ltAx(LT.AGE0)+' '+LT.AY1;
   rin.forEach(function(r){path+=' L '+ltAx(r.age).toFixed(1)+' '+(LT.AY1-(LT.AY1-LT.AY0)*r.total).toFixed(1);});
@@ -2182,7 +2201,7 @@ function ltRender(cd){
   s+='<path d="'+path+'" fill="url(#ltar)" stroke="var(--gold)" stroke-width="1.3"/>';
   var cw=(LT.PR-LT.PL)/(LT.AGE1-LT.AGE0);
   LT_CATS.forEach(function(cat,ci){var ly=LT.LY0+ci*LT.LH;
-    s+='<rect x="'+LT.PL+'" y="'+ly+'" width="'+(LT.PR-LT.PL)+'" height="'+(LT.LH-3)+'" fill="#faf5e8" stroke="#eee3c9" stroke-width="0.5" rx="3"/>';
+    s+='<rect x="'+LT.PL+'" y="'+ly+'" width="'+(LT.PR-LT.PL)+'" height="'+(LT.LH-3)+'" fill="var(--surface2)" stroke="var(--line)" stroke-width="0.5" rx="3"/>';
     rin.forEach(function(r){var v=r[cat.key];if(v<=0.05)return;var x=ltAx(r.age)-cw/2;
       s+='<rect x="'+x.toFixed(1)+'" y="'+ly+'" width="'+(cw+0.6).toFixed(1)+'" height="'+(LT.LH-3)+'" fill="'+ltRgba(cat.color,0.18+0.72*v)+'"/>';});});
   var nowAge=D.nowAge;
@@ -3930,15 +3949,14 @@ function nhCompass(cd){
   function pt(r,b){var a=(b-90)*Math.PI/180;return [cx+r*Math.cos(a),cy+r*Math.sin(a)];}
   function sector(b){var a0=b-22.5,a1=b+22.5,oa=pt(rO,a0),ob=pt(rO,a1),ia=pt(rI,a1),ib=pt(rI,a0);
     return 'M'+oa[0].toFixed(1)+' '+oa[1].toFixed(1)+' A'+rO+' '+rO+' 0 0 1 '+ob[0].toFixed(1)+' '+ob[1].toFixed(1)+' L'+ia[0].toFixed(1)+' '+ia[1].toFixed(1)+' A'+rI+' '+rI+' 0 0 0 '+ib[0].toFixed(1)+' '+ib[1].toFixed(1)+' Z';}
-  var fills={best:'#5bb487',good:'#c3e4d0',money:'#e3c264',bad:'#df8f7e',warn:'#f1d2ca',neutral:'#efe7d4'};
   var segs='',labels='';
   dirs.forEach(function(d){
     var b=bearing[d],c=cellOf[d]||{luck:0},cls;
     if(d===best)cls='best';else if(d===money)cls='money';else if(d===worst)cls='bad';
     else if(c.yojinDir&&c.luck>=1)cls='good';else if(c.kishinDir||c.luck<=-1)cls='warn';else cls='neutral';
-    segs+='<path d="'+sector(b)+'" fill="'+fills[cls]+'" stroke="var(--surface)" stroke-width="1.5"/>';
-    var lp=pt(rO+12,b),big=(d===best)?'font-weight:800;fill:#1c7a52;font-size:13px':'fill:var(--text2);font-size:11px';
-    labels+='<text x="'+lp[0].toFixed(1)+'" y="'+(lp[1]+3).toFixed(1)+'" text-anchor="middle" style="font-family:\'Shippori Mincho B1\',serif;'+big+'">'+d+'</text>';
+    segs+='<path d="'+sector(b)+'" class="nhcp-'+cls+'" stroke="var(--surface)" stroke-width="1.5"/>';
+    var lp=pt(rO+12,b);
+    labels+='<text x="'+lp[0].toFixed(1)+'" y="'+(lp[1]+3).toFixed(1)+'" text-anchor="middle" '+(d===best?'class="nhcp-best-lab" style="font-family:\'Shippori Mincho B1\',serif;font-weight:800;font-size:13px"':'style="font-family:\'Shippori Mincho B1\',serif;fill:var(--text2);font-size:11px"')+'>'+d+'</text>';
     if(d===money||d===worst){var ep=pt((rO+rI)/2+4,b);labels+='<text x="'+ep[0].toFixed(1)+'" y="'+(ep[1]+4).toFixed(1)+'" text-anchor="middle" font-size="13" font-family=\'Material Symbols Rounded\' style="font-feature-settings:\'liga\'">'+(d===money?'payments':'warning')+'</text>';}
   });
   return '<svg viewBox="-8 -8 192 192">'+segs+'<circle cx="'+cx+'" cy="'+cy+'" r="'+(rI-3)+'" fill="var(--surface)" stroke="var(--line)"/><text x="'+cx+'" y="'+(cy+7)+'" text-anchor="middle" font-size="18" font-family=\'Material Symbols Rounded\' style="font-feature-settings:\'liga\'" fill="var(--gold-dim)">home</text>'+labels+'</svg>';
