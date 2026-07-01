@@ -78,6 +78,52 @@
   body.theme-hikari-dark .cat-study{--tint:#201432;--cat:#9169ac}
   body.theme-hikari-dark .cat-kankei{--tint:#2a1c10}
   body.theme-hikari-dark .nh-topsky{background:radial-gradient(120% 70% at 80% 0%,rgba(90,70,150,.35),transparent 50%),linear-gradient(180deg,#0a0c22 0%,#0b0e24 52%,#0e0f26 62%,#0d0d20 72%,#0a0916 82%,#08070f 90%,#08080f 96%,var(--bg) 100%)}
+  /* ====== テーマカラー：五行 ====== */
+  body.theme-wood{
+    --bg:#eef6ee; --surface:#ffffff; --surface2:#e2f0e0; --line:#cfe3ce; --line2:#b8d4b5;
+    --text:#1e3a24; --text2:#3d6b42; --text3:#58775b; --paper:#1e3a24;
+    --gold:#4a8f52; --gold-soft:#3d7744; --gold-dim:#4a6e4c; --shu:#c0432f;
+    --green:#2f9070; --green-d:#2c7a5d; --green-bg:rgba(47,144,112,.12); --green-line:rgba(47,144,112,.40);
+    --blue:#3f74ac; --blue-d:#2f5f95; --blue-bg:rgba(63,116,172,.12); --blue-line:rgba(63,116,172,.40);
+    --red:#c0432f; --red-d:#a93824; --red-bg:rgba(192,67,47,.10); --red-line:rgba(192,67,47,.38);
+    --amber:#9a7a1e; --amber-bg:rgba(169,130,31,.13); --purple:#8a5fa6;
+  }
+  body.theme-fire{
+    --bg:#fdf0e8; --surface:#fffbf7; --surface2:#f7dfcd; --line:#f0c9ab; --line2:#e8b190;
+    --text:#5a2410; --text2:#8a4020; --text3:#8b6654; --paper:#5a2410;
+    --gold:#d9622e; --gold-soft:#a7481e; --gold-dim:#8f5836; --shu:#c0432f;
+    --green:#2f9070; --green-d:#2c7a5d; --green-bg:rgba(47,144,112,.12); --green-line:rgba(47,144,112,.40);
+    --blue:#3f74ac; --blue-d:#2f5f95; --blue-bg:rgba(63,116,172,.12); --blue-line:rgba(63,116,172,.40);
+    --red:#c0432f; --red-d:#a93824; --red-bg:rgba(192,67,47,.10); --red-line:rgba(192,67,47,.38);
+    --amber:#9a7a1e; --amber-bg:rgba(169,130,31,.13); --purple:#8a5fa6;
+  }
+  body.theme-earth{
+    --bg:#f7f1e0; --surface:#fffcf5; --surface2:#ece0c4; --line:#ddcda0; --line2:#cbb787;
+    --text:#4a3a1a; --text2:#6e5830; --text3:#7b6d4a; --paper:#4a3a1a;
+    --gold:#b8923a; --gold-soft:#796026; --gold-dim:#8a7340; --shu:#c0432f;
+    --green:#2f9070; --green-d:#2c7a5d; --green-bg:rgba(47,144,112,.12); --green-line:rgba(47,144,112,.40);
+    --blue:#3f74ac; --blue-d:#2f5f95; --blue-bg:rgba(63,116,172,.12); --blue-line:rgba(63,116,172,.40);
+    --red:#c0432f; --red-d:#a93824; --red-bg:rgba(192,67,47,.10); --red-line:rgba(192,67,47,.38);
+    --amber:#9a7a1e; --amber-bg:rgba(169,130,31,.13); --purple:#8a5fa6;
+  }
+  body.theme-metal{
+    --bg:#f2f3f6; --surface:#ffffff; --surface2:#e4e7ec; --line:#d3d6dc; --line2:#bcc0c9;
+    --text:#2b2e36; --text2:#565c68; --text3:#686f7d; --paper:#2b2e36;
+    --gold:#6b7686; --gold-soft:#5e6876; --gold-dim:#6a7482; --shu:#c0432f;
+    --green:#2f9070; --green-d:#2c7a5d; --green-bg:rgba(47,144,112,.12); --green-line:rgba(47,144,112,.40);
+    --blue:#3f74ac; --blue-d:#2f5f95; --blue-bg:rgba(63,116,172,.12); --blue-line:rgba(63,116,172,.40);
+    --red:#c0432f; --red-d:#a93824; --red-bg:rgba(192,67,47,.10); --red-line:rgba(192,67,47,.38);
+    --amber:#9a7a1e; --amber-bg:rgba(169,130,31,.13); --purple:#8a5fa6;
+  }
+  body.theme-water{
+    --bg:#eaf1f7; --surface:#ffffff; --surface2:#daE7f0; --line:#c2d9e8; --line2:#a8cadd;
+    --text:#12314f; --text2:#2c5478; --text3:#567083; --paper:#12314f;
+    --gold:#2f74ac; --gold-soft:#2b6b9e; --gold-dim:#3d6485; --shu:#c0432f;
+    --green:#2f9070; --green-d:#2c7a5d; --green-bg:rgba(47,144,112,.12); --green-line:rgba(47,144,112,.40);
+    --blue:#3f74ac; --blue-d:#2f5f95; --blue-bg:rgba(63,116,172,.12); --blue-line:rgba(63,116,172,.40);
+    --red:#c0432f; --red-d:#a93824; --red-bg:rgba(192,67,47,.10); --red-line:rgba(192,67,47,.38);
+    --amber:#9a7a1e; --amber-bg:rgba(169,130,31,.13); --purple:#8a5fa6;
+  }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scrollbar-gutter:stable}
   body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;
@@ -1072,12 +1118,17 @@
 .stg-sec-title{font-size:14px;font-weight:700;color:var(--gold-soft)}
 .stg-sec-sub{font-size:11px;color:var(--text3);margin-top:1px;line-height:1.4}
 .stg-list-card{background:var(--surface);border:0.5px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
-.theme-swatches{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-.theme-sw-name{font-size:11px;font-weight:600;color:var(--text);line-height:1.35}
+.theme-swatches{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px}
+.theme-sw-name{font-size:10px;font-weight:600;color:var(--text);line-height:1.3}
 .theme-prev-hikari-dark{background:linear-gradient(135deg,#1c1c2a 0%,#15151f 40%,#08080f 70%,#6c5ce7 100%)}
-.theme-sw{border:1.5px solid var(--line2);border-radius:14px;padding:12px;text-align:center;cursor:pointer;position:relative;transition:border-color .2s ease}
+.theme-prev-wood{background:linear-gradient(135deg,#ffffff 0%,#eef6ee 40%,#b8d4b5 70%,#4a8f52 100%)}
+.theme-prev-fire{background:linear-gradient(135deg,#fffbf7 0%,#fdf0e8 40%,#e8b190 70%,#d9622e 100%)}
+.theme-prev-earth{background:linear-gradient(135deg,#fffcf5 0%,#f7f1e0 40%,#cbb787 70%,#b8923a 100%)}
+.theme-prev-metal{background:linear-gradient(135deg,#ffffff 0%,#f2f3f6 40%,#bcc0c9 70%,#6b7686 100%)}
+.theme-prev-water{background:linear-gradient(135deg,#ffffff 0%,#eaf1f7 40%,#a8cadd 70%,#2f74ac 100%)}
+.theme-sw{border:1.5px solid var(--line2);border-radius:12px;padding:8px 6px;text-align:center;cursor:pointer;position:relative;transition:border-color .2s ease}
 .theme-sw.on{border-color:var(--gold-soft);border-width:2px}
-.theme-sw-preview{width:100%;height:56px;border-radius:10px;margin-bottom:8px}
+.theme-sw-preview{width:100%;height:44px;border-radius:9px;margin-bottom:6px}
 .theme-prev-wa{background:linear-gradient(135deg,#fffdf8 0%,#f4eee1 40%,#e0d6bf 70%,#a9821f 100%)}
 .theme-prev-hikari{background:linear-gradient(135deg,#ffffff 0%,#f0eeff 40%,#c4b5fd 70%,#6c5ce7 100%)}
 .theme-sw-check{position:absolute;top:8px;right:8px;font-size:18px;color:var(--gold-soft);background:var(--surface);border-radius:50%}
@@ -1493,7 +1544,13 @@ function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace
 function initials(name){return name?name.slice(0,2):'？';}
 function persist(){try{localStorage.setItem('kimon_app_data',JSON.stringify({v:1,profiles:Store.profiles,activeId:Store.activeId,pseq:Store._seq,places:Places.list,plseq:Places._seq,homeCoords:APP.homeCoords,ritsuunMode:APP.ritsuunMode,googleKey:APP.googleKey,notif:APP.notif,theme:APP.theme}));}catch(e){}}
 function restore(){try{var d=JSON.parse(localStorage.getItem('kimon_app_data')||'null');if(!d)return false;if(d.profiles&&d.profiles.length){Store.profiles=d.profiles;Store.activeId=d.activeId||d.profiles[0].id;Store._seq=d.pseq||(d.profiles.length+1);}if(d.places){Places.list=d.places;Places._seq=d.plseq||(d.places.length+1);}if(typeof d.homeCoords==='string')APP.homeCoords=d.homeCoords;if(d.ritsuunMode)APP.ritsuunMode=d.ritsuunMode;if(typeof d.googleKey==='string')APP.googleKey=d.googleKey;if(d.notif){var dn=d.notif,an=APP.notif;Object.keys(an).forEach(function(k){if(dn[k])Object.assign(an[k],dn[k]);});}if(d.theme)APP.theme=d.theme;return true;}catch(e){return false;}}
-function setTheme(t){APP.theme=t;document.body.classList.remove('theme-hikari','theme-hikari-dark');if(t==='hikari')document.body.classList.add('theme-hikari');else if(t==='hikari-dark')document.body.classList.add('theme-hikari-dark');persist();renderSettings();}
+function setTheme(t){
+  APP.theme=t;
+  var all=['theme-hikari','theme-hikari-dark','theme-wood','theme-fire','theme-earth','theme-metal','theme-water'];
+  document.body.classList.remove.apply(document.body.classList,all);
+  if(t!=='wa')document.body.classList.add('theme-'+t);
+  persist();renderSettings();
+}
 
 function rebuildChart(){
   var p=Store.getActive();
@@ -3746,11 +3803,17 @@ function renderSettings(){
   html+=stgSecHead('gold','palette','テーマカラー','アプリ全体の配色を選べます');
   html+='<div class="stg-list-card"><div style="padding:16px">';
   html+='<div class="theme-swatches">';
-  html+='<div class="theme-sw'+(APP.theme==='wa'||!APP.theme?' on':'')+'" onclick="setTheme(\'wa\')"><div class="theme-sw-preview theme-prev-wa"></div><div class="theme-sw-name">和<br>ゴールド</div>'+((APP.theme==='wa'||!APP.theme)?'<span class="msr theme-sw-check">check_circle</span>':'')+'</div>';
-  html+='<div class="theme-sw'+(APP.theme==='hikari'?' on':'')+'" onclick="setTheme(\'hikari\')"><div class="theme-sw-preview theme-prev-hikari"></div><div class="theme-sw-name">パープル<br>ライト</div>'+(APP.theme==='hikari'?'<span class="msr theme-sw-check">check_circle</span>':'')+'</div>';
-  html+='<div class="theme-sw'+(APP.theme==='hikari-dark'?' on':'')+'" onclick="setTheme(\'hikari-dark\')"><div class="theme-sw-preview theme-prev-hikari-dark"></div><div class="theme-sw-name">パープル<br>ダーク</div>'+(APP.theme==='hikari-dark'?'<span class="msr theme-sw-check">check_circle</span>':'')+'</div>';
+  var THEME_LIST=[
+    ['wa','和','ゴールド'],['hikari','パープル','ライト'],['hikari-dark','パープル','ダーク'],
+    ['wood','五行・木','グリーン'],['fire','五行・火','オレンジ'],['earth','五行・土','ベージュ'],
+    ['metal','五行・金','シルバー'],['water','五行・水','ネイビー']
+  ];
+  html+=THEME_LIST.map(function(t){
+    var id=t[0],cur=(APP.theme===id)||(id==='wa'&&!APP.theme);
+    return '<div class="theme-sw'+(cur?' on':'')+'" onclick="setTheme(\''+id+'\')"><div class="theme-sw-preview theme-prev-'+id+'"></div><div class="theme-sw-name">'+t[1]+'<br>'+t[2]+'</div>'+(cur?'<span class="msr theme-sw-check">check_circle</span>':'')+'</div>';
+  }).join('');
   html+='</div>';
-  html+='<div class="stg-hint" style="margin-top:12px">お好みの配色を選べます。ライト・ダークどちらでも見やすいよう調整済みです。夜空の演出（ホーム画面のヒーロー部分）は現在どのテーマでも同じ配色です。</div>';
+  html+='<div class="stg-hint" style="margin-top:12px">お好みの配色を選べます。「五行」は命式に使われる木・火・土・金・水をイメージした配色です。夜空の演出（ホーム画面のヒーロー部分）は現在どのテーマでも同じ配色です。</div>';
   html+='</div></div>';
 
   /* ── ⑥ 詳細設定 ── */
@@ -4320,9 +4383,7 @@ if(!restore()){
   Store.add({name:'自分（サンプル）',birthDate:'1990-05-15',birthTime:'10:30',sex:'M',coords:'35.6895, 139.6917',memo:'サンプルの命式です。設定からあなたの情報に編集できます。'});
   Store.setActive('p1');
 }
-document.body.classList.remove('theme-hikari','theme-hikari-dark');
-if(APP.theme==='hikari')document.body.classList.add('theme-hikari');
-else if(APP.theme==='hikari-dark')document.body.classList.add('theme-hikari-dark');
+if(APP.theme&&APP.theme!=='wa')document.body.classList.add('theme-'+APP.theme);
 try{if(!APP.googleKey)APP.googleKey=localStorage.getItem('kimon_gkey')||'';}catch(e){}
 rebuildChart();
 renderHome();APP.built.home=true;
