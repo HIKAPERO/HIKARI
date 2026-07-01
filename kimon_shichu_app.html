@@ -531,6 +531,29 @@
   .ds-loading{padding:28px 16px;text-align:center;color:var(--text3);font-size:13px}
   .ds-spin{display:inline-block;animation:dsspin 1.1s linear infinite}
   @keyframes dsspin{to{transform:rotate(360deg)}}
+  /* ============ マイクロインタラクション：出現アニメーション ============ */
+  @keyframes cardIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes navPop{0%{transform:scale(1)}35%{transform:scale(1.22)}60%{transform:scale(.94)}100%{transform:scale(1)}}
+  @keyframes tabIndicatorIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+  @media (prefers-reduced-motion: reduce){
+    .reading-card,.topic,.nh-cat,.help-card,.stg-list-card{animation:none!important}
+    .nav-item.active .ni-icon{animation:none!important}
+  }
+  .rtab.active,.seg-b.on,.tab.active{animation:tabIndicatorIn .22s ease}
+  .reading-card,.topic,.help-card,.stg-list-card{animation:cardIn .32s cubic-bezier(.22,.61,.36,1) both}
+  .reading-card:nth-of-type(1),.topic:nth-of-type(1){animation-delay:0s}
+  .reading-card:nth-of-type(2),.topic:nth-of-type(2){animation-delay:.04s}
+  .reading-card:nth-of-type(3),.topic:nth-of-type(3){animation-delay:.08s}
+  .reading-card:nth-of-type(4),.topic:nth-of-type(4){animation-delay:.12s}
+  .reading-card:nth-of-type(5),.topic:nth-of-type(5){animation-delay:.16s}
+  .reading-card:nth-of-type(6){animation-delay:.20s}
+  .reading-card:nth-of-type(n+7){animation-delay:.22s}
+  .nh-cat{animation:cardIn .3s cubic-bezier(.22,.61,.36,1) both}
+  .nh-cat:nth-child(1){animation-delay:0s}.nh-cat:nth-child(2){animation-delay:.03s}
+  .nh-cat:nth-child(3){animation-delay:.06s}.nh-cat:nth-child(4){animation-delay:.09s}
+  .nh-cat:nth-child(5){animation-delay:.12s}.nh-cat:nth-child(6){animation-delay:.15s}
+  .nav-item.active .ni-icon{animation:navPop .38s cubic-bezier(.34,1.56,.64,1)}
+  .nav-item .ni-icon,.nav-item>span:last-child{transition:color .2s ease,filter .2s ease}
   .luck-star{font-size:20px;margin:2px 0 12px;letter-spacing:2px}
   .luck-star span{font-size:13px;margin-left:8px}
   .luck-star.good{color:var(--green-d)}.luck-star.mid{color:var(--gold-soft)}.luck-star.bad{color:var(--red-d)}
@@ -898,13 +921,13 @@
 .nh-cat.c-health{background:linear-gradient(165deg,#eef7f0,#e0f0e6);border-color:#cae6d3}
 .nh-cat.c-study{background:linear-gradient(165deg,#f4eefb,#eae0f6);border-color:#ddccf0}
 .nh-cat.c-kankei{background:linear-gradient(165deg,#fbf0e6,#f6e2d2);border-color:#eccdb3}
-.nh-cat-ic{font-size:26px;line-height:1;margin-bottom:8px}
+.nh-cat-ic{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;font-size:22px;box-shadow:inset 0 1px 2px rgba(255,255,255,.5),0 1px 3px rgba(60,45,20,.10)}
 .nh-cat-name{font-family:"Shippori Mincho B1",serif;font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px}
 .nh-cat-stars{font-size:12px;letter-spacing:1px;color:var(--gold);margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:4px}
 .nh-cat-score{font-size:10px;color:var(--text3);font-weight:700;letter-spacing:0}
 .nh-cat-stars .e{color:rgba(169,130,31,.28)}
 .nh-cat-cmt{font-size:11px;color:var(--text2);line-height:1.55;min-height:34px}
-.nh-cat-go{width:22px;height:22px;border-radius:50%;border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--text2);margin:8px auto 0;background:rgba(255,255,255,.5)}
+.nh-cat.nh-cat-pressed{transform:scale(.95)!important}
 
 /* --- 方位コンパス / NG --- */
 .nh-panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(80,70,40,.05)}
@@ -999,13 +1022,19 @@
 .rc-ic-badge{width:26px;height:26px;border-radius:8px;background:rgba(205,169,79,.14);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
 .rc-ic-badge .msr{font-size:15px;color:var(--gold-soft);flex-shrink:0}
 .rc-title .msr{font-size:16px;color:var(--gold-soft);flex-shrink:0}
-.nh-cat-ic .msr{font-size:26px;color:inherit}
+.nh-cat-ic .msr{font-size:22px;color:inherit}
 .nh-cat.c-money .nh-cat-ic .msr{color:#a9821f}
 .nh-cat.c-love .nh-cat-ic .msr{color:#c0577a}
 .nh-cat.c-work .nh-cat-ic .msr{color:#3f74ac}
 .nh-cat.c-health .nh-cat-ic .msr{color:#2f9070}
 .nh-cat.c-study .nh-cat-ic .msr{color:#7a5aa8}
 .nh-cat.c-kankei .nh-cat-ic .msr{color:#b8722e}
+.nh-cat.c-money .nh-cat-ic{background:radial-gradient(circle at 32% 28%,#f9edc8,#f0dca0)}
+.nh-cat.c-love .nh-cat-ic{background:radial-gradient(circle at 32% 28%,#fbe1e6,#f4c7d1)}
+.nh-cat.c-work .nh-cat-ic{background:radial-gradient(circle at 32% 28%,#e6eefa,#cfe0f5)}
+.nh-cat.c-health .nh-cat-ic{background:radial-gradient(circle at 32% 28%,#e2f4e8,#c8e9d5)}
+.nh-cat.c-study .nh-cat-ic{background:radial-gradient(circle at 32% 28%,#efe4f8,#e0cdf0)}
+.nh-cat.c-kankei .nh-cat-ic{background:radial-gradient(circle at 32% 28%,#f8e7d5,#f0d3b4)}
 .chip-ic.msr{font-size:15px}
 .nhw-cal .msr{font-size:17px;color:#f1e6cd}
 .nh-ptitle .msr{font-size:16px;color:var(--gold-soft)}
@@ -1132,8 +1161,10 @@
 .lt-scroll::-webkit-scrollbar{height:7px}
 .lt-scroll::-webkit-scrollbar-thumb{background:#dcd0b3;border-radius:7px}
 .lt-hint{font-size:11px;color:var(--text3,#9a8e76);text-align:center;margin:4px 0 2px}
-.lt-legend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:10.5px;color:var(--text2,#6e634f);margin:8px 2px 2px}
-.lt-legend span{display:inline-flex;align-items:center;gap:3px}
+.lt-legend{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:10.5px;color:var(--text2,#6e634f);margin:8px 2px 2px}
+.lt-legend span{display:inline-flex;align-items:center;gap:5px}
+.lt-badge{width:18px;height:18px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.lt-badge .msr{font-size:12px;color:#fff}
 .lt-dot{width:9px;height:9px;border-radius:3px;display:inline-block}
 .lt-detail{font-size:12.5px;color:var(--text,#2b2620);background:#fbf6ea;border:1px solid var(--line);border-radius:12px;padding:12px 12px;margin-top:8px;min-height:38px}
 .lt-detail b{font-family:"Shippori Mincho B1",serif}
@@ -1142,8 +1173,30 @@
 .lt-t3-when{flex-shrink:0;text-align:center;min-width:54px}
 .lt-t3-when .yr{font-family:"Shippori Mincho B1",serif;font-weight:800;font-size:16px;color:var(--gold,#a9821f)}
 .lt-t3-when .ag{font-size:10px;color:var(--text2,#6e634f)}
-.lt-t3-icons{font-size:14px;letter-spacing:2px}
-.lt-t3-why{font-size:11.5px;color:var(--text2,#6e634f);margin-top:1px}
+.lt-t3-icons{font-size:15px;display:flex;gap:6px}
+.lt-labels span.msr{font-size:15px}
+.lt-t3-why{font-size:11.5px;color:var(--text2,#6e634f);margin-top:1px}/* ============ マイクロインタラクション：押下フィードバック（優先度確保のため末尾に配置） ============ */
+.btn,.rtab,.seg-b,.stg-seg-b,.notif-seg,.notif-chip,.nav-item,.geo-chip,.pc-act-btn,
+.stg-plain-row,.stg-sum,.help-sum,.nh-cat,.profile-card .pc-top,.mbti-prompt,
+.cd-act,.diary-cell,.diary-nav,.stg-back-btn,.help-back,.act-btn,.la-chip,
+.cd-back,.check-row,.geo-cur,.geo-item,.notif-row,.ob-x,.pc-icon-btn,.pc-memo-empty,
+.rank-row,.stg-switch-btn,.cd-ico,.nhw-hist,.scan-d,.kt,
+.c-dei,.c-gate,.c-gnd,.c-star,.c-ten{
+  transition:transform .15s cubic-bezier(.34,1.56,.64,1),background-color .2s ease,color .2s ease,border-color .2s ease,box-shadow .2s ease!important;
+  -webkit-tap-highlight-color:transparent;
+}
+.btn:active,.rtab:active,.seg-b:active,.stg-seg-b:active,.notif-seg:active,.notif-chip:active,
+.nav-item:active,.geo-chip:active,.pc-act-btn:active,.stg-plain-row:active,.stg-sum:active,
+.help-sum:active,.nh-cat:active,.profile-card .pc-top:active,.mbti-prompt:active,
+.cd-act:active,.diary-cell:active,.act-btn:active,.la-chip:active,
+.cd-back:active,.check-row:active,.geo-cur:active,.geo-item:active,.notif-row:active,
+.ob-x:active,.pc-icon-btn:active,.pc-memo-empty:active,.rank-row:active,.stg-switch-btn:active,
+.cd-ico:active,.nhw-hist:active,.scan-d:active,.kt:active,
+.c-dei:active,.c-gate:active,.c-gnd:active,.c-star:active,.c-ten:active{
+  transform:scale(.95);
+}
+.notif-sw:active .notif-sl{transform:scale(.85)}
+.notif-item.notif-on .notif-sw:active .notif-sl{transform:translateX(18px) scale(.85)}
 </style>
 </head>
 <body>
@@ -2088,10 +2141,10 @@ function ltRender(cd){
   s+='</svg>';
   // 固定ラベル
   var labs='<span class="lt-tlab" style="top:'+((LT.AY0+LT.AY1)/2)+'px">総合<br>転機度</span>';
-  LT_CATS.forEach(function(cat,ci){var py=LT.LY0+ci*LT.LH+(LT.LH-3)/2;labs+='<span style="top:'+py+'px" class="msr">'+cat.icon+'</span>';});
+  LT_CATS.forEach(function(cat,ci){var py=LT.LY0+ci*LT.LH+(LT.LH-3)/2;labs+='<span style="top:'+py+'px;color:'+cat.color+'" class="msr">'+cat.icon+'</span>';});
   var clab=document.getElementById('lt-labels');clab.innerHTML=labs;clab.style.height=H+'px';
   document.getElementById('lt-chart').innerHTML=s;
-  document.getElementById('lt-legend').innerHTML=LT_CATS.map(function(c){return '<span><span class="lt-dot" style="background:'+c.color+'"></span><span class="msr">'+c.icon+'</span> '+c.label+'</span>';}).join('');
+  document.getElementById('lt-legend').innerHTML=LT_CATS.map(function(c){return '<span><span class="lt-badge" style="background:'+c.color+'"><span class="msr">'+c.icon+'</span></span>'+c.label+'</span>';}).join('');
   var svgEl=document.querySelector('#lt-chart svg');
   function onTap(ev){var t=ev.target,age=t&&t.getAttribute&&t.getAttribute('data-age');if(age)ltShowDetail(parseInt(age,10));}
   svgEl.addEventListener('click',onTap);
@@ -2101,7 +2154,7 @@ function ltRender(cd){
   fut.sort(function(a,b){return b.total-a.total;});
   var top=fut.slice(0,3).sort(function(a,b){return a.year-b.year;});
   document.getElementById('lt-top3').innerHTML=top.map(function(r){
-    var ics=LT_CATS.filter(function(c){return r[c.key]>=0.5;}).map(function(c){return '<span class="msr">'+c.icon+'</span>';}).join('');
+    var ics=LT_CATS.filter(function(c){return r[c.key]>=0.5;}).map(function(c){return '<span class="msr" style="color:'+c.color+'">'+c.icon+'</span>';}).join('');
     var whys=[];LT_CATS.forEach(function(c){if(r[c.key]>=0.5&&r.why[c.key][0])whys.push(r.why[c.key][0]);});
     return '<div class="lt-t3-row"><div class="lt-t3-when"><div class="yr">'+r.year+'</div><div class="ag">'+r.age+'歳・'+r.gz+'</div></div><div><div class="lt-t3-icons">'+(ics||'—')+'</div><div class="lt-t3-why">'+(whys.slice(0,2).join(' ／ ')||'穏やかな年')+'</div></div></div>';
   }).join('');
@@ -4010,11 +4063,10 @@ function renderCatDetail(key){
   var scan=catHourScan(cd,key),tm=dayTimingCompute(cd.now);
   var bestWin=KOKU_RANGE[scan.bestIdx],worstWin=KOKU_RANGE[scan.worstIdx];
   var best=cd.dirs.best,worst=cd.dirs.worst,money=cd.wealthDirs[0]||'—';
-  var fav=(APP._catFav&&APP._catFav[key])?'★':'☆';
   var el=document.getElementById('screen-catdetail');
   var h='<div class="catdetail '+C.cls+'">';
   /* header */
-  h+='<div class="cd-top"><button class="cd-back" onclick="go(\'home\')">‹</button><div class="cd-title">'+C.label+'</div><div class="cd-acts"><button class="cd-ico" onclick="toggleCatFav(\''+key+'\')">'+fav+'</button><button class="cd-ico" onclick="shareReading()">⤴</button></div></div>';
+  h+='<div class="cd-top"><button class="cd-back" onclick="go(\'home\')">‹</button><div class="cd-title">'+C.label+'</div></div>';
   /* 1. 総評（大） */
   h+='<div class="cd-hero feat"><div class="cd-ring">'+catRing(sc,C)+'<div class="cd-ring-in"><div class="cd-ring-cap">今日の'+C.label+'</div><div class="cd-ring-num">'+sc+'</div><div class="cd-ring-den">/100点</div></div></div><div class="cd-hero-r"><div class="cd-head">'+C.head[tier]+'</div><div class="cd-desc">'+C.desc[tier]+'</div></div></div>';
     /* 5. ラッキーカラー・アイテム（使い方つき） */
@@ -4038,12 +4090,16 @@ function renderCatDetail(key){
   h+='</div>';
   el.innerHTML=h;
 }
-function openCat(key){
-  var cur=document.querySelector('.screen.active');if(cur)APP.scrollPos[cur.id]=window.scrollY;
-  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
-  var hd=document.querySelector('.header');if(hd)hd.style.display='none';
-  document.getElementById('screen-catdetail').classList.add('active');
-  renderCatDetail(key);window.scrollTo(0,0);
+function openCat(key,ev){
+  var card=ev&&ev.currentTarget;
+  function go2(){
+    var cur=document.querySelector('.screen.active');if(cur)APP.scrollPos[cur.id]=window.scrollY;
+    document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+    var hd=document.querySelector('.header');if(hd)hd.style.display='none';
+    document.getElementById('screen-catdetail').classList.add('active');
+    renderCatDetail(key);window.scrollTo(0,0);
+  }
+  if(card){card.classList.add('nh-cat-pressed');setTimeout(go2,110);}else{go2();}
 }
 function toggleCatFav(key){APP._catFav=APP._catFav||{};APP._catFav[key]=!APP._catFav[key];renderCatDetail(key);}
 window.openCat=openCat;window.toggleCatFav=toggleCatFav;
@@ -4125,7 +4181,7 @@ renderHome=function(){
   html+=nhTopSky(cd,score,overall,tone[0],tone[1],pA,dl);
   html+=onboardBanner();
 
-  html+='<div class="nh-cats">'+keys.map(function(k){var m=CATMETA[k],st=prof[k],sv=catScore(cd,k);return '<div class="nh-cat '+m[0]+'" onclick="openCat(\''+k+'\')"><div class="nh-cat-ic"><span class="msr">'+m[1]+'</span></div><div class="nh-cat-name">'+m[2]+'</div><div class="nh-cat-stars">'+nhStarRow(st.stars)+'<span class="nh-cat-score">'+sv+'</span></div><div class="nh-cat-go">›</div></div>';}).join('')+'</div>';
+  html+='<div class="nh-cats">'+keys.map(function(k){var m=CATMETA[k],st=prof[k],sv=catScore(cd,k);return '<div class="nh-cat '+m[0]+'" onclick="openCat(\''+k+'\',event)"><div class="nh-cat-ic"><span class="msr">'+m[1]+'</span></div><div class="nh-cat-name">'+m[2]+'</div><div class="nh-cat-stars">'+nhStarRow(st.stars)+'<span class="nh-cat-score">'+sv+'</span></div></div>';}).join('')+'</div>';
   html+='<div class="nh-panel"><div class="nh-ptitle"><span class="msr">explore</span> 今日の最強方位</div><div class="nh-dirwrap"><div class="nh-compass">'+nhCompass(cd)+'</div><div class="nh-dirinfo"><div class="nh-dirbig"><b>'+(best?best.dir:'—')+'</b><span>が吉</span></div><div class="nh-dirdesc">'+(best?'運気を後押ししてくれる方位です。':'本日は際立った吉方位はありません。')+'</div><div class="nh-dirtag gold"><span class="msr">wb_sunny</span> 金運アップ方位</div><div class="nh-dirval">'+(cd.wealthDirs[0]||'—')+'<span class="s">（'+cd.wealthEl+'の気）</span></div><div class="nh-dirtag red"><span class="msr">warning</span> 避けたい方位</div><div class="nh-dirval">'+(worst?worst.dir:'—')+'<span class="s">運気ダウン</span></div></div></div></div>';
   html+='<div class="nh-panel nh-ng"><div class="nh-ptitle"><span class="msr">warning</span> 今日のNG方位・注意時間帯</div><div class="nh-ngrow"><div class="nh-nglab"><span class="msr">explore</span> 避けたい方位</div><div class="nh-ngval">'+(worst?worst.dir:'—')+'</div><div class="nh-ngsub">この方位は運気ダウン</div></div><div class="nh-ngrow"><div class="nh-nglab"><span class="msr">schedule</span> 注意時間帯</div><div class="nh-ngval" id="home-ng-time"><span style="font-size:12px;color:var(--text3)">計算中…</span></div><div class="nh-ngsub">重要な決断・契約は控えめに</div></div></div>';
   html+='<div class="nh-section"><span class="msr">card_giftcard</span> 今日のラッキーアイテム</div><div class="nh-panel"><div class="nh-lucky">'
@@ -4170,6 +4226,7 @@ window.switchTrip=switchTrip;window.addPresetPlace=addPresetPlace;window.setHome
 window.setAishoA=setAishoA;window.setAishoB=setAishoB;window.setAishoRel=setAishoRel;window.setTripMode=setTripMode;window.setDestSearch=setDestSearch;window.setDestPeriod=setDestPeriod;window.setDestPurpose=setDestPurpose;window.setDestView=setDestView;window.setDestFilter=setDestFilter;window.setDestCustom=setDestCustom;window.kimonFromTrip=kimonFromTrip;window.setLuckProfile=setLuckProfile;window.setLuckPeriod=setLuckPeriod;window.setLuckView=setLuckView;window.setLuckAction=setLuckAction;window.showLuckDetail=showLuckDetail;window.closeLuckDetail=closeLuckDetail;window.toggleGroupMember=toggleGroupMember;window.setGroupDest=setGroupDest;window.setGroupPeriod=setGroupPeriod;window.setGroupView=setGroupView;window.setDestBase=setDestBase;window.setGroupBase=setGroupBase;window.setGroupMemberMode=setGroupMemberMode;window.setMemberBase=setMemberBase;window.setDestTrip=setDestTrip;window.setDestNights=setDestNights;window.setDestNightsMax=setDestNightsMax;window.showRoundDetail=showRoundDetail;window.closeRoundDetail=closeRoundDetail;window.showGroupDetail=showGroupDetail;window.closeGroupDetail=closeGroupDetail;window.setGroupTrip=setGroupTrip;window.setGroupNights=setGroupNights;window.setGroupNightsMax=setGroupNightsMax;window.showGroupRoundDetail=showGroupRoundDetail;window.closeGroupRoundDetail=closeGroupRoundDetail;
 
 /* ============ 初期化 ============ */
+document.addEventListener('touchstart',function(){},{passive:true}); /* iOS Safariで:activeを確実に発火させるため */
 if(!restore()){
   Store.add({name:'自分（サンプル）',birthDate:'1990-05-15',birthTime:'10:30',sex:'M',coords:'35.6895, 139.6917',memo:'サンプルの命式です。設定からあなたの情報に編集できます。'});
   Store.setActive('p1');
