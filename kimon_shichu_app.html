@@ -20,6 +20,7 @@
     --r:14px; --r-sm:10px;
   }
   *{box-sizing:border-box;margin:0;padding:0}
+  html{scrollbar-gutter:stable}
   body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;
     background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
   .app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--bg);padding-bottom:68px;position:relative}
@@ -540,7 +541,7 @@
     .reading-card,.topic,.nh-cat,.help-card,.stg-list-card{animation:none!important}
     .nav-item.active .ni-icon{animation:none!important}
   }
-  .rtab.active,.seg-b.on,.tab.active{animation:tabIndicatorIn .22s ease}
+  .rtab.active,.tab.active{animation:tabIndicatorIn .22s ease}
   .reading-card,.topic,.help-card,.stg-list-card{animation:cardIn .32s cubic-bezier(.22,.61,.36,1) both}
   .reading-card:nth-of-type(1),.topic:nth-of-type(1){animation-delay:0s}
   .reading-card:nth-of-type(2),.topic:nth-of-type(2){animation-delay:.04s}
