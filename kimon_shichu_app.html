@@ -71,6 +71,12 @@
   body.theme-hikari-dark .nhcp-warn{fill:#5c342e}
   body.theme-hikari-dark .nhcp-neutral{fill:#221e38}
   body.theme-hikari-dark .nhcp-best-lab{fill:#6fd9a8}
+  body.theme-hikari-dark .cat-money{--tint:#2a2210}
+  body.theme-hikari-dark .cat-love{--tint:#2a1620}
+  body.theme-hikari-dark .cat-work{--tint:#131f30;--cat:#417bb9}
+  body.theme-hikari-dark .cat-health{--tint:#0f261b}
+  body.theme-hikari-dark .cat-study{--tint:#201432;--cat:#9169ac}
+  body.theme-hikari-dark .cat-kankei{--tint:#2a1c10}
   body.theme-hikari-dark .nh-topsky{background:radial-gradient(120% 70% at 80% 0%,rgba(90,70,150,.35),transparent 50%),linear-gradient(180deg,#0a0c22 0%,#0b0e24 52%,#0e0f26 62%,#0d0d20 72%,#0a0916 82%,#08070f 90%,#08080f 96%,var(--bg) 100%)}
   *{box-sizing:border-box;margin:0;padding:0}
   html{scrollbar-gutter:stable}
@@ -4104,7 +4110,7 @@ CAT.kankei={label:'人間関係運',cls:'cat-kankei',cat:'#c2683d',track:'#f0d6c
   advice:{hi:'今日は縁が動く日。あなたからの一声が、関係を一段深めます。',mid:'丁寧さが信頼を育てます。小さな気遣いを大切に。',lo:'今日は守りの対人運。受け止め役に回ると角が立ちません。'}};
 function catRing(score,C){
   var R=46,Cc=2*Math.PI*R,off=Cc*(1-score/100);
-  return '<svg viewBox="0 0 110 110"><circle cx="55" cy="55" r="'+R+'" fill="none" stroke="'+C.track+'" stroke-width="7"/>'
+  return '<svg viewBox="0 0 110 110"><circle cx="55" cy="55" r="'+R+'" fill="none" stroke="var(--line2)" stroke-width="7"/>'
     +'<circle cx="55" cy="55" r="'+R+'" fill="none" stroke="'+C.ring+'" stroke-width="7" stroke-linecap="round" stroke-dasharray="'+Cc.toFixed(1)+'" stroke-dashoffset="'+off.toFixed(1)+'" transform="rotate(-90 55 55)"/></svg>';
 }
 function catHourScan(cd,key){
