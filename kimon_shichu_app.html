@@ -19,6 +19,28 @@
     --amber:#9a7a1e; --amber-bg:rgba(169,130,31,.13); --purple:#8a5fa6;
     --r:14px; --r-sm:10px;
   }
+  /* ====== テーマカラー：HIKARI（パープル） ====== */
+  body.theme-hikari{
+    --bg:#f0eeff; --surface:#ffffff; --surface2:#f5f3ff; --line:#ddd6fe; --line2:#c4b5fd;
+    --text:#2a1a5e; --text2:#5040c8; --text3:#6a5bd0; --paper:#2a1a5e;
+    --gold:#6c5ce7; --gold-soft:#5040c8; --gold-dim:#4a3a9e; --shu:#a93892;
+    --green:#2f9070; --green-d:#2c7a5d; --green-bg:rgba(47,144,112,.12); --green-line:rgba(47,144,112,.40);
+    --blue:#3f74ac; --blue-d:#2f5f95; --blue-bg:rgba(63,116,172,.12); --blue-line:rgba(63,116,172,.40);
+    --red:#c0432f; --red-d:#a93824; --red-bg:rgba(192,67,47,.10); --red-line:rgba(192,67,47,.38);
+    --amber:#9a7a1e; --amber-bg:rgba(169,130,31,.13); --purple:#8a5fa6;
+  }
+  /* ====== テーマカラー：HIKARI（ダーク） ====== */
+  body.theme-hikari-dark{
+    --bg:#08080f; --surface:#15151f; --surface2:#1c1c2a; --line:#26263a; --line2:#34344a;
+    --text:#d0cce8; --text2:#a89fd4; --text3:#8a7fc0; --paper:#d0cce8;
+    --gold:#6c5ce7; --gold-soft:#c9b8ff; --gold-dim:#9683d9; --shu:#e08fd6;
+    --green:#3fae8a; --green-d:#2f9070; --green-bg:rgba(47,144,112,.18); --green-line:rgba(47,144,112,.45);
+    --blue:#437bb6; --blue-d:#5a92cf; --blue-bg:rgba(67,123,182,.18); --blue-line:rgba(67,123,182,.45);
+    --red:#ce4d38; --red-d:#e0715f; --red-bg:rgba(206,77,56,.16); --red-line:rgba(206,77,56,.42);
+    --amber:#c9a53a; --amber-bg:rgba(169,130,31,.20); --purple:#a98bd0;
+  }
+  body.theme-hikari-dark{background:var(--bg);color:var(--text)}
+  body.theme-hikari-dark .app{background:var(--bg)}
   *{box-sizing:border-box;margin:0;padding:0}
   html{scrollbar-gutter:stable}
   body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;
@@ -1005,6 +1027,15 @@
 .stg-sec-title{font-size:14px;font-weight:700;color:var(--gold-soft)}
 .stg-sec-sub{font-size:11px;color:var(--text3);margin-top:1px;line-height:1.4}
 .stg-list-card{background:var(--surface);border:0.5px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.theme-swatches{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.theme-sw-name{font-size:11px;font-weight:600;color:var(--text);line-height:1.35}
+.theme-prev-hikari-dark{background:linear-gradient(135deg,#1c1c2a 0%,#15151f 40%,#08080f 70%,#6c5ce7 100%)}
+.theme-sw{border:1.5px solid var(--line2);border-radius:14px;padding:12px;text-align:center;cursor:pointer;position:relative;transition:border-color .2s ease}
+.theme-sw.on{border-color:var(--gold-soft);border-width:2px}
+.theme-sw-preview{width:100%;height:56px;border-radius:10px;margin-bottom:8px}
+.theme-prev-wa{background:linear-gradient(135deg,#fffdf8 0%,#f4eee1 40%,#e0d6bf 70%,#a9821f 100%)}
+.theme-prev-hikari{background:linear-gradient(135deg,#ffffff 0%,#f0eeff 40%,#c4b5fd 70%,#6c5ce7 100%)}
+.theme-sw-check{position:absolute;top:8px;right:8px;font-size:18px;color:var(--gold-soft);background:var(--surface);border-radius:50%}
 .stg-det{overflow:hidden}
 .stg-det+.stg-det,.stg-plain-row+.stg-det,.stg-det+.stg-plain-row,.stg-plain-row+.stg-plain-row{border-top:0.5px solid var(--line)}
 .stg-sum{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:12px 16px;-webkit-tap-highlight-color:rgba(0,0,0,.04)}
@@ -1398,7 +1429,7 @@ var Store={
   update:function(id,data){this.profiles.forEach(function(p){if(p.id===id){p.name=data.name;p.birthDate=data.birthDate;p.birthTime=data.birthTime;p.sex=data.sex;if(data.coords!==undefined)p.coords=data.coords;if(data.mbti!==undefined)p.mbti=data.mbti;if(data.memo!==undefined)p.memo=data.memo;}});persist();}
 };
 
-var APP={chartData:null,ritsuunMode:'round',built:{home:false,meishiki:false,unsei:false,kimon:false,trip:false,aisho:false},
+var APP={chartData:null,ritsuunMode:'round',theme:'wa',built:{home:false,meishiki:false,unsei:false,kimon:false,trip:false,aisho:false},
   kimonTab:'shi',kimonDateStr:'',kimonTimeStr:'',_kimonScan:null,baseId:'home',destId:'',tripOut:'',tripRet:'',tripTab:'ri',tripMode:'check',destSearchId:'',destBase:'home',destTrip:'one',destNights:1,destNightsMax:1,destPeriod:'1m',destPurpose:'all',destView:'list',destFilter:'all',destStart:'',destEnd:'',_destCache:null,luckProfile:'money',luckPeriod:'1m',luckView:'cal',luckAction:'宝くじ・くじ運',groupMembers:[],groupDest:'',groupBase:'home',groupMemberMode:'same',groupMemberBase:{},groupTrip:'one',groupNights:1,groupNightsMax:1,groupPeriod:'1m',groupView:'list',aishoA:'',aishoB:'',aishoRel:'renai',homeCoords:'',readingTab:'seikaku',openMonth:-1,diaryMonth:0,diaryPick:null,googleKey:'',_geo:{results:{},timers:{}},scrollPos:{},
   formNoTime:false,heading:0,sensorOn:false,
   viewMode:'list',pendingDelete:null,editingMemo:null,editingProfile:null,
@@ -1415,8 +1446,9 @@ var APP={chartData:null,ritsuunMode:'round',built:{home:false,meishiki:false,uns
 
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function initials(name){return name?name.slice(0,2):'？';}
-function persist(){try{localStorage.setItem('kimon_app_data',JSON.stringify({v:1,profiles:Store.profiles,activeId:Store.activeId,pseq:Store._seq,places:Places.list,plseq:Places._seq,homeCoords:APP.homeCoords,ritsuunMode:APP.ritsuunMode,googleKey:APP.googleKey,notif:APP.notif}));}catch(e){}}
-function restore(){try{var d=JSON.parse(localStorage.getItem('kimon_app_data')||'null');if(!d)return false;if(d.profiles&&d.profiles.length){Store.profiles=d.profiles;Store.activeId=d.activeId||d.profiles[0].id;Store._seq=d.pseq||(d.profiles.length+1);}if(d.places){Places.list=d.places;Places._seq=d.plseq||(d.places.length+1);}if(typeof d.homeCoords==='string')APP.homeCoords=d.homeCoords;if(d.ritsuunMode)APP.ritsuunMode=d.ritsuunMode;if(typeof d.googleKey==='string')APP.googleKey=d.googleKey;if(d.notif){var dn=d.notif,an=APP.notif;Object.keys(an).forEach(function(k){if(dn[k])Object.assign(an[k],dn[k]);});}return true;}catch(e){return false;}}
+function persist(){try{localStorage.setItem('kimon_app_data',JSON.stringify({v:1,profiles:Store.profiles,activeId:Store.activeId,pseq:Store._seq,places:Places.list,plseq:Places._seq,homeCoords:APP.homeCoords,ritsuunMode:APP.ritsuunMode,googleKey:APP.googleKey,notif:APP.notif,theme:APP.theme}));}catch(e){}}
+function restore(){try{var d=JSON.parse(localStorage.getItem('kimon_app_data')||'null');if(!d)return false;if(d.profiles&&d.profiles.length){Store.profiles=d.profiles;Store.activeId=d.activeId||d.profiles[0].id;Store._seq=d.pseq||(d.profiles.length+1);}if(d.places){Places.list=d.places;Places._seq=d.plseq||(d.places.length+1);}if(typeof d.homeCoords==='string')APP.homeCoords=d.homeCoords;if(d.ritsuunMode)APP.ritsuunMode=d.ritsuunMode;if(typeof d.googleKey==='string')APP.googleKey=d.googleKey;if(d.notif){var dn=d.notif,an=APP.notif;Object.keys(an).forEach(function(k){if(dn[k])Object.assign(an[k],dn[k]);});}if(d.theme)APP.theme=d.theme;return true;}catch(e){return false;}}
+function setTheme(t){APP.theme=t;document.body.classList.remove('theme-hikari','theme-hikari-dark');if(t==='hikari')document.body.classList.add('theme-hikari');else if(t==='hikari-dark')document.body.classList.add('theme-hikari-dark');persist();renderSettings();}
 
 function rebuildChart(){
   var p=Store.getActive();
@@ -3665,6 +3697,17 @@ function renderSettings(){
   html+=stgSecHead('gold','notifications','通知設定','Androidアプリ公開時に有効化されます');
   html+='<div class="stg-list-card">'+renderNotifSection()+'</div>';
 
+  /* ── ⑤.5 テーマカラー ── */
+  html+=stgSecHead('gold','palette','テーマカラー','アプリ全体の配色を選べます');
+  html+='<div class="stg-list-card"><div style="padding:16px">';
+  html+='<div class="theme-swatches">';
+  html+='<div class="theme-sw'+(APP.theme==='wa'||!APP.theme?' on':'')+'" onclick="setTheme(\'wa\')"><div class="theme-sw-preview theme-prev-wa"></div><div class="theme-sw-name">和<br>ゴールド</div>'+((APP.theme==='wa'||!APP.theme)?'<span class="msr theme-sw-check">check_circle</span>':'')+'</div>';
+  html+='<div class="theme-sw'+(APP.theme==='hikari'?' on':'')+'" onclick="setTheme(\'hikari\')"><div class="theme-sw-preview theme-prev-hikari"></div><div class="theme-sw-name">HIKARI<br>パープル</div>'+(APP.theme==='hikari'?'<span class="msr theme-sw-check">check_circle</span>':'')+'</div>';
+  html+='<div class="theme-sw'+(APP.theme==='hikari-dark'?' on':'')+'" onclick="setTheme(\'hikari-dark\')"><div class="theme-sw-preview theme-prev-hikari-dark"></div><div class="theme-sw-name">HIKARI<br>ダーク</div>'+(APP.theme==='hikari-dark'?'<span class="msr theme-sw-check">check_circle</span>':'')+'</div>';
+  html+='</div>';
+  html+='<div class="stg-hint" style="margin-top:12px">HIKARIテーマは <b>hikapero.github.io/HIKARI</b> の配色（ライト／ダーク）を再現したものです。夜空の演出（ホーム画面のヒーロー部分）は現在どのテーマでも同じ配色です。</div>';
+  html+='</div></div>';
+
   /* ── ⑥ 詳細設定 ── */
   html+=stgSecHead('gray','tune','詳細設定','計算方法や検索エンジンの細かい設定');
   html+='<div class="stg-list-card">';
@@ -4214,7 +4257,7 @@ window.switchKimon=switchKimon;window.setKimonDate=setKimonDate;window.setKimonT
 window.showAdd=showAdd;window.cancelAdd=cancelAdd;window.toggleFormNoTime=toggleFormNoTime;
 window.saveProfile=saveProfile;window.selectProfile=selectProfile;window.askDelete=askDelete;
 window.cancelDelete=cancelDelete;window.confirmDelete=confirmDelete;window.editMemo=editMemo;
-window.cancelMemo=cancelMemo;window.saveMemo=saveMemo;window.setRitsuun=setRitsuun;
+window.cancelMemo=cancelMemo;window.saveMemo=saveMemo;window.setRitsuun=setRitsuun;window.setTheme=setTheme;
 window.saveBirthCoords=saveBirthCoords;
 window.showEdit=showEdit;window.dismissOnboard=dismissOnboard;
 window.shareReading=shareReading;window.printReading=printReading;window.showGlossary=showGlossary;window.closeGlossary=closeGlossary;
@@ -4233,6 +4276,9 @@ if(!restore()){
   Store.add({name:'自分（サンプル）',birthDate:'1990-05-15',birthTime:'10:30',sex:'M',coords:'35.6895, 139.6917',memo:'サンプルの命式です。設定からあなたの情報に編集できます。'});
   Store.setActive('p1');
 }
+document.body.classList.remove('theme-hikari','theme-hikari-dark');
+if(APP.theme==='hikari')document.body.classList.add('theme-hikari');
+else if(APP.theme==='hikari-dark')document.body.classList.add('theme-hikari-dark');
 try{if(!APP.googleKey)APP.googleKey=localStorage.getItem('kimon_gkey')||'';}catch(e){}
 rebuildChart();
 renderHome();APP.built.home=true;
