@@ -1394,7 +1394,7 @@ var DEITIES=['値符','螣蛇','太陰','六合','白虎','玄武','九地','九
 var GND_STEM_BY_PAL={1:4,2:5,3:6,4:7,5:8,6:9,7:3,8:2,9:1};
 var SL={'天蓬':1,'天芮':-1,'天冲':1,'天輔':1,'天禽':0,'天心':1,'天柱':-1,'天任':1,'天英':0};
 var GL={'休門':1,'死門':-1,'傷門':-1,'杜門':0,'中':0,'開門':1,'驚門':-1,'生門':1,'景門':0};
-var DL={'値符':1,'螣蛇':-1,'太陰':1,'六合':1,'白虎':-1,'玄武':-1,'九地':1,'九天':1,'勾陳':-1};
+var DL={'値符':1,'螣蛇':-1,'太陰':1,'六合':1,'白虎':-1,'玄武':-1,'九地':1,'九天':1,'勾陳':-1,'朱雀':-1};
 var YANG_JU=[[1,7,4],[2,8,5],[3,9,6],[8,5,2],[9,6,3],[1,7,4],[3,9,6],[4,1,7],[5,2,8],[4,1,7],[5,2,8],[6,3,9]];
 var YIN_JU=[[9,3,6],[8,2,5],[7,1,4],[2,5,8],[1,4,7],[9,3,6],[7,1,4],[6,9,3],[5,8,2],[6,9,3],[5,8,2],[4,7,1]];
 var YANG_JQ=['冬至','小寒','大寒','立春','雨水','啓蟄','春分','清明','穀雨','立夏','小満','芒種'];
@@ -1434,31 +1434,77 @@ function tsuhensei(dSt,tSt){var de=GOGYO[dSt],te=GOGYO[tSt],sp=YYS[dSt]===YYS[tS
 function getSM(d){var T2=[[1,20],[2,18],[3,20],[4,19],[5,21],[6,21],[7,23],[8,23],[9,23],[10,23],[11,22],[12,22]];return d.getDate()>=T2[d.getMonth()][1]?d.getMonth()+1:d.getMonth();}
 function roundRitsuun(val,mode){if(mode==='floor')return Math.max(0,Math.floor(val));if(mode==='ceil')return Math.max(0,Math.ceil(val));return Math.max(0,Math.round(val));}
 /* ============ 盤生成・格局・大運・chartData ============ */
+/* ====== 正統・奇門遁甲エンジン（転盤式・拆補法） ====== */
+var RING_PALS=[1,8,3,4,9,2,7,6];
+var STAR_BY_PAL={1:'天蓬',2:'天芮',3:'天冲',4:'天輔',5:'天禽',6:'天心',7:'天柱',8:'天任',9:'天英'};
+var GATE_BY_PAL={1:'休門',2:'死門',3:'傷門',4:'杜門',6:'開門',7:'驚門',8:'生門',9:'景門'};
+var GATE_RING=['休門','生門','傷門','杜門','景門','死門','驚門','開門'];
+var DEI8_YANG=['値符','螣蛇','太陰','六合','勾陳','朱雀','九地','九天'];
+var DEI8_YIN=['値符','螣蛇','太陰','六合','白虎','玄武','九地','九天'];
+var GI_SEQ=[4,5,6,7,8,9,3,2,1];/* 戊己庚辛壬癸丁丙乙 */
+function pillarN60(t,b){var x=t;for(var i=0;i<6;i++){if(x%12===b)return x;x+=10;}return t;}
+function junshuOfPillar(t,b){var js=((b-t)%12+12)%12,jo=[0,10,8,6,4,2],jn=['甲子旬','甲戌旬','甲申旬','甲午旬','甲辰旬','甲寅旬'],gs=[4,5,6,7,8,9],i=jo.indexOf(js);return{junName:i>=0?jn[i]:'甲'+DZ[js]+'旬',junshuDZIdx:js,giStem:i>=0?gs[i]:4,ku1:(js+10)%12,ku2:(js+11)%12};}
+function groundPlate(ju,yang){var g={};for(var k=0;k<9;k++){var pal=yang?((ju-1+k)%9)+1:(((ju-1-k)%9+9)%9)+1;g[pal]=GI_SEQ[k];}return g;}
+function palOfStem(gp,st){for(var p=1;p<=9;p++)if(gp[p]===st)return p;return 5;}
+function boardPillar(date,tab){
+  if(tab==='ri')return dayGZi(date);
+  if(tab==='yue')return getMonthGZi(date);
+  if(tab==='nian'){var ey=effYear(date);return{t:yKanIdx(ey),b:yJiIdx(ey)};}
+  return timeGZi(date);
+}
 function buildBoard(date,tab){
-  var r=getJuNumber(date),ju=r.ju,yang=r.yang,off=yang?ju-1:(9-ju);
-  if(tab==='ri'){var e0=new Date(2020,0,22);off=((Math.floor((date-e0)/86400000)+ju-1)%9+9)%9;}
-  else if(tab==='yue')off=((getSM(date)+ju-1)%9+9)%9;
-  else if(tab==='nian')off=((date.getFullYear()-4)%9+9)%9;
-  else{var hh=Math.floor(((date.getHours()+1)%24)/2);off=((off+(yang?hh:(9-hh)%9))%9+9)%9;}
-  var ji=getJunshu(date),ku1=ji.ku1,ku2=ji.ku2,kuP1=DZ_TO_PAL[ku1],kuP2=DZ_TO_PAL[ku2],chu=yang?2:8;
-  var cells=PALACES.map(function(palNum,idx){
-    var ep=palNum===5?chu:palNum,sIdx,gIdx,dIdx;
-    if(yang){sIdx=((ep-1+off)%9+9)%9;gIdx=sIdx;dIdx=((ep-1+off+2)%9+9)%9;}
-    else{sIdx=((8-(ep-1)+off)%9+9)%9;gIdx=sIdx;dIdx=((8-(ep-1)+off+2)%9+9)%9;}
-    var star=STARS[sIdx],gateRaw=palNum===5?'（寄）':GATES[gIdx],deityRaw=palNum===5?'（寄）':DEITIES[dIdx];
-    var gsi=GND_STEM_BY_PAL[palNum],tsi=yang?((gsi+off)%9+9)%9:((gsi-off+90)%9+9)%9;
-    var luck=(SL[star]||0)+(GL[GATES[gIdx]]||0)+(DL[DEITIES[dIdx]]||0);
-    return{palNum:palNum,dir:DIR[idx],tri:TRI[idx],gogyo:PAL_GOGYO[palNum],star:star,gateRaw:gateRaw,deityRaw:deityRaw,gndStem:TG[gsi],tenStem:TG[tsi],luck:luck,idx:idx,isKu:palNum===kuP1||palNum===kuP2,isCtr:palNum===5};
+  tab=tab||'shi';
+  var P=boardPillar(date,tab);
+  var genP=(tab==='yue'||tab==='nian')?P:dayGZi(date);
+  var gen=Math.floor(pillarN60(genP.t,genP.b)/5)%3;/* 拆補法: 符頭（甲・己）による三元 */
+  var s=getSurrJQ(date),prev=s.prev;
+  var yang=prev?[270,285,300,315,330,345,0,15,30,45,60,75].indexOf(prev.lon)>=0:true;
+  var ju;
+  if(!prev)ju=yang?1:9;
+  else if(yang){var si=YANG_JQ.indexOf(prev.name);ju=si>=0?YANG_JU[si][gen]:1;}
+  else{var si2=YIN_JQ.indexOf(prev.name);ju=si2>=0?YIN_JU[si2][gen]:9;}
+  var gp=groundPlate(ju,yang);/* 地盤: 局数の宮から戊、陽順・陰逆に布局 */
+  var js=junshuOfPillar(P.t,P.b);
+  var giPal=palOfStem(gp,js.giStem);/* 旬首儀の地盤宮 */
+  var zfStar=STAR_BY_PAL[giPal];/* 値符星 */
+  var zsGateName=GATE_BY_PAL[giPal===5?2:giPal];/* 値使門（中宮は寄坤＝死門） */
+  var lead=P.t===0?js.giStem:P.t;/* 干（甲は旬首儀に置換） */
+  var target=palOfStem(gp,lead);if(target===5)target=2;/* 値符は干に随う（中宮は寄坤） */
+  var zfBase=giPal===5?2:giPal;
+  var shift=((RING_PALS.indexOf(target)-RING_PALS.indexOf(zfBase))%8+8)%8;
+  var hs={},hstem={},hstem2={};
+  RING_PALS.forEach(function(pal,i){
+    var srcPal=RING_PALS[((i-shift)%8+8)%8];
+    hs[pal]=STAR_BY_PAL[srcPal];hstem[pal]=gp[srcPal];
+    if(srcPal===2)hstem2[pal]=gp[5];/* 天禽・中宮干は天芮に同乗 */
   });
-  var zfPal=DZ_TO_PAL[ji.junshuDZIdx],zfCell=null;for(var i=0;i<cells.length;i++){if(cells[i].palNum===zfPal){zfCell=cells[i];break;}}
-  var board={cells:cells,junName:ji.junName,ku1:ku1,ku2:ku2,yang:yang,ju:ju,zfCell:zfCell,zsGate:zfCell?zfCell.gateRaw:'—'};
+  /* 値使は支に随う: 旬首からの歩数を陽順飛・陰逆飛（数字順・中宮含む） */
+  var steps=((P.b-js.junshuDZIdx)%12+12)%12;
+  var vsPal=giPal;for(var k2=0;k2<steps;k2++){vsPal=yang?(vsPal%9)+1:((vsPal-2+9)%9)+1;}
+  if(vsPal===5)vsPal=2;
+  var g0=GATE_RING.indexOf(zsGateName),r0=RING_PALS.indexOf(vsPal);
+  var gates={};for(var i2=0;i2<8;i2++)gates[RING_PALS[(r0+i2)%8]]=GATE_RING[(g0+i2)%8];
+  /* 八神: 値符宮から陽順・陰逆 */
+  var r1=RING_PALS.indexOf(target),deis={};
+  for(var i3=0;i3<8;i3++){var pal3=yang?RING_PALS[(r1+i3)%8]:RING_PALS[((r1-i3)%8+8)%8];deis[pal3]=(yang?DEI8_YANG:DEI8_YIN)[i3];}
+  var kuP1=DZ_TO_PAL[js.ku1],kuP2=DZ_TO_PAL[js.ku2];
+  var cells=PALACES.map(function(palNum,idx){
+    var ctr=palNum===5;
+    var star=ctr?'天禽':hs[palNum];
+    var gateRaw=ctr?'（寄）':gates[palNum];
+    var deityRaw=ctr?'（寄）':deis[palNum];
+    var luck=ctr?0:(SL[star]||0)+(GL[gateRaw]||0)+(DL[deityRaw]||0);
+    return{palNum:palNum,dir:DIR[idx],tri:TRI[idx],gogyo:PAL_GOGYO[palNum],star:star,gateRaw:gateRaw,deityRaw:deityRaw,gndStem:TG[gp[palNum]],tenStem:ctr?'':TG[hstem[palNum]],tenStem2:(!ctr&&hstem2[palNum]!=null)?TG[hstem2[palNum]]:'',luck:luck,idx:idx,isKu:palNum===kuP1||palNum===kuP2,isCtr:ctr};
+  });
+  var zfCell=null;for(var i4=0;i4<cells.length;i4++)if(cells[i4].palNum===target){zfCell=cells[i4];break;}
+  var board={cells:cells,junName:js.junName,ku1:js.ku1,ku2:js.ku2,yang:yang,ju:ju,gen:gen,zfCell:zfCell,zfStar:zfStar,zsGateName:zsGateName,zsGate:zfCell?zfCell.gateRaw:'—'};
   board.kakukyoku=judgeKK(board);return board;
 }
 var KK_DEFS=[
   {name:'青龍返首',type:'good',stars:5,trans:'営業・交渉・契約に大吉',check:function(b){return b.zfCell&&['開門','生門','休門'].indexOf(b.zfCell.gateRaw)>=0;}},
   {name:'飛鳥跌穴',type:'bad',stars:1,trans:'重要な決断・移動は控えめに',check:function(b){return b.zfCell&&['死門','驚門','傷門'].indexOf(b.zfCell.gateRaw)>=0;}},
   {name:'玉女守門',type:'good',stars:4,trans:'恋愛・内密の相談・根回しに吉',check:function(b){return b.zfCell&&b.zfCell.tenStem==='丁';}},
-  {name:'三奇得使',type:'good',stars:5,trans:'起業・企画・大勝負に最吉',check:function(b){var t=b.cells.map(function(c){return c.tenStem;});return['乙','丙','丁'].every(function(s){return t.indexOf(s)>=0;})&&['開門','生門','休門'].indexOf(b.zsGate)>=0;}}
+  {name:'三奇得使',type:'good',stars:5,trans:'起業・企画・大勝負に最吉',check:function(b){var t=[];b.cells.forEach(function(c){if(c.tenStem)t.push(c.tenStem);if(c.tenStem2)t.push(c.tenStem2);});return['乙','丙','丁'].every(function(s){return t.indexOf(s)>=0;})&&['開門','生門','休門'].indexOf(b.zsGate)>=0;}}
 ];
 function judgeKK(b){var res=[];KK_DEFS.forEach(function(d){try{if(d.check(b))res.push({name:d.name,type:d.type,stars:d.stars,trans:d.trans});}catch(e){}});res.sort(function(a,b2){if(a.type!==b2.type)return a.type==='good'?-1:1;return b2.stars-a.stars;});return res;}
 
@@ -2671,6 +2717,7 @@ var KIMON_TERMS={
  '九地':{k:'八神',d:'吉神。守り・安定・蓄積。地に足をつけた堅実な行動に良い。'},
  '九天':{k:'八神',d:'吉神。発展・遠出・飛躍。大きく動く・遠方の用事に良い。'},
  '勾陳':{k:'八神',d:'凶神。停滞・もつれ・不動産トラブル。手続きの遅れに注意。'},
+ '朱雀':{k:'八神',d:'凶神。口舌・文書トラブル・騒がしさ。言葉の行き違いに注意。'},
  '乾':{k:'八卦',d:'天・父・リーダーを象徴（北西）。剛健さと統率力。'},
  '兌':{k:'八卦',d:'沢・少女・喜びを象徴（西）。言葉・社交・楽しみ。'},
  '離':{k:'八卦',d:'火・中女・知性を象徴（南）。明るさ・名声・美。'},
@@ -3150,7 +3197,7 @@ function luckFactors(b){
   var ff=fanFuYin(b);
   if(ff.fuyin)f.push({id:'fuyin',label:'伏吟（停滞・物事が動きにくい）',sign:-1});
   if(ff.fanyin)f.push({id:'fanyin',label:'反吟（反転・変動が大きい）',sign:-1});
-  ['生門','開門'].forEach(function(g){var c=b.cells.filter(function(x){return x.gateRaw===g;})[0];if(c){if(['白虎','玄武','螣蛇','勾陳'].indexOf(c.deityRaw)>=0)f.push({id:'kyo_deity',label:c.deityRaw+'が'+g+'に同宮（凶神）',sign:-1});else if(['値符','六合','太陰','九天','九地'].indexOf(c.deityRaw)>=0)f.push({id:'kichi_deity',label:c.deityRaw+'が'+g+'に同宮（吉神）',sign:1});}});
+  ['生門','開門'].forEach(function(g){var c=b.cells.filter(function(x){return x.gateRaw===g;})[0];if(c){if(['白虎','玄武','螣蛇','勾陳','朱雀'].indexOf(c.deityRaw)>=0)f.push({id:'kyo_deity',label:c.deityRaw+'が'+g+'に同宮（凶神）',sign:-1});else if(['値符','六合','太陰','九天','九地'].indexOf(c.deityRaw)>=0)f.push({id:'kichi_deity',label:c.deityRaw+'が'+g+'に同宮（吉神）',sign:1});}});
   return f;
 }
 function luckScore(b,pk){
