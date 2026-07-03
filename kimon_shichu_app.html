@@ -166,6 +166,51 @@
   label{display:block;font-size:12px;color:var(--text2);margin-bottom:4px}
   input,select{width:100%;font-size:14px;padding:8px 12px;border:0.5px solid var(--line2);border-radius:var(--r-sm);background:var(--surface);color:var(--text);font-family:inherit}
   input:disabled{opacity:.45}
+  /* 日付・時刻入力のモバイル最適化: 48pxタップ領域 / 16pxでiOSの自動ズーム防止 / 見切れ防止 */
+  input[type=date],input[type=time],input[type=datetime-local]{
+    -webkit-appearance:none;appearance:none;
+    width:100%;min-width:0;max-width:100%;
+    min-height:48px;font-size:16px;line-height:1.2;
+    padding:10px 12px;
+    display:flex;align-items:center;
+  }
+  input[type=date]::-webkit-date-and-time-value,
+  input[type=time]::-webkit-date-and-time-value{text-align:left;margin:0}
+  input[type=date]::-webkit-calendar-picker-indicator,
+  input[type=time]::-webkit-calendar-picker-indicator{margin-left:auto;opacity:.55;flex:0 0 auto;cursor:pointer}
+  @media(max-width:379px){.row2{grid-template-columns:1fr}}
+  /* ===== ドラムロール式タイムピッカー ===== */
+  .tw-field{display:flex;align-items:center;gap:8px;width:100%;min-height:48px;font-size:16px;padding:10px 12px;background:var(--surface);border:0.5px solid var(--line2);border-radius:var(--r-sm);color:var(--text);font-family:inherit;cursor:pointer;text-align:left}
+  .tw-field:disabled{opacity:.45;cursor:default}
+  .tw-field .tw-fic{font-size:18px;color:var(--gold)}
+  .tw-field .tw-val{font-variant-numeric:tabular-nums;letter-spacing:.5px}
+  .kimon-date .tw-field{background:var(--surface2);border:1px solid var(--line);border-radius:10px;min-height:46px;padding:8px 10px;justify-content:center;flex:1 1 104px;width:auto}
+  .notif-time-input.tw-field{width:170px;justify-content:center}
+  .tw-overlay{position:fixed;inset:0;background:rgba(0,0,0,.38);z-index:9000;display:flex;align-items:flex-end;justify-content:center;opacity:0;transition:opacity .18s}
+  .tw-overlay.open{opacity:1}
+  .tw-sheet{width:100%;max-width:520px;background:var(--surface);border-radius:20px 20px 0 0;box-shadow:0 -8px 32px rgba(0,0,0,.22);transform:translateY(28px);transition:transform .18s;padding-bottom:calc(8px + env(safe-area-inset-bottom))}
+  .tw-overlay.open .tw-sheet{transform:translateY(0)}
+  .tw-head{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-bottom:0.5px solid var(--line)}
+  .tw-title{font-size:14px;font-weight:700;color:var(--text)}
+  .tw-btn{border:none;background:none;font-size:15px;color:var(--text2);padding:10px 12px;cursor:pointer;font-family:inherit;min-height:44px}
+  .tw-ok{color:var(--gold);font-weight:800}
+  .tw-body{position:relative;display:flex;align-items:stretch;justify-content:center;gap:2px;padding:8px 24px;height:224px;-webkit-mask-image:linear-gradient(to bottom,transparent,#000 24%,#000 76%,transparent);mask-image:linear-gradient(to bottom,transparent,#000 24%,#000 76%,transparent)}
+  .tw-band{position:absolute;left:24px;right:24px;top:50%;transform:translateY(-50%);height:44px;border-radius:12px;background:var(--surface2);border:1px solid var(--gold);opacity:.85;pointer-events:none}
+  .tw-col{position:relative;width:92px;height:100%;overflow-y:auto;scroll-snap-type:y mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;z-index:1}
+  .tw-col::-webkit-scrollbar{display:none}
+  .tw-col::before,.tw-col::after{content:'';display:block;height:90px}
+  .tw-item{height:44px;display:flex;align-items:center;justify-content:center;scroll-snap-align:center;font-size:22px;color:var(--text3);font-variant-numeric:tabular-nums;transition:color .12s,transform .12s}
+  .tw-item.on{color:var(--text);font-weight:700;transform:scale(1.1)}
+  .tw-sep{align-self:center;font-size:22px;font-weight:700;color:var(--text2);padding:0 2px;z-index:1}
+  .luck-dir{display:flex;gap:6px 14px;flex-wrap:wrap;margin:8px 0;padding:10px 12px;background:var(--surface2);border-radius:10px;font-size:12.5px}
+  .luck-dir .ld{display:inline-flex;align-items:center;gap:4px}
+  .luck-dir .ld .msr{font-size:15px}
+  .luck-dir .ld.g{color:var(--green-d)}
+  .luck-dir .ld.b{color:var(--red-d)}
+  .luck-dir .ld-sub{color:var(--text3);font-size:11px}
+  .tw-col.dw-yc{width:112px}
+  .tw-col.dw-mc,.tw-col.dw-dc{width:84px}
+  .dw-yc .tw-item,.dw-mc .tw-item,.dw-dc .tw-item{font-size:19px}
   textarea{width:100%;font-size:13px;padding:8px 12px;border:0.5px solid var(--line2);border-radius:var(--r-sm);background:var(--surface);color:var(--text);font-family:inherit;resize:vertical;min-height:54px;line-height:1.6}
   .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   .btn{font-size:14px;padding:12px 20px;border:0.5px solid var(--line2);border-radius:24px;background:transparent;color:var(--text2);cursor:pointer;width:100%;font-family:inherit}
@@ -569,10 +614,12 @@
   .stat-cell .sc-v{font-family:"Shippori Mincho B1","Noto Serif JP",serif;font-size:21px;color:var(--paper,var(--text))}
   .stat-cell.hl .sc-v{color:var(--gold-soft)}
   .stat-cell .sc-l{font-size:10px;color:var(--text3);margin-top:1px}
-  .kimon-date{display:flex;gap:8px;align-items:center;margin-bottom:8px}
-  .kimon-date .kd-ico{font-size:14px;flex:0 0 auto}
-  .kimon-date .kd-input{flex:1;min-width:0;font-size:13px;padding:8px 8px;background:var(--surface2);border:1px solid var(--line);border-radius:8px;color:var(--text);font-family:inherit}
-  .kimon-date .kd-now{flex:0 0 auto;padding:8px 12px;font-size:12px;border:0.5px solid var(--line2);border-radius:8px;background:var(--surface2);color:var(--text2);cursor:pointer;font-family:inherit}
+  .ryuha-note{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--text3);background:var(--surface2);border:0.5px solid var(--line);border-radius:20px;padding:3px 10px;margin-bottom:8px}
+  .kimon-date{display:flex;gap:8px;align-items:stretch;margin-bottom:8px;flex-wrap:wrap}
+  .kimon-date .kd-ico{font-size:16px;flex:0 0 auto;align-self:center}
+  .kimon-date .kd-input{flex:1 1 150px;min-width:0;min-height:46px;font-size:16px;padding:8px 10px;background:var(--surface2);border:1px solid var(--line);border-radius:10px;color:var(--text);font-family:inherit}
+  .kimon-date input[type=time].kd-input{flex:1 1 104px}
+  .kimon-date .kd-now{flex:0 0 auto;min-height:46px;padding:8px 14px;font-size:13px;border:0.5px solid var(--line2);border-radius:10px;background:var(--surface2);color:var(--text2);cursor:pointer;font-family:inherit}
   .kimon-date .kd-now.on{opacity:.45}
   .kd-note{font-size:11px;color:var(--text3);margin-bottom:12px;line-height:1.55}
   .board-wrap{margin-bottom:16px}
@@ -1229,7 +1276,7 @@
 .notif-opt-row{padding:8px 0;border-bottom:0.5px solid var(--line)}
 .notif-opt-row:last-child{border-bottom:none;padding-bottom:2px}
 .notif-opt-label{font-size:11px;font-weight:600;color:var(--text2);margin-bottom:8px}
-.notif-time-input{font-size:14px;padding:8px 12px;border:0.5px solid var(--line2);border-radius:9px;background:var(--surface);color:var(--text);font-family:inherit;width:130px}
+.notif-time-input{font-size:16px;min-height:46px;padding:8px 12px;border:0.5px solid var(--line2);border-radius:9px;background:var(--surface);color:var(--text);font-family:inherit;width:150px;max-width:100%}
 .notif-segs{display:flex;gap:4px;flex-wrap:wrap}
 .notif-seg{font-size:11.5px;padding:8px 12px;border:0.5px solid var(--line2);border-radius:20px;background:var(--surface);color:var(--text2);cursor:pointer;font-family:inherit;transition:all .15s}
 .notif-seg.on{background:var(--green-bg);color:var(--green-d);border-color:var(--green-line);font-weight:600}
@@ -1365,7 +1412,7 @@
     <div class="nav-item" data-screen="meishiki" onclick="go('meishiki')"><span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg></span><span>命式</span></div>
     <div class="nav-item" data-screen="unsei" onclick="go('unsei')"><span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg></span><span>運勢</span></div>
     <div class="nav-item" data-screen="kimon" onclick="go('kimon')"><span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg></span><span>奇門遁甲</span></div>
-    <div class="nav-item" data-screen="trip" onclick="go('trip')"><span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg></span><span>旅行</span></div>
+    <div class="nav-item" data-screen="trip" onclick="go('trip')"><span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg></span><span>開運</span></div>
     <div class="nav-item" data-screen="aisho" onclick="go('aisho')"><span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></span><span>相性</span></div>
     <div class="nav-item" data-screen="settings" onclick="go('settings')"><span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></span><span>設定</span></div>
   </div>
@@ -1639,7 +1686,7 @@ function go(screen){
   document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
   document.getElementById('screen-'+screen).classList.add('active');
   var nav=document.querySelector('.nav-item[data-screen="'+screen+'"]');if(nav)nav.classList.add('active');
-  document.getElementById('appTitle').textContent={home:'ホーム',meishiki:'命式',unsei:'運勢',kimon:'奇門遁甲',trip:'旅行・方位',aisho:'相性',settings:'設定'}[screen];
+  document.getElementById('appTitle').textContent={home:'ホーム',meishiki:'命式',unsei:'運勢',kimon:'奇門遁甲',trip:'開運・方位',aisho:'相性',settings:'設定'}[screen];
   if(screen==='settings'){renderSettings();}
   else if(screen==='trip'){renderTrip();}
   else if(screen==='aisho'){renderAisho();}
@@ -2582,7 +2629,7 @@ function planCard(){
   var h='<div class="sec-label"><span class="si msr">map</span>旅先プランナー（方違え判定）</div>';
   h+='<div class="nav-card">';
   h+='<div class="hint" style="margin:0 0 12px">基準は<b>自宅</b>（帰路の最終目的地も自宅）。出発日・帰着日を決めると、登録地点を「方違えの要否」で仕分けます。判定は日盤で行います。</div>';
-  h+='<div class="row2"><div class="fld"><label>出発日（往路）</label><input type="date" value="'+outV+'" onchange="setTripDate(\'out\',this.value)"></div><div class="fld"><label>帰着日（帰路）</label><input type="date" value="'+retV+'" onchange="setTripDate(\'ret\',this.value)"></div></div>';
+  h+='<div class="row2"><div class="fld"><label>出発日（往路）</label><button type="button" class="tw-field" onclick="openDateWheel(\''+outV+'\',function(v){setTripDate(\'out\',v)},{title:\'出発日を選択\',minY:2020,maxY:2059})"><span class="msr tw-fic">event</span><span class="tw-val">'+fmtYmdBtn(outV)+'</span></button></div><div class="fld"><label>帰着日（帰路）</label><button type="button" class="tw-field" onclick="openDateWheel(\''+retV+'\',function(v){setTripDate(\'ret\',v)},{title:\'帰着日を選択\',minY:2020,maxY:2059})"><span class="msr tw-fic">event</span><span class="tw-val">'+fmtYmdBtn(retV)+'</span></button></div></div>';
   if(!Places.list.length){h+='<div class="hint" style="margin:0">登録地点がありません。設定 › 登録地点 から追加してください。</div></div>';return h;}
   var R=planTrips(outV,retV);
   h+=planGroup('<span class="msr">check_circle</span> 方違えなしで行ける旅先',R.go,false);
@@ -2629,7 +2676,8 @@ function renderKimon(){
   var best=dirs.best,worst=dirs.worst;
   var html='';
   html+='<div class="yojin-card"><div class="yj-circle" style="background:'+GOGYO_COLOR[y.primaryYojin]+'">'+y.primaryYojin+'</div><div class="yj-text">あなたの用神 <b>'+y.primaryYojin+'（'+ELEMENT_KEY[y.primaryYojin]+'）</b> の方位が運を呼ぶ方角です。</div></div>';
-  html+='<div class="kimon-date"><span class="kd-ico msr">calendar_today</span><input type="date" class="kd-input" value="'+ymd(bd)+'" onchange="setKimonDate(this.value)">'+(tab==='shi'?'<input type="time" class="kd-input" value="'+hm(bd)+'" onchange="setKimonTime(this.value)">':'')+'<button class="kd-now'+(isToday?' on':'')+'" onclick="kimonToday()">今日</button></div>';
+  html+='<div class="ryuha-note"><span class="msr" style="font-size:12px">verified</span>盤式：転盤式・拆補法（時家奇門）</div>';
+  html+='<div class="kimon-date"><span class="kd-ico msr">calendar_today</span><button type="button" class="kd-input tw-field" onclick="openDateWheel(\''+ymd(bd)+'\',setKimonDate,{title:\'盤の日付を選択\'})"><span class="tw-val">'+fmtYmdBtn(ymd(bd))+'</span></button>'+(tab==='shi'?'<button type="button" class="kd-input tw-field" onclick="openTimeWheel(\''+hm(bd)+'\',setKimonTime,{title:\'時盤の時刻を選択\'})"><span class="msr tw-fic">schedule</span><span class="tw-val">'+hm(bd)+'</span></button>':'')+'<button class="kd-now'+(isToday?' on':'')+'" onclick="kimonToday()">今日</button></div>';
   html+='<div class="kd-note">'+(isToday?'本日の盤を表示中。日付（時盤は時刻も）を変えると、未来・過去の盤を確認できます。':'⏩ '+dlabel+' の盤を表示中（未来予測）。「今日」ボタンで戻れます。')+'</div>';
   var scan=kimonScan(y);
   html+='<div class="topic gold" style="margin-top:2px"><div class="topic-title"><span class="msr">auto_awesome</span> 今後30日のおすすめ（日盤で自動診断）</div><div class="tp-body"><div class="scan-row"><span><span class="msr">trending_up</span> 最も<b style="color:var(--green-d)">吉方位</b>が多い日</span><span class="scan-d" onclick="setKimonDate(\''+ymd(scan.bestG.d)+'\')">'+(scan.bestG.d.getMonth()+1)+'/'+scan.bestG.d.getDate()+'（吉'+scan.bestG.n+'方向）›</span></div><div class="scan-row"><span><span class="msr">trending_down</span> 最も<b style="color:var(--red-d)">凶方位</b>が多い日</span><span class="scan-d" onclick="setKimonDate(\''+ymd(scan.bestB.d)+'\')">'+(scan.bestB.d.getMonth()+1)+'/'+scan.bestB.d.getDate()+'（凶'+scan.bestB.n+'方向）›</span></div></div></div>';
@@ -2687,6 +2735,101 @@ function hm(d){return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slic
 function kimonDate(){if(!APP.kimonDateStr)return new Date();var t=APP.kimonTimeStr||'12:00';var dt=new Date(APP.kimonDateStr+'T'+t);return isNaN(dt.getTime())?new Date():dt;}
 function setKimonDate(v){APP.kimonDateStr=v;renderKimon();}
 function setKimonTime(v){APP.kimonTimeStr=v;renderKimon();}
+/* ====== ドラムロール式タイムピッカー ====== */
+var _twCb=null;
+function _twItems(n){var h='';for(var i=0;i<n;i++)h+='<div class="tw-item">'+(i<10?'0':'')+i+'</div>';return h;}
+function openTimeWheel(val,cb,opts){
+  var _ex=document.getElementById('tw-overlay');
+  if(_ex){if(_ex.classList.contains('open'))return;if(_ex.parentNode)_ex.parentNode.removeChild(_ex);}
+  _twCb=cb||null;
+  var hh=10,mm=30;
+  if(/^\d{1,2}:\d{2}$/.test(val||'')){var p=(val||'').split(':');hh=Math.max(0,Math.min(23,parseInt(p[0],10)||0));mm=Math.max(0,Math.min(59,parseInt(p[1],10)||0));}
+  var ov=document.createElement('div');ov.className='tw-overlay';ov.id='tw-overlay';
+  ov.innerHTML='<div class="tw-sheet">'
+    +'<div class="tw-head"><button type="button" class="tw-btn" onclick="closeTimeWheel(false)">キャンセル</button><div class="tw-title">'+esc((opts&&opts.title)||'時刻を選択')+'</div><button type="button" class="tw-btn tw-ok" onclick="closeTimeWheel(true)">決定</button></div>'
+    +'<div class="tw-body"><div class="tw-band"></div><div class="tw-col" id="tw-h">'+_twItems(24)+'</div><div class="tw-sep">:</div><div class="tw-col" id="tw-m">'+_twItems(60)+'</div></div>'
+  +'</div>';
+  document.body.appendChild(ov);
+  ov.addEventListener('click',function(e){if(e.target===ov)closeTimeWheel(false);});
+  var ch=document.getElementById('tw-h'),cm=document.getElementById('tw-m');
+  function bind(col){col.addEventListener('scroll',function(){if(col._raf)return;col._raf=requestAnimationFrame(function(){col._raf=null;_twHighlight(col);});},{passive:true});}
+  bind(ch);bind(cm);
+  requestAnimationFrame(function(){ch.scrollTop=hh*44;cm.scrollTop=mm*44;_twHighlight(ch);_twHighlight(cm);ov.classList.add('open');});
+}
+function _twHighlight(col){var i=Math.round(col.scrollTop/44),items=col.children;for(var k=0;k<items.length;k++)items[k].classList.toggle('on',k===i);}
+function _twIdx(id){var col=document.getElementById(id);if(!col)return 0;var i=Math.round(col.scrollTop/44);return Math.max(0,Math.min(col.children.length-1,i));}
+function closeTimeWheel(ok){
+  var ov=document.getElementById('tw-overlay');if(!ov)return;
+  var cb=_twCb;_twCb=null;
+  if(ok&&cb){var v=('0'+_twIdx('tw-h')).slice(-2)+':'+('0'+_twIdx('tw-m')).slice(-2);try{cb(v);}catch(e){}}
+  ov.classList.remove('open');setTimeout(function(){if(ov.parentNode)ov.parentNode.removeChild(ov);},180);
+}
+function pickFormTime(){
+  var el=document.getElementById('f-time');
+  openTimeWheel(el&&el.value?el.value:'10:30',function(v){
+    var e2=document.getElementById('f-time');if(e2)e2.value=v;
+    var b=document.getElementById('f-time-btn');if(b){var s=b.querySelector('.tw-val');if(s)s.textContent=v;}
+  },{title:'出生時刻を選択'});
+}
+/* ====== ドラムロール式デートピッカー(年・月・日) ====== */
+var _dwCb=null,_dwMinY=1900;
+function _dwItems(from,to,suf){var h='';for(var i=from;i<=to;i++)h+='<div class="tw-item">'+i+(suf||'')+'</div>';return h;}
+function openDateWheel(val,cb,opts){
+  opts=opts||{};
+  var _ex=document.getElementById('tw-overlay');
+  if(_ex){if(_ex.classList.contains('open'))return;if(_ex.parentNode)_ex.parentNode.removeChild(_ex);}
+  _dwCb=cb||null;
+  var minY=opts.minY||1900,maxY=opts.maxY||2059;_dwMinY=minY;
+  var t=new Date(),Y=t.getFullYear(),M=t.getMonth()+1,D=t.getDate();
+  if(/^\d{4}-\d{2}-\d{2}$/.test(val||'')){var p=val.split('-');Y=+p[0];M=+p[1];D=+p[2];}
+  Y=Math.max(minY,Math.min(maxY,Y));
+  var ov=document.createElement('div');ov.className='tw-overlay';ov.id='tw-overlay';
+  ov.innerHTML='<div class="tw-sheet">'
+    +'<div class="tw-head"><button type="button" class="tw-btn" onclick="closeDateWheel(false)">キャンセル</button><div class="tw-title">'+esc((opts&&opts.title)||'日付を選択')+'</div><button type="button" class="tw-btn tw-ok" onclick="closeDateWheel(true)">決定</button></div>'
+    +'<div class="tw-body"><div class="tw-band"></div>'
+      +'<div class="tw-col dw-yc" id="dw-y">'+_dwItems(minY,maxY,'年')+'</div>'
+      +'<div class="tw-col dw-mc" id="dw-m">'+_dwItems(1,12,'月')+'</div>'
+      +'<div class="tw-col dw-dc" id="dw-d">'+_dwItems(1,new Date(Y,M,0).getDate(),'日')+'</div>'
+    +'</div></div>';
+  document.body.appendChild(ov);
+  ov.addEventListener('click',function(e){if(e.target===ov)closeDateWheel(false);});
+  var cy=document.getElementById('dw-y'),cm2=document.getElementById('dw-m'),cd2=document.getElementById('dw-d');
+  function bind(col,isYM){col.addEventListener('scroll',function(){
+    if(!col._raf){col._raf=requestAnimationFrame(function(){col._raf=null;_twHighlight(col);});}
+    if(isYM){clearTimeout(col._t);col._t=setTimeout(_dwSyncDays,140);}
+  },{passive:true});}
+  bind(cy,true);bind(cm2,true);bind(cd2,false);
+  requestAnimationFrame(function(){cy.scrollTop=(Y-minY)*44;cm2.scrollTop=(M-1)*44;cd2.scrollTop=(D-1)*44;_twHighlight(cy);_twHighlight(cm2);_twHighlight(cd2);ov.classList.add('open');});
+}
+function _dwSyncDays(){
+  var cy=document.getElementById('dw-y'),cm2=document.getElementById('dw-m'),cd2=document.getElementById('dw-d');
+  if(!cy||!cm2||!cd2)return;
+  var y=_dwMinY+Math.round(cy.scrollTop/44),m=Math.max(1,Math.min(12,1+Math.round(cm2.scrollTop/44)));
+  var n=new Date(y,m,0).getDate();
+  if(cd2.children.length!==n){
+    var cur=Math.min(n,1+Math.round(cd2.scrollTop/44));
+    cd2.innerHTML=_dwItems(1,n,'日');
+    cd2.scrollTop=(cur-1)*44;_twHighlight(cd2);
+  }
+}
+function closeDateWheel(ok){
+  var ov=document.getElementById('tw-overlay');if(!ov)return;
+  var cb=_dwCb;_dwCb=null;
+  if(ok&&cb){
+    var y=_dwMinY+_twIdx('dw-y'),m=1+_twIdx('dw-m'),dmax=new Date(y,m,0).getDate(),dd=Math.min(dmax,1+_twIdx('dw-d'));
+    var v=y+'-'+('0'+m).slice(-2)+'-'+('0'+dd).slice(-2);
+    try{cb(v);}catch(e){}
+  }
+  ov.classList.remove('open');setTimeout(function(){if(ov.parentNode)ov.parentNode.removeChild(ov);},180);
+}
+function fmtYmdBtn(v){if(!/^\d{4}-\d{2}-\d{2}$/.test(v||''))return v||'';var p=v.split('-');return p[0]+'/'+(+p[1])+'/'+(+p[2]);}
+function pickFormDate(){
+  var el=document.getElementById('f-date');
+  openDateWheel(el&&el.value?el.value:'1990-05-15',function(v){
+    var e2=document.getElementById('f-date');if(e2)e2.value=v;
+    var b=document.getElementById('f-date-btn');if(b){var s=b.querySelector('.tw-val');if(s)s.textContent=fmtYmdBtn(v);}
+  },{title:'生年月日を選択',minY:1900,maxY:new Date().getFullYear()});
+}
 function kimonToday(){APP.kimonDateStr='';APP.kimonTimeStr='';renderKimon();}
 function switchKimon(tab){APP.kimonTab=tab;renderKimon();}
 var KIMON_TERMS={
@@ -3002,7 +3145,7 @@ function monthCalendar(rows,cellFn,legendHtml){
 }
 function destCalendar(rows,filter){
   if(!rows.length)return '';
-  return monthCalendar(rows,function(r){var on=filter==='all'||(filter==='good'&&!r.isBad&&r.stars>=3)||(filter==='bad'&&r.isBad);var cls=r.isBad?'dc-bad':r.stars>=4?'dc-good':r.stars>=2?'dc-mid':'dc-low';return '<div class="dc-cell '+cls+(r.w?' dc-w':r.wb?' dc-wb':'')+(on?'':' dc-dim')+'" onclick="kimonFromTrip(\''+ymd(r.date)+'\')"><div class="dc-day">'+r.date.getDate()+'</div><div class="dc-mk">'+(r.isBad?'凶':'★'+r.stars)+'</div></div>';},'<div class="dc-legend"><span class="dcl"><span class="dcl-dot dc-good"></span>吉日</span><span class="dcl"><span class="dcl-dot dc-mid"></span>中</span><span class="dcl"><span class="dcl-dot dc-bad"></span>凶日</span>'+(PURPOSE_TO_LUCK[APP.destPurpose]?'<span class="dcl"><span class="dcl-dot dcl-w"></span>W吉日（金枠）</span><span class="dcl"><span class="dcl-dot dcl-wb"></span>W凶日（赤枠）</span>':'')+'<span class="dcl">日付タップで詳細</span></div>');
+  return monthCalendar(rows,function(r){var on=filter==='all'||(filter==='good'&&!r.isBad&&r.stars>=3)||(filter==='bad'&&r.isBad);var cls=r.isBad?'dc-bad':r.stars>=4?'dc-good':r.stars>=2?'dc-mid':'dc-low';return '<div class="dc-cell '+cls+(r.w?' dc-w':r.wb?' dc-wb':'')+(on?'':' dc-dim')+'" onclick="showLuckDetail(\''+ymd(r.date)+'\',PURPOSE_TO_LUCK[APP.destPurpose]||APP.luckProfile)"><div class="dc-day">'+r.date.getDate()+'</div><div class="dc-mk">'+(r.isBad?'凶':'★'+r.stars)+'</div></div>';},'<div class="dc-legend"><span class="dcl"><span class="dcl-dot dc-good"></span>吉日</span><span class="dcl"><span class="dcl-dot dc-mid"></span>中</span><span class="dcl"><span class="dcl-dot dc-bad"></span>凶日</span>'+(PURPOSE_TO_LUCK[APP.destPurpose]?'<span class="dcl"><span class="dcl-dot dcl-w"></span>W吉日（金枠）</span><span class="dcl"><span class="dcl-dot dcl-wb"></span>W凶日（赤枠）</span>':'')+'<span class="dcl">日付タップで詳細</span></div>');
 }
 function tripLatLng(sel){if(sel==='home')return homeLatLng();var pl=Places.get(sel);return pl?[pl.lat,pl.lng]:homeLatLng();}
 function tripPointName(sel){if(sel==='home')return '自宅';var pl=Places.get(sel);return pl?pl.name:'自宅';}
@@ -3023,7 +3166,7 @@ function destSearchCard(){
   h+='<div class="ds-field"><span class="ds-flabel">行程</span><div class="seg seg-sm"><button class="seg-b'+(APP.destTrip!=='round'?' on':'')+'" onclick="setDestTrip(\'one\')">片道</button><button class="seg-b'+(APP.destTrip==='round'?' on':'')+'" onclick="setDestTrip(\'round\')"><span class="msr">swap_horiz</span> 往復</button></div></div>';
   if(APP.destTrip==='round')h+='<div class="ds-field"><span class="ds-flabel">宿泊数（範囲で振ると最適泊数を提案）</span><div class="nights-range"><select onchange="setDestNights(this.value)">'+nightsOptions(APP.destNights)+'</select><span class="nr-sep">〜</span><select onchange="setDestNightsMax(this.value)">'+nightsOptions(Math.max(APP.destNights,APP.destNightsMax||APP.destNights))+'</select></div></div>';
   h+='<div class="ds-field"><span class="ds-flabel">検索期間</span><div class="seg seg-sm seg-wrap">'+[['1w','1週間'],['1m','1か月'],['3m','3か月'],['custom','指定']].map(function(t){return '<button class="seg-b'+(APP.destPeriod===t[0]?' on':'')+'" onclick="setDestPeriod(\''+t[0]+'\')">'+t[1]+'</button>';}).join('')+'</div></div>';
-  if(APP.destPeriod==='custom')h+='<div class="row2"><div class="fld"><label>開始日</label><input type="date" value="'+(APP.destStart||ymd(new Date()))+'" onchange="setDestCustom(\'start\',this.value)"></div><div class="fld"><label>終了日</label><input type="date" value="'+(APP.destEnd||ymd(addDays(new Date(),30)))+'" onchange="setDestCustom(\'end\',this.value)"></div></div>';
+  if(APP.destPeriod==='custom')h+='<div class="row2"><div class="fld"><label>開始日</label><button type="button" class="tw-field" onclick="openDateWheel(\''+(APP.destStart||ymd(new Date()))+'\',function(v){setDestCustom(\'start\',v)},{title:\'開始日を選択\',minY:2020,maxY:2059})"><span class="msr tw-fic">event</span><span class="tw-val">'+fmtYmdBtn(APP.destStart||ymd(new Date()))+'</span></button></div><div class="fld"><label>終了日</label><button type="button" class="tw-field" onclick="openDateWheel(\''+(APP.destEnd||ymd(addDays(new Date(),30)))+'\',function(v){setDestCustom(\'end\',v)},{title:\'終了日を選択\',minY:2020,maxY:2059})"><span class="msr tw-fic">event</span><span class="tw-val">'+fmtYmdBtn(APP.destEnd||ymd(addDays(new Date(),30)))+'</span></button></div></div>';
   h+='<div class="ds-field"><span class="ds-flabel">重視する運（フィルター）</span><div class="seg seg-sm seg-wrap">'+['all','money','love','health','work'].map(function(k){return '<button class="seg-b'+(APP.destPurpose===k?' on':'')+'" onclick="setDestPurpose(\''+k+'\')">'+'<span class="msr">'+PURPOSES[k].icon+'</span>'+PURPOSES[k].label+'</button>';}).join('')+'</div></div>';
   h+='<div class="ds-toggles"><div class="seg seg-sm"><button class="seg-b'+(APP.destView==='list'?' on':'')+'" onclick="setDestView(\'list\')"><span class="msr">list</span> リスト</button><button class="seg-b'+(APP.destView==='cal'?' on':'')+'" onclick="setDestView(\'cal\')"><span class="msr">calendar_month</span> カレンダー</button></div><div class="seg seg-sm"><button class="seg-b'+(APP.destFilter==='all'?' on':'')+'" onclick="setDestFilter(\'all\')">すべて</button><button class="seg-b'+(APP.destFilter==='good'?' on':'')+'" onclick="setDestFilter(\'good\')">吉日</button><button class="seg-b'+(APP.destFilter==='bad'?' on':'')+'" onclick="setDestFilter(\'bad\')">凶日</button></div></div>';
   h+='</div>';
@@ -3113,7 +3256,7 @@ function fillDestResults(){
   var rows=cells.map(function(o){return evalDestDay(o.date,o.cell,APP.destPurpose);});
   rows.forEach(function(r){r.dl=dayLuckFor(r.date,APP.destPurpose);r.w=isWDay(r);r.wb=isWBadDay(r);r.comment=mergedComment(r,APP.destPurpose)||r.comment;});
   var goodN=rows.filter(function(r){return !r.isBad&&r.stars>=3;}).length,badN=rows.filter(function(r){return r.isBad;}).length,wN=rows.filter(function(r){return r.w;}).length,wbN=rows.filter(function(r){return r.wb;}).length;
-  var h='<div class="ds-summary"><span class="msr">location_on</span> <b>'+esc(tripPointName(APP.destSearchId))+'</b> ＝ '+esc(tripPointName(APP.destBase))+'から <b>'+dir+'</b>方向・約'+distFmt(dist)+'<br><span class="small">'+PURPOSES[APP.destPurpose].label+'重視 ／ '+rows.length+'日間（吉'+goodN+'日・凶'+badN+'日'+(PURPOSE_TO_LUCK[APP.destPurpose]?'・<b>W吉日'+wN+'日</b>・<b class="wb-txt">W凶日'+wbN+'日</b>':'')+'）・日付タップで盤の詳細へ'+(PURPOSE_TO_LUCK[APP.destPurpose]?'<br>★＝その方位への吉凶 ／ 日運＝その日全体の'+PURPOSES[APP.destPurpose].label+'（運勢暦と同じ判定）。両方そろった日が <b>W吉日◎</b>、逆に方位・日運とも悪い日が <b class="wb-txt">W凶日✕</b>（大事な行動は避ける日）です。':'')+'</span></div>';
+  var h='<div class="ds-summary"><span class="msr">location_on</span> <b>'+esc(tripPointName(APP.destSearchId))+'</b> ＝ '+esc(tripPointName(APP.destBase))+'から <b>'+dir+'</b>方向・約'+distFmt(dist)+'<br><span class="small">'+PURPOSES[APP.destPurpose].label+'重視 ／ '+rows.length+'日間（吉'+goodN+'日・凶'+badN+'日'+(PURPOSE_TO_LUCK[APP.destPurpose]?'・<b>W吉日'+wN+'日</b>・<b class="wb-txt">W凶日'+wbN+'日</b>':'')+'）・日付タップで詳細へ'+(PURPOSE_TO_LUCK[APP.destPurpose]?'<br>★＝その方位への吉凶 ／ 日運＝その日全体の'+PURPOSES[APP.destPurpose].label+'（運勢暦と同じ判定）。両方そろった日が <b>W吉日◎</b>、逆に方位・日運とも悪い日が <b class="wb-txt">W凶日✕</b>（大事な行動は避ける日）です。':'')+'</span></div>';
   var listRows=null;
   if(APP.destView==='cal'){h+=destCalendar(rows,APP.destFilter);}
   else{listRows=rows.filter(function(r){return APP.destFilter==='all'?true:APP.destFilter==='good'?(!r.isBad&&r.stars>=3):r.isBad;});h+=destList(listRows);}
@@ -3270,15 +3413,27 @@ function fillLuckResults(){
   el.innerHTML=h;
   if(APP.luckView==='list')scheduleTimingFill(rows.map(function(r){return {ds:ymd(r.date),id:'lt-'+ymd(r.date),good:r.sc.stars>=3};}));
 }
-function showLuckDetail(ds){
-  var d=new Date(ds+'T12:00'),pk=APP.luckProfile,P=LUCK_PROFILES[pk];
+function showLuckDetail(ds,pkOpt){
+  var d=new Date(ds+'T12:00'),pk=(pkOpt&&LUCK_PROFILES[pkOpt])?pkOpt:APP.luckProfile,P=LUCK_PROFILES[pk];
   var sc=luckScore(dayBoard(d),pk),WD=['日','月','火','水','木','金','土'][d.getDay()];
   var tm=dayTimingCompute(d);
   var star=sc.stars===0?'凶':'★★★★★'.slice(0,sc.stars)+'☆☆☆☆☆'.slice(0,5-sc.stars);
   var reasons=sc.reasonsBad.concat(sc.reasonsGood);
   var rh=reasons.length?reasons.map(function(x){return '<li>'+x+'</li>';}).join(''):'<li>際立った特徴のない、平均的な盤です。</li>';
+  var dirH='';
+  try{
+    if(APP.chartData){
+      var _dirs=extractDirections(dayBoard(d),APP.chartData.yojin);
+      if(_dirs.best||_dirs.worst){
+        dirH='<div class="luck-dir">'
+          +(_dirs.best?'<span class="ld g"><span class="msr">explore</span>吉方位 <b>'+_dirs.best.dir+'</b><span class="ld-sub">（'+_dirs.best.gateRaw+'・'+_dirs.best.star+'）</span></span>':'')
+          +(_dirs.worst?'<span class="ld b"><span class="msr">block</span>凶方位 <b>'+_dirs.worst.dir+'</b><span class="ld-sub">（'+_dirs.worst.gateRaw+'・'+_dirs.worst.star+'）</span></span>':'')
+        +'</div>';
+      }
+    }
+  }catch(e){}
   var acts=sc.stars>=3?('<div class="luck-act good"><div class="la-h"><span class="msr">check_circle</span> '+P.label+'におすすめの行動</div><div class="la-list">'+P.good.map(function(a){return '<span class="la-chip"><span class="msr">check</span> '+a+'</span>';}).join('')+'</div></div>'):('<div class="luck-act bad"><div class="la-h"><span class="msr">cancel</span> 今日は避けた方が良いこと</div><div class="la-list">'+P.bad.map(function(a){return '<span class="la-chip"><span class="msr">close</span> '+a+'</span>';}).join('')+'</div></div>');
-  document.getElementById('modalRoot').innerHTML='<div class="modal-overlay" onclick="closeLuckDetail()"><div class="modal" onclick="event.stopPropagation()"><div class="kt-cat"><span class="msr">'+P.icon+'</span>'+P.label+'</div><h4 style="margin:8px 0 4px">'+d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日（'+WD+'）</h4><div class="luck-star '+sc.color+'">'+star+' <span>'+(sc.stars===0?sc.label.replace(/^凶/,''):sc.label)+'</span></div><div class="luck-time"><span class="lt-g"><span class="lt-dot"></span> 吉時間帯 '+tm.good.main+' '+(tm.good.sub||'')+'</span><span class="lt-b"><span class="lt-dot"></span> 凶時間帯 '+tm.bad.main+' '+(tm.bad.sub||'')+'</span></div><div class="luck-reason"><div class="lr-h">【判定理由】</div><ul class="lr-list">'+rh+'</ul></div>'+acts+'<div class="modal-actions"><button class="btn" onclick="closeLuckDetail()">閉じる</button></div></div></div>';
+  document.getElementById('modalRoot').innerHTML='<div class="modal-overlay" onclick="closeLuckDetail()"><div class="modal" onclick="event.stopPropagation()"><div class="kt-cat"><span class="msr">'+P.icon+'</span>'+P.label+'</div><h4 style="margin:8px 0 4px">'+d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日（'+WD+'）</h4><div class="luck-star '+sc.color+'">'+star+' <span>'+(sc.stars===0?sc.label.replace(/^凶/,''):sc.label)+'</span></div><div class="luck-time"><span class="lt-g"><span class="lt-dot"></span> 吉時間帯 '+tm.good.main+' '+(tm.good.sub||'')+'</span><span class="lt-b"><span class="lt-dot"></span> 凶時間帯 '+tm.bad.main+' '+(tm.bad.sub||'')+'</span></div>'+dirH+'<div class="luck-reason"><div class="lr-h">【判定理由】</div><ul class="lr-list">'+rh+'</ul></div>'+acts+'<div class="modal-actions"><button class="btn" onclick="closeLuckDetail()">閉じる</button></div></div></div>';
 }
 function closeLuckDetail(){document.getElementById('modalRoot').innerHTML='';}
 function setLuckProfile(k){APP.luckProfile=k;renderTrip();}
@@ -3449,7 +3604,7 @@ function setGroupPeriod(k){APP.groupPeriod=k;renderTrip();}
 function setGroupView(v){APP.groupView=v;renderTrip();}
 function renderTrip(){
   var el=document.getElementById('screen-trip');
-  if(!APP.chartData){el.innerHTML=emptyState('旅行・方位の判定');return;}
+  if(!APP.chartData){el.innerHTML=emptyState('開運・方位の判定');return;}
   var cd=APP.chartData,y=cd.yojin,tab=APP.tripTab;
   var html='';
   html+='<div class="seg seg-mode"><button class="seg-b'+(APP.tripMode!=='search'&&APP.tripMode!=='luck'&&APP.tripMode!=='group'?' on':'')+'" onclick="setTripMode(\'check\')"><span class="msr">explore</span> 方位</button><button class="seg-b'+(APP.tripMode==='search'?' on':'')+'" onclick="setTripMode(\'search\')"><span class="msr">event</span> 吉日サーチ</button><button class="seg-b'+(APP.tripMode==='luck'?' on':'')+'" onclick="setTripMode(\'luck\')"><span class="msr">payments</span> 運勢暦</button><button class="seg-b'+(APP.tripMode==='group'?' on':'')+'" onclick="setTripMode(\'group\')"><span class="msr">group</span> グループ</button></div>';
@@ -3582,7 +3737,7 @@ function renderHelp(){
     +'<div class="help-step" style="border:none"><div class="help-step-body"><div class="help-step-title">吉方位の見方</div><div class="help-step-desc">緑色が吉方位、赤色が凶方位です。各マスをタップすると星・門・神の詳細が見られます。</div></div></div>'
     +tip('「開門＋生門」の方角への外出は特に吉とされています。毎朝チェックして、行動の参考にしてみてください。')
   );
-  h+=det('purple','flight','旅行・方位','旅先・引越先の方位をチェック',
+  h+=det('purple','flight','開運・方位','吉方位・吉日・運勢暦をチェック',
     '<p>自宅から目的地の方位が吉か凶かを調べられます。</p>'
     +'<div class="help-step" style="border:none"><div class="help-step-body"><div class="help-step-title">方位チェックの手順</div><div class="help-step-desc">①出発地（自宅）と目的地を設定 → ②旅行期間を選択 → ③方位スコアが自動計算されます。</div></div></div>'
     +'<div class="help-step" style="border:none"><div class="help-step-body"><div class="help-step-title">吉方旅行・引越</div><div class="help-step-desc">吉方位への移動は運気の取り込みに良いとされています。複数の行き先を比較して最も吉の方位を選べます。</div></div></div>'
@@ -3698,7 +3853,7 @@ function renderNotifSection(){
   /* 1. 朝の運勢サマリー */
   h+=item('summary','wb_sunny','gold','朝の運勢サマリー','毎朝・運勢スコア＋吉方位＋吉時間帯を通知',
     '<div class="notif-opt-row"><div class="notif-opt-label">通知時刻</div>'
-    +'<input type="time" class="notif-time-input" value="'+n.summary.time+'" onchange="setNotifVal(\'summary\',\'time\',this.value)"></div>'
+    +'<button type="button" class="notif-time-input tw-field" onclick="openTimeWheel(\''+n.summary.time+'\',function(v){setNotifVal(\'summary\',\'time\',v)},{title:\'通知時刻を選択\'})"><span class="msr tw-fic">schedule</span><span class="tw-val">'+n.summary.time+'</span></button></div>'
     +optProfiles('summary'));
 
   /* 2. 吉方位リマインダー */
@@ -3836,7 +3991,7 @@ function renderSettings(){
     +'<div class="stg-row-body"><div class="stg-row-title">地点を追加・管理</div><div class="stg-row-desc">旅先・実家・よく行く場所を登録</div></div>'
     +'<div class="stg-row-right"><span class="stg-badge'+(Places.list.length?' green':'')+'">'+Places.list.length+'件</span>'+stgChev()+'</div>'
   +'</summary><div class="stg-det-body">';
-  html+='<div class="stg-hint">住所やスポット名で検索して登録できます。「旅行・方位」タブの方位チェックで使います。</div>';
+  html+='<div class="stg-hint">住所やスポット名で検索して登録できます。「開運・方位」タブの方位チェックで使います。</div>';
   html+=geoBox('place','住所・スポット名（例：出雲大社、実家の最寄り駅）');
   html+='<div class="fld"><label>地点名 <span style="font-size:11px;color:var(--text3);font-weight:400">（省略可）</span></label><input type="text" id="pl-name" placeholder="例：実家、軽井沢の宿、近所の神社"></div>';
   html+='<div class="fld"><label>緯度・経度 <span style="font-size:11px;color:var(--text3);font-weight:400">（検索すると自動入力されます）</span></label><input type="text" id="pl-coords" placeholder="35.69, 139.69"></div>';
@@ -3859,7 +4014,7 @@ function renderSettings(){
     +'<div class="stg-row-body"><div class="stg-row-title">自宅の場所</div><div class="stg-row-desc">方位計算の出発点になります</div></div>'
     +'<div class="stg-row-right">'+(APP.homeCoords?'<span class="stg-badge green">設定済み</span>':'<span class="stg-badge">未設定</span>')+stgChev()+'</div>'
   +'</summary><div class="stg-det-body">';
-  html+='<div class="stg-hint">「旅行・方位」タブで方位をチェックするとき、どこから出発するかの基点になります。命式の出生地とは別に設定できます。</div>';
+  html+='<div class="stg-hint">「開運・方位」タブで方位をチェックするとき、どこから出発するかの基点になります。命式の出生地とは別に設定できます。</div>';
   html+=geoBox('home','住所・施設名（例：最寄り駅名、市区町村名）');
   html+='<div class="fld"><label>座標 <span style="font-size:11px;color:var(--text3);font-weight:400">（検索すると自動入力されます）</span></label><input type="text" id="home-coords" value="'+esc(APP.homeCoords||(Store.getActive()&&Store.getActive().coords)||'')+'" placeholder="35.7510, 139.9127"></div>';
   html+='<button class="btn btn-primary" style="width:auto;padding:8px 16px" onclick="setHomeCoords()">保存する</button>';
@@ -3922,6 +4077,16 @@ function renderSettings(){
     +'<button class="stg-seg-b'+(APP.ritsuunMode==='ceil'?' on':'')+'" onclick="setRitsuun(\'ceil\')">切り上げ</button>'
   +'</div></div></details>';
   html+='<details class="stg-det"><summary class="stg-sum">'
+    +stgRowIc('gold','verified')
+    +'<div class="stg-row-body"><div class="stg-row-title">計算方式について</div><div class="stg-row-desc">このアプリが採用している占術の方式・流派</div></div>'
+    +'<div class="stg-row-right">'+stgChev()+'</div>'
+  +'</summary><div class="stg-det-body">'
+  +'<div class="stg-hint" style="line-height:1.8">'
+  +'<b>【四柱推命】</b><br>・年柱は立春の正確な時刻で切り替え<br>・月柱は節入りの時刻単位で判定（日単位の暦より高精度）<br>・日柱・時柱は万年暦と照合済み<br>・出生地の経度による真太陽時補正に対応<br><br>'
+  +'<b>【奇門遁甲】</b><br>・時家奇門・<b>転盤式</b>を採用<br>・三元（上元・中元・下元）は<b>拆補法</b>（日の符頭：甲・己で区切る方式）<br>・値符は時干に随い、値使は時支に随う正統布局<br>・八神は陽遁で勾陳・朱雀、陰遁で白虎・玄武を用いる古典方式<br>・中宮の儀は坤二宮に寄せる（中宮寄坤）<br>・日盤・月盤・年盤も同じ方式をそれぞれの柱で適用<br><br>'
+  +'<span style="font-size:11px">※奇門遁甲には置閏法など他の流派も存在します。書籍や他のアプリと局数が異なる場合は、流派の違いによるものです。</span>'
+  +'</div></div></details>';
+  html+='<details class="stg-det"><summary class="stg-sum">'
     +stgRowIc('blue','search')
     +'<div class="stg-row-body"><div class="stg-row-title">住所検索エンジン</div><div class="stg-row-desc">'+(APP.googleKey?'Google Maps API を使用中':'OpenStreetMap を使用中（無料）')+'</div></div>'
     +'<div class="stg-row-right">'+stgChev()+'</div>'
@@ -3939,7 +4104,7 @@ function renderAddForm(el){
   var html='<div class="stg-back-row"><button class="stg-back-btn" onclick="cancelAdd()">←</button><div class="stg-page-title">'+(ed?'命式を編集':'新しく命式を登録')+'</div></div>';
   if(!ed)html+='<div class="stg-hint" style="margin-bottom:12px">生年月日などを入力して「保存する」を押すと、あなた専用の鑑定が始まります。</div>';
   html+='<div class="fld"><label>名前・ラベル <span style="font-size:11px;color:var(--text3);font-weight:400">（誰の命式か分かるように）</span></label><input type="text" id="f-name" value="'+(ed?esc(ed.name):'')+'" placeholder="例：わたし、田中さん、お母さん"></div>';
-  html+='<div class="row2"><div class="fld"><label>生年月日</label><input type="date" id="f-date" value="'+(ed?ed.birthDate:'1990-05-15')+'"></div><div class="fld"><label>出生時刻 <span style="font-size:11px;color:var(--text3);font-weight:400">（任意）</span></label><input type="time" id="f-time" value="'+(ed&&ed.birthTime?ed.birthTime:'10:30')+'"'+(APP.formNoTime?' disabled':'')+'></div></div>';
+  html+='<div class="row2"><div class="fld"><label>生年月日</label><input type="hidden" id="f-date" value="'+(ed?ed.birthDate:'1990-05-15')+'"><button type="button" class="tw-field" id="f-date-btn" onclick="pickFormDate()"><span class="msr tw-fic">event</span><span class="tw-val">'+fmtYmdBtn(ed?ed.birthDate:'1990-05-15')+'</span></button></div><div class="fld"><label>出生時刻 <span style="font-size:11px;color:var(--text3);font-weight:400">（任意）</span></label><input type="hidden" id="f-time" value="'+(ed&&ed.birthTime?ed.birthTime:'10:30')+'"><button type="button" class="tw-field" id="f-time-btn"'+(APP.formNoTime?' disabled':'')+' onclick="pickFormTime()"><span class="msr tw-fic">schedule</span><span class="tw-val">'+(ed&&ed.birthTime?ed.birthTime:'10:30')+'</span></button></div></div>';
   html+='<div class="check-row" onclick="toggleFormNoTime()"><div class="check-box'+(APP.formNoTime?' on':'')+'">'+( APP.formNoTime?'<span class="msr">check</span>':'')+'</div><div><div class="check-label">出生時刻が分からない</div><div class="check-sub">時柱を除いた三柱（年・月・日）で鑑定します</div></div></div>';
   html+='<div class="fld"><label>性別</label><select id="f-sex"><option value="M"'+(ed&&ed.sex==='M'?' selected':'')+'>男性</option><option value="F"'+(ed&&ed.sex==='F'?' selected':'')+'>女性</option></select></div>';
   html+='<div class="fld"><label>出生地の座標 <span style="font-size:11px;color:var(--text3);font-weight:400">（省略可・時刻補正に使用）</span></label><input type="text" id="f-coords" value="'+(ed?esc(ed.coords||''):'')+'" placeholder="35.6895, 139.6917（緯度, 経度）"></div>';
