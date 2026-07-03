@@ -2,6 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<meta name="theme-color" id="metaThemeColor" content="#08080f">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>奇門遁甲 × 四柱推命 ｜ 運命ナビ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1635,7 +1636,7 @@ var Store={
   update:function(id,data){this.profiles.forEach(function(p){if(p.id===id){p.name=data.name;p.birthDate=data.birthDate;p.birthTime=data.birthTime;p.sex=data.sex;if(data.coords!==undefined)p.coords=data.coords;if(data.mbti!==undefined)p.mbti=data.mbti;if(data.memo!==undefined)p.memo=data.memo;}});persist();}
 };
 
-var APP={chartData:null,ritsuunMode:'round',theme:'wa',built:{home:false,meishiki:false,unsei:false,kimon:false,trip:false,aisho:false},
+var APP={chartData:null,ritsuunMode:'round',theme:'hikari-dark',built:{home:false,meishiki:false,unsei:false,kimon:false,trip:false,aisho:false},
   kimonTab:'shi',kimonDateStr:'',kimonTimeStr:'',_kimonScan:null,baseId:'home',destId:'',tripOut:'',tripRet:'',tripTab:'ri',tripMode:'check',destSearchId:'',destBase:'home',destTrip:'one',destNights:1,destNightsMax:1,destPeriod:'1m',destPurpose:'all',destView:'list',destFilter:'all',destStart:'',destEnd:'',_destCache:null,luckProfile:'money',luckPeriod:'1m',luckView:'cal',luckAction:'宝くじ・くじ運',groupMembers:[],groupDest:'',groupBase:'home',groupMemberMode:'same',groupMemberBase:{},groupTrip:'one',groupNights:1,groupNightsMax:1,groupPeriod:'1m',groupView:'list',aishoA:'',aishoB:'',aishoRel:'renai',homeCoords:'',readingTab:'seikaku',openMonth:-1,diaryMonth:0,diaryPick:null,googleKey:'',_geo:{results:{},timers:{}},scrollPos:{},
   formNoTime:false,heading:0,sensorOn:false,
   viewMode:'list',pendingDelete:null,editingMemo:null,editingProfile:null,
@@ -1659,6 +1660,7 @@ function setTheme(t){
   var all=['theme-hikari','theme-hikari-dark','theme-wood','theme-fire','theme-earth','theme-metal','theme-water'];
   document.body.classList.remove.apply(document.body.classList,all);
   if(t!=='wa')document.body.classList.add('theme-'+t);
+  _syncMetaTheme();
   persist();renderSettings();
 }
 
@@ -4634,6 +4636,8 @@ if(!restore()){
   Store.setActive('p1');
 }
 if(APP.theme&&APP.theme!=='wa')document.body.classList.add('theme-'+APP.theme);
+function _syncMetaTheme(){try{var m=document.getElementById('metaThemeColor');if(m){var bg=getComputedStyle(document.body).backgroundColor;m.setAttribute('content',APP.theme==='hikari-dark'?'#08080f':(bg&&bg!=='rgba(0, 0, 0, 0)'?bg:'#faf8f2'));}}catch(e){}}
+_syncMetaTheme();
 try{if(!APP.googleKey)APP.googleKey=localStorage.getItem('kimon_gkey')||'';}catch(e){}
 rebuildChart();
 renderHome();APP.built.home=true;
