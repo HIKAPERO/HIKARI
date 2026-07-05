@@ -209,6 +209,104 @@
   .luck-dir .ld.g{color:var(--green-d)}
   .luck-dir .ld.b{color:var(--red-d)}
   .luck-dir .ld-sub{color:var(--text3);font-size:11px}
+  .lk-grid{display:grid;grid-template-columns:repeat(3,1fr)}
+  .lk-grid .seg-b{justify-content:center;min-width:0;white-space:nowrap}
+  .lr-list{list-style:none;padding:0;margin:0}
+  .lr-row{display:grid;grid-template-columns:minmax(88px,118px) 1fr;gap:8px;padding:6px 0;border-bottom:0.5px dashed var(--line);align-items:start}
+  .lr-row:last-child{border-bottom:none}
+  .lr-k{font-size:12px;font-weight:800;color:var(--text);line-height:1.55}
+  .lr-d{font-size:12px;color:var(--text2);line-height:1.65}
+  .lr-legend{margin-top:0;padding:8px 12px;background:var(--surface2);border-radius:0 0 10px 10px}
+  .lr-fold{margin-top:10px}
+  .lr-fold-s{cursor:pointer;font-size:12px;font-weight:700;color:var(--text2);padding:9px 12px;background:var(--surface2);border-radius:10px}
+  .lr-fold[open] .lr-fold-s{border-radius:10px 10px 0 0;border-bottom:0.5px dashed var(--line)}
+  .dsh-cats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+  .dsh-chip{display:flex;align-items:center;justify-content:center;gap:5px;min-height:42px;font-size:13px;font-weight:700;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--text2);font-family:inherit;cursor:pointer;min-width:0;white-space:nowrap;padding:4px 2px}
+  .dsh-chip .msr{font-size:16px}
+  .dsh-chip.on{border-color:var(--gold);color:var(--gold);background:var(--surface2)}
+  .dsh-today{border:1px solid var(--line);border-radius:16px;padding:16px;background:var(--surface);margin-bottom:14px;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+  .dsh-today.good{border-color:var(--green-d)}
+  .dsh-today.bad{border-color:var(--red)}
+  .dsh-th{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+  .dsh-date{font-size:13px;font-weight:800;color:var(--text)}
+  .dsh-cat{display:inline-flex;gap:4px;align-items:center;font-size:11px;color:var(--text3)}
+  .dsh-cat .msr{font-size:14px}
+  .dsh-star{font-size:19px;color:var(--gold);letter-spacing:2px;margin:2px 0}
+  .dsh-star b{font-size:14px;color:var(--text);margin-left:6px;letter-spacing:0}
+  .dsh-one{font-size:12.5px;color:var(--text2);line-height:1.7;margin:4px 0 8px}
+  .dsh-dirs{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;margin-bottom:6px}
+  .dsh-dirs .dd{display:inline-flex;align-items:center;gap:3px}
+  .dsh-dirs .dd .msr{font-size:14px}
+  .dsh-dirs .dd.g{color:var(--green-d)}
+  .dsh-dirs .dd.b{color:var(--red-d)}
+  .dsh-time{display:flex;gap:12px;flex-wrap:wrap;font-size:11.5px;color:var(--text3)}
+  .dsh-time .g{color:var(--green-d)}
+  .dsh-time .b{color:var(--red-d)}
+  .dsh-src{font-size:10px;color:var(--text3);margin:-2px 0 6px}
+  .luck-dir .ld.n{flex-basis:100%;font-size:10px;color:var(--text3)}
+  .dsh-more{text-align:right;font-size:11px;color:var(--text3);margin-top:6px}
+  .dsh-sec{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:12px 14px;margin-bottom:12px}
+  .dsh-sh{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:var(--text);margin-bottom:4px}
+  .dsh-sh .msr{font-size:16px;color:var(--gold)}
+  .dsh-sh.warn .msr{color:var(--red)}
+  .dsh-row{display:flex;align-items:center;gap:10px;padding:9px 2px;border-bottom:0.5px dashed var(--line);cursor:pointer}
+  .dsh-row:last-child{border-bottom:none}
+  .dsh-rd{font-size:13px;font-weight:700;color:var(--text);min-width:76px}
+  .dsh-rs{font-size:12px;font-weight:800;color:var(--gold)}
+  .dsh-row.b .dsh-rs{color:var(--red-d)}
+  .dsh-rl{flex:1;font-size:12px;color:var(--text2);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .dsh-none{font-size:12px;color:var(--text3);padding:6px 0}
+  .dsh-calbtn{width:100%;display:flex;align-items:center;justify-content:center;gap:6px;min-height:46px;border:1px solid var(--line2);border-radius:12px;background:var(--surface2);color:var(--text2);font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:14px}
+  .dsh-entries{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px}
+  .dsh-ecard{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:12px 6px;text-align:center;cursor:pointer;min-width:0}
+  .dsh-eic{font-size:22px;color:var(--gold)}
+  .dsh-et{font-size:12px;font-weight:800;color:var(--text);margin-top:4px}
+  .dsh-ed{font-size:10px;color:var(--text3);margin-top:2px;line-height:1.5}
+  .ot-wrap{position:sticky;top:0;z-index:30;background:var(--bg,var(--surface2));margin:0 0 12px;padding:6px 0 8px}
+  .ot-tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:2px;-webkit-mask-image:linear-gradient(90deg,#000 90%,transparent);mask-image:linear-gradient(90deg,#000 90%,transparent)}
+  .ot-tabs::-webkit-scrollbar{display:none}
+  .ot-chip{flex:0 0 auto;display:inline-flex;align-items:center;gap:4px;padding:8px 13px;border-radius:20px;border:1px solid var(--line);background:var(--surface);color:var(--text2);font-size:12.5px;font-weight:700;font-family:inherit;cursor:pointer;min-height:38px;white-space:nowrap}
+  .ot-chip .msr{font-size:15px}
+  .ot-chip.on{border-color:var(--gold);color:var(--gold);background:var(--surface2)}
+  .cmp-lg{display:flex;gap:14px;justify-content:center;font-size:10.5px;color:var(--text3);margin-top:6px;flex-wrap:wrap}
+  .cmp-lg .cl.g{color:var(--green-d)}
+  .cmp-lg .cl.b{color:var(--red-d)}
+  .gmap-link{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--gold);margin:10px 12px 0 0;text-decoration:underline;font-weight:700}
+  .gmap-link .msr{font-size:15px}
+  .dash-back{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--text3);cursor:pointer;margin-bottom:8px;padding:4px 2px}
+  .dash-back .msr{font-size:15px}
+  .lay-line{display:flex;gap:5px;margin-top:4px;flex-wrap:wrap}
+  .lay-badge{font-size:10px;font-weight:700;padding:1px 7px;border-radius:8px;border:1px solid var(--line2);color:var(--text3);background:var(--surface2);white-space:nowrap}
+  .lay-badge.g{color:var(--green-d);border-color:var(--green-d)}
+  .lay-badge.b{color:var(--red-d);border-color:var(--red)}
+  .dep-line{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--gold);margin-top:4px;font-weight:700}
+  .ds-card{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:12px 14px;margin-bottom:12px}
+  .dsh-planbtn{width:100%;display:flex;align-items:center;justify-content:center;gap:6px;min-height:48px;border:1px solid var(--gold);border-radius:12px;background:var(--surface);color:var(--gold);font-size:13.5px;font-weight:800;font-family:inherit;cursor:pointer;margin-bottom:10px}
+  .dsh-plan{display:flex;align-items:center;gap:10px;border:1px solid var(--gold);border-radius:14px;background:var(--surface);padding:12px 14px;margin-bottom:10px;cursor:pointer}
+  .dsh-plan>.msr{font-size:22px;color:var(--gold)}
+  .dsh-pl-b{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
+  .dsh-pl-b b{font-size:12.5px;color:var(--text)}
+  .dsh-pl-b span{font-size:11.5px;color:var(--text2)}
+  .pl-plan{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:14px;margin-top:12px}
+  .pl-head{font-size:13px;font-weight:800;color:var(--text);margin-bottom:10px}
+  .pl-gauge{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:12px;color:var(--text2)}
+  .pl-gl{flex:0 0 auto}
+  .pl-bar{flex:1;height:8px;border-radius:6px;background:var(--surface2);overflow:hidden}
+  .pl-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--gold),#f0d68c)}
+  .pl-step{display:flex;gap:10px;padding:10px 0;border-bottom:0.5px dashed var(--line)}
+  .pl-step:last-of-type{border-bottom:none}
+  .pl-ic{flex:0 0 34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface2)}
+  .pl-ic .msr{font-size:18px}
+  .pl-step.b .pl-ic{color:var(--red-d);border:1px solid var(--red)}
+  .pl-step.g .pl-ic{color:var(--green-d);border:1px solid var(--green-d)}
+  .pl-step.gold .pl-ic{color:var(--gold);border:1px solid var(--gold)}
+  .pl-body{flex:1;min-width:0}
+  .pl-t{font-size:12.5px;font-weight:800;color:var(--text)}
+  .pl-t .pl-d{margin-left:8px;color:var(--gold)}
+  .pl-desc{font-size:12px;color:var(--text2);line-height:1.7;margin-top:2px}
+  .pl-safe{display:flex;gap:6px;align-items:flex-start;font-size:11px;color:var(--text3);margin-top:10px;padding:8px 10px;background:var(--surface2);border-radius:10px;line-height:1.6}
+  .pl-safe .msr{font-size:14px;flex:0 0 auto}
+  .pl-clr{margin-left:10px;color:var(--red-d);cursor:pointer;text-decoration:underline;font-size:11px}
   .tw-col.dw-yc{width:112px}
   .tw-col.dw-mc,.tw-col.dw-dc{width:84px}
   /* ===== オープニングスプラッシュ ===== */
@@ -437,7 +535,7 @@
   .seg button{font-size:11px;padding:4px 12px;border:none;border-radius:6px;background:transparent;color:var(--text2);cursor:pointer;font-family:inherit}
   .seg button.active{background:var(--surface);color:var(--text);font-weight:600}
   .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;padding:20px;z-index:50}
-  .modal{background:var(--surface);border-radius:var(--r);padding:20px;width:100%;max-width:330px}
+  .modal{background:var(--surface);border-radius:var(--r);padding:20px;width:100%;max-width:330px;max-height:calc(100vh - 48px);max-height:calc(100dvh - 48px);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
   .modal h4{font-size:15px;font-weight:600;margin-bottom:8px}
   .modal p{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:12px}
   .modal-actions{display:flex;gap:8px;margin-top:16px}.modal-actions .btn{flex:1}
@@ -1471,7 +1569,7 @@ try{
     <div class="nav-item active" data-screen="home" onclick="go('home')"><span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg></span><span>ホーム</span></div>
     <div class="nav-item" data-screen="meishiki" onclick="go('meishiki')"><span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg></span><span>命式</span></div>
     <div class="nav-item" data-screen="unsei" onclick="go('unsei')"><span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg></span><span>運勢</span></div>
-    <div class="nav-item" data-screen="kimon" onclick="go('kimon')"><span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg></span><span>奇門遁甲</span></div>
+    <div class="nav-item" data-screen="kimon" onclick="go('kimon')"><span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="17" height="17" rx="2"/><line x1="9.2" y1="3.5" x2="9.2" y2="20.5"/><line x1="14.8" y1="3.5" x2="14.8" y2="20.5"/><line x1="3.5" y1="9.2" x2="20.5" y2="9.2"/><line x1="3.5" y1="14.8" x2="20.5" y2="14.8"/></svg></span><span>奇門遁甲</span></div>
     <div class="nav-item" data-screen="trip" onclick="go('trip')"><span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg></span><span>開運</span></div>
     <div class="nav-item" data-screen="aisho" onclick="go('aisho')"><span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></span><span>相性</span></div>
     <div class="nav-item" data-screen="settings" onclick="go('settings')"><span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></span><span>設定</span></div>
@@ -1607,13 +1705,21 @@ function buildBoard(date,tab){
   var board={cells:cells,junName:js.junName,ku1:js.ku1,ku2:js.ku2,yang:yang,ju:ju,gen:gen,zfCell:zfCell,zfStar:zfStar,zsGateName:zsGateName,zsGate:zfCell?zfCell.gateRaw:'—'};
   board.kakukyoku=judgeKK(board);return board;
 }
+var KK_DESC_PAIR=function(b,hv,gd){return b.cells.some(function(c){return !c.isCtr&&(c.tenStem===hv||c.tenStem2===hv)&&c.gndStem===gd;});};
 var KK_DEFS=[
-  {name:'青龍返首',type:'good',stars:5,trans:'営業・交渉・契約に大吉',check:function(b){return b.zfCell&&['開門','生門','休門'].indexOf(b.zfCell.gateRaw)>=0;}},
-  {name:'飛鳥跌穴',type:'bad',stars:1,trans:'重要な決断・移動は控えめに',check:function(b){return b.zfCell&&['死門','驚門','傷門'].indexOf(b.zfCell.gateRaw)>=0;}},
-  {name:'玉女守門',type:'good',stars:4,trans:'恋愛・内密の相談・根回しに吉',check:function(b){return b.zfCell&&b.zfCell.tenStem==='丁';}},
-  {name:'三奇得使',type:'good',stars:5,trans:'起業・企画・大勝負に最吉',check:function(b){var t=[];b.cells.forEach(function(c){if(c.tenStem)t.push(c.tenStem);if(c.tenStem2)t.push(c.tenStem2);});return['乙','丙','丁'].every(function(s){return t.indexOf(s)>=0;})&&['開門','生門','休門'].indexOf(b.zsGate)>=0;}}
+  {name:'青龍返首',type:'good',stars:5,trans:'交渉・営業・大事な行動に大吉',desc:'天盤の戊が地盤の丙に重なる大吉格。目上の引き立て・形勢逆転の追い風が吹く配置',check:function(b){return KK_DESC_PAIR(b,'戊','丙');}},
+  {name:'飛鳥跌穴',type:'good',stars:5,trans:'仕掛け・発表・アピールに大吉',desc:'天盤の丙が地盤の戊に重なる大吉格。鳥が巣に収まるように、行動がぴたりと的中しやすい配置',check:function(b){return KK_DESC_PAIR(b,'丙','戊');}},
+  {name:'玉女守門',type:'good',stars:4,trans:'恋愛・内密の相談・根回しに吉',desc:'丁奇（玉女）が値使門の宮を守る吉格。縁ごと・人間関係が円滑に進む配置',check:function(b){var c=b.cells.filter(function(x){return x.gateRaw===b.zsGateName;})[0];return !!(c&&(c.tenStem==='丁'||c.tenStem2==='丁'));}},
+  {name:'三奇得使',type:'good',stars:5,trans:'企画・起業・挑戦に最吉',desc:'乙・丙・丁の三奇が六甲の遁干と組む吉格。才能と助けが噛み合う配置',check:function(b){var MAPJ={'甲子旬':'戊','甲戌旬':'己','甲申旬':'庚','甲午旬':'辛','甲辰旬':'壬','甲寅旬':'癸'};var gi=MAPJ[b.junName];if(!gi)return false;var QI={'戊':'丙','己':'乙','庚':'丙','辛':'乙','壬':'丁','癸':'丁'};return KK_DESC_PAIR(b,QI[gi],gi);}},
+  {name:'白虎猖狂',type:'bad',stars:1,trans:'事故・ケガ・争いに注意',desc:'天盤の辛が地盤の乙に重なる凶格。荒々しい破壊の気。移動・刃物・強行は控えめに',check:function(b){return KK_DESC_PAIR(b,'辛','乙');}},
+  {name:'青龍逃走',type:'bad',stars:1,trans:'損失・人が離れる事に注意',desc:'天盤の乙が地盤の辛に重なる凶格。財や人が手元から離れやすい配置',check:function(b){return KK_DESC_PAIR(b,'乙','辛');}},
+  {name:'螣蛇夭矯',type:'bad',stars:1,trans:'虚言・話のもつれに注意',desc:'天盤の癸が地盤の丁に重なる凶格。話がこじれ、欺かれやすい配置',check:function(b){return KK_DESC_PAIR(b,'癸','丁');}},
+  {name:'朱雀投江',type:'bad',stars:1,trans:'文書・連絡ミスに注意',desc:'天盤の丁が地盤の癸に重なる凶格。書類・メッセージのトラブルが出やすい',check:function(b){return KK_DESC_PAIR(b,'丁','癸');}},
+  {name:'太白入熒',type:'bad',stars:1,trans:'盗難・横取りに注意',desc:'天盤の庚が地盤の丙に重なる凶格。持ち物・成果を奪われる暗示',check:function(b){return KK_DESC_PAIR(b,'庚','丙');}},
+  {name:'熒入太白',type:'bad',stars:1,trans:'突発の争い・侵入に注意',desc:'天盤の丙が地盤の庚に重なる凶格。向こうから来るトラブルに備えを',check:function(b){return KK_DESC_PAIR(b,'丙','庚');}},
+  {name:'六儀撃刑',type:'bad',stars:1,trans:'もめ事・こじれに注意',desc:'六儀が刑の宮に落ちる凶格。争いごとが激化しやすい配置',check:function(b){var KEI={'戊':3,'己':2,'庚':8,'辛':9,'壬':4,'癸':4};return b.cells.some(function(c){return !c.isCtr&&KEI[c.tenStem]===c.palNum;});}}
 ];
-function judgeKK(b){var res=[];KK_DEFS.forEach(function(d){try{if(d.check(b))res.push({name:d.name,type:d.type,stars:d.stars,trans:d.trans});}catch(e){}});res.sort(function(a,b2){if(a.type!==b2.type)return a.type==='good'?-1:1;return b2.stars-a.stars;});return res;}
+function judgeKK(b){var res=[];KK_DEFS.forEach(function(d){try{if(d.check(b))res.push({name:d.name,type:d.type,stars:d.stars,trans:d.trans,desc:d.desc});}catch(e){}});res.sort(function(a,b2){if(a.type!==b2.type)return a.type==='good'?-1:1;return b2.stars-a.stars;});return res;}
 
 function calcDaiyun(birth,sex,mode){
   var ykan=yKanIdx(effYear(birth)),yYin=YYS[TG[ykan]];
@@ -1696,7 +1802,7 @@ var Store={
 };
 
 var APP={chartData:null,ritsuunMode:'round',theme:'hikari-dark',built:{home:false,meishiki:false,unsei:false,kimon:false,trip:false,aisho:false},
-  kimonTab:'shi',kimonDateStr:'',kimonTimeStr:'',_kimonScan:null,baseId:'home',destId:'',tripOut:'',tripRet:'',tripTab:'ri',tripMode:'check',destSearchId:'',destBase:'home',destTrip:'one',destNights:1,destNightsMax:1,destPeriod:'1m',destPurpose:'all',destView:'list',destFilter:'all',destStart:'',destEnd:'',_destCache:null,luckProfile:'money',luckPeriod:'1m',luckView:'cal',luckAction:'宝くじ・くじ運',groupMembers:[],groupDest:'',groupBase:'home',groupMemberMode:'same',groupMemberBase:{},groupTrip:'one',groupNights:1,groupNightsMax:1,groupPeriod:'1m',groupView:'list',aishoA:'',aishoB:'',aishoRel:'renai',homeCoords:'',readingTab:'seikaku',openMonth:-1,diaryMonth:0,diaryPick:null,googleKey:'',_geo:{results:{},timers:{}},scrollPos:{},
+  kimonTab:'shi',kimonDateStr:'',kimonTimeStr:'',_kimonScan:null,baseId:'home',destId:'',tripOut:'',tripRet:'',tripTab:'ri',tripMode:'luck',destSearchId:'',destBase:'home',destTrip:'one',destNights:1,destNightsMax:1,destPeriod:'1m',destPurpose:'all',destView:'list',destFilter:'all',destStart:'',destEnd:'',_destCache:null,luckProfile:'money',luckPeriod:'1m',luckView:'cal',luckAction:'宝くじ・くじ運',groupMembers:[],groupDest:'',groupBase:'home',groupMemberMode:'same',groupMemberBase:{},groupTrip:'one',groupNights:1,groupNightsMax:1,groupPeriod:'1m',groupView:'list',aishoA:'',aishoB:'',aishoRel:'renai',homeCoords:'',readingTab:'seikaku',openMonth:-1,diaryMonth:0,diaryPick:null,googleKey:'',_geo:{results:{},timers:{}},scrollPos:{},
   formNoTime:false,heading:0,sensorOn:false,
   viewMode:'list',pendingDelete:null,editingMemo:null,editingProfile:null,
   notif:{
@@ -3186,7 +3292,7 @@ function destList(rows){
   return '<div class="ds-list">'+rows.map(function(r){
     var cls=r.isBad?'ds-bad':r.stars>=4?'ds-good':r.stars>=2?'ds-mid':'ds-low';
     var star=r.isBad?'<span class="ds-kyo">凶</span>':'<span class="ds-stars">'+'★★★★★'.slice(0,r.stars)+'<span class="ds-star-e">'+'☆☆☆☆☆'.slice(0,5-r.stars)+'</span></span>';
-    return '<div class="ds-row '+cls+(r.w?' ds-wday':r.wb?' ds-wbday':'')+'" onclick="kimonFromTrip(\''+ymd(r.date)+'\')"><div class="dsr-date">'+(r.date.getMonth()+1)+'/'+r.date.getDate()+'<span class="dsr-wd">('+wd[r.date.getDay()]+')</span></div><div class="dsr-body"><div class="dsr-top">'+star+(r.isBad?'':'<span class="dsr-label">'+r.label+'</span>')+(r.w?'<span class="w-badge">W吉◎</span>':'')+(r.wb?'<span class="wb-badge">W凶✕</span>':'')+(r.dl?'<span class="dl-badge'+(r.dl.stars>=4?' g':r.dl.stars<=1?' b':'')+'">日運'+(r.dl.stars===0?'凶':'★'+r.dl.stars)+'</span>':'')+'</div><div class="dsr-comment">'+r.comment+'</div>'+(r.info?'<div class="dsr-info">'+r.info+'</div>':'')+timingCellHtml(r.date,!r.isBad&&r.stars>=3,'dt-')+'</div><div class="dsr-chev">›</div></div>';
+    return '<div class="ds-row '+cls+(r.w?' ds-wday':r.wb?' ds-wbday':'')+'" onclick="kimonFromTrip(\''+ymd(r.date)+'\')"><div class="dsr-date">'+(r.date.getMonth()+1)+'/'+r.date.getDate()+'<span class="dsr-wd">('+wd[r.date.getDay()]+')</span></div><div class="dsr-body"><div class="dsr-top">'+star+(r.isBad?'':'<span class="dsr-label">'+r.label+'</span>')+(r.w?'<span class="w-badge">W吉◎</span>':'')+(r.wb?'<span class="wb-badge">W凶✕</span>':'')+(r.dl?'<span class="dl-badge'+(r.dl.stars>=4?' g':r.dl.stars<=1?' b':'')+'">日運'+(r.dl.stars===0?'凶':'★'+r.dl.stars)+'</span>':'')+'</div><div class="dsr-comment">'+r.comment+'</div>'+(r.info?'<div class="dsr-info">'+r.info+'</div>':'')+(r.parts?'<div class="lay-line">'+r.parts.map(function(p){return '<span class="lay-badge'+(p.isBad?' b':p.stars>=3?' g':'')+'">'+TAB_SHORT[p.tab]+'盤'+(p.isBad?'✕':p.stars>=3?'◎':'△')+'</span>';}).join('')+'</div>':'')+(r.dep&&r.dep.stars>=3?'<div class="dep-line"><span class="msr" style="font-size:13px">schedule</span>出発は '+KOKU_RANGE[r.dep.wi]+' が時盤◎</div>':'')+timingCellHtml(r.date,!r.isBad&&r.stars>=3,'dt-')+'</div><div class="dsr-chev">›</div></div>';
   }).join('')+'</div>';
 }
 function calMonths(rows){var groups=[],cur=null;rows.forEach(function(r){var key=r.date.getFullYear()+'-'+r.date.getMonth();if(!cur||cur.key!==key){cur={key:key,y:r.date.getFullYear(),m:r.date.getMonth(),items:[]};groups.push(cur);}cur.items.push(r);});return groups;}
@@ -3225,6 +3331,7 @@ function destSearchCard(){
   h+='<div class="route-pick"><div class="rp-col"><label>出発地</label><select onchange="setDestBase(this.value)">'+pointOptions(baseSel)+'</select></div><div class="rp-arrow"><span class="msr">arrow_forward</span></div><div class="rp-col"><label>目的地</label><select onchange="setDestSearch(this.value)">'+pointOptions(selId)+'</select></div></div>';
   h+='<div class="rp-hint"><span class="msr">lightbulb</span> 出発地と目的地を入れ替えると「帰路」の運気も調べられます。 <b onclick="go(\'settings\')" style="color:var(--gold-soft);cursor:pointer">＋地点を追加</b></div>';
   h+='<div class="ds-field"><span class="ds-flabel">行程</span><div class="seg seg-sm"><button class="seg-b'+(APP.destTrip!=='round'?' on':'')+'" onclick="setDestTrip(\'one\')">片道</button><button class="seg-b'+(APP.destTrip==='round'?' on':'')+'" onclick="setDestTrip(\'round\')"><span class="msr">swap_horiz</span> 往復</button></div></div>';
+  if(APP.destTrip!=='round')h+='<div class="ds-field"><span class="ds-flabel">移動の規模</span><div class="seg seg-sm">'+[['day','日帰り'],['stay','宿泊あり'],['move','引越・移転']].map(function(t){return '<button class="seg-b'+((APP.destScale||'day')===t[0]?' on':'')+'" onclick="setDestScale(\''+t[0]+'\')">'+t[1]+'</button>';}).join('')+'</div></div>';
   if(APP.destTrip==='round')h+='<div class="ds-field"><span class="ds-flabel">宿泊数（範囲で振ると最適泊数を提案）</span><div class="nights-range"><select onchange="setDestNights(this.value)">'+nightsOptions(APP.destNights)+'</select><span class="nr-sep">〜</span><select onchange="setDestNightsMax(this.value)">'+nightsOptions(Math.max(APP.destNights,APP.destNightsMax||APP.destNights))+'</select></div></div>';
   h+='<div class="ds-field"><span class="ds-flabel">検索期間</span><div class="seg seg-sm seg-wrap">'+[['1w','1週間'],['1m','1か月'],['3m','3か月'],['custom','指定']].map(function(t){return '<button class="seg-b'+(APP.destPeriod===t[0]?' on':'')+'" onclick="setDestPeriod(\''+t[0]+'\')">'+t[1]+'</button>';}).join('')+'</div></div>';
   if(APP.destPeriod==='custom')h+='<div class="row2"><div class="fld"><label>開始日</label><button type="button" class="tw-field" onclick="openDateWheel(\''+(APP.destStart||ymd(new Date()))+'\',function(v){setDestCustom(\'start\',v)},{title:\'開始日を選択\',minY:2020,maxY:2059})"><span class="msr tw-fic">event</span><span class="tw-val">'+fmtYmdBtn(APP.destStart||ymd(new Date()))+'</span></button></div><div class="fld"><label>終了日</label><button type="button" class="tw-field" onclick="openDateWheel(\''+(APP.destEnd||ymd(addDays(new Date(),30)))+'\',function(v){setDestCustom(\'end\',v)},{title:\'終了日を選択\',minY:2020,maxY:2059})"><span class="msr tw-fic">event</span><span class="tw-val">'+fmtYmdBtn(APP.destEnd||ymd(addDays(new Date(),30)))+'</span></button></div></div>';
@@ -3240,10 +3347,57 @@ function destSearchCard(){
 }
 function nightsOptions(sel){var o='';for(var n=0;n<=6;n++)o+='<option value="'+n+'"'+(sel===n?' selected':'')+'>'+(n===0?'日帰り':n+'泊')+'</option>';return o;}
 function bestRoundForDay(d,outDir,retDir,nmin,nmax,purpose){var best=null;for(var n=nmin;n<=nmax;n++){var r=evalRoundDay(d,outDir,retDir,n,purpose);if(!best||r.rank>best.rank)best=r;}return best;}
+/* ===== 盤の階層(移動規模で日盤・月盤・年盤を重ねる) ===== */
+var _lbCache={};
+function boardCached(d,tab){
+  var s=getSurrJQ(d),pj=s.prev?s.prev.name:'x';
+  var P=boardPillar(d,tab);
+  var k=tab+'|'+P.t+'|'+P.b+'|'+pj+'|'+d.getFullYear();
+  if(_lbCache[k])return _lbCache[k];
+  var b=buildBoard(d,tab);_lbCache[k]=b;return b;
+}
+var SCALE_LAYERS={day:[['ri',1.0]],stay:[['ri',1.0],['yue',0.6]],move:[['ri',0.5],['yue',1.0],['nian',0.8]]};
+var TAB_SHORT={ri:'日',yue:'月',nian:'年'};
+function layeredDirEval(d,dir,purpose,scale){
+  if(!SCALE_LAYERS[scale])scale='day';
+  if(scale==='day'){var e0=evalDestDay(d,cellByDir(dayBoard(d),dir),purpose);e0.parts=null;return e0;}
+  var layers=SCALE_LAYERS[scale],parts=[],ts=0,tw=0,anyBad=false,base=null;
+  layers.forEach(function(L){
+    var tab=L[0],w=L[1];
+    var b=tab==='ri'?dayBoard(d):boardCached(d,tab);
+    var e=evalDestDay(d,cellByDir(b,dir),purpose);
+    if(tab==='ri')base=e;
+    parts.push({tab:tab,stars:e.stars,isBad:e.isBad});
+    ts+=e.score*w;tw+=w;
+    if(e.isBad&&w>=0.6)anyBad=true;
+  });
+  var avg=ts/tw,stars,label,isBad=false;
+  if(anyBad||avg<=-1.4){stars=0;label='凶';isBad=true;}
+  else if(avg>=3){stars=5;label='大吉';}
+  else if(avg>=1.8){stars=4;label='吉';}
+  else if(avg>=0.8){stars=3;label='中吉';}
+  else if(avg>=0){stars=2;label='小吉';}
+  else{stars=1;label='末吉';}
+  return {date:d,stars:stars,label:label,isBad:isBad,score:avg,info:base?base.info:'',comment:isBad?'いずれかの盤でこの方位が凶。移動・大事な用事は避けたい日':(base?base.comment:''),parts:parts};
+}
+var _depCache={};
+function bestDepartHour(d,dir,purpose,wiFrom,wiTo){
+  wiFrom=wiFrom==null?3:wiFrom;wiTo=wiTo==null?10:wiTo;
+  var k=ymd(d)+'|'+dir+'|'+purpose+'|'+wiFrom+'-'+wiTo;
+  if(_depCache[k]!==undefined)return _depCache[k];
+  var best=null;
+  for(var wi=wiFrom;wi<=wiTo;wi++){
+    var dt=new Date(d);dt.setHours(wi*2,0,0,0);
+    var e;try{e=evalDestDay(dt,cellByDir(buildBoard(dt,'shi'),dir),purpose);}catch(er){continue;}
+    if(!best||e.score>best.score)best={wi:wi,score:e.score,stars:e.stars,isBad:e.isBad};
+  }
+  _depCache[k]=best;return best;
+}
 function evalRoundDay(d,outDir,retDir,nights,purpose){
   var d2=addDays(d,nights);
-  var go=evalDestDay(d,cellByDir(dayBoard(d),outDir),purpose);
-  var back=evalDestDay(d2,cellByDir(dayBoard(d2),retDir),purpose);
+  var sc2=nights>=1?'stay':'day';
+  var go=layeredDirEval(d,outDir,purpose,sc2);
+  var back=layeredDirEval(d2,retDir,purpose,sc2);
   var gs=go.isBad?0:go.stars,bs=back.isBad?0:back.stars;
   var bothGood=!go.isBad&&go.stars>=3&&!back.isBad&&back.stars>=3;
   var anyBad=go.isBad||back.isBad;
@@ -3299,12 +3453,118 @@ function showRoundDetail(ds){
   var tmGo=dayTimingCompute(r.date),tmBack=dayTimingCompute(r.ret),WD=['日','月','火','水','木','金','土'];
   var sweepHtml='';
   if(sweep){sweepHtml='<div class="nr-compare"><div class="nrc-h">泊数ごとの往復評価（◎=往復吉）</div>';for(var nn=nmin;nn<=nmax;nn++){var rr=evalRoundDay(d,outDir,retDir,nn,APP.destPurpose);var sym=rr.bothGood?'◎':rr.anyBad?'✕':'△';sweepHtml+='<div class="nrc-row'+(nn===nights?' nrc-best':'')+'"><span class="nrc-n">'+(nn===0?'日帰り':nn+'泊')+'</span><span class="nrc-v">'+sym+' '+rr.label+'</span><span class="nrc-s">行'+(rr.go.isBad?'凶':'★'+rr.go.stars)+'/帰'+(rr.back.isBad?'凶':'★'+rr.back.stars)+'</span></div>';}sweepHtml+='</div>';}
-  function legCard(tag,dir,dd,e,tm){var gd=!e.isBad&&e.stars>=3;var star=e.isBad?'凶':'★★★★★'.slice(0,e.stars)+'☆☆☆☆☆'.slice(0,5-e.stars);var tline=gd?('<span class="lt-dot lt-dot-g"></span> 吉時間帯 '+tm.good.main+' '+(tm.good.sub||'')):('<span class="lt-dot lt-dot-b"></span> 凶時間帯 '+tm.bad.main+' '+(tm.bad.sub||''));return '<div class="rt-card"><div class="rt-ch"><b>'+tag+'</b> '+(dd.getMonth()+1)+'/'+dd.getDate()+'（'+WD[dd.getDay()]+'）<span class="rt-dir">'+dir+'方向</span></div><div class="rt-cs '+(e.isBad?'bad':gd?'good':'mid')+'">'+star+(e.isBad?'':' '+e.label)+'</div><div class="rt-cc">'+e.comment+'</div><div class="rt-ct">'+tline+'</div></div>';}
+  function legCard(tag,dir,dd,e,tm){var gd=!e.isBad&&e.stars>=3;var star=e.isBad?'凶':'★★★★★'.slice(0,e.stars)+'☆☆☆☆☆'.slice(0,5-e.stars);var tline=gd?('<span class="lt-dot lt-dot-g"></span> 吉時間帯 '+tm.good.main):('<span class="lt-dot lt-dot-b"></span> 凶時間帯 '+tm.bad.main);return '<div class="rt-card"><div class="rt-ch"><b>'+tag+'</b> '+(dd.getMonth()+1)+'/'+dd.getDate()+'（'+WD[dd.getDay()]+'）<span class="rt-dir">'+dir+'方向</span></div><div class="rt-cs '+(e.isBad?'bad':gd?'good':'mid')+'">'+star+(e.isBad?'':' '+e.label)+'</div><div class="rt-cc">'+e.comment+'</div><div class="rt-ct">'+tline+'</div></div>';}
   var note=r.bothGood?'行き・帰りとも良好です。この出発日で計画を進められます。':r.anyBad?((r.go.isBad?'行き':'帰り')+'の日に凶が出ています。出発日や宿泊数をずらすのがおすすめです。'):'大きな問題はありませんが、往復とも最良とまではいきません。';
   if(r.dl){if(r.w)note+=' さらに出発日の日運も好調で、絶好のタイミングです。';else if(r.dl.stars<=1)note+=' なお出発日の日運は'+(r.dl.stars===0?'凶':'低調')+'です。方位が良くても、大きなお金の決断は慎重に。';}
+  if(r.nights>=1)note+=' 宿泊を伴うため、月盤も重ねて判定しています。';
   document.getElementById('modalRoot').innerHTML='<div class="modal-overlay" onclick="closeRoundDetail()"><div class="modal" onclick="event.stopPropagation()"><div class="kt-cat"><span class="msr">swap_horiz</span> '+esc(tripPointName(APP.destBase))+' ⇄ '+esc(tripPointName(APP.destSearchId))+'（'+(nights===0?'日帰り':nights+'泊'+(nights+1)+'日')+'）</div><div class="luck-star '+(r.bothGood?'good':r.anyBad?'bad':'mid')+'" style="margin-top:8px">★'+r.stars+' <span>'+r.label+'</span></div>'+legCard('行き',outDir,r.date,r.go,tmGo)+legCard('帰り',retDir,r.ret,r.back,tmBack)+sweepHtml+'<div class="hint" style="margin:8px 0 0">'+note+'</div><div class="modal-actions"><button class="btn" onclick="closeRoundDetail()">閉じる</button></div></div></div>';
 }
 function closeRoundDetail(){document.getElementById('modalRoot').innerHTML='';}
+/* ===== 宝くじプランナー(正攻法/振り幅法) ===== */
+var PLAN_KEY='unmei_lotplan';
+function loadPlan(){try{return JSON.parse(localStorage.getItem(PLAN_KEY)||'null');}catch(e){return null;}}
+function savePlanData(p){try{localStorage.setItem(PLAN_KEY,JSON.stringify(p));}catch(e){}}
+function clearPlan(){try{localStorage.removeItem(PLAN_KEY);}catch(e){}renderTrip();}
+window.clearPlan=clearPlan;
+function worstDepartHour(d,dir,purpose,wiFrom,wiTo){
+  wiFrom=wiFrom==null?3:wiFrom;wiTo=wiTo==null?10:wiTo;
+  var k='w|'+ymd(d)+'|'+dir+'|'+purpose+'|'+wiFrom+'-'+wiTo;
+  if(_depCache[k]!==undefined)return _depCache[k];
+  var worst=null;
+  for(var wi=wiFrom;wi<=wiTo;wi++){
+    var dt=new Date(d);dt.setHours(wi*2,0,0,0);
+    var e;try{e=evalDestDay(dt,cellByDir(buildBoard(dt,'shi'),dir),purpose);}catch(er){continue;}
+    if(!worst||e.score<worst.score)worst={wi:wi,score:e.score,stars:e.stars};
+  }
+  _depCache[k]=worst;return worst;
+}
+function buildPlan(drawYmd,placeId,mode){
+  var draw=new Date(drawYmd+'T12:00');if(isNaN(draw))return{err:'抽選日を選択してください'};
+  var today=new Date();today.setHours(12,0,0,0);
+  var buyEnd=addDays(draw,-1);
+  if(buyEnd<today)return{err:'抽選日は明日以降の日付を選んでください'};
+  var baseLL=tripLatLng('home'),destLL=tripLatLng(placeId);
+  if(!baseLL||!destLL)return{err:'自宅の座標が未設定です（設定→自宅の場所）'};
+  var brg=calcBearing(baseLL[0],baseLL[1],destLL[0],destLL[1]),dir=bearDir(brg),dist=calcDist(baseLL[0],baseLL[1],destLL[0],destLL[1]);
+  var span=Math.min(60,Math.round((buyEnd-today)/86400000)+1);
+  var days=[];
+  for(var i=0;i<span;i++){var d=addDays(today,i);var de=layeredDirEval(d,dir,'money','day');var dl=luckScore(dayBoard(d),'money');days.push({d:d,de:de,dl:dl,mix:de.score+dl.score*0.6});}
+  var plan={mode:mode,drawYmd:drawYmd,placeId:placeId,placeName:tripPointName(placeId),dir:dir,dist:dist,brg:brg,destLL:destLL,homeLL:baseLL};
+  if(mode==='swing'){
+    var sik=days.slice().sort(function(a,b){return a.mix-b.mix;})[0];
+    plan.sikomi={ymd:ymd(sik.d),mix:sik.mix,dirStars:sik.de.isBad?0:sik.de.stars,dirBad:sik.de.isBad,dlStars:sik.dl.stars,w:worstDepartHour(sik.d,dir,'money',5,9)};
+    var cw=[];
+    for(var off=10;off>=7;off--){var cd2=addDays(draw,-off);if(cd2>=today&&ymd(cd2)!==plan.sikomi.ymd&&cd2>new Date(plan.sikomi.ymd+'T00:00'))cw.push(cd2);}
+    if(!cw.length){for(var off2=6;off2>=2;off2--){var cd3=addDays(draw,-off2);if(cd3>=today&&cd3>new Date(plan.sikomi.ymd+'T00:00'))cw.push(cd3);}plan.chargeNote='抽選が近いため、チャージ窓を'+ (cw.length?'直前に短縮しています':'確保できませんでした');}
+    var best=null;
+    cw.forEach(function(cd){var dl=luckScore(dayBoard(cd),'money');var dirs=null;try{dirs=extractDirections(dayBoard(cd),APP.chartData?APP.chartData.yojin:null);}catch(e){}var s2=dl.score+(dirs&&dirs.best?dirs.best.luck*0.4:0);if(!best||s2>best.s2)best={d:cd,dl:dl,dirs:dirs,s2:s2};});
+    if(best)plan.charge={ymd:ymd(best.d),dlStars:best.dl.stars,dlLabel:best.dl.label,dir:best.dirs&&best.dirs.best?best.dirs.best.dir:null,dirInfo:best.dirs&&best.dirs.best?(best.dirs.best.gateRaw+'・'+best.dirs.best.star):''};
+    plan.swing=best?Math.max(0,Math.round((best.dl.score-sik.mix)*10)/10):null;
+  }else{
+    var top=days.filter(function(x){return !x.de.isBad;}).sort(function(a,b){return b.mix-a.mix;})[0]||days[0];
+    plan.buy={ymd:ymd(top.d),dirStars:top.de.isBad?0:top.de.stars,dlStars:top.dl.stars,w:top.de.isBad?null:bestDepartHour(top.d,dir,'money',5,9),isW:!top.de.isBad&&top.de.stars>=3&&top.dl.stars>=4};
+  }
+  return plan;
+}
+function setPlannerDraw(v){APP.plannerDraw=v;APP.plannerResult=null;renderTrip();}
+window.setPlannerDraw=setPlannerDraw;
+function setPlannerPlace(v){APP.plannerPlace=v;APP.plannerResult=null;renderTrip();}
+window.setPlannerPlace=setPlannerPlace;
+function setPlannerMode(m){APP.plannerMode=m;APP.plannerResult=null;renderTrip();}
+window.setPlannerMode=setPlannerMode;
+function runPlanner(){APP.plannerResult=buildPlan(APP.plannerDraw,APP.plannerPlace||'home',APP.plannerMode||'swing');renderTrip();}
+window.runPlanner=runPlanner;
+function savePlan(){if(APP.plannerResult&&!APP.plannerResult.err){savePlanData(APP.plannerResult);renderTrip();}}
+window.savePlan=savePlan;
+function plStep(icon,cls,title,ymdStr,body){
+  var d=new Date(ymdStr+'T12:00'),WD=['日','月','火','水','木','金','土'];
+  return '<div class="pl-step '+cls+'"><div class="pl-ic"><span class="msr">'+icon+'</span></div><div class="pl-body"><div class="pl-t">'+title+'<span class="pl-d">'+(d.getMonth()+1)+'/'+d.getDate()+'（'+WD[d.getDay()]+'）</span></div><div class="pl-desc">'+body+'</div></div></div>';
+}
+function plannerCard(){
+  var draw=APP.plannerDraw||ymd(addDays(new Date(),14));APP.plannerDraw=draw;
+  var mode=APP.plannerMode||'swing';
+  var h='<div class="sec-label"><span class="si msr">confirmation_number</span>宝くじプランナー</div>';
+  h+='<div class="ds-card">';
+  h+='<div class="ds-field"><span class="ds-flabel">抽選日</span><button type="button" class="tw-field" onclick="openDateWheel(\''+draw+'\',setPlannerDraw,{title:\'抽選日を選択\',minY:2020,maxY:2059})"><span class="msr tw-fic">event</span><span class="tw-val">'+fmtYmdBtn(draw)+'</span></button></div>';
+  h+='<div class="ds-field"><span class="ds-flabel">売り場</span><select onchange="setPlannerPlace(this.value)">'+placeOptions(APP.plannerPlace||'home',true)+'</select></div>';
+  h+='<div class="ds-field"><span class="ds-flabel">作戦</span><div class="seg seg-sm"><button class="seg-b'+(mode==='ortho'?' on':'')+'" onclick="setPlannerMode(\'ortho\')">王道（吉日に買う）</button><button class="seg-b'+(mode==='swing'?' on':'')+'" onclick="setPlannerMode(\'swing\')">振り幅（底で買う）</button></div></div>';
+  if(mode==='swing')h+='<div class="rp-hint" style="margin:8px 0"><span class="msr">lightbulb</span> 振り幅法：<b>運気の底</b>（凶方位×凶日×凶時間帯）で購入し、発表の7〜10日前に<b>吉方位で金運をチャージ</b>して発表を待つ。上がり幅を最大化する裏技です。</div>';
+  h+='<button class="dsh-calbtn" style="margin-top:6px" onclick="runPlanner()"><span class="msr">auto_awesome</span> プランを作る</button>';
+  h+='</div>';
+  var r=APP.plannerResult;
+  if(r){
+    if(r.err){h+='<div class="ds-summary"><span class="msr">error</span> '+esc(r.err)+'</div>';}
+    else{
+      h+='<div class="pl-plan">';
+      h+='<div class="pl-head">'+(r.mode==='swing'?'振り幅プラン':'王道プラン')+'：'+esc(r.placeName)+'（自宅から<b>'+r.dir+'</b>・約'+Math.round(r.dist)+'km）</div>';
+      var _md=new Date((r.mode==='swing'?r.sikomi.ymd:r.buy.ymd)+'T12:00');
+      h+=dirCompassSvg(dayBoard(_md),{brg:r.brg,destLabel:'売り場',size:210});
+      h+='<div class="cmp-lg" style="margin-bottom:8px">'+(r.mode==='swing'?'仕込み日':'購入日')+'の方位マップ（●＝売り場の方角）</div>';
+      if(r.mode==='swing'){
+        if(r.swing!=null)h+='<div class="pl-gauge"><span class="pl-gl">振り幅スコア</span><div class="pl-bar"><div class="pl-fill" style="width:'+Math.min(100,Math.round(r.swing*10))+'%"></div></div><b>'+r.swing+'</b></div>';
+        h+=plStep('south','b','① 仕込み（底で買う）',r.sikomi.ymd,'方位'+(r.sikomi.dirBad?'凶':'★'+r.sikomi.dirStars)+'×日運'+(r.sikomi.dlStars===0?'凶':'★'+r.sikomi.dlStars)+'。'+(r.sikomi.w?'<b>'+KOKU_RANGE[r.sikomi.w.wi]+'</b>に売り場へ（時盤も凶・営業時間10〜18時で選定）':'')+'。運気の底で購入し、振り幅を最大化');
+        if(r.charge)h+=plStep('north','g','② チャージ（山で待つ）',r.charge.ymd,'金運'+(r.charge.dlStars===0?'凶':'★'+r.charge.dlStars)+'の日。'+(r.charge.dir?'<b>'+r.charge.dir+'</b>方面（'+r.charge.dirInfo+'）へ外出。50km以上・日帰り温泉などが効果的（宿泊すれば月盤も味方に）':'吉方位への外出で金運を充填'));
+        else h+='<div class="pl-desc" style="padding:8px 2px">'+esc(r.chargeNote||'チャージ窓を確保できませんでした')+'</div>';
+        h+=plStep('emoji_events','gold','③ 抽選日',r.drawYmd,'上がり切った運気で結果を待つ');
+        h+='<div class="pl-safe"><span class="msr">health_and_safety</span> ここでの「凶」は運気上の選択です。実際の運転・防犯・体調管理はいつも通り慎重に。</div>';
+      }else{
+        h+=plStep('confirmation_number','g','① 購入日',r.buy.ymd,(r.buy.isW?'<b>W吉日</b>！方位★'+r.buy.dirStars+'×日運★'+r.buy.dlStars:'方位'+(r.buy.dirStars===0?'凶':'★'+r.buy.dirStars)+'×日運★'+r.buy.dlStars)+(r.buy.w?'。<b>'+KOKU_RANGE[r.buy.w.wi]+'</b>に売り場へ（時盤◎・営業時間10〜18時で選定）':''));
+        h+=plStep('emoji_events','gold','② 抽選日',r.drawYmd,'良い流れのまま結果を待つ');
+      }
+      if(r.destLL)h+='<a class="gmap-link" href="https://www.google.com/maps/dir/?api=1&destination='+r.destLL[0]+','+r.destLL[1]+'" target="_blank" rel="noopener"><span class="msr">map</span> 売り場までの経路をGoogleマップで見る</a>';
+      if(r.mode==='swing'&&r.charge&&r.charge.dir&&r.homeLL)h+='<a class="gmap-link" href="https://www.google.com/maps/search/日帰り温泉/@'+r.homeLL[0]+','+r.homeLL[1]+',10z" target="_blank" rel="noopener"><span class="msr">hot_tub</span> チャージ先（'+r.charge.dir+'方面）の温泉を探す</a>';
+      var saved=loadPlan();
+      var isSaved=saved&&saved.drawYmd===r.drawYmd&&saved.mode===r.mode&&saved.placeId===r.placeId;
+      h+='<button class="dsh-calbtn" onclick="savePlan()">'+(isSaved?'<span class="msr">check</span> 保存済み（ホームに表示中）':'<span class="msr">bookmark</span> このプランを保存')+'</button>';
+      h+='</div>';
+    }
+  }
+  var sv=loadPlan();
+  if(sv&&!r)h+='<div class="ds-summary" style="margin-top:10px"><span class="msr">bookmark</span> 保存中のプラン：抽選 '+fmtYmdBtn(sv.drawYmd)+'（'+(sv.mode==='swing'?'振り幅':'王道')+'）<span class="pl-clr" onclick="clearPlan()">削除</span></div>';
+  return h;
+}
+function setDestScale(k){APP.destScale=k;renderTrip();}
+window.setDestScale=setDestScale;
 function setDestTrip(v){APP.destTrip=v;renderTrip();}
 function setDestNights(n){APP.destNights=+n;if((APP.destNightsMax||0)<APP.destNights)APP.destNightsMax=APP.destNights;APP._destCache=null;renderTrip();}
 function setDestNightsMax(n){APP.destNightsMax=Math.max(+n,APP.destNights||0);APP._destCache=null;renderTrip();}
@@ -3314,17 +3574,20 @@ function fillDestResults(){
   var dir=bearDir(calcBearing(baseLL[0],baseLL[1],destLL[0],destLL[1])),dist=calcDist(baseLL[0],baseLL[1],destLL[0],destLL[1]);
   if(APP.destTrip==='round'){fillDestRound(el,baseLL,destLL,dir,dist);return;}
   var days=destDays(),cells=destBoards(APP.destSearchId,dir,days);
-  var rows=cells.map(function(o){return evalDestDay(o.date,o.cell,APP.destPurpose);});
+  var rows=cells.map(function(o){return layeredDirEval(o.date,dir,APP.destPurpose,APP.destScale||'day');});
+  rows.forEach(function(r){if(!r.isBad&&r.stars>=3)r.dep=bestDepartHour(r.date,dir,APP.destPurpose);});
   rows.forEach(function(r){r.dl=dayLuckFor(r.date,APP.destPurpose);r.w=isWDay(r);r.wb=isWBadDay(r);r.comment=mergedComment(r,APP.destPurpose)||r.comment;});
   var goodN=rows.filter(function(r){return !r.isBad&&r.stars>=3;}).length,badN=rows.filter(function(r){return r.isBad;}).length,wN=rows.filter(function(r){return r.w;}).length,wbN=rows.filter(function(r){return r.wb;}).length;
-  var h='<div class="ds-summary"><span class="msr">location_on</span> <b>'+esc(tripPointName(APP.destSearchId))+'</b> ＝ '+esc(tripPointName(APP.destBase))+'から <b>'+dir+'</b>方向・約'+distFmt(dist)+'<br><span class="small">'+PURPOSES[APP.destPurpose].label+'重視 ／ '+rows.length+'日間（吉'+goodN+'日・凶'+badN+'日'+(PURPOSE_TO_LUCK[APP.destPurpose]?'・<b>W吉日'+wN+'日</b>・<b class="wb-txt">W凶日'+wbN+'日</b>':'')+'）・日付タップで詳細へ'+(PURPOSE_TO_LUCK[APP.destPurpose]?'<br>★＝その方位への吉凶 ／ 日運＝その日全体の'+PURPOSES[APP.destPurpose].label+'（運勢暦と同じ判定）。両方そろった日が <b>W吉日◎</b>、逆に方位・日運とも悪い日が <b class="wb-txt">W凶日✕</b>（大事な行動は避ける日）です。':'')+'</span></div>';
+  var h='<div class="ds-summary"><span class="msr">location_on</span> <b>'+esc(tripPointName(APP.destSearchId))+'</b> ＝ '+esc(tripPointName(APP.destBase))+'から <b>'+dir+'</b>方向・約'+distFmt(dist)+' <a class="gmap-link" style="margin:0" href="https://www.google.com/maps/dir/?api=1&destination='+destLL[0]+','+destLL[1]+'" target="_blank" rel="noopener"><span class="msr" style="font-size:13px">map</span>地図</a><br><span class="small">'+PURPOSES[APP.destPurpose].label+'重視 ／ '+rows.length+'日間（吉'+goodN+'日・凶'+badN+'日'+(PURPOSE_TO_LUCK[APP.destPurpose]?'・<b>W吉日'+wN+'日</b>・<b class="wb-txt">W凶日'+wbN+'日</b>':'')+'）・日付タップで詳細へ'+({stay:'<br>宿泊を伴うため<b>月盤</b>も重ねて判定しています。方位の効果は距離50km以上・一泊以上で強まるとされます。',move:'<br>引越・移転は<b>年盤・月盤</b>が主役です。日盤との3盤合成で判定しています。'}[APP.destScale]||'')+(PURPOSE_TO_LUCK[APP.destPurpose]?'<br>★＝その方位への吉凶 ／ 日運＝その日全体の'+PURPOSES[APP.destPurpose].label+'（運勢暦と同じ判定）。両方そろった日が <b>W吉日◎</b>、逆に方位・日運とも悪い日が <b class="wb-txt">W凶日✕</b>（大事な行動は避ける日）です。':'')+'</span></div>';
   var listRows=null;
   if(APP.destView==='cal'){h+=destCalendar(rows,APP.destFilter);}
   else{listRows=rows.filter(function(r){return APP.destFilter==='all'?true:APP.destFilter==='good'?(!r.isBad&&r.stars>=3):r.isBad;});h+=destList(listRows);}
   el.innerHTML=h;
   if(listRows)scheduleTimingFill(listRows.map(function(r){return {ds:ymd(r.date),id:'dt-'+ymd(r.date),good:!r.isBad&&r.stars>=3};}));
 }
-function setTripMode(m){APP.tripMode=m;renderTrip();}
+function setTravelKind(k){APP.travelKind=k;renderTrip();}
+window.setTravelKind=setTravelKind;
+function setTripMode(m){APP.tripMode=m;renderTrip();otScrollActive();}
 function setDestSearch(id){APP.destSearchId=id;APP._destCache=null;renderTrip();}
 function setDestPeriod(p){APP.destPeriod=p;APP._destCache=null;renderTrip();}
 function setDestPurpose(p){APP.destPurpose=p;renderTrip();}
@@ -3335,41 +3598,56 @@ function kimonFromTrip(ds){APP.kimonDateStr=ds;APP.kimonTimeStr='';APP.built.kim
 /* ====== 運勢スコアの重み付け設定（ここを編集して調整できます） ====== */
 var LUCK_PROFILES={
  money:{label:'金運',icon:'payments',
-  weights:{zf_good:1.2,zf_bad:1.4,sheng_good:2.0,sheng_bad:1.6,kai_good:1.0,kai_bad:0.8,kk_good:1.0,kk_bad:1.2,zf_kong:1.2,fuyin:1.0,fanyin:1.2,kyo_deity:1.0,kichi_deity:0.8},
+  weights:{zf_good:1.2,zf_bad:1.4,sheng_good:2.0,sheng_bad:1.6,kai_good:1.0,kai_bad:0.8,kk_good:1.2,kk_bad:1.4,zf_kong:1.3,fuyin:1.1,fanyin:1.4,kyo_deity:1.0,kichi_deity:0.9,sho_kyo:0.5,chu_hen:0.5},
   tiers:[[6.5,5,'最高'],[3.0,4,'良好'],[1.6,3,'平均'],[0.6,2,'やや注意'],[-1.6,1,'注意']],
-  kyoLabel:'凶（金運注意）',oneGood:'金運が高まる日。お金にまつわる前向きな行動に。',oneBad:'金運が乱れやすい日。大きなお金は動かさないで。',
-  good:['宝くじ・くじ購入','財布の新調','投資・口座開設','大きな買い物','契約・商談','開業・開店'],
-  bad:['宝くじ購入','高額な買い物','契約・投資の開始','大金の貸し借り','ギャンブル']},
- work:{label:'仕事運',icon:'work',
-  weights:{zf_good:1.4,zf_bad:1.4,sheng_good:1.0,sheng_bad:0.8,kai_good:1.6,kai_bad:1.0,kk_good:1.0,kk_bad:1.2,zf_kong:1.0,fuyin:1.2,fanyin:1.2,kyo_deity:0.9,kichi_deity:0.9},
-  tiers:[[6.5,5,'最高'],[3.0,4,'良好'],[1.6,3,'平均'],[0.6,2,'やや注意'],[-1.6,1,'注意']],
-  kyoLabel:'凶（仕事注意）',oneGood:'評価・前進の日。大事な仕事や交渉に。',oneBad:'停滞やトラブルが出やすい日。守りに徹して。',
-  good:['プレゼン・商談','面接・面談','企画提出','新規プロジェクト','重要な決断'],
-  bad:['重要な決断','契約の締結','大きな勝負','無理な交渉']},
+  kyoLabel:'凶（金運注意）',oneGood:'金運・勝負運が高まる日。お金と勝負ごとの前向きな行動に。',oneBad:'金運が乱れやすい日。大きなお金と勝負ごとは避けて。',
+  good:['宝くじ・くじ・抽選','勝負ごと・コンペ','財布の新調','投資・口座開設','大きな買い物','開業・開店'],
+  bad:['宝くじ購入','高額な買い物','契約・投資の開始','大金の貸し借り','ギャンブル・一発勝負']},
  love:{label:'恋愛運',icon:'favorite',
-  weights:{zf_good:1.0,zf_bad:1.0,sheng_good:1.2,sheng_bad:1.0,kai_good:0.8,kai_bad:0.6,kk_good:1.0,kk_bad:1.0,zf_kong:0.9,fuyin:1.0,fanyin:1.4,kyo_deity:1.2,kichi_deity:1.4},
+  weights:{zf_good:1.0,zf_bad:1.0,sheng_good:1.2,sheng_bad:1.0,kai_good:0.8,kai_bad:0.6,kk_good:1.0,kk_bad:1.0,zf_kong:0.9,fuyin:1.0,fanyin:1.4,kyo_deity:1.2,kichi_deity:1.4,sho_kyo:0.5,chu_hen:0.6},
   tiers:[[6.5,5,'最高'],[3.0,4,'良好'],[1.6,3,'平均'],[0.6,2,'やや注意'],[-1.6,1,'注意']],
   kyoLabel:'凶（恋愛注意）',oneGood:'ご縁が動く日。出会いや告白、デートに。',oneBad:'すれ違いが出やすい日。大事な話は後日に。',
   good:['デート・食事','告白・プロポーズ','出会いの場へ行く','久しぶりの連絡','記念日のお祝い'],
   bad:['告白・重い話','別れ話','感情的な議論']},
+ taijin:{label:'対人運',icon:'handshake',
+  weights:{zf_good:1.0,zf_bad:1.0,sheng_good:0.8,sheng_bad:0.8,kai_good:1.0,kai_bad:0.8,kk_good:1.0,kk_bad:1.2,zf_kong:1.0,fuyin:1.0,fanyin:1.4,kyo_deity:1.5,kichi_deity:1.6,sho_kyo:0.8,chu_hen:0.8},
+  tiers:[[6.5,5,'最高'],[3.0,4,'良好'],[1.6,3,'平均'],[0.6,2,'やや注意'],[-1.6,1,'注意']],
+  kyoLabel:'凶（対人注意）',oneGood:'人との縁がなめらかな日。挨拶・お願いごと・仲直りに。',oneBad:'誤解やすれ違いが出やすい日。言葉選びは慎重に。',
+  good:['大事な相談・お願いごと','初対面の挨拶・紹介','仲直り・お詫び','会食・集まり'],
+  bad:['言いにくい話','苦手な相手との対決','感情的な議論']},
+ work:{label:'仕事運',icon:'work',
+  weights:{zf_good:1.4,zf_bad:1.4,sheng_good:1.0,sheng_bad:0.8,kai_good:1.6,kai_bad:1.0,kk_good:1.0,kk_bad:1.2,zf_kong:1.0,fuyin:1.2,fanyin:1.2,kyo_deity:0.9,kichi_deity:0.9,sho_kyo:0.5,chu_hen:0.6},
+  tiers:[[6.5,5,'最高'],[3.0,4,'良好'],[1.6,3,'平均'],[0.6,2,'やや注意'],[-1.6,1,'注意']],
+  kyoLabel:'凶（仕事注意）',oneGood:'評価・前進の日。大事な仕事や交渉に。',oneBad:'停滞やトラブルが出やすい日。守りに徹して。',
+  good:['プレゼン・商談','面接・面談','企画提出','新規プロジェクト','重要な決断'],
+  bad:['重要な決断','契約の締結','大きな勝負','無理な交渉']},
+ contract:{label:'契約・商談運',icon:'assignment',
+  weights:{zf_good:1.3,zf_bad:1.4,sheng_good:1.2,sheng_bad:1.0,kai_good:1.7,kai_bad:1.2,kk_good:1.3,kk_bad:1.4,zf_kong:1.4,fuyin:1.3,fanyin:1.5,kyo_deity:1.2,kichi_deity:1.5,sho_kyo:0.5,chu_hen:0.8},
+  tiers:[[6.5,5,'最高'],[3.0,4,'良好'],[1.6,3,'平均'],[0.6,2,'やや注意'],[-1.6,1,'注意']],
+  kyoLabel:'凶（契約注意）',oneGood:'約束ごとがまとまりやすい日。契約・商談・申込みに。',oneBad:'話が流れやすい日。サインや発注は日を改めて。',
+  good:['契約・サイン','商談・見積り提示','申込み・発注','取引先への提案'],
+  bad:['重要な契約の締結','大きな発注','口約束で進めること']},
  health:{label:'健康運',icon:'eco',
-  weights:{zf_good:1.0,zf_bad:1.2,sheng_good:1.8,sheng_bad:1.6,kai_good:1.0,kai_bad:0.8,kk_good:0.9,kk_bad:1.2,zf_kong:1.2,fuyin:1.0,fanyin:1.0,kyo_deity:1.2,kichi_deity:0.8},
+  weights:{zf_good:1.0,zf_bad:1.2,sheng_good:1.8,sheng_bad:1.6,kai_good:1.0,kai_bad:0.8,kk_good:0.9,kk_bad:1.2,zf_kong:1.2,fuyin:1.0,fanyin:1.0,kyo_deity:1.2,kichi_deity:0.8,sho_kyo:1.0,chu_hen:0.7},
   tiers:[[6.5,5,'最高'],[3.0,4,'良好'],[1.6,3,'平均'],[0.6,2,'やや注意'],[-1.6,1,'注意']],
   kyoLabel:'凶（体調注意）',oneGood:'心身が整いやすい日。運動や健康習慣に。',oneBad:'無理が出やすい日。休養を優先して。',
   good:['運動・トレーニング','健康診断・通院','生活習慣の見直し','早寝・休養'],
   bad:['夜更かし・暴飲暴食','無理な運動','体に負担の大きい予定']},
- shobu:{label:'勝負運',icon:'casino',
-  weights:{zf_good:1.2,zf_bad:1.4,sheng_good:1.4,sheng_bad:1.2,kai_good:1.4,kai_bad:1.0,kk_good:1.4,kk_bad:1.6,zf_kong:1.4,fuyin:1.4,fanyin:1.6,kyo_deity:1.2,kichi_deity:1.2},
-  tiers:[[7.0,5,'最高'],[3.5,4,'良好'],[1.8,3,'平均'],[0.6,2,'やや注意'],[-1.8,1,'注意']],
-  kyoLabel:'凶（勝負注意）',oneGood:'勝負強い日。大事な挑戦や決戦に。',oneBad:'空回りしやすい日。勝負は避けて。',
-  good:['試験・コンペ','スポーツの試合','大事な交渉','くじ・抽選'],
-  bad:['ギャンブル','大きな勝負','一発逆転狙い']},
- travel:{label:'旅行運',icon:'flight',
-  weights:{zf_good:1.0,zf_bad:1.2,sheng_good:1.0,sheng_bad:1.0,kai_good:1.6,kai_bad:1.2,kk_good:1.0,kk_bad:1.2,zf_kong:1.2,fuyin:1.2,fanyin:1.4,kyo_deity:1.0,kichi_deity:1.0},
+ study:{label:'勉強運',icon:'school',
+  weights:{},tiers:[[6.5,5,'最高'],[3.0,4,'良好'],[1.6,3,'平均'],[0.6,2,'やや注意'],[-1.6,1,'注意']],
+  kyoLabel:'凶（勉強注意）',oneGood:'',oneBad:'',good:[],bad:[]},
+ travel:{label:'移動運',icon:'flight',
+  weights:{zf_good:1.0,zf_bad:1.2,sheng_good:1.0,sheng_bad:1.0,kai_good:1.6,kai_bad:1.2,kk_good:1.0,kk_bad:1.3,zf_kong:1.2,fuyin:1.2,fanyin:1.5,kyo_deity:1.3,kichi_deity:1.0,sho_kyo:1.6,chu_hen:1.2},
   tiers:[[6.5,5,'最高'],[3.0,4,'良好'],[1.6,3,'平均'],[0.6,2,'やや注意'],[-1.6,1,'注意']],
-  kyoLabel:'凶（移動注意）',oneGood:'出かけるのに良い日。旅行や遠出に。',oneBad:'移動でトラブルが出やすい日。慎重に。',
-  good:['旅行・遠出','引越し','レジャー','ドライブ'],
-  bad:['長距離の移動','重要な出張','慌ただしい強行日程']}
+  kyoLabel:'凶（移動注意）',oneGood:'出かける・移すのに良い日。旅行・引越・遠出に。',oneBad:'移動でトラブルが出やすい日。慎重に。',
+  good:['旅行・遠出','引越し','納車・乗り始め','レジャー・ドライブ'],
+  bad:['長距離の強行日程','重要な出張','夜間の長時間運転']},
+ trouble:{label:'トラブル',icon:'warning',
+  weights:{zf_good:0.8,zf_bad:1.5,sheng_good:0.5,sheng_bad:0.7,kai_good:0.5,kai_bad:0.7,kk_good:0.8,kk_bad:1.9,zf_kong:1.5,fuyin:0.7,fanyin:1.7,kyo_deity:1.9,kichi_deity:0.9,sho_kyo:2.3,chu_hen:1.7},
+  tiers:[[5.5,5,'安心'],[2.6,4,'おおむね安全'],[1.2,3,'普通'],[0.4,2,'注意'],[-1.6,1,'要注意']],
+  kyoLabel:'凶（警戒日）',oneGood:'大きな乱れの少ない日。落ち着いて行動できます。',oneBad:'事故・盗難・急なトラブルに警戒。移動と貴重品の管理は慎重に。',
+  good:['遠出・ドライブ','新しい場所への外出','大事な受け渡し・手続き'],
+  bad:['スピード超過・ながら運転','夜道の一人歩き','貴重品の持ち歩き','強行スケジュール','刃物・機械の扱い']}
 };
 var MONEY_ACTIONS={
  '宝くじ・くじ運':{icon:'casino',fav:['sheng_good','kichi_deity','kk_good'],pen:['fanyin','fuyin','zf_kong']},
@@ -3388,29 +3666,56 @@ function fanFuYin(b){
   return {fuyin:fu,fanyin:fan};
 }
 /* ====== 盤から評価ファクターを抽出（八門・九星・八神・格局・空亡・反吟・伏吟） ====== */
+var DEI_MEAN={'白虎':'争い・ケガ・事故','玄武':'盗み・欺き','螣蛇':'不安・突発の変事','勾陳':'停滞・もつれ','朱雀':'口舌・文書トラブル','値符':'貴人の助け・主導権','六合':'和合・ご縁','太陰':'陰の助け・根回し','九地':'守り・安定','九天':'発展・飛躍'};
+var GATE_THEME={'生門':'お金と発展','開門':'仕事と始まり','休門':'休息と人間関係','傷門':'ケガ・事故','死門':'停滞','驚門':'驚き・動揺','杜門':'閉塞','景門':'文書・試験'};
 function luckFactors(b){
   var f=[],zg=b.zsGate;
-  if(['開門','生門','休門'].indexOf(zg)>=0)f.push({id:'zf_good',label:'値符が吉門（'+zg+'）',sign:1});
-  else if(['死門','驚門','傷門'].indexOf(zg)>=0)f.push({id:'zf_bad',label:'値符が凶門（'+zg+'）',sign:-1});
+  if(['開門','生門','休門'].indexOf(zg)>=0)f.push({id:'zf_good',sign:1,k:'値符×'+zg,d:'盤の主役（値符）が「'+(GATE_THEME[zg]||'')+'」の吉門と重なり、物事がスムーズに通りやすい日'});
+  else if(['死門','驚門','傷門'].indexOf(zg)>=0)f.push({id:'zf_bad',sign:-1,k:'値符×'+zg,d:'盤の主役が「'+(GATE_THEME[zg]||'')+'」の凶門と重なり、流れが滞りやすい日'});
   var sheng=b.cells.filter(function(c){return c.gateRaw==='生門';})[0];
-  if(sheng){if(sheng.luck>=2&&!sheng.isKu)f.push({id:'sheng_good',label:'生門が好位置（生気あり）',sign:1});else if(sheng.isKu||sheng.luck<=-1)f.push({id:'sheng_bad',label:'生門が弱い配置（空亡/凶）',sign:-1});}
+  if(sheng){if(sheng.luck>=2&&!sheng.isKu)f.push({id:'sheng_good',sign:1,k:'生門が好調',d:'お金と発展を司る門が良い宮に入り、財運の土台が強い日'});else if(sheng.isKu||sheng.luck<=-1)f.push({id:'sheng_bad',sign:-1,k:'生門×空亡/凶',d:'お金の門の力が抜けていて、財運が伸びにくい日'});}
   var kai=b.cells.filter(function(c){return c.gateRaw==='開門';})[0];
-  if(kai){if(kai.luck>=2&&!kai.isKu)f.push({id:'kai_good',label:'開門が好位置',sign:1});else if(kai.isKu||kai.luck<=-1)f.push({id:'kai_bad',label:'開門が弱い配置（空亡/凶）',sign:-1});}
-  (b.kakukyoku||[]).forEach(function(k){if(k.type==='good')f.push({id:'kk_good',label:'吉格「'+k.name+'」',sign:1});else f.push({id:'kk_bad',label:'凶格「'+k.name+'」',sign:-1});});
-  if(b.zfCell&&b.zfCell.isKu)f.push({id:'zf_kong',label:'値符が空亡（力が抜ける）',sign:-1});
+  if(kai){if(kai.luck>=2&&!kai.isKu)f.push({id:'kai_good',sign:1,k:'開門が好調',d:'仕事と始まりの門が良い宮に入り、新しい行動が実りやすい日'});else if(kai.isKu||kai.luck<=-1)f.push({id:'kai_bad',sign:-1,k:'開門×空亡/凶',d:'仕事の門が弱く、立ち上げや大きな決断に向かない日'});}
+  (b.kakukyoku||[]).forEach(function(k){if(k.type==='good')f.push({id:'kk_good',sign:1,k:'吉格「'+k.name+'」',d:(k.desc||'古典で吉とされる特別な配置')});else f.push({id:'kk_bad',sign:-1,k:'凶格「'+k.name+'」',d:(k.desc||'古典で凶とされる特別な配置')});});
+  if(b.zfCell&&b.zfCell.isKu)f.push({id:'zf_kong',sign:-1,k:'値符×空亡',d:'主役の宮が空亡。決め手を欠き、力が空回りしやすい日'});
   var ff=fanFuYin(b);
-  if(ff.fuyin)f.push({id:'fuyin',label:'伏吟（停滞・物事が動きにくい）',sign:-1});
-  if(ff.fanyin)f.push({id:'fanyin',label:'反吟（反転・変動が大きい）',sign:-1});
-  ['生門','開門'].forEach(function(g){var c=b.cells.filter(function(x){return x.gateRaw===g;})[0];if(c){if(['白虎','玄武','螣蛇','勾陳','朱雀'].indexOf(c.deityRaw)>=0)f.push({id:'kyo_deity',label:c.deityRaw+'が'+g+'に同宮（凶神）',sign:-1});else if(['値符','六合','太陰','九天','九地'].indexOf(c.deityRaw)>=0)f.push({id:'kichi_deity',label:c.deityRaw+'が'+g+'に同宮（吉神）',sign:1});}});
+  if(ff.fuyin)f.push({id:'fuyin',sign:-1,k:'伏吟',d:'盤が動かない特殊配置。現状維持は○だが、新しい仕掛けは通りにくい'});
+  if(ff.fanyin)f.push({id:'fanyin',sign:-1,k:'反吟',d:'盤が反転する特殊配置。予定の変更やどんでん返しが起きやすい'});
+  ['生門','開門'].forEach(function(g){var c=b.cells.filter(function(x){return x.gateRaw===g;})[0];if(c){if(['白虎','玄武','螣蛇','勾陳','朱雀'].indexOf(c.deityRaw)>=0)f.push({id:'kyo_deity',sign:-1,k:c.deityRaw+'×'+g,d:'凶神「'+c.deityRaw+'」（'+(DEI_MEAN[c.deityRaw]||'')+'）が'+(GATE_THEME[g]||'')+'の門に影を落とす'});else if(['値符','六合','太陰','九天','九地'].indexOf(c.deityRaw)>=0)f.push({id:'kichi_deity',sign:1,k:c.deityRaw+'×'+g,d:'吉神「'+c.deityRaw+'」（'+(DEI_MEAN[c.deityRaw]||'')+'）が'+(GATE_THEME[g]||'')+'の門を後押しする'});}});
+  var sho=b.cells.filter(function(c){return c.gateRaw==='傷門';})[0];
+  if(sho&&['白虎','玄武','螣蛇'].indexOf(sho.deityRaw)>=0)f.push({id:'sho_kyo',sign:-1,k:'傷門×'+sho.deityRaw,d:'ケガ・事故の門に「'+sho.deityRaw+'」（'+(DEI_MEAN[sho.deityRaw]||'')+'）が重なる。移動・刃物・衝突に注意'});
+  var chu=b.cells.filter(function(c){return c.star==='天冲'&&!c.isCtr;})[0];
+  if(chu&&(chu.deityRaw==='螣蛇'||chu.gateRaw==='傷門'))f.push({id:'chu_hen',sign:-1,k:'天冲×'+(chu.deityRaw==='螣蛇'?'螣蛇':'傷門'),d:'変動の星に不安定な気が重なり、突発的な予定変更やトラブルが出やすい'});
   return f;
 }
+function luckRaw(b,pk){
+  var P=LUCK_PROFILES[pk]||LUCK_PROFILES.money,fs=luckFactors(b),score=0,rg=[],rb=[];
+  fs.forEach(function(f){var w=(P.weights[f.id]!=null?P.weights[f.id]:0.5);score+=f.sign*w;if(f.sign>0)rg.push({k:f.k,d:f.d});else rb.push({k:f.k,d:f.d});});
+  return {score:score,rg:rg,rb:rb,fs:fs};
+}
+/* 分布ベース自動較正: 直近30日+今後210日のスコア分布からパーセンタイルで段階を決定。
+   エンジンの重みをどう調整しても、★5=上位12%・警戒=下位5%の出現バランスが自動で保たれる */
+var _calibT={};
+function calibTiers(pk){
+  if(_calibT[pk])return _calibT[pk];
+  var P=LUCK_PROFILES[pk];if(!P)return null;
+  var arr=[],base=new Date();base.setHours(12,0,0,0);base.setDate(base.getDate()-30);
+  for(var i=0;i<240;i++){var d=new Date(base);d.setDate(base.getDate()+i);try{arr.push(luckRaw(dayBoard(d),pk).score);}catch(e){}}
+  if(arr.length<60)return null;
+  arr.sort(function(a,b){return a-b;});
+  function pct(p){return arr[Math.max(0,Math.min(arr.length-1,Math.floor(arr.length*p)))];}
+  var L=P.tiers.map(function(t){return t[2];});
+  var t=[[pct(0.88),5,L[0]],[pct(0.62),4,L[1]],[pct(0.34),3,L[2]],[pct(0.13),2,L[3]],[pct(0.05),1,L[4]]];
+  for(var j=1;j<t.length;j++){if(t[j][0]>=t[j-1][0])t[j][0]=t[j-1][0]-0.01;}
+  _calibT[pk]=t;return t;
+}
 function luckScore(b,pk){
-  var P=LUCK_PROFILES[pk]||LUCK_PROFILES.money,fs=luckFactors(b),score=0,rg=[],rb=[],i;
-  fs.forEach(function(f){var w=(P.weights[f.id]!=null?P.weights[f.id]:0.5);score+=f.sign*w;if(f.sign>0)rg.push(f.label);else rb.push(f.label);});
-  var stars=0,label=P.kyoLabel||'凶';
-  for(i=0;i<P.tiers.length;i++){if(score>=P.tiers[i][0]){stars=P.tiers[i][1];label=P.tiers[i][2];break;}}
+  var P=LUCK_PROFILES[pk]||LUCK_PROFILES.money;
+  var r=luckRaw(b,pk),score=r.score;
+  var tiers=calibTiers(pk)||P.tiers,stars=0,label=P.kyoLabel||'凶',i;
+  for(i=0;i<tiers.length;i++){if(score>=tiers[i][0]){stars=tiers[i][1];label=tiers[i][2];break;}}
   var color=stars>=4?'good':stars>=2?'mid':'bad';
-  return {score:score,stars:stars,label:label,color:color,reasonsGood:rg,reasonsBad:rb,factors:fs};
+  return {score:score,stars:stars,label:label,color:color,reasonsGood:r.rg,reasonsBad:r.rb,factors:r.fs};
 }
 function actionScore(sc,act){
   var A=MONEY_ACTIONS[act];if(!A)return sc.score;
@@ -3454,9 +3759,9 @@ function luckRanking(rows,pk){
 function luckCalendarCard(){
   var h='<div class="sec-label"><span class="si msr">payments</span>未来の運勢カレンダー</div>';
   if(!APP.chartData)return h;
-  h+='<div class="rp-hint"><span class="msr">lightbulb</span> 運勢暦は方位に関係なく「その日そのもの」の運勢です。宝くじ売り場など<b>特定の場所へ行く日</b>を選ぶなら、吉日サーチで方位と日運が両方そろう <b>W吉日◎</b> を狙うのがおすすめです。逆に両方悪い <b class="wb-txt">W凶日✕</b> は大きなお金を動かさないでください。</div>';
+  h+='<div class="rp-hint"><span class="msr">lightbulb</span> 運勢暦は方位に関係なく「その日そのもの」の運勢です。宝くじ売り場など<b>特定の場所へ行く日</b>を選ぶなら、吉日サーチで方位と日運が両方そろう <b>W吉日◎</b> を狙うのがおすすめです。逆に両方悪い <b class="wb-txt">W凶日✕</b> は大きなお金を動かさないでください。<br>旅行・引越など「移動」の日選びは<b>移動運</b>でも見られます。方角まで含めて選ぶなら「方位」「吉日サーチ」との併用が最強です。</div>';
   h+='<div class="nav-card">';
-  h+='<div class="ds-field"><span class="ds-flabel">運の種類（重み付けで判定）</span><div class="seg seg-sm seg-wrap">'+Object.keys(LUCK_PROFILES).map(function(k){return '<button class="seg-b'+(APP.luckProfile===k?' on':'')+'" onclick="setLuckProfile(\''+k+'\')">'+'<span class="msr">'+LUCK_PROFILES[k].icon+'</span>'+LUCK_PROFILES[k].label+'</button>';}).join('')+'</div></div>';
+  h+='<div class="ds-field"><span class="ds-flabel">運の種類（重み付けで判定）</span><div class="seg seg-sm seg-wrap lk-grid">'+Object.keys(LUCK_PROFILES).map(function(k){return '<button class="seg-b'+(APP.luckProfile===k?' on':'')+'" onclick="setLuckProfile(\''+k+'\')">'+'<span class="msr">'+LUCK_PROFILES[k].icon+'</span>'+LUCK_PROFILES[k].label+'</button>';}).join('')+'</div></div>';
   h+='<div class="ds-field"><span class="ds-flabel">期間</span><div class="seg seg-sm seg-wrap">'+[['1w','1週間'],['1m','1か月'],['3m','3か月']].map(function(t){return '<button class="seg-b'+(APP.luckPeriod===t[0]?' on':'')+'" onclick="setLuckPeriod(\''+t[0]+'\')">'+t[1]+'</button>';}).join('')+'</div></div>';
   h+='<div class="ds-toggles"><div class="seg seg-sm"><button class="seg-b'+(APP.luckView==='cal'?' on':'')+'" onclick="setLuckView(\'cal\')"><span class="msr">calendar_month</span> カレンダー</button><button class="seg-b'+(APP.luckView==='list'?' on':'')+'" onclick="setLuckView(\'list\')"><span class="msr">list</span> リスト</button></div></div>';
   h+='</div>';
@@ -3480,7 +3785,15 @@ function showLuckDetail(ds,pkOpt){
   var tm=dayTimingCompute(d);
   var star=sc.stars===0?'凶':'★★★★★'.slice(0,sc.stars)+'☆☆☆☆☆'.slice(0,5-sc.stars);
   var reasons=sc.reasonsBad.concat(sc.reasonsGood);
-  var rh=reasons.length?reasons.map(function(x){return '<li>'+x+'</li>';}).join(''):'<li>際立った特徴のない、平均的な盤です。</li>';
+  var rh=reasons.length?reasons.map(function(x){return '<li class="lr-row"><b class="lr-k">'+x.k+'</b><span class="lr-d">'+x.d+'</span></li>';}).join(''):'<li class="lr-row"><b class="lr-k">特筆なし</b><span class="lr-d">際立った特徴のない、平均的な盤です。</span></li>';
+  var lgd='';
+  if(pk==='trouble'){lgd='<details class="lr-fold"><summary class="lr-fold-s">トラブル判定の見方（凶の根拠）</summary><div class="lr-legend"><ul class="lr-list">'
+    +'<li class="lr-row"><b class="lr-k">傷門</b><span class="lr-d">ケガ・事故・衝突の門（現代では交通事故）</span></li>'
+    +'<li class="lr-row"><b class="lr-k">白虎</b><span class="lr-d">刃物・金属・交通に絡む傷害の凶神</span></li>'
+    +'<li class="lr-row"><b class="lr-k">玄武</b><span class="lr-d">盗難・詐欺の凶神</span></li>'
+    +'<li class="lr-row"><b class="lr-k">天冲・螣蛇</b><span class="lr-d">突発的なトラブル・予期せぬ変化</span></li>'
+    +'<li class="lr-row"><b class="lr-k">空亡・凶格</b><span class="lr-d">計画が崩れやすい日を示すサイン</span></li>'
+    +'</ul></div></details>';}
   var dirH='';
   try{
     if(APP.chartData){
@@ -3489,12 +3802,12 @@ function showLuckDetail(ds,pkOpt){
         dirH='<div class="luck-dir">'
           +(_dirs.best?'<span class="ld g"><span class="msr">explore</span>吉方位 <b>'+_dirs.best.dir+'</b><span class="ld-sub">（'+_dirs.best.gateRaw+'・'+_dirs.best.star+'）</span></span>':'')
           +(_dirs.worst?'<span class="ld b"><span class="msr">block</span>凶方位 <b>'+_dirs.worst.dir+'</b><span class="ld-sub">（'+_dirs.worst.gateRaw+'・'+_dirs.worst.star+'）</span></span>':'')
-        +'</div>';
+        +'<span class="ld n">日盤×用神で判定</span></div>';
       }
     }
   }catch(e){}
   var acts=sc.stars>=3?('<div class="luck-act good"><div class="la-h"><span class="msr">check_circle</span> '+P.label+'におすすめの行動</div><div class="la-list">'+P.good.map(function(a){return '<span class="la-chip"><span class="msr">check</span> '+a+'</span>';}).join('')+'</div></div>'):('<div class="luck-act bad"><div class="la-h"><span class="msr">cancel</span> 今日は避けた方が良いこと</div><div class="la-list">'+P.bad.map(function(a){return '<span class="la-chip"><span class="msr">close</span> '+a+'</span>';}).join('')+'</div></div>');
-  document.getElementById('modalRoot').innerHTML='<div class="modal-overlay" onclick="closeLuckDetail()"><div class="modal" onclick="event.stopPropagation()"><div class="kt-cat"><span class="msr">'+P.icon+'</span>'+P.label+'</div><h4 style="margin:8px 0 4px">'+d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日（'+WD+'）</h4><div class="luck-star '+sc.color+'">'+star+' <span>'+(sc.stars===0?sc.label.replace(/^凶/,''):sc.label)+'</span></div><div class="luck-time"><span class="lt-g"><span class="lt-dot"></span> 吉時間帯 '+tm.good.main+' '+(tm.good.sub||'')+'</span><span class="lt-b"><span class="lt-dot"></span> 凶時間帯 '+tm.bad.main+' '+(tm.bad.sub||'')+'</span></div>'+dirH+'<div class="luck-reason"><div class="lr-h">【判定理由】</div><ul class="lr-list">'+rh+'</ul></div>'+acts+'<div class="modal-actions"><button class="btn" onclick="closeLuckDetail()">閉じる</button></div></div></div>';
+  document.getElementById('modalRoot').innerHTML='<div class="modal-overlay" onclick="closeLuckDetail()"><div class="modal" onclick="event.stopPropagation()"><div class="kt-cat"><span class="msr">'+P.icon+'</span>'+P.label+'</div><h4 style="margin:8px 0 4px">'+d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日（'+WD+'）</h4><div class="luck-star '+sc.color+'">'+star+' <span>'+(sc.stars===0?sc.label.replace(/^凶/,''):sc.label)+'</span></div><div class="luck-time"><span class="lt-g"><span class="lt-dot"></span> 吉時間帯 '+tm.good.main+'</span><span class="lt-b"><span class="lt-dot"></span> 凶時間帯 '+tm.bad.main+'</span></div>'+dirH+acts+'<div class="luck-reason"><div class="lr-h">【判定理由】</div><ul class="lr-list">'+rh+'</ul></div>'+lgd+'<div class="modal-actions"><button class="btn" onclick="closeLuckDetail()">閉じる</button></div></div></div>';
 }
 function closeLuckDetail(){document.getElementById('modalRoot').innerHTML='';}
 function setLuckProfile(k){APP.luckProfile=k;renderTrip();}
@@ -3656,22 +3969,115 @@ function showGroupDetail(ds){
   var r=evalGroupDay(d,members,destLL),tm=dayTimingCompute(d);
   var rowsH=r.per.map(function(pm){var sym=pm.isBad?'✕ 凶':pm.stars>=4?'◎ 最適':pm.stars===3?'○ 良':pm.stars===2?'△ 注意':'△ やや注意';var c=pm.isBad?'var(--red-d)':pm.stars>=3?'var(--green-d)':'var(--gold-soft)';var note=pm.dir==='—'?'出発地＝目的地':(esc(tripPointName(pm.base))+'発・'+pm.dir+'方向'+(pm.yojin?'（用神に合致）':''));return '<div class="gm-row"><span class="gm-name">'+esc(pm.name)+'</span><span class="gm-v" style="color:'+c+'">'+sym+'</span><span class="gm-note">'+note+'</span></div>';}).join('');
   var note=r.allGood?'全員にとって良い日。安心して計画できます。':r.anyBad?('一部の方に凶が出ています。日をずらすか、'+r.per.filter(function(x){return x.isBad;}).map(function(x){return esc(x.name);}).join('・')+'さんは別日程の検討を。'):'大きな問題はありませんが、全員に最良とまではいきません。';
-  document.getElementById('modalRoot').innerHTML='<div class="modal-overlay" onclick="closeGroupDetail()"><div class="modal" onclick="event.stopPropagation()"><div class="kt-cat"><span class="msr">group</span> '+esc(tripPointName(APP.groupDest))+' へ</div><h4 style="margin:8px 0 4px">'+d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日（'+WD+'）</h4><div class="luck-star '+(r.allGood?'good':r.anyBad?'bad':'mid')+'">★'+r.stars+' <span>'+r.label+'</span></div><div class="gm-list">'+rowsH+'</div><div class="luck-time"><span class="lt-g"><span class="lt-dot"></span> 吉時間帯 '+tm.good.main+' '+(tm.good.sub||'')+'</span><span class="lt-b"><span class="lt-dot"></span> 凶時間帯 '+tm.bad.main+' '+(tm.bad.sub||'')+'</span></div><div class="hint" style="margin:0">'+note+'</div><div class="modal-actions"><button class="btn" onclick="closeGroupDetail()">閉じる</button></div></div></div>';
+  document.getElementById('modalRoot').innerHTML='<div class="modal-overlay" onclick="closeGroupDetail()"><div class="modal" onclick="event.stopPropagation()"><div class="kt-cat"><span class="msr">group</span> '+esc(tripPointName(APP.groupDest))+' へ</div><h4 style="margin:8px 0 4px">'+d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日（'+WD+'）</h4><div class="luck-star '+(r.allGood?'good':r.anyBad?'bad':'mid')+'">★'+r.stars+' <span>'+r.label+'</span></div><div class="gm-list">'+rowsH+'</div><div class="luck-time"><span class="lt-g"><span class="lt-dot"></span> 吉時間帯 '+tm.good.main+'</span><span class="lt-b"><span class="lt-dot"></span> 凶時間帯 '+tm.bad.main+'</span></div><div class="hint" style="margin:0">'+note+'</div><div class="modal-actions"><button class="btn" onclick="closeGroupDetail()">閉じる</button></div></div></div>';
 }
 function closeGroupDetail(){document.getElementById('modalRoot').innerHTML='';}
 function toggleGroupMember(id){var i=APP.groupMembers.indexOf(id);if(i>=0){if(APP.groupMembers.length<=1)return;APP.groupMembers.splice(i,1);}else APP.groupMembers.push(id);renderTrip();}
 function setGroupDest(id){APP.groupDest=id;renderTrip();}
 function setGroupPeriod(k){APP.groupPeriod=k;renderTrip();}
 function setGroupView(v){APP.groupView=v;renderTrip();}
+function otTabs(){
+  var mode=APP.tripMode||'dash';
+  var tabs=[['check','explore','方位'],['luck','menu_book','運勢暦'],['travel','luggage','旅行'],['planner','confirmation_number','くじ']];
+  return '<div class="ot-wrap"><div class="ot-tabs" id="otTabs">'+tabs.map(function(t){return '<button class="ot-chip'+(mode===t[0]?' on':'')+'" onclick="setTripMode(\''+t[0]+'\')"><span class="msr">'+t[1]+'</span>'+t[2]+'</button>';}).join('')+'</div></div>';
+}
+function otScrollActive(){try{var el2=document.querySelector('#otTabs .ot-chip.on');if(el2&&el2.scrollIntoView)el2.scrollIntoView({inline:'center',block:'nearest'});}catch(e){}}
+function dirCompassSvg(board,opts){
+  opts=opts||{};
+  var dirs=null;try{dirs=extractDirections(board,APP.chartData?APP.chartData.yojin:null);}catch(e){}
+  var names=['北','北東','東','南東','南','南西','西','北西'];
+  var size=opts.size||230,c=size/2,r=c-18;
+  function pt(ang,rad){var a=(ang-90)*Math.PI/180;return [c+rad*Math.cos(a),c+rad*Math.sin(a)];}
+  var s='<svg viewBox="0 0 '+size+' '+size+'" width="100%" style="max-width:'+size+'px;display:block;margin:2px auto">';
+  names.forEach(function(n,i){
+    var p0=pt(i*45-22.5,r),p1=pt(i*45+22.5,r);
+    var cell=cellByDir(board,n)||{};
+    var fill='var(--text3)',op=0.08;
+    if(dirs&&dirs.best&&dirs.best.dir===n){fill='var(--green-d)';op=0.5;}
+    else if(cell.luck>=2&&!cell.isKu){fill='var(--green-d)';op=0.2;}
+    else if(dirs&&dirs.worst&&dirs.worst.dir===n){fill='var(--red)';op=0.45;}
+    else if(cell.luck<=-1||cell.isKu){fill='var(--red)';op=0.18;}
+    s+='<path d="M'+c+' '+c+' L'+p0[0].toFixed(1)+' '+p0[1].toFixed(1)+' A'+r+' '+r+' 0 0 1 '+p1[0].toFixed(1)+' '+p1[1].toFixed(1)+' Z" fill="'+fill+'" opacity="'+op+'" stroke="var(--line)" stroke-width="0.5"/>';
+    var lp=pt(i*45,r-14);
+    s+='<text x="'+lp[0].toFixed(1)+'" y="'+(lp[1]+4).toFixed(1)+'" text-anchor="middle" font-size="11" fill="var(--text2)" font-weight="700">'+n+'</text>';
+  });
+  s+='<circle cx="'+c+'" cy="'+c+'" r="16" fill="var(--surface)" stroke="var(--line2)" stroke-width="0.5"/>';
+  s+='<text x="'+c+'" y="'+(c+4)+'" text-anchor="middle" font-size="10" fill="var(--text3)">自宅</text>';
+  if(opts.brg!=null){var mp=pt(opts.brg,r-34);
+    s+='<circle cx="'+mp[0].toFixed(1)+'" cy="'+mp[1].toFixed(1)+'" r="6" fill="var(--gold)" stroke="var(--surface)" stroke-width="1.5"/>';
+    if(opts.destLabel)s+='<text x="'+mp[0].toFixed(1)+'" y="'+(mp[1]-10).toFixed(1)+'" text-anchor="middle" font-size="10" fill="var(--gold)" font-weight="800">'+esc(opts.destLabel)+'</text>';
+  }
+  s+='</svg>';
+  return s;
+}
+function setCmpDest(v){APP.cmpDest=v;renderTrip();}
+window.setCmpDest=setCmpDest;
+function dirCompassCard(){
+  var today=new Date();today.setHours(12,0,0,0);
+  var opts={},dn='';
+  if(APP.cmpDest){var h0=tripLatLng('home'),d0=tripLatLng(APP.cmpDest);
+    if(h0&&d0){opts.brg=calcBearing(h0[0],h0[1],d0[0],d0[1]);dn=tripPointName(APP.cmpDest);opts.destLabel=dn.length>6?dn.slice(0,6)+'…':dn;}}
+  return '<div class="ds-card" style="margin-bottom:12px"><div class="dsh-sh"><span class="msr">explore</span>今日の方位マップ<span style="font-weight:400;font-size:10px;color:var(--text3)">（日盤×用神）</span></div>'
+    +'<div class="ds-field" style="margin:4px 0 2px"><span class="ds-flabel">目的地</span><select onchange="setCmpDest(this.value)"><option value=""'+(!APP.cmpDest?' selected':'')+'>選択なし（方位のみ表示）</option>'+placeOptions(APP.cmpDest,false)+'</select></div>'
+    +dirCompassSvg(dayBoard(today),opts)
+    +'<div class="cmp-lg"><span class="cl g">■ 吉方位（濃い＝最良）</span><span class="cl b">■ 凶方位（濃い＝最凶）</span>'+(opts.brg!=null?'<span style="color:var(--gold)">●＝'+esc(dn)+'</span>':'')+'</div></div>';
+}
+function dashProfile(k){APP.luckProfile=k;renderTrip();}
+window.dashProfile=dashProfile;
+function renderDashHtml(cd){
+  var pk=APP.luckProfile||'money';if(!LUCK_PROFILES[pk])pk='money';
+  var P=LUCK_PROFILES[pk],WD=['日','月','火','水','木','金','土'];
+  var today=new Date();today.setHours(12,0,0,0);
+  var sc=luckScore(dayBoard(today),pk),tm=null,dirs=null;
+  try{tm=dayTimingCompute(today);}catch(e){}
+  try{dirs=extractDirections(dayBoard(today),cd.yojin);}catch(e){}
+  var h='';
+  h+='<div class="dsh-cats">'+Object.keys(LUCK_PROFILES).map(function(k){var Q=LUCK_PROFILES[k];return '<button class="dsh-chip'+(k===pk?' on':'')+'" onclick="dashProfile(\''+k+'\')"><span class="msr">'+Q.icon+'</span>'+Q.label+'</button>';}).join('')+'</div>';
+  var star=sc.stars===0?'凶':'★★★★★'.slice(0,sc.stars)+'☆☆☆☆☆'.slice(0,5-sc.stars);
+  h+='<div class="dsh-today '+sc.color+'" onclick="showLuckDetail(\''+ymd(today)+'\',\''+pk+'\')">'
+    +'<div class="dsh-th"><span class="dsh-date">今日 '+(today.getMonth()+1)+'/'+today.getDate()+'（'+WD[today.getDay()]+'）</span><span class="dsh-cat"><span class="msr">'+P.icon+'</span>'+P.label+'</span></div>'
+    +'<div class="dsh-star">'+star+' <b>'+esc(sc.stars===0?sc.label.replace(/^凶/,''):sc.label)+'</b></div>'
+    +'<div class="dsh-one">'+esc(sc.stars>=3?P.oneGood:P.oneBad)+'</div>'
+    +(dirs&&(dirs.best||dirs.worst)?'<div class="dsh-dirs">'+(dirs.best?'<span class="dd g"><span class="msr">explore</span>吉方位 <b>'+dirs.best.dir+'</b></span>':'')+(dirs.worst?'<span class="dd b"><span class="msr">block</span>凶方位 <b>'+dirs.worst.dir+'</b></span>':'')+'</div>':'')
+    +(dirs&&(dirs.best||dirs.worst)?'<div class="dsh-src">方位は日盤×あなたの用神で判定（奇門遁甲タブの時盤とは異なります）</div>':'')+(tm?'<div class="dsh-time"><span class="g">● 吉時間帯 '+tm.good.main+'</span><span class="b">● 凶時間帯 '+tm.bad.main+'</span></div>':'')
+    +'<div class="dsh-more">タップで詳細 ›</div>'
+  +'</div>';
+  var rows=[];
+  for(var i=1;i<=30;i++){var d2=new Date(today);d2.setDate(today.getDate()+i);rows.push({d:d2,sc:luckScore(dayBoard(d2),pk)});}
+  var best=rows.slice().sort(function(a,b){return b.sc.score-a.sc.score;}).slice(0,3);
+  best.sort(function(a,b){return a.d-b.d;});
+  var warn=rows.filter(function(r){return r.sc.stars<=1;}).slice(0,3);
+  function row(r,cls){var dd=r.d,st=r.sc.stars===0?'凶':'★'+r.sc.stars;return '<div class="dsh-row '+cls+'" onclick="showLuckDetail(\''+ymd(dd)+'\',\''+pk+'\')"><span class="dsh-rd">'+(dd.getMonth()+1)+'/'+dd.getDate()+'（'+WD[dd.getDay()]+'）</span><span class="dsh-rs">'+st+'</span><span class="dsh-rl">'+esc(r.sc.label)+'</span><span class="dsr-chev">›</span></div>';}
+  h+='<div class="dsh-sec"><div class="dsh-sh"><span class="msr">event_available</span>今後30日の'+P.label+'ベスト3</div>'+best.map(function(r){return row(r,'g');}).join('')+'</div>';
+  h+='<div class="dsh-sec"><div class="dsh-sh warn"><span class="msr">warning</span>警戒しておきたい日</div>'+(warn.length?warn.map(function(r){return row(r,'b');}).join(''):'<div class="dsh-none">今後30日に警戒日はありません</div>')+'</div>';
+  var sv=loadPlan();
+  if(sv){
+    var nowY=ymd(today),next=null;
+    if(sv.mode==='swing'){if(sv.sikomi&&sv.sikomi.ymd>=nowY)next=['仕込み',sv.sikomi.ymd];else if(sv.charge&&sv.charge.ymd>=nowY)next=['チャージ',sv.charge.ymd];else if(sv.drawYmd>=nowY)next=['抽選',sv.drawYmd];}
+    else{if(sv.buy&&sv.buy.ymd>=nowY)next=['購入',sv.buy.ymd];else if(sv.drawYmd>=nowY)next=['抽選',sv.drawYmd];}
+    if(next){var left=Math.round((new Date(next[1]+'T12:00')-today)/86400000);
+      h+='<div class="dsh-plan" onclick="setTripMode(\'planner\')"><span class="msr">confirmation_number</span><div class="dsh-pl-b"><b>宝くじプラン進行中</b><span>次は「'+next[0]+'」 '+fmtYmdBtn(next[1])+'（'+(left===0?'今日！':'あと'+left+'日')+'）</span></div><span class="dsr-chev">›</span></div>';}
+  }
+  
+  
+  return h;
+}
 function renderTrip(){
   var el=document.getElementById('screen-trip');
   if(!APP.chartData){el.innerHTML=emptyState('開運・方位の判定');return;}
   var cd=APP.chartData,y=cd.yojin,tab=APP.tripTab;
+  if(!APP.tripMode||APP.tripMode==='dash'||APP.tripMode==='search'||APP.tripMode==='group')APP.tripMode=(APP.tripMode==='search'||APP.tripMode==='group')?'travel':'luck';
   var html='';
-  html+='<div class="seg seg-mode"><button class="seg-b'+(APP.tripMode!=='search'&&APP.tripMode!=='luck'&&APP.tripMode!=='group'?' on':'')+'" onclick="setTripMode(\'check\')"><span class="msr">explore</span> 方位</button><button class="seg-b'+(APP.tripMode==='search'?' on':'')+'" onclick="setTripMode(\'search\')"><span class="msr">event</span> 吉日サーチ</button><button class="seg-b'+(APP.tripMode==='luck'?' on':'')+'" onclick="setTripMode(\'luck\')"><span class="msr">payments</span> 運勢暦</button><button class="seg-b'+(APP.tripMode==='group'?' on':'')+'" onclick="setTripMode(\'group\')"><span class="msr">group</span> グループ</button></div>';
-  if(APP.tripMode==='search'){html+=destSearchCard();el.innerHTML=html;if(document.getElementById('ds-results'))setTimeout(fillDestResults,16);return;}
-  if(APP.tripMode==='luck'){html+=luckCalendarCard();el.innerHTML=html;if(document.getElementById('luck-results'))setTimeout(fillLuckResults,16);return;}
-  if(APP.tripMode==='group'){html+=groupCard();el.innerHTML=html;if(document.getElementById('group-results'))setTimeout(fillGroupResults,16);return;}
+  html+=otTabs();
+  if(APP.tripMode==='planner'){html+=plannerCard();el.innerHTML=html;otScrollActive();return;}
+  if(APP.tripMode==='check')html+=dirCompassCard();
+  if(APP.tripMode==='travel'){
+    var tk=APP.travelKind||'solo';
+    html+='<div class="seg seg-sm" style="margin-bottom:12px"><button class="seg-b'+(tk==='solo'?' on':'')+'" onclick="setTravelKind(\'solo\')"><span class="msr">person</span> 一人で旅行</button><button class="seg-b'+(tk==='group'?' on':'')+'" onclick="setTravelKind(\'group\')"><span class="msr">group</span> グループ旅行</button></div>';
+    if(tk==='solo'){html+=destSearchCard();el.innerHTML=html;if(document.getElementById('ds-results'))setTimeout(fillDestResults,16);return;}
+    html+=groupCard();el.innerHTML=html;if(document.getElementById('group-results'))setTimeout(fillGroupResults,16);return;
+  }
+  if(APP.tripMode==='luck'){html+=renderDashHtml(cd)+luckCalendarCard();el.innerHTML=html;otScrollActive();if(document.getElementById('luck-results'))setTimeout(fillLuckResults,16);return;}
   var b=(tab===cd.boardTab)?cd.kimon:buildBoard(new Date(),tab);
   if(tab!==cd.boardTab)extractDirections(b,y);
   html+='<div class="yojin-card"><div class="yj-circle" style="background:'+GOGYO_COLOR[y.primaryYojin]+'">'+y.primaryYojin+'</div><div class="yj-text">登録地点への方角が、用神 <b>'+y.primaryYojin+'</b> から見て吉か凶かを判定します。地点は設定で登録できます。</div></div>';
@@ -4144,7 +4550,7 @@ function renderSettings(){
   +'</summary><div class="stg-det-body">'
   +'<div class="stg-hint" style="line-height:1.8">'
   +'<b>【四柱推命】</b><br>・年柱は立春の正確な時刻で切り替え<br>・月柱は節入りの時刻単位で判定（日単位の暦より高精度）<br>・日柱・時柱は万年暦と照合済み<br>・出生地の経度による真太陽時補正に対応<br><br>'
-  +'<b>【奇門遁甲】</b><br>・時家奇門・<b>転盤式</b>を採用<br>・三元（上元・中元・下元）は<b>拆補法</b>（日の符頭：甲・己で区切る方式）<br>・値符は時干に随い、値使は時支に随う正統布局<br>・八神は陽遁で勾陳・朱雀、陰遁で白虎・玄武を用いる古典方式<br>・中宮の儀は坤二宮に寄せる（中宮寄坤）<br>・日盤・月盤・年盤も同じ方式をそれぞれの柱で適用<br><br>'
+  +'<b>【奇門遁甲】</b><br>・時家奇門・<b>転盤式</b>を採用<br>・三元（上元・中元・下元）は<b>拆補法</b>（日の符頭：甲・己で区切る方式）<br>・値符は時干に随い、値使は時支に随う正統布局<br>・八神は陽遁で勾陳・朱雀、陰遁で白虎・玄武を用いる古典方式<br>・中宮の儀は坤二宮に寄せる（中宮寄坤）<br>・日盤・月盤・年盤も同じ方式をそれぞれの柱で適用<br>・方位は8方位・各45度の等分方式<br>・宿泊を伴う移動は月盤、引越は年盤・月盤を重ねて判定<br><br>'
   +'<span style="font-size:11px">※奇門遁甲には置閏法など他の流派も存在します。書籍や他のアプリと局数が異なる場合は、流派の違いによるものです。</span>'
   +'</div></div></details>';
   html+='<details class="stg-det"><summary class="stg-sum">'
@@ -4304,8 +4710,8 @@ var GLOSSARY=[
 function showGlossary(){document.getElementById('modalRoot').innerHTML='<div class="modal-overlay" onclick="closeGlossary()"><div class="modal gloss" onclick="event.stopPropagation()"><h4><span class="msr">menu_book</span> 用語のミニ解説</h4><div class="gloss-list">'+GLOSSARY.map(function(g){return '<div class="gloss-item"><div class="gloss-term">'+g[0]+'</div><div class="gloss-def">'+g[1]+'</div></div>';}).join('')+'</div><div class="modal-actions"><button class="btn" onclick="closeGlossary()">閉じる</button></div></div></div>';}
 function closeGlossary(){document.getElementById('modalRoot').innerHTML='';}
 /* ====== HOME REBUILD (logic) ====== */
-/* ===== 学び運プロファイル（既存エンジンに追加） ===== */
-LUCK_PROFILES.study={label:'学び運',icon:'school',
+/* ===== 勉強運プロファイル（既存エンジンに追加） ===== */
+LUCK_PROFILES.study={label:'勉強運',icon:'school',
   weights:{zf_good:1.0,zf_bad:1.0,sheng_good:1.8,sheng_bad:1.4,kai_good:1.2,kai_bad:0.8,kk_good:1.0,kk_bad:1.0,zf_kong:1.0,fuyin:0.8,fanyin:1.0,kyo_deity:0.8,kichi_deity:1.2},
   tiers:[[6.5,5,'最高'],[3.0,4,'良好'],[1.6,3,'平均'],[0.6,2,'やや注意'],[-1.6,1,'注意']],
   kyoLabel:'凶（集中注意）',oneGood:'吸収力が高い日。学びや資格に。',oneBad:'集中が乱れやすい日。復習中心で。',
@@ -4464,7 +4870,7 @@ var CAT={
    acts:{hi:['軽い運動・ストレッチをする','水分をしっかりとる','早めに寝る準備をする'],mid:['散歩で気分転換する','姿勢を意識する','腹八分を心がける'],lo:['ゆっくり入浴する','消化に良い食事にする','早めに休む']},
    avoid:{hi:['ハードすぎる運動','夜更かし'],mid:['暴飲暴食','長時間の同じ姿勢'],lo:['無理な予定詰め込み','冷たいものの摂りすぎ','睡眠を削ること']},
    advice:{hi:'巡りが良い日。軽い運動から始めると一日が整います。',mid:'リズムを一定に。整えることが運気アップの鍵です。',lo:'今日は休養が最優先。ゆっくりお風呂に浸かるのもおすすめです。'}},
- study:{label:'学び運',cls:'cat-study',cat:'var(--purple)',track:'#ddccf0',ring:'#b98ad0',peak:10,mk:'🎓',
+ study:{label:'勉強運',cls:'cat-study',cat:'var(--purple)',track:'#ddccf0',ring:'#b98ad0',peak:10,mk:'🎓',
    color:['パープル','var(--purple)'],colorUse:'ペン・ノート・しおりなど学びの道具に。集中と直感のバランスが整います。',
    item:['ノート','📒'],itemUse:'学んだ要点を1ページにまとめると記憶が定着。見返す習慣で差がつきます。',
    head:{hi:'吸収力が高い日',mid:'コツコツ積み上がる日',lo:'復習に向く日'},
@@ -4630,7 +5036,7 @@ renderHome=function(){
   var overall=score>=86?5:score>=78?4:score>=65?3:score>=58?2:1;
   var TONE={5:['絶好調の日','大きく動いて吉。追い風を存分に活かして。'],4:['運気上昇の日','新しい挑戦が吉。積極的な行動が幸運を引き寄せます。'],3:['まずまずの日','穏やかで安定した一日。整えると次に活きます。'],2:['スロー運転の日','欲張らず一つずつ。小さく整えると◎。'],1:['休息・守りの日','無理に動かず、休養・計画・整理に向く日です。']};
   var tone=TONE[overall];
-  var CATMETA={money:['c-money','payments','金運'],love:['c-love','favorite','恋愛運'],work:['c-work','work','仕事運'],health:['c-health','eco','健康運'],study:['c-study','school','学び運'],kankei:['c-kankei','handshake','対人運']};
+  var CATMETA={money:['c-money','payments','金運'],love:['c-love','favorite','恋愛運'],work:['c-work','work','仕事運'],health:['c-health','eco','健康運'],study:['c-study','school','勉強運'],kankei:['c-kankei','handshake','対人運']};
   var CMT={money:['堅実な行動が金運を高めます。','無駄遣いは控えめに整える日。','大きな出費・契約は控えめに。'],
     love:['出会いのチャンス。誠実さが鍵。','穏やかに縁を育てる日。','些細な行き違いに注意。'],
     work:['努力が評価される日。協力が吉。','淡々と進めると形になる日。','重要な決断は見送りが無難。'],
