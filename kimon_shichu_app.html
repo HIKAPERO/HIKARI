@@ -61,7 +61,7 @@
   body.theme-hikari-dark .nh-cat.c-study .nh-cat-ic .msr{color:#c7a3f0}
   body.theme-hikari-dark .nh-cat.c-kankei .nh-cat-ic .msr{color:#f0b880}
   body.theme-hikari-dark .nh-herow{background:radial-gradient(85% 55% at 78% 16%,rgba(150,110,200,.35),transparent 60%),linear-gradient(180deg,#1c1740 0%,#201a44 42%,#221c40 56%,#1c1836 72%,#141128 87%,#0c0a1a 100%)}
-  body.theme-hikari-dark .header{background:rgba(21,21,31,.88)!important;border-bottom-color:var(--line)}
+  body.theme-hikari-dark .header{background:var(--bg)!important;border-bottom-color:var(--line)}
   body.theme-hikari-dark .bottom-nav{background:rgba(21,21,31,.94)!important;border-top-color:var(--line)}
   body.theme-hikari-dark .profile-chip{background:linear-gradient(135deg,#241f3e,#1c1832)!important;border:1px solid var(--gold-dim)!important;color:var(--gold-soft)!important;box-shadow:0 1px 4px rgba(0,0,0,.3)}
   body.theme-hikari-dark .chip-wrap .profile-select{color:var(--gold-soft)!important}
@@ -267,7 +267,8 @@
   .ot-tabs::-webkit-scrollbar{display:none}
   .ot-chip{flex:0 0 auto;display:inline-flex;align-items:center;gap:4px;padding:8px 13px;border-radius:20px;border:1px solid var(--line);background:var(--surface);color:var(--text2);font-size:12.5px;font-weight:700;font-family:inherit;cursor:pointer;min-height:38px;white-space:nowrap}
   .ot-chip .msr{font-size:15px}
-  .ot-chip.on{border-color:var(--gold);color:var(--gold);background:var(--surface2)}
+  .ot-chip.on{border-color:transparent;color:#241c0d;background:linear-gradient(135deg,var(--gold),#e2c07e);font-weight:800;box-shadow:0 2px 10px rgba(205,169,79,.30)}
+  .ot-chip.on .msr{color:#241c0d}
   .cmp-lg{display:flex;gap:14px;justify-content:center;font-size:10.5px;color:var(--text3);margin-top:6px;flex-wrap:wrap}
   .cmp-lg .cl.g{color:var(--green-d)}
   .cmp-lg .cl.b{color:var(--red-d)}
@@ -302,6 +303,36 @@
   .mb-chip{font-size:11px;font-weight:700;padding:3px 10px;border-radius:9px;background:var(--surface2);color:var(--text2);border:0.5px solid var(--line)}
   .mb-chip.b{color:var(--red-d);border-color:var(--red)}
   .mbc-t{font-size:12.5px;color:var(--text);flex:0 0 auto}
+  .kkn-rd{display:block;font-size:10.5px;color:var(--text3);line-height:1.65;margin:2px 0 5px;font-weight:400}
+  .hf-sec{margin:18px 0 26px}
+  .hf-card{position:relative;border:1px solid var(--gold);border-radius:16px;padding:14px 38px 13px 16px;cursor:pointer;
+    background:linear-gradient(135deg,var(--surface) 0%,var(--surface2) 60%,var(--surface) 100%);
+    box-shadow:0 4px 18px rgba(0,0,0,0.10);overflow:hidden}
+  .hf-card::before{content:'';position:absolute;inset:0;background:radial-gradient(120% 90% at 100% 0%,var(--gold) 0%,transparent 55%);opacity:.10;pointer-events:none}
+  .hf-card.bad{border-color:var(--red)}
+  .hf-card.bad::before{background:radial-gradient(120% 90% at 100% 0%,var(--red) 0%,transparent 55%)}
+  .hf-cap{font-size:10.5px;font-weight:700;color:var(--text3);letter-spacing:.04em}
+  .hf-when{margin-left:8px;color:var(--gold);font-weight:800}
+  .hf-title{font-size:19px;font-weight:800;color:var(--text);margin:5px 0 4px;letter-spacing:.02em}
+  .hf-desc{font-size:11.5px;color:var(--text2);line-height:1.75}
+  .hf-chev{position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:20px}
+  .hf-banner{display:flex;align-items:center;gap:8px;margin-top:8px;border:0.5px solid var(--line2);border-radius:13px;padding:10px 12px;cursor:pointer;
+    background:linear-gradient(90deg,var(--surface2),var(--surface));font-size:12px;color:var(--text2)}
+  .hf-banner.bad{border-color:var(--red)}
+  .hf-banner b{font-size:13.5px;color:var(--text)}
+  .hf-b-when{font-size:11px;font-weight:800;color:var(--gold)}
+  .hf-b-sub{font-size:10.5px;color:var(--text3);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .bg-acc{border:1px solid var(--line);border-radius:14px;background:var(--surface);margin:12px 0;overflow:hidden}
+  .bg-sum{display:flex;align-items:center;gap:8px;padding:12px 14px;cursor:pointer;list-style:none;min-height:46px}
+  .bg-sum::-webkit-details-marker{display:none}
+  .bg-t{flex:1;font-size:12.5px;font-weight:800;color:var(--text2)}
+  .ht-sub{font-size:10.5px;font-weight:600;color:var(--text3);margin-left:7px;vertical-align:1.5px;letter-spacing:.02em}
+  .ht-sub.chip{display:inline-block;font-size:9px;line-height:1.3;text-align:left;vertical-align:middle;white-space:nowrap;letter-spacing:.04em;margin-left:8px}
+  .bg-chev{font-size:20px;color:var(--text3);transition:transform .25s ease}
+  .bg-acc[open] .bg-chev{transform:rotate(180deg)}
+  .bg-acc[open] .bg-sum{border-bottom:0.5px dashed var(--line)}
+  .bg-body{padding:10px 12px 12px;animation:bgOpen .28s ease}
+  @keyframes bgOpen{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
   .drg-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;vertical-align:0.5px;background:var(--text3)}
   .drg-dot.g{background:var(--green-d)}
   .drg-dot.y{background:var(--gold)}
@@ -313,6 +344,31 @@
   .ev-ic.g{color:var(--gold)}
   .ev-ic.n{color:var(--text3)}
   .ev-ic.b{color:var(--red-d)}
+  /* ==== 統一デザイン: アコーディオン共通シェブロン ==== */
+  summary.dsh-sh{display:flex;align-items:center}
+  summary.dsh-sh::after,.kk-sum .kk-header::after,.kdg-sum::after,.lr-fold-s::after{
+    font-family:'Material Symbols Rounded';content:'expand_more';font-size:19px;color:var(--text3);
+    margin-left:auto;flex:0 0 auto;transition:transform .25s ease;font-weight:400}
+  .kdg-sum::after{margin-left:4px}
+  details[open]>summary.dsh-sh::after,details[open]>.kk-sum .kk-header::after,details[open]>.kdg-sum::after,details[open]>.lr-fold-s::after{transform:rotate(180deg)}
+  .kk-sum .kk-header{display:flex;align-items:center}
+  .kk-sum .kk-header .kk-stars{margin-left:auto}
+  .kk-sum .kk-header::after{margin-left:8px}
+  .lr-fold-s{display:flex;align-items:center;cursor:pointer;list-style:none}
+  .lr-fold-s::-webkit-details-marker{display:none}
+  /* ==== 統一デザイン: ボタン2種(主=塗り/副=枠)の整合 ==== */
+  .kd-now{border-radius:12px;font-weight:700}
+  .dsh-calbtn{border-radius:12px;font-weight:700;background:var(--surface2)}
+  .cd-kkn>summary{display:flex;align-items:center;list-style:none;cursor:pointer}
+  .cd-kkn>summary::-webkit-details-marker{display:none}
+  .cd-kkn>summary::after,summary.stg-coords-toggle::after{
+    font-family:'Material Symbols Rounded';content:'expand_more';font-size:18px;color:var(--text3);
+    margin-left:auto;flex:0 0 auto;transition:transform .25s ease;font-weight:400}
+  details[open]>summary.stg-coords-toggle::after,.cd-kkn[open]>summary::after{transform:rotate(180deg)}
+  .plain-sum{list-style:none;cursor:pointer;display:flex;align-items:center;gap:4px}
+  .plain-sum::-webkit-details-marker{display:none}
+  .plain-sum::after{font-family:'Material Symbols Rounded';content:'expand_more';font-size:15px;color:var(--text3);margin-left:2px;transition:transform .25s ease}
+  details[open]>.plain-sum::after{transform:rotate(180deg)}
   .dash-back{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--text3);cursor:pointer;margin-bottom:8px;padding:4px 2px}
   .dash-back .msr{font-size:15px}
   .lay-line{display:flex;gap:5px;margin-top:4px;flex-wrap:wrap}
@@ -321,7 +377,6 @@
   .lay-badge.b{color:var(--red-d);border-color:var(--red)}
   .dep-line{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--gold);margin-top:4px;font-weight:700}
   .ds-card{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:12px 14px;margin-bottom:12px}
-  .dsh-planbtn{width:100%;display:flex;align-items:center;justify-content:center;gap:6px;min-height:48px;border:1px solid var(--gold);border-radius:12px;background:var(--surface);color:var(--gold);font-size:13.5px;font-weight:800;font-family:inherit;cursor:pointer;margin-bottom:10px}
   .dsh-plan{display:flex;align-items:center;gap:10px;border:1px solid var(--gold);border-radius:14px;background:var(--surface);padding:12px 14px;margin-bottom:10px;cursor:pointer}
   .dsh-plan>.msr{font-size:22px;color:var(--gold)}
   .dsh-pl-b{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
@@ -593,7 +648,7 @@
   h1,.hero-gz,.dir-main,.bc-dir,.ms-kan,.ms-ji,.yh-element-name,.dc-dir,.yd-gz,.dy-gz,
   .mo-gz,.kk-name,.gc-main,.wc-main,.tr-val,.kj-side-val,.good-sec-title,.warn-sec-title,
   .modal h4,.kj-badge,.bc-dir,.hero-gz .no{font-family:"Shippori Mincho B1","Noto Serif JP",serif;}
-  .header{background:rgba(255,253,248,.88);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  .header{background:var(--bg);border-bottom:1px solid var(--line)}
   .h-left{display:flex;align-items:center;gap:12px}
   .header h1{font-family:"Shippori Mincho B1","Noto Serif JP",serif;color:var(--gold-soft);letter-spacing:.06em}
   .ls{width:26px;height:26px;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);border:1px solid var(--gold-dim);border-radius:5px;overflow:hidden;flex:0 0 auto}
@@ -1133,14 +1188,14 @@
 /* ====== HOME REBUILD ====== */
 /* ===================== PREMIUM HOME REBUILD ===================== */
 /* --- header / nav を上質に --- */
-.header{background:rgba(255,253,248,.9)!important;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:12px 16px}
+.header{background:var(--bg)!important;border-bottom:1px solid var(--line);padding:12px 16px}
 .header .h-left{display:flex;align-items:center;gap:12px}
 .header .ls{width:30px;height:30px;border-radius:9px;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);gap:2px;padding:4px;background:linear-gradient(140deg,#fff8e8,#f0e3c4);border:1px solid var(--gold);box-shadow:0 1px 4px rgba(169,130,31,.25)}
 .header .ls i{background:var(--gold-dim);border-radius:1px;opacity:.55}
 .header .ls i:nth-child(5){background:var(--shu);opacity:1}
 .header h1#appTitle{font-family:"Shippori Mincho B1",serif;font-size:19px;font-weight:700;color:var(--gold-dim);letter-spacing:.04em}
 .profile-chip{background:linear-gradient(135deg,#fffbf0,#f1e6cd)!important;border:1px solid var(--gold)!important;color:#6a5320!important;font-weight:600;padding:8px 12px!important;box-shadow:0 1px 4px rgba(169,130,31,.18)}
-.bottom-nav{background:rgba(255,253,248,.94)!important;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line)}
+.bottom-nav{background:var(--bg)!important;border-top:1px solid var(--line)}
 .nav-item{color:#a99c80}
 .nav-item.active{color:var(--gold-dim)!important}
 .nav-item.active .ni-icon{filter:drop-shadow(0 1px 2px rgba(169,130,31,.4))}
@@ -1404,7 +1459,7 @@
 .stg-chev.msr{font-size:19px;color:var(--text3)}
 .stg-badge-icon{font-size:12px;color:var(--text2)}
 .stg-chev{font-size:14px;color:var(--text3);line-height:1;transition:transform .2s}
-.stg-det[open] .stg-chev{transform:rotate(90deg)}
+.stg-det[open] .stg-chev{transform:rotate(180deg)}
 .stg-row-body{flex:1;min-width:0}
 .stg-row-title{font-size:13px;font-weight:600;color:var(--text);line-height:1.3}
 .stg-row-desc{font-size:11px;color:var(--text2);margin-top:1.5px;line-height:1.4}
@@ -1472,7 +1527,7 @@
 .help-sum-title{font-size:13px;font-weight:600;color:var(--text)}
 .help-sum-sub{font-size:11px;color:var(--text2);margin-top:1px}
 .help-chev{font-size:18px;color:var(--text3);transition:transform .2s;flex-shrink:0}
-.help-det[open] .help-chev{transform:rotate(90deg)}
+.help-det[open] .help-chev{transform:rotate(180deg)}
 .help-body{padding:4px 16px 16px;background:var(--surface2);border-top:0.5px solid var(--line)}
 .help-body p{font-size:13px;color:var(--text);line-height:1.85;margin:12px 0 4px}
 .help-body b{color:var(--gold-soft)}
@@ -1843,7 +1898,7 @@ var Store={
 };
 
 var APP={chartData:null,ritsuunMode:'round',theme:'hikari-dark',built:{home:false,meishiki:false,unsei:false,kimon:false,trip:false,aisho:false},
-  kimonTab:'shi',kimonDateStr:'',kimonTimeStr:'',_kimonScan:null,baseId:'home',destId:'',tripOut:'',tripRet:'',tripTab:'ri',tripMode:'check',destSearchId:'',destBase:'home',destTrip:'one',destNights:1,destNightsMax:1,destPeriod:'1m',destPurpose:'all',destView:'list',destFilter:'all',destStart:'',destEnd:'',_destCache:null,luckProfile:'money',luckPeriod:'1m',luckView:'cal',luckAction:'宝くじ・くじ運',groupMembers:[],groupDest:'',groupBase:'home',groupMemberMode:'same',groupMemberBase:{},groupTrip:'one',groupNights:1,groupNightsMax:1,groupPeriod:'1m',groupView:'list',aishoA:'',aishoB:'',aishoRel:'renai',homeCoords:'',readingTab:'seikaku',openMonth:-1,diaryMonth:0,diaryPick:null,googleKey:'',_geo:{results:{},timers:{}},scrollPos:{},
+  kimonTab:'shi',kimonDateStr:'',kimonTimeStr:'',cmpOrigin:'gps',gpsLL:null,gpsState:'idle',baseId:'home',destId:'',tripOut:'',tripRet:'',tripTab:'ri',tripMode:'check',destSearchId:'',destBase:'home',destTrip:'one',destNights:1,destNightsMax:1,destPeriod:'1m',destPurpose:'all',destView:'list',destFilter:'all',destStart:'',destEnd:'',_destCache:null,luckProfile:'money',luckPeriod:'1m',luckView:'cal',luckAction:'宝くじ・くじ運',groupMembers:[],groupDest:'',groupBase:'home',groupMemberMode:'same',groupMemberBase:{},groupTrip:'one',groupNights:1,groupNightsMax:1,groupPeriod:'1m',groupView:'list',aishoA:'',aishoB:'',aishoRel:'renai',homeCoords:'',readingTab:'seikaku',openMonth:-1,diaryMonth:0,diaryPick:null,googleKey:'',_geo:{results:{},timers:{}},scrollPos:{},
   formNoTime:false,heading:0,sensorOn:false,
   viewMode:'list',pendingDelete:null,editingMemo:null,editingProfile:null,
   notif:{
@@ -1878,7 +1933,7 @@ function rebuildChart(){
 }
 function invalidateAll(){
   rebuildChart();
-  _dayBoardCache={};APP._destCache=null;APP._kimonScan=null;_timingCache={};_timingQueue=[];_timingRunning=false;
+  _dayBoardCache={};APP._destCache=null;_timingCache={};_timingQueue=[];_timingRunning=false;
   var active=document.querySelector('.nav-item.active').dataset.screen;
   if(active!=='settings'){buildScreen(active);APP.built[active]=true;}
   buildScreen('home');APP.built.home=true;
@@ -1894,7 +1949,7 @@ function go(screen){
   document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
   document.getElementById('screen-'+screen).classList.add('active');
   var nav=document.querySelector('.nav-item[data-screen="'+screen+'"]');if(nav)nav.classList.add('active');
-  document.getElementById('appTitle').textContent={home:'ホーム',meishiki:'命式',unsei:'運勢',kimon:'奇門遁甲',trip:'開運・方位',aisho:'相性',settings:'設定'}[screen];
+  document.getElementById('appTitle').innerHTML={home:'ホーム',meishiki:'命式<span class="ht-sub">四柱推命</span>',unsei:'運勢<span class="ht-sub">四柱推命</span>',kimon:'奇門遁甲<span class="ht-sub">命盤</span>',trip:'開運・方位<span class="ht-sub chip">奇門遁甲<br>×四柱推命</span>',aisho:'相性<span class="ht-sub">四柱推命</span>',settings:'設定'}[screen];
   if(screen==='settings'){renderSettings();}
   else if(screen==='trip'){renderTrip();}
   else if(screen==='aisho'){renderAisho();}
@@ -1952,7 +2007,7 @@ function homeNgTime(tm){return '<span class="hc-tag red">注意時間帯</span><
 /* ============ 命式タブ（鑑定テキスト移植）============ */
 function renderMeishiki(){
   var el=document.getElementById('screen-meishiki');
-  if(!APP.chartData){el.innerHTML=emptyState('命式分析');return;}
+  if(!APP.chartData){el.innerHTML=emptyState('あなたの命式と鑑定');return;}
   var cd=APP.chartData,y=cd.yojin;
   var mainGogyo='木',mx=0;for(var k in cd.score){if(cd.score[k]>mx){mx=cd.score[k];mainGogyo=k;}}
   var html='';
@@ -2483,6 +2538,50 @@ var LT_YAKU_M=[[24,1],[25,2],[26,1],[41,1],[42,2],[43,1],[60,1],[61,2],[62,1]];
 var LT_YAKU_F=[[18,1],[19,2],[20,1],[32,1],[33,2],[34,1],[36,1],[37,2],[38,1],[60,1],[61,2],[62,1]];
 function ltYaku(kazoe,sex){var t=sex==='F'?LT_YAKU_F:LT_YAKU_M;for(var i=0;i<t.length;i++)if(t[i][0]===kazoe)return t[i][1];return 0;}
 
+/* ===== 運勢グラフ理由文のユーザー向け翻訳レイヤー ===== */
+var LT_WHY_TEXT={
+ 'study|正印が巡る（学び・吸収の年）':'知識がすっと身につく学びの当たり年。資格や習い事を始めるなら今です。',
+ 'study|偏印が巡る（学び・吸収の年）':'専門分野や独自の学びが伸びる時期。興味の深掘りが才能を磨きます。',
+ 'study|食神（才能・表現が伸びる年）':'才能と表現力が花開く時期。作品づくりや発信に挑戦すると評価されます。',
+ 'study|文昌貴人（学問の星）':'学問の星が味方する年。勉強や試験で実力以上の成果が出やすくなります。',
+ 'study|月柱と合（環境が学びを後押し）':'周囲の環境が学びを応援してくれる年。良い先生や教材に出会えます。',
+ 'job|正官が巡る（仕事の転機）':'責任ある役割が回ってくる年。昇進や抜擢のチャンスをつかみやすい時期です。',
+ 'job|偏官が巡る（仕事の転機）':'仕事に大きな動きが出る年。転職や挑戦は、準備を整えてから踏み切って。',
+ 'job|傷官の年（離職・独立の気）':'今のやり方に窮屈さを感じやすい年。独立や転職を考え始めるタイミングです。',
+ 'job|月支と沖（キャリアの宮の動揺）':'職場環境が大きく動きやすい年。異動や組織変更の波にうまく乗りましょう。',
+ 'job|駅馬（異動・出張）':'出張や異動など、動きながら成果を出す年。フットワークが武器になります。',
+ 'job|大運の切り替わり':'人生の節目にあたる年。キャリアの方向性を見直す絶好のタイミングです。',
+ 'move|駅馬の年（移動・転居の星）':'引越しや長距離の移動に縁が深い年。住まい探しを始めるのに向いています。',
+ 'move|日支と沖（住環境の変化）':'住まいや暮らしの土台が動きやすい年。環境を変えるならこの流れに乗って。',
+ 'move|年支と沖':'実家や地元との関わりに変化が出やすい年。住む場所の見直しが起こりがちです。',
+ 'move|大運の切り替わり':'運気の章が変わる節目。心機一転の引越しや模様替えが吉に働きます。',
+ 'marry|日支と六合（縁が結ばれる）':'あなた自身の宮に良縁が結ばれる年。出会いから話が早く進みます。',
+ 'marry|日支と三合':'周囲の後押しで縁がまとまりやすい年。紹介や集まりの場を大切に。',
+ 'marry|桃花の年（人気・恋愛の星）':'魅力が増して注目される年。出会いの場に積極的に出ると好機をつかめます。',
+ 'child|時柱と六合（子の宮が動く）':'子どもの宮に縁が結ばれる年。家族計画を前向きに進めやすい時期です。',
+ 'child|時柱と三合':'子どもの宮が周囲の応援で温まる年。授かりへの準備を整えるのに好適です。',
+ 'child|桃花の年':'愛情運が高まる年。パートナーとの関係を深めることが授かりにつながります。',
+ 'family|比劫の年（張り合い・出費）':'兄弟や仲間との張り合い、予定外の出費が出やすい年。財布の紐は固めに。',
+ 'family|年支と沖（親・目上の宮）':'親や目上との関係が揺れやすい年。実家のことは早めに話し合うと安心です。',
+ 'family|月支と沖':'家庭や身近な環境がざわつきやすい年。聞き役に回ると波風が収まります。',
+ 'family|刑（こじれ）':'身内の話がこじれやすい年。約束ごとは記録に残すなど、丁寧な確認を。',
+ 'health|日支と沖':'生活リズムが乱れやすい年。無理なスケジュールを避け、休息を最優先に。',
+ 'health|日支と刑':'体の弱い部分にサインが出やすい年。違和感は放置せず早めの受診を。',
+ 'health|七殺（偏官）が巡る（負荷の年）':'心身にプレッシャーがかかりやすい年。頑張りすぎず、意識して休んで。',
+ 'health|厄年と重なる':'厄年と重なるため疲れが出やすい年。健康診断とお祓いで備えると安心です。',
+ 'health|沖・刑が重なる':'不調やアクシデントが重なりやすい年。運転や足元には特に注意を。'
+};
+function ltWhyText(cat,raw){
+  var k=cat+'|'+raw;
+  if(LT_WHY_TEXT[k])return LT_WHY_TEXT[k];
+  if(raw.indexOf('配偶星（')===0)return '結婚相手にあたる星が巡る年。恋愛や縁談が現実味を帯びる時期です。';
+  if(raw.indexOf('（子の星）')>=0)return '子どもとの縁を司る星が巡る年。授かりに関する良い動きが出やすい時期。';
+  var m=raw.match(/^本厄（数え(\d+)）$/);
+  if(m)return '数え'+m[1]+'歳の本厄。新しい挑戦より足元固めの一年に。お祓いも心の支えになります。';
+  m=raw.match(/^前厄・後厄（数え(\d+)）$/);
+  if(m)return '数え'+m[1]+'歳の前厄・後厄。大きな決断は慎重に、生活を丁寧に整える一年です。';
+  return raw;
+}
 function ltBuildLife(cd){
   var by=cd.birth.getFullYear(), dStem=cd.dStem, dT=TG.indexOf(dStem), P=cd.pillars;
   var yB=DZ.indexOf(P[0].branch), mB=DZ.indexOf(P[1].branch), dB=DZ.indexOf(P[2].branch);
@@ -2623,14 +2722,14 @@ function ltShowDetail(age){
   var r=LT.data.rows.filter(function(x){return x.age===age;})[0]; if(!r)return;
   var parts=LT_CATS.map(function(c){var v=r[c.key];if(v<0.05)return '';
     var bar='●'.repeat(Math.round(v*5))+'○'.repeat(5-Math.round(v*5));
-    var why=r.why[c.key].join('、');
+    var why=r.why[c.key].map(function(w){return ltWhyText(c.key,w);}).join('<br>');
     return '<div style="margin-top:4px"><span style="color:'+c.color+'"><span class="msr">'+c.icon+'</span> '+c.label+'</span> <span style="color:#9a8e76">'+bar+'</span>'+(why?'<br><span style="font-size:11px;color:var(--text2)">'+why+'</span>':'')+'</div>';
   }).filter(Boolean).join('');
   document.getElementById('lt-detail').innerHTML='<b>'+r.year+'年（'+age+'歳・'+r.gz+'）</b>'+(r.switch?' <span style="font-size:11px;color:var(--gold)">◆大運の節目</span>':'')+(parts||'<div style="margin-top:4px;color:#9a8e76">大きな転機の要素は弱め。落ち着いた年回りです。</div>');
 }
 function renderUnsei(){
   var el=document.getElementById('screen-unsei');
-  if(!APP.chartData){el.innerHTML=emptyState('運勢分析');return;}
+  if(!APP.chartData){el.innerHTML=emptyState('運勢グラフと人生の年表');return;}
   var cd=APP.chartData,y=cd.yojin,dStem=cd.dStem,html='';
   html+='<div class="yojin-card"><div class="yj-circle" style="background:'+GOGYO_COLOR[y.primaryYojin]+'">'+y.primaryYojin+'</div><div class="yj-text">あなたの用神 <b>'+y.primaryYojin+'</b> が巡る時期が、好機です。</div></div>';
   html+=renderLifeTransition(cd);
@@ -2762,8 +2861,7 @@ function geoInput(el,target){
 function geoApply(target,r){
   var cs=r.lat.toFixed(6)+', '+r.lng.toFixed(6);
   var nm=r.shortName||geoShort(r.name);
-  if(target==='home'){var el=document.getElementById('home-coords');if(el)el.value=cs;setHomeCoords();}
-  else if(target==='place'){var pn=document.getElementById('pl-name'),pc=document.getElementById('pl-coords');if(pc)pc.value=cs;if(pn&&!pn.value.trim())pn.value=nm;geoStatus(target,'<span class="msr">check</span> 座標を入力しました。地点名を確認して「この地点を登録する」を押してください。');geoRenderResults(target,[]);}
+  if(target==='place'){var pn=document.getElementById('pl-name'),pc=document.getElementById('pl-coords');if(pc)pc.value=cs;if(pn&&!pn.value.trim())pn.value=nm;geoStatus(target,'<span class="msr">check</span> 座標を入力しました。地点名を確認して「この地点を登録する」を押してください。');geoRenderResults(target,[]);}
   else if(target.indexOf('birth:')===0){var id=target.slice(6);var be=document.getElementById('bc-'+id);if(be)be.value=cs;saveBirthCoords(id);}
 }
 function geoPick(target,i){var r=(APP._geo.results[target]||[])[i];if(!r)return;geoHistAdd(r);geoApply(target,r);}
@@ -2793,7 +2891,6 @@ function homeBaseInfo(){var ap=Store.getActive();
   var hc=parseCoords(APP.homeCoords);if(hc)return{ll:hc,label:'以前の自宅設定（'+hc[0].toFixed(3)+', '+hc[1].toFixed(3)+'）',src:'legacy'};
   return{ll:[35.6895,139.6917],label:'未登録（東京基準）',src:'default'};}
 function homeLatLng(){return homeBaseInfo().ll;}
-function setHomeCoords(){var el=document.getElementById('home-coords');if(!el)return;var v=el.value.trim();if(v&&!parseCoords(v)){alert('「緯度, 経度」の形式で入力してください（例：35.7510, 139.9127）');return;}APP.homeCoords=v;persist();renderSettings();}
 function resolveBase(){if(APP.baseId==='home'){return{co:homeLatLng(),name:'自宅'};}var pl=Places.get(APP.baseId);return pl?{co:[pl.lat,pl.lng],name:pl.name}:{co:null,name:'—'};}
 function setBaseId(v){APP.baseId=v;renderTrip();}
 function setDestId(v){APP.destId=v;renderTrip();}
@@ -2878,6 +2975,9 @@ function tripCard(b){
      '<div class="tr-tip"><span class="msr">lightbulb</span> 拠点を変えると目的地の方角・吉凶が変わります（方違えの発想）。盤タブ（時/日/月/年）でも判定が変わります。</div></div>';
   h+='</div>';return h;
 }
+var KAN_TRAIT={'甲':'まっすぐ伸びる向上心と、道を切り開く推進力','乙':'柔らかな協調性と、しなやかに乗り越える適応力','丙':'内に秘めたカリスマ性と、場を明るくする勢い','丁':'細やかな知性と、ひらめきの鋭さ','戊':'どっしりとした安定感と、周囲から信頼される器','己':'人を育てる包容力と、こつこつ耕す堅実さ','庚':'困難を跳ね返す強さと、ブレない信念・鋭い決断力','辛':'磨けば光る美意識と、本質を見極める目','壬':'大きな流れを読む広い視野と、自由な発想力','癸':'静かな洞察力と、深く物事を極める探究心'};
+var STAR_TRAIT={'天心':'的確な判断で人を導くリーダーの資質','天任':'信頼を積み上げる誠実さと粘り強さ','天輔':'知性と品格で人を惹きつける教養','天禽':'どんな場でも調和を生むバランス感覚','天英':'人を惹きつける華やかさと情熱','天芮':'深く学び、人に寄り添う面倒見の良さ','天柱':'鋭い批評眼と、筋を通す言葉の力','天冲':'思い立ったら動ける行動力とスピード','天蓬':'ピンチの裏側を見抜く大胆さと、大局的な知略'};
+var DEI_TRAIT={'値符':'目上を惹きつける主役の風格','螣蛇':'鋭い直感と豊かな感受性','太陰':'水面下で整える思慮深さと気配り','六合':'人と人をつなぐ調和の才能','白虎':'ここ一番で発揮される突破力と勝負強さ','玄武':'状況を冷静に観察する力と、機転の早い戦略的思考','九地':'揺るがない守りと継続力','九天':'高みを目指す向上心とスケールの大きさ','勾陳':'土台を固める粘り強さ','朱雀':'言葉と表現で人を動かす力'};
 var STAR_PERSONA={'天心':'決断力と統率力を備えた、頼られるリーダー型','天任':'コツコツ積み上げて信頼と財を築く、堅実な大器晩成型','天輔':'知性と品の良さで人を惹きつける、教養・人望型','天禽':'バランス感覚に優れ、どこでも調和を生む中庸型','天英':'華やかで注目を集める、直感と情熱のスター型','天芮':'学び深く面倒見が良い一方、抱え込みやすい研究・世話役型','天柱':'弁が立ち批評眼が鋭い、守りと改革の論客型','天冲':'思い立ったら即行動、スピードで道を開く行動派','天蓬':'胆力と発想力で大きく張れる、豪胆な勝負師型'};
 var DEI_PERSONA={'値符':'目上の引き立てを受けやすく、場の主役になりやすい人','螣蛇':'感受性が鋭く、直感やひらめきが冴える人','太陰':'思慮深く、水面下の根回しや気配りが得意な人','六合':'人と人をつなぐのが上手な、ご縁と調和の人','白虎':'闘争心と突破力を秘めた、勝負どころに強い人','玄武':'洞察力があり、物事の裏側を見抜く人','九地':'守りが堅く、地道な継続で花開く人','九天':'向上心が高く、大きな舞台で伸びる人','勾陳':'粘り強く、土台を固めるのが得意な人','朱雀':'言葉と表現の力で人を動かす人'};
 var STAR_APT={'天心':'経営・管理職、医療・健康分野、コンサルタント','天任':'金融・不動産、農業・食、堅実な実務職','天輔':'教育・研究、文筆、士業・アドバイザー','天禽':'調整役・マネジメント、サービス業全般','天英':'芸能・美容・デザイン、広報・プレゼンが要る仕事','天芮':'研究・分析、医療・介護、教育サポート','天柱':'法務・評論・編集、品質管理、専門技術','天冲':'営業・スポーツ・立ち上げ期の事業、スピード勝負の現場','天蓬':'投資・貿易・企画勝負、大胆さが活きる分野'};
@@ -2900,13 +3000,13 @@ function buildMeibanChapters(cd,b){
   var bads=(b.kakukyoku||[]).filter(function(k){return k.type!=='good';});
   var ch=[];
   ch.push({icon:'face',t:'基本性格・本質',concl:(STAR_PERSONA[mc.star]||'').split('、')[1]||STAR_PERSONA[mc.star]||'',
-    body:'命宮（あなた自身を表す宮）は<b>'+mc.dir+'</b>。九星は<b>'+mc.star+'</b>（'+(STAR_MEAN[mc.star]||'')+'）で、<b>'+(STAR_PERSONA[mc.star]||'')+'</b>です。'
+    body:'命宮（あなた自身を表す宮）は<b>'+mc.dir+'</b>。九星は<b>'+mc.star+'</b>で、<b>'+(STAR_PERSONA[mc.star]||'')+'</b>です。'
       +(mc.deityRaw?'八神は<b>'+mc.deityRaw+'</b>。'+(DEI_PERSONA[mc.deityRaw]||'')+'という一面を持ちます。':'')
-      +(mc.tenStem&&KAN_MEAN[mc.tenStem]?'天盤の<b>'+mc.tenStem+'</b>（'+KAN_MEAN[mc.tenStem]+'）の気質が、人柄の芯にあります。':'')});
+      +(mc.tenStem&&KAN_TRAIT[mc.tenStem]?'天盤の<b>'+mc.tenStem+'</b>が示す「'+KAN_TRAIT[mc.tenStem]+'」が、人柄の芯にあります。':'')});
   ch.push({icon:'workspace_premium',t:'才能・適職',concl:'向いているのは '+((STAR_APT[mc.star]||'').split('、')[0])+' など',
-    body:'才能の核は<b>'+mc.star+'</b>の「'+(STAR_MEAN[mc.star]||'')+'」。適職の方向性は<b>'+(STAR_APT[mc.star]||'')+'</b>です。'
+    body:'才能の核は<b>'+mc.star+'</b>の「'+(STAR_TRAIT[mc.star]||'')+'」。適職の方向性は<b>'+(STAR_APT[mc.star]||'')+'</b>です。'
       +(mc.gateRaw?'命宮の<b>'+mc.gateRaw+'</b>は、'+(GATE_APT[mc.gateRaw]||GATE_MEAN2[mc.gateRaw]||'')+'との相性の良さを示します。':'')
-      +(mc.gndStem&&KAN_MEAN[mc.gndStem]?'地盤の<b>'+mc.gndStem+'</b>（'+KAN_MEAN[mc.gndStem]+'）は、生まれつき土台に備わっている資質です。':'')});
+      +(mc.gndStem&&KAN_TRAIT[mc.gndStem]?'地盤の<b>'+mc.gndStem+'</b>が示す「'+KAN_TRAIT[mc.gndStem]+'」は、生まれつき土台に備わっている資質です。':'')});
   var rg=cellByDeity(b,'六合');
   var b3='',c3;
   if(rg){b3='ご縁を司る<b>六合</b>は<b>'+rg.dir+'</b>の宮にあり、<b>'+rg.gateRaw+'</b>（'+(GATE_MEAN2[rg.gateRaw]||'')+'）×<b>'+rg.star+'</b>と組んでいます。'
@@ -2928,9 +3028,9 @@ function buildMeibanChapters(cd,b){
   ch.push({icon:'auto_awesome',t:'人生の使命・開運ポイント',concl:ye?('用神'+ye+'を満たす行動が開運の近道'):'命宮の場面で本領発揮',body:b5});
   var mg=mc.gogyo;
   var isYo=!!(y&&y.yojinEl&&y.yojinEl.indexOf(mg)>=0),isKi=!!(y&&y.kishinEl&&y.kishinEl.indexOf(mg)>=0);
-  var b6='強みは<b>'+mc.star+'</b>の「'+(STAR_MEAN[mc.star]||'')+'」'+(mc.deityRaw?'と、<b>'+mc.deityRaw+'</b>の「'+(DEI_MEAN[mc.deityRaw]||'')+'」':'')+'。'
-    +'命宮の五行は<b>'+mg+'</b>で、'+(isYo?'あなたの<b>用神と一致</b>します。持ち味を素直に出すほど運が伸びる、恵まれた配置です。':isKi?'あなたの<b>忌神</b>にあたります。持ち味が強く出すぎると裏目に出やすいので、'+(ye&&GOGYO_ACT[ye]?GOGYO_ACT[ye]+'で':'用神を満たす行動で')+'バランスを取るのが上手な使い方です。':'用神とは中立です。環境しだいで強みにも弱みにもなる、伸びしろ型といえます。');
-  ch.push({icon:'balance',t:'強み・弱み',concl:isYo?'素の持ち味がそのまま武器になる':isKi?'持ち味の「出し過ぎ」だけ注意':'環境しだいで化ける伸びしろ型',body:b6});
+  var b6='強みは<b>'+mc.star+'</b>の「'+(STAR_TRAIT[mc.star]||'')+'」'+(mc.deityRaw?'と、<b>'+mc.deityRaw+'</b>の「'+(DEI_TRAIT[mc.deityRaw]||'')+'」':'')+'。'
+    +'命宮の五行は<b>'+mg+'</b>で、'+(isYo?'あなたの<b>用神と一致</b>します。持ち味を素直に出すほど運が伸びる、恵まれた配置です。':isKi?'あなたの<b>忌神</b>にあたります。持ち味が強く出すぎると裏目に出やすいので、'+(ye&&GOGYO_ACT[ye]?GOGYO_ACT[ye]+'で':'用神を満たす行動で')+'バランスを取るのが上手な使い方です。':'用神とは中立です。環境選びによって無限の可能性が開花する、伸びしろ型といえます。自分の直感が活きる場所に身を置くことが、開運の近道になります。');
+  ch.push({icon:'balance',t:'強み・弱み',concl:isYo?'素の持ち味がそのまま武器になる':isKi?'持ち味の「出し過ぎ」だけ注意':'環境選びで無限に化ける伸びしろ型',body:b6});
   var riskCells=b.cells.filter(function(c){return !c.isCtr&&(c.gateRaw==='傷門'||c.gateRaw==='死門')&&(c.deityRaw==='白虎'||c.deityRaw==='玄武'||c.deityRaw==='螣蛇');});
   var b7='';
   if(mc.isKu)b7+='命宮が<b>空亡</b>です。頑張りが空回りしやすい時期が巡りやすいので、「休む勇気」も実力のうちと心得てください。';
@@ -3046,7 +3146,7 @@ function boardReadingHtml(b,dlabel){
   G.g.sort(function(a,b2){return b2.adj-a.adj;});
   G.y.sort(function(a,b2){return b2.adj-a.adj;});
   G.r.sort(function(a,b2){return a.adj-b2.adj;});
-  var h='<div class="sec-label"><span class="si msr">explore</span>方位別・鑑定結果一覧（'+dlabel+'）</div>';
+  var h='<div class="sec-label"><span class="si msr">explore</span>方位別・鑑定結果一覧<span style="font-weight:400;font-size:10px;color:var(--text3)">（奇門遁甲・'+dlabel+'）</span></div>';
   function grpHtml(icon,cls,title,arr){
     if(!arr.length)return '';
     var s='<div class="drg"><div class="drg-h '+cls+'"><span class="drg-dot '+cls+'"></span>'+title+'</div>';
@@ -3071,7 +3171,7 @@ function boardDLabel(bd,tab){
 }
 function boardGridHtml(b,best,worst){
   var html='';
-  html+='<div class="board-title">盤の詳細 <span class="board-hint">（文字をタップで意味を表示）</span></div>';
+  html+='<details class="bg-acc"'+(APP.bgOpen?' open':'')+' ontoggle="APP.bgOpen=this.open"><summary class="bg-sum"><span class="bg-t">専門鑑定データ（奇門遁甲盤の詳細）</span><span class="msr bg-chev">expand_more</span></summary><div class="bg-body"><div class="board-hint" style="margin:2px 0 8px">文字をタップすると意味を表示します</div>';
   html+='<div class="board-wrap"><div class="bw-n">南</div><div class="bw-mid"><div class="bw-w">東</div><div class="board">'+b.cells.map(function(c){
     var lc=c.luck>=2?'lucky':c.luck<=-1?'unlucky':'',jl=c.luck>=2?'吉':c.luck<=-1?'凶':'中吉',js=c.luck>=2?'jg':c.luck<=-1?'jb':'jm';
     var isBest=best&&c.idx===best.idx,isWorst=worst&&c.idx===worst.idx;
@@ -3080,6 +3180,7 @@ function boardGridHtml(b,best,worst){
     var gc=GOGYO_COLOR[c.gogyo];
     return '<div class="'+cls+'"><div class="c-pal"><span class="kt" onclick="showKimonTerm(\''+c.tri+'\')">'+c.tri+'</span><span class="c-pal-g" style="background:'+gc+'22;color:'+gc+'">'+c.gogyo+'</span></div><div class="c-star kt" onclick="showKimonTerm(\''+c.star+'\')">'+c.star+'</div><div class="c-gate kt" onclick="showKimonTerm(\''+c.gateRaw+'\')">'+c.gateRaw+'</div><div class="c-dei kt" onclick="showKimonTerm(\''+c.deityRaw+'\')">'+c.deityRaw+'</div><div class="c-stems"><span class="c-ten kt" onclick="showKimonTerm(\''+c.tenStem+'\')">'+c.tenStem+'</span><span class="c-sep">/</span><span class="c-gnd kt" onclick="showKimonTerm(\''+c.gndStem+'\')">'+c.gndStem+'</span></div><div class="c-ji '+js+'">'+jl+'</div><div>'+yj+ku+'</div></div>';
   }).join('')+'</div><div class="bw-e">西</div></div><div class="bw-s">北</div></div>';
+  html+='</div></details>';
   return html;
 }
 var KK_GUIDE={
@@ -3088,9 +3189,9 @@ var KK_GUIDE={
  '玉女守門':{yomi:'ぎょくじょしゅもん',tag:'恋愛成就・隠密行動',body:'水面下でコッソリ進めることに絶大な効果がある格局。デート、お見合い、信頼できる人への秘密の相談、ビジネスの事前交渉（根回し）で相手の心を開かせたい時に最適です。'},
  '三奇得使':{yomi:'さんきとくし',tag:'目上の引き立て・トラブル解決',body:'目上の有力者からのサポートを得たり、長引く問題を一気に解決したりするための格局。上司への直談判や交渉ごとに最適です。'},
  '日月相会':{yomi:'じつげつそうかい',tag:'才能開花・試験合格',body:'知恵が冴え渡り、頭脳労働で成果が出る格局。試験勉強、資格受験、クリエイティブな創作活動に最適です。'},
- '青龍逃走':{yomi:'せいりゅうとうそう',tag:'財産の損失・離別',body:'本来味方であるはずの財運やサポート（青龍）が逃げ出す格局。無理に動くとお金を失ったり、信頼していたパートナーが離れたりします。買い物、投資、旅行は厳禁です。'},
- '螣蛇夭矯':{yomi:'とうじゃようきょう',tag:'口論・デマ・契約トラブル',body:'嘘、噂話、しつこいトラブルが蛇のようにまとわりつく格局。発言の炎上、詐欺被害、書類不備による揉め事が発生しやすくなります。重要な話し合いや契約は絶対NGです。'},
- '太白入熒':{yomi:'たいはくにゅうけい',tag:'盗難・横取り・侵入',body:'自分のテリトリーに泥棒が侵入するような格局。物理的な盗難だけでなく、ビジネスのアイデアの盗用や、手柄の横取りのリスクが高まります。防犯と機密保持を徹底すべき配置です。'},
+ '青龍逃走':{yomi:'せいりゅうとうそう',tag:'財産の損失・離別',body:'本来味方であるはずの財運やサポート（青龍）が逃げ出す格局。無理に動くとお金を失ったり、信頼していたパートナーが離れたりします。買い物や投資、旅行などの大きな行動は、別の日に回すのが安心です。'},
+ '螣蛇夭矯':{yomi:'とうじゃようきょう',tag:'口論・デマ・契約トラブル',body:'嘘、噂話、しつこいトラブルが蛇のようにまとわりつく格局。発言の炎上、詐欺被害、書類不備による揉め事が発生しやすくなります。重要な話し合いや契約は、日を改めるのがおすすめです。'},
+ '太白入熒':{yomi:'たいはくにゅうけい',tag:'盗難・横取り・侵入',body:'自分のテリトリーに泥棒が侵入するような格局。物理的な盗難だけでなく、ビジネスのアイデアの盗用や、手柄の横取りのリスクが高まります。持ち物や情報の管理を、いつもより丁寧にすると安心な配置です。'},
  '熒入太白':{yomi:'けいにゅうたいはく',tag:'突然の災難・もらい事故',body:'こちらから仕掛けたアクションが大失敗し、自分に大ダメージとなって返ってくる格局。遠出や新規開拓、強気な攻めの姿勢はNGです。'},
  '白虎猖狂':{yomi:'びゃっこしょうきょう',tag:'暴走・事故・目上との衝突',body:'荒ぶる白虎が暴れ回るような格局。交通事故やケガ、目上の人との激しい衝突が起きやすくなります。運転・危険な作業・強気の直接対決は避けるべき配置です。'},
  '朱雀投江':{yomi:'すざくとうこう',tag:'文書・情報のトラブル・失言',body:'情報や文書が水に落ちて失われるような格局。書類のミス、失言・誤送信、大事な連絡の行き違いが起きやすくなります。契約書や重要なメッセージの扱いは特に慎重に。'},
@@ -3126,7 +3227,7 @@ function checkBoardViewerHtml(){
   try{b=buildBoard(bd,tab);}catch(e){return '';}
   var _dirs=null;try{_dirs=extractDirections(b,cd.yojin);}catch(e){}
   var dlabel=boardDLabel(bd,tab);
-  var h='<div class="sec-label" style="margin-top:16px"><span class="si msr">grid_on</span>盤ビューア</div>';
+  var h='<div class="sec-label" style="margin-top:16px"><span class="si msr">grid_on</span>盤ビューア<span style="font-weight:400;font-size:10px;color:var(--text3)">（奇門遁甲）</span></div>';
   h+='<div class="seg seg-sm" style="margin-bottom:10px">'+[['shi','時盤'],['ri','日盤'],['yue','月盤'],['nian','年盤']].map(function(t){var dis=cd.noTime&&t[0]==='shi';return '<button class="seg-b'+(tab===t[0]?' on':'')+'"'+(dis?' disabled style="opacity:.4"':' onclick="cmpSwitchTab(\''+t[0]+'\')"')+'>'+t[1]+'</button>';}).join('')+'</div>';
   h+='<div class="kimon-date"><span class="kd-ico msr">calendar_today</span><button type="button" class="kd-input tw-field" onclick="openDateWheel(\''+ymd(bd)+'\',setKimonDate,{title:\'盤の日付を選択\'})"><span class="tw-val">'+kimonDateLabel(bd,tab)+'</span></button>'+(tab==='shi'?'<button type="button" class="kd-input tw-field" onclick="openTimeWheel(\''+hm(bd)+'\',setKimonTime,{title:\'時盤の時刻を選択\'})"><span class="msr tw-fic">schedule</span><span class="tw-val">'+hm(bd)+'</span></button>':'')+'<button type="button" class="kd-now" onclick="kimonToday()">今日</button></div>';
   if(tab==='yue'||tab==='nian')h+='<div class="kd-note">月盤・年盤は節気（約15日ごと）で切り替わるため、選択した日を<b>基準日</b>として表示しています。</div>';
@@ -3289,20 +3390,6 @@ var KIMON_TERMS={
 };
 function showKimonTerm(key){var t=KIMON_TERMS[key];if(!t)return;document.getElementById('modalRoot').innerHTML='<div class="modal-overlay" onclick="closeKimonTerm()"><div class="modal" onclick="event.stopPropagation()"><div class="kt-cat">'+t.k+'</div><h4 style="margin:8px 0 8px">'+key+'</h4><div class="kt-desc">'+t.d+'</div><div class="modal-actions"><button class="btn" onclick="closeKimonTerm()">閉じる</button></div></div></div>';}
 function closeKimonTerm(){document.getElementById('modalRoot').innerHTML='';}
-function kimonScan(y){
-  var key=fmtD2(new Date())+'|'+Store.activeId;
-  if(APP._kimonScan&&APP._kimonScan.key===key)return APP._kimonScan;
-  var base=new Date(),bestG=null,bestB=null,i;
-  for(i=0;i<30;i++){
-    var d=new Date(base.getFullYear(),base.getMonth(),base.getDate()+i);
-    var bb=dayBoard(d);
-    var g=0,bd2=0;
-    bb.cells.forEach(function(c){if(c.isCtr)return;if(c.luck>=2&&!c.isKu)g++;else if(c.luck<=-1)bd2++;});
-    if(!bestG||g>bestG.n)bestG={d:d,n:g};
-    if(!bestB||bd2>bestB.n)bestB={d:d,n:bd2};
-  }
-  APP._kimonScan={key:key,bestG:bestG,bestB:bestB};return APP._kimonScan;
-}
 function switchTrip(tab){APP.tripTab=tab;renderTrip();}
 function aishoMain(cd){var g='木',mx=-1;for(var k in cd.score){if(cd.score[k]>mx){mx=cd.score[k];g=k;}}return g;}
 function aishoWeak(cd){var g='木',mn=1e9;for(var k in cd.score){if(cd.score[k]<mn){mn=cd.score[k];g=k;}}return g;}
@@ -4103,7 +4190,7 @@ function setDestPurpose(p){APP.destPurpose=p;renderTrip();}
 function setDestView(v){APP.destView=v;renderTrip();}
 function setDestFilter(f){APP.destFilter=f;renderTrip();}
 function setDestCustom(w,v){if(w==='start')APP.destStart=v;else APP.destEnd=v;APP._destCache=null;renderTrip();}
-function kimonFromTrip(ds){APP.kimonDateStr=ds;APP.kimonTimeStr='';APP.built.kimon=false;go('kimon');}
+function kimonFromTrip(ds){var pk=(LUCK_PROFILES[APP.destPurpose])?APP.destPurpose:'travel';showLuckDetail(ds,pk);}
 /* ====== 運勢スコアの重み付け設定（ここを編集して調整できます） ====== */
 var LUCK_PROFILES={
  money:{label:'金運',icon:'payments',
@@ -4268,9 +4355,8 @@ function luckRanking(rows,pk){
 function luckCalendarCard(){
   var h='<div class="sec-label"><span class="si msr">payments</span>未来の運勢カレンダー</div>';
   if(!APP.chartData)return h;
-  h+='<div class="rp-hint"><span class="msr">lightbulb</span> 運勢暦は方位に関係なく「その日そのもの」の運勢です。宝くじ売り場など<b>特定の場所へ行く日</b>を選ぶなら、吉日サーチで方位と日運が両方そろう <b>W吉日◎</b> を狙うのがおすすめです。逆に両方悪い <b class="wb-txt">W凶日✕</b> は大きなお金を動かさないでください。<br>旅行・引越など「移動」の日選びは<b>移動運</b>でも見られます。方角まで含めて選ぶなら「方位」「吉日サーチ」との併用が最強です。</div>';
+  h+='<div class="rp-hint"><span class="msr">lightbulb</span> 運勢暦は方位に関係なく「その日そのもの」の運勢です。宝くじ売り場へ行く日は<b>「くじ」タブ</b>、旅行など<b>特定の場所へ行く日</b>は<b>「旅行」タブ</b>で、方位と日運が両方そろう <b>W吉日◎</b> を狙うのがおすすめです。逆に両方悪い <b class="wb-txt">W凶日✕</b> は大きなお金を動かさないでください。<br>旅行・引越など「移動」の日選びは<b>移動運</b>でも見られます。方角まで含めて選ぶなら「方位」「旅行」タブとの併用が最強です。</div>';
   h+='<div class="nav-card">';
-  h+='<div class="ds-field"><span class="ds-flabel">運の種類（重み付けで判定）</span><div class="seg seg-sm seg-wrap lk-grid">'+Object.keys(LUCK_PROFILES).map(function(k){return '<button class="seg-b'+(APP.luckProfile===k?' on':'')+'" onclick="setLuckProfile(\''+k+'\')">'+'<span class="msr">'+LUCK_PROFILES[k].icon+'</span>'+LUCK_PROFILES[k].label+'</button>';}).join('')+'</div></div>';
   h+='<div class="ds-field"><span class="ds-flabel">期間</span><div class="seg seg-sm seg-wrap">'+[['1w','1週間'],['1m','1か月'],['3m','3か月']].map(function(t){return '<button class="seg-b'+(APP.luckPeriod===t[0]?' on':'')+'" onclick="setLuckPeriod(\''+t[0]+'\')">'+t[1]+'</button>';}).join('')+'</div></div>';
   h+='<div class="ds-toggles"><div class="seg seg-sm"><button class="seg-b'+(APP.luckView==='cal'?' on':'')+'" onclick="setLuckView(\'cal\')"><span class="msr">calendar_month</span> カレンダー</button><button class="seg-b'+(APP.luckView==='list'?' on':'')+'" onclick="setLuckView(\'list\')"><span class="msr">list</span> リスト</button></div></div>';
   h+='</div>';
@@ -4521,19 +4607,47 @@ function dirCompassSvg(board,opts){
 }
 function setCmpDest(v){APP.cmpDest=v;renderTrip();}
 window.setCmpDest=setCmpDest;
+function fetchGPS(){
+  if(!navigator.geolocation){APP.gpsState='unsupported';return;}
+  if(APP.gpsState==='loading')return;
+  APP.gpsState='loading';
+  navigator.geolocation.getCurrentPosition(function(pos){
+    APP.gpsLL=[pos.coords.latitude,pos.coords.longitude];APP.gpsState='ok';
+    if(APP.tripMode==='check'&&document.getElementById('screen-trip'))try{renderTrip();}catch(e){}
+  },function(err){
+    APP.gpsState='denied';
+    if(APP.tripMode==='check'&&document.getElementById('screen-trip'))try{renderTrip();}catch(e){}
+  },{enableHighAccuracy:false,timeout:8000,maximumAge:300000});
+}
+function cmpOriginInfo(){
+  if(APP.cmpOrigin!=='base'&&APP.gpsLL)return {ll:APP.gpsLL,label:'現在地（GPS）',src:'gps'};
+  return homeBaseInfo();
+}
+function setCmpOrigin(o){APP.cmpOrigin=o;if(o==='gps'&&!APP.gpsLL)fetchGPS();renderTrip();}
+window.setCmpOrigin=setCmpOrigin;
 function dirCompassCard(){
   var tab=APP.kimonTab||'shi';var cd=APP.chartData;
   if(cd&&cd.noTime&&tab==='shi')tab='ri';
   var TABN={shi:'時盤',ri:'日盤',yue:'月盤',nian:'年盤'};
   var bd=kimonDate(),board;
   try{board=buildBoard(bd,tab);}catch(e){var _t=new Date();_t.setHours(12,0,0,0);board=dayBoard(_t);}
-  var opts={},dn='';
-  if(APP.cmpDest){var h0=tripLatLng('home'),d0=tripLatLng(APP.cmpDest);
+  var _oi=cmpOriginInfo();
+  var opts={originLabel:_oi.label},dn='';
+  if(APP.cmpDest){var h0=_oi.ll,d0=tripLatLng(APP.cmpDest);
     if(h0&&d0){opts.brg=calcBearing(h0[0],h0[1],d0[0],d0[1]);dn=tripPointName(APP.cmpDest);opts.destLabel=dn.length>6?dn.slice(0,6)+'…':dn;}}
-  return '<div class="ds-card" style="margin-bottom:12px"><div class="dsh-sh"><span class="msr">explore</span>'+TABN[tab]+'の方位マップ<span style="font-weight:400;font-size:10px;color:var(--text3)">（'+boardDLabel(bd,tab)+'・用神込み）</span></div>'
+  var _gpsNote='';
+  if(APP.cmpOrigin!=='base'&&!APP.gpsLL){
+    _gpsNote=APP.gpsState==='loading'?'現在地を取得中…（それまで'+esc(homeBaseInfo().label)+'を起点に表示）':(APP.gpsState==='denied'?'位置情報が許可されていないため、'+esc(homeBaseInfo().label)+'を起点に表示中':'');
+  }
+  var _originSeg='<div style="display:flex;align-items:center;gap:8px;margin:2px 0 8px"><span style="font-size:10.5px;color:var(--text3);flex:0 0 auto">起点</span><div class="seg seg-sm" style="flex:0 0 auto">'
+    +'<button class="seg-b'+(APP.cmpOrigin!=='base'?' on':'')+'" onclick="setCmpOrigin(\'gps\')"><span class="msr" style="font-size:13px">my_location</span>現在地</button>'
+    +'<button class="seg-b'+(APP.cmpOrigin==='base'?' on':'')+'" onclick="setCmpOrigin(\'base\')"><span class="msr" style="font-size:13px">home</span>自宅・拠点</button>'
+    +'</div></div>'
+    +(_gpsNote?'<div style="font-size:10.5px;color:var(--text3);margin:-4px 0 6px">'+_gpsNote+'</div>':'');
+  return '<div class="ds-card" style="margin-bottom:12px"><div class="dsh-sh"><span class="msr">explore</span>'+TABN[tab]+'の方位マップ<span style="font-weight:400;font-size:10px;color:var(--text3)">（奇門遁甲・'+boardDLabel(bd,tab)+'・用神込み）</span></div>'+_originSeg
     +'<div class="ds-field" style="margin:4px 0 2px"><span class="ds-flabel">目的地</span><select onchange="setCmpDest(this.value)"><option value=""'+(!APP.cmpDest?' selected':'')+'>選択なし（方位のみ表示）</option>'+placeOptions(APP.cmpDest,false)+'</select></div>'
     +dirCompassSvg(board,opts)
-    +'<div class="cmp-lg"><span class="cl g">■ 吉方位（濃い＝最良）</span><span class="cl b">■ 凶方位（濃い＝最凶）</span>'+(opts.brg!=null?'<span style="color:var(--gold)">●＝'+esc(dn)+'</span>':'')+'<span>起点：'+esc(homeBaseInfo().label)+'</span></div></div>';
+    +'<div class="cmp-lg"><span class="cl g">■ 吉方位（濃い＝最良）</span><span class="cl b">■ 凶方位（濃い＝最凶）</span>'+(opts.brg!=null?'<span style="color:var(--gold)">●＝'+esc(dn)+'</span>':'')+'<span>起点：'+esc(opts.originLabel||homeBaseInfo().label)+'</span></div></div>';
 }
 function dashProfile(k){APP.luckProfile=k;renderTrip();}
 window.dashProfile=dashProfile;
@@ -4577,7 +4691,7 @@ function renderDashHtml(cd){
 }
 function renderTrip(){
   var el=document.getElementById('screen-trip');
-  if(!APP.chartData){el.innerHTML=emptyState('開運・方位の判定');return;}
+  if(!APP.chartData){el.innerHTML=emptyState('方位マップ・運勢暦・宝くじプランナーなどの開運機能');return;}
   var cd=APP.chartData,y=cd.yojin,tab=APP.tripTab;
   if(!APP.tripMode||APP.tripMode==='dash'||APP.tripMode==='search'||APP.tripMode==='group')APP.tripMode=(APP.tripMode==='search'||APP.tripMode==='group')?'travel':'luck';
   var html='';
@@ -4592,17 +4706,8 @@ function renderTrip(){
     html+=groupCard();el.innerHTML=html;if(document.getElementById('group-results'))setTimeout(fillGroupResults,16);return;
   }
   if(APP.tripMode==='luck'){html+=renderDashHtml(cd)+luckCalendarCard();el.innerHTML=html;otScrollActive();if(document.getElementById('luck-results'))setTimeout(fillLuckResults,16);return;}
-  var b=(tab===cd.boardTab)?cd.kimon:buildBoard(new Date(),tab);
-  if(tab!==cd.boardTab)extractDirections(b,y);
-  html+='<div class="yojin-card"><div class="yj-circle" style="background:'+GOGYO_COLOR[y.primaryYojin]+'">'+y.primaryYojin+'</div><div class="yj-text">登録地点への方角が、用神 <b>'+y.primaryYojin+'</b> から見て吉か凶かを判定します。地点は設定で登録できます。</div></div>';
-  html+='<div class="tabs">';[['shi','時盤'],['ri','日盤'],['yue','月盤'],['nian','年盤']].forEach(function(t){var dis=cd.noTime&&t[0]==='shi';html+='<button class="tab'+(tab===t[0]?' active':'')+'"'+(dis?' style="opacity:.4" disabled':' onclick="switchTrip(\''+t[0]+'\')"')+'>'+t[1]+(dis?'<span class="msr" style="font-size:10px;vertical-align:1px">close</span>':'')+'</button>';});html+='</div>';
-  if(cd.noTime&&tab==='ri')html+='<div class="fumei-note"><span>⏱</span><span>時刻不明のため時盤は使えません。日盤で判定しています。</span></div>';
-  html+=tripCard(b);
-  html+=planCard();
-  el.innerHTML=html;
 }
 
-/* ===== コンパス描画（自宅基準の方角を表示）===== */
 function drawCompass(){
   var stage=document.getElementById('compass');if(!stage||!APP._compass)return;
   var TARGET=APP._compass.best,WORST=APP._compass.worst,heading=APP.heading;
@@ -4654,7 +4759,7 @@ function renderHelp(){
     return '<details class="help-det"><summary class="help-sum">'
       +'<div class="help-sum-ic '+icClass+'"><span class="msr">'+ic+'</span></div>'
       +'<div class="help-sum-body"><div class="help-sum-title">'+title+'</div>'+(sub?'<div class="help-sum-sub">'+sub+'</div>':'')+'</div>'
-      +'<span class="help-chev msr">chevron_right</span>'
+      +'<span class="help-chev msr">expand_more</span>'
     +'</summary><div class="help-body">'+body+'</div></details>';
   }
   function step(n,title,desc){
@@ -4688,6 +4793,11 @@ function renderHelp(){
     +step(2,'「自宅・拠点・出発地」に地名か座標を入力','市区郡までの地名でOK。近距離を正確に判定したい場合は座標で。')
     +step(3,'「検索」して保存','')
   );
+  h+=det('gold','confirmation_number','宝くじ売り場を確認する（くじ機能用）','有名売り場10件を初期登録済み',
+    '<p>宝くじプランナーの売り場候補になります。</p>'
+    +step(1,'設定 → 宝くじ売り場','一覧の確認、営業時間の編集、閉店した売り場の削除ができます。')
+    +step(2,'売り場を追加','よく行く売り場を住所・施設名または座標で登録。CSVの一括取り込み／書き出しにも対応しています。')
+  );
   h+='</div></div>';
 
   /* ────── ② 各タブの使い方 ────── */
@@ -4712,17 +4822,18 @@ function renderHelp(){
     +'<div class="help-step" style="border:none"><div class="help-step-body"><div class="help-step-title">人生の転機グラフ</div><div class="help-step-desc">学業・仕事・結婚・健康など8つの分野について、人生のどの時期が転機かをレーン別に表示します。</div></div></div>'
     +tip('グラフの山と谷が重なる年は「人生の節目」になりやすい時期です。大きな決断の参考にしてみてください。')
   );
-  h+=det('green','grid_on','奇門遁甲','吉方位・吉時間帯を調べる',
-    '<p>奇門遁甲は時間と方位の吉凶を読む占術です。</p>'
-    +'<div class="help-step" style="border:none"><div class="help-step-body"><div class="help-step-title">時盤・日盤・月盤・年盤</div><div class="help-step-desc">時間の単位（時間・日・月・年）ごとに方位盤が変わります。短期の外出なら「時盤」、旅行や引越なら「日盤」「月盤」を参考にします。</div></div></div>'
-    +'<div class="help-step" style="border:none"><div class="help-step-body"><div class="help-step-title">吉方位の見方</div><div class="help-step-desc">緑色が吉方位、赤色が凶方位です。各マスをタップすると星・門・神の詳細が見られます。</div></div></div>'
-    +tip('「開門＋生門」の方角への外出は特に吉とされています。毎朝チェックして、行動の参考にしてみてください。')
+  h+=det('green','grid_on','奇門遁甲（命盤）','生まれた瞬間の盤から人生の傾向を読む',
+    '<p>あなたの出生時刻（不明な場合は出生日）の盤＝<b>奇門命盤</b>を表示します。日々の盤（時盤〜年盤）は「開運・方位」タブの盤ビューアへ移動しました。</p>'
+    +step(1,'命宮を見る','日干の宿る宮があなた自身。九星・八門・八神・干の組み合わせが本質を表します。')
+    +step(2,'人生の傾向鑑定（7章）','性格・適職・恋愛・金運・使命・強み弱み・課題を、結論1行＋タップで本文の形式で読めます。')
+    +step(3,'出生時刻が不明の場合','出生日の日盤を「簡易命盤」として使用します。時刻が分かると、より詳細な命盤になります。')
   );
-  h+=det('purple','explore','開運・方位','吉方位・吉日・運勢暦をチェック',
-    '<p>自宅から目的地の方位が吉か凶かを調べられます。</p>'
-    +'<div class="help-step" style="border:none"><div class="help-step-body"><div class="help-step-title">方位チェックの手順</div><div class="help-step-desc">①出発地（自宅）と目的地を設定 → ②旅行期間を選択 → ③方位スコアが自動計算されます。</div></div></div>'
-    +'<div class="help-step" style="border:none"><div class="help-step-body"><div class="help-step-title">吉方旅行・引越</div><div class="help-step-desc">吉方位への移動は運気の取り込みに良いとされています。複数の行き先を比較して最も吉の方位を選べます。</div></div></div>'
-    +tip('「よく行く場所」に実家・旅先などを登録しておくと、毎回入力せずにすぐ確認できます。')
+  h+=det('purple','explore','開運・方位','方位マップ・運勢暦・旅行・取引・くじ',
+    '<p>奇門遁甲×四柱推命の実用ツール集です。画面上部のタブで機能を切り替えます。</p>'
+    +step(1,'方位','今日の方位マップ（吉凶の扇形＋目的地マーカー）、実機コンパス、盤ビューア（時盤〜年盤の格局・方位別の鑑定一覧）。')
+    +step(2,'運勢暦','今日の運勢カード・今後のベスト3と警戒日・目的別の運勢カレンダー。')
+    +step(3,'旅行','一人で旅行＝行き先への吉日サーチ（移動規模で盤を重ねて判定）。グループ旅行＝みんなの日合わせ。')
+    +step(4,'取引・くじ','取引＝商談や勝負に有利な日時・座る方角・場所の選定。くじ＝宝くじプランナー（王道／振り幅の2作戦）。')
   );
   h+=det('red','favorite','相性','二人の命式の相性を鑑定',
     '<p>登録した命式同士の相性を五行バランスで分析します。</p>'
@@ -4896,7 +5007,7 @@ function toggleNotifProfile(key,id,targetKey){
 function stgSecHead(icClass,icon,title,sub){
   return '<div class="stg-sec-head"><div class="stg-sec-ic '+icClass+'"><span class="msr">'+icon+'</span></div><div class="stg-sec-texts"><div class="stg-sec-title">'+title+'</div>'+(sub?'<div class="stg-sec-sub">'+sub+'</div>':'')+'</div></div>';
 }
-function stgChev(){return '<span class="stg-chev msr">chevron_right</span>';}
+function stgChev(){return '<span class="stg-chev msr">expand_more</span>';}
 function stgRowIc(c,ic){return '<div class="stg-row-ic '+c+'"><span class="msr">'+ic+'</span></div>';}
 
 function renderSettings(){
@@ -4977,7 +5088,7 @@ function renderSettings(){
   html+='<div class="fld"><label>地点名 <span style="font-size:11px;color:var(--text3);font-weight:400">（省略可）</span></label><input type="text" id="pl-name" placeholder="例：実家、軽井沢の宿、近所の神社"></div>';
   html+='<div class="fld"><label>緯度・経度 <span style="font-size:11px;color:var(--text3);font-weight:400">（検索すると自動入力されます）</span></label><input type="text" id="pl-coords" placeholder="35.69, 139.69"></div>';
   html+='<button class="btn btn-primary" style="margin-bottom:12px" onclick="addPlace()">この地点を登録する</button>';
-  html+='<details><summary style="list-style:none;cursor:pointer;font-size:12px;color:var(--text3);padding:4px 0;display:flex;align-items:center;gap:4px">▾ 主要都市から選ぶ</summary>'
+  html+='<details class="plain-acc"><summary class="plain-sum" style="font-size:12px;color:var(--text3);padding:4px 0">主要都市から選ぶ</summary>'
     +'<div style="margin-top:8px;display:flex;gap:8px"><select id="pl-preset" style="flex:1"><option value="">都市を選んでください…</option>'+CITIES.map(function(c,i){return '<option value="'+i+'">'+esc(c.name)+'</option>';}).join('')+'</select>'
     +'<button class="btn btn-primary" style="width:auto;padding:8px 16px" onclick="addPresetPlace()">追加</button></div></details>';
   if(Places.list.length){
@@ -5470,7 +5581,7 @@ function renderCatDetail(key){
     +C.avoid[tier].map(function(a){return '<div class="cd-act avoid"><span class="av-x msr">close</span><span class="act-t">'+a+'</span></div>';}).join('')+'</div></div>';
     /* 9. AI開運アドバイス（吹き出し） */
   var ai='今日の'+C.label+'は'+sc+'点、「'+C.head[tier]+'」。'+(tm&&tm.good?tm.good.main+'ごろ':bestWin+'ごろ')+'が狙い目で、'+(best?best.dir+'方向':'落ち着いた行動')+'がさらに後押しに。'
-    +'まずは「'+C.acts[tier][0]+'」から始めてみましょう。'+(tier==='lo'?'無理は禁物、整えることを優先に。':tier==='hi'?'流れに乗って大胆に。':'一歩ずつ着実に。');
+    +'まずは「'+C.acts[tier][0]+'」から始めてみましょう。'+(tier==='lo'?'無理はせず、まずは整えることを優先しましょう。':tier==='hi'?'流れに乗って大胆に。':'一歩ずつ着実に。');
   h+='<div class="cd-ai"><div class="ai-av msr">auto_awesome</div><div class="ai-bub"><div class="ai-cap">AIからの開運アドバイス</div><div class="ai-txt">'+ai+'</div></div></div>';
   h+='</div>';
   el.innerHTML=h;
@@ -5492,8 +5603,8 @@ window.openCat=openCat;window.toggleCatFav=toggleCatFav;
 function homeKimonReason(cd){
   var b=cd.kimon,best=cd.dirs.best,zf=b.zfCell,kk=b.kakukyoku||[];
   var fs=luckFactors(b)||[];
-  var reasons=fs.map(function(f){return '<li class="'+(f.sign>0?'rg':'rb')+'">'+(f.sign>0?'＋ ':'－ ')+f.label+'</li>';}).join('');
-  if(!reasons)reasons='<li class="rn">特筆すべき強い作用はなく、平均的な巡りです。</li>';
+  var reasons=fs.map(function(f){return '<li class="'+(f.sign>0?'rg':'rb')+'">'+(f.sign>0?'＋ ':'－ ')+'<b>'+f.k+'</b>'+(f.d?'<span class="kkn-rd">'+f.d+'</span>':'')+'</li>';}).join('');
+  if(!reasons)reasons='<li class="rn">特に強い作用はなく、平均的な巡りです。</li>';
   return '<details class="cd-kkn" style="--cat:var(--gold-dim)"><summary><span class="cd-bi"><span class="msr">search</span></span>奇門遁甲の根拠（八門・九星・八神）</summary>'
     +'<div class="kkn-body"><div class="kkn-sub">この日の値符（盤の主役）と、吉方位の宮の構成です。</div>'
     +'<div class="kb-wrap"><table class="kb"><thead><tr><td></td><td>八門</td><td>九星</td><td>八神</td><td>天盤</td><td>地盤</td><td>五行</td></tr></thead><tbody>'
@@ -5539,10 +5650,52 @@ function nhHeroAnim(score,starsN){
   var t0=null,dur2=1150;function step(t){if(!t0)t0=t;var pr=Math.min(1,(t-t0)/dur2);var e=1-Math.pow(1-pr,3);var cur=score*e;rn.textContent=Math.round(cur);prog.style.strokeDashoffset=(CIRC*(1-cur/100)).toFixed(1);if(pr<1)requestAnimationFrame(step);}requestAnimationFrame(step);
   if(score>=90){var sh=hero.querySelector('.wa-shoot');setTimeout(function(){sh.classList.remove('go');void sh.offsetWidth;sh.classList.add('go');},700);}
 }
+/* ===== ホーム:現在の運気の流れ(今月・今年の格局) ===== */
+function flowFortuneData(){
+  var now=new Date();now.setHours(12,0,0,0);
+  function pick(tab){
+    var b;try{b=boardCached(now,tab);}catch(e){try{b=buildBoard(now,tab);}catch(e2){return null;}}
+    var kk=(b.kakukyoku||[]);
+    if(!kk.length)return {none:true};
+    var k=kk[0],g=KK_GUIDE[k.name]||{};
+    return {name:k.name,good:k.type==='good',tag:g.tag||k.trans||'',more:kk.length-1};
+  }
+  var m=pick('yue')||{none:true},yr=pick('nian')||{none:true};
+  return {
+    monthlyFortune:{month:(now.getMonth()+1)+'月',
+      title:m.none?'安定運':m.name,good:m.none?null:m.good,
+      description:m.none?'大きな格局のない、落ち着いた流れの1か月。方位の使い分けがそのまま結果につながります。':((m.good?'追い風：':'向き合うテーマ：')+m.tag+'。'+(m.more>0?'ほか'+m.more+'件の格局が発動中。':'タップで発動方位と活かし方を確認できます。'))},
+    yearlyFortune:{year:effYear(now)+'年',
+      title:yr.none?'安定運':yr.name,good:yr.none?null:yr.good,
+      subTitle:yr.none?'落ち着いた流れの一年':yr.tag}
+  };
+}
+function openFlowDetail(tab){
+  APP.kimonTab=tab;APP.kimonDateStr='';APP.kimonTimeStr='';APP.tripMode='check';
+  go('trip');
+}
+window.openFlowDetail=openFlowDetail;
+function homeFlowHtml(){
+  var d;try{d=flowFortuneData();}catch(e){return '';}
+  var mf=d.monthlyFortune,yf=d.yearlyFortune;
+  var h='<div class="hf-sec"><div class="sec-label"><span class="si msr">waves</span>現在の運気の流れ</div>';
+  h+='<div class="hf-card'+(mf.good===false?' bad':'')+'" onclick="openFlowDetail(\'yue\')">'
+    +'<div class="hf-cap">今月の運気テーマ<span class="hf-when">'+mf.month+'</span></div>'
+    +'<div class="hf-title">'+(mf.good!=null?'<span class="drg-dot '+(mf.good?'g':'r')+'"></span>':'')+esc(mf.title)+'</div>'
+    +'<div class="hf-desc">'+esc(mf.description)+'</div>'
+    +'<span class="hf-chev msr">chevron_right</span></div>';
+  h+='<div class="hf-banner'+(yf.good===false?' bad':'')+'" onclick="openFlowDetail(\'nian\')">'
+    +'<span class="hf-b-when">'+yf.year+'</span>'
+    +(yf.good!=null?'<span class="drg-dot '+(yf.good?'g':'r')+'"></span>':'')
+    +'<b>'+esc(yf.title)+'</b><span class="hf-b-sub">'+esc(yf.subTitle)+'</span>'
+    +'<span class="hf-chev msr" style="position:static;margin-left:auto">chevron_right</span></div>';
+  h+='</div>';
+  return h;
+}
 renderHome=function(){
   var el=document.getElementById('screen-home');
   var _gh=document.querySelector('.header');if(_gh){var _na=document.querySelector('.nav-item.active');_gh.style.display=(_na&&_na.dataset.screen==='home')?'none':'';}
-  if(!APP.chartData){el.innerHTML=emptyState('ホーム');return;}
+  if(!APP.chartData){el.innerHTML=emptyState('今日の運勢');return;}
   var cd=APP.chartData;
   var cs=nhCatStars(cd);
   var prof={money:{stars:cs.money},love:{stars:cs.love},work:{stars:cs.work},health:{stars:cs.health},study:{stars:cs.study},kankei:{stars:cs.kankei}};
@@ -5556,7 +5709,7 @@ renderHome=function(){
   var CMT={money:['堅実な行動が金運を高めます。','無駄遣いは控えめに整える日。','大きな出費・契約は控えめに。'],
     love:['出会いのチャンス。誠実さが鍵。','穏やかに縁を育てる日。','些細な行き違いに注意。'],
     work:['努力が評価される日。協力が吉。','淡々と進めると形になる日。','重要な決断は見送りが無難。'],
-    health:['心身が整う日。運動に好機。','体調は安定。休息も大切に。','無理は禁物。休養を優先して。'],
+    health:['心身が整う日。運動に好機。','体調は安定。休息も大切に。','無理はせず、休養を優先しましょう。'],
     study:['吸収力が高い日。学びに好機。','コツコツ進めると身につく日。','詰め込みは避け復習中心で。'],
     kankei:['人との縁が広がる日。連絡が吉。','穏やかに信頼を育む日。','対立を避け聞き役に回ると◎。']};
   function catCmt(k,st){return st.stars>=4?CMT[k][0]:st.stars<=2?CMT[k][2]:CMT[k][1];}
@@ -5584,9 +5737,11 @@ renderHome=function(){
   html+='<div class="nh-section"><span class="msr">search</span> 今日の奇門遁甲</div>'+homeKimonReason(cd);
   var adv=overall>=4?'午前から積極的に動いて吉。小さな一歩が大きな幸運につながります。':overall<=2?'午前は控えめに、午後から徐々に。守りを固める一日に。':'焦らず一定のペースで。整えることが次の運を呼びます。';
   html+='<div class="nh-advice" id="nhAdvice"><div class="ndsky"></div>'+ND_MOON+'<div class="nh-advice-ic msr">edit_note</div><div class="nh-advice-cap">今日の一言アドバイス</div><div class="nh-advice-txt">'+adv+'</div></div>';
+  html+=homeFlowHtml();
   el.innerHTML=html;
   nhHeroAnim(score,overall);
   populateProfileSelect();
+  if(APP.gpsState==='idle')try{fetchGPS();}catch(e){}
   setTimeout(function(){try{var tm=dayTimingCompute(cd.now);var s2=document.getElementById('home-ng-time');if(s2)s2.textContent=(tm&&tm.bad?tm.bad.main:'—');}catch(e){}},20);
 };
 
@@ -5607,8 +5762,7 @@ window.showHelp=showHelp;
 window.geoInput=geoInput;window.geoPick=geoPick;window.geoCurrent=geoCurrent;window.geoPickHist=geoPickHist;window.setGoogleKey=setGoogleKey;
 window.setBaseId=setBaseId;window.setDestId=setDestId;window.addPlace=addPlace;window.removePlace=removePlace;
 window.setTripDate=setTripDate;
-window.switchTrip=switchTrip;window.addPresetPlace=addPresetPlace;window.setHomeCoords=setHomeCoords;
-window.setAishoA=setAishoA;window.setAishoB=setAishoB;window.setAishoRel=setAishoRel;window.setTripMode=setTripMode;window.setDestSearch=setDestSearch;window.setDestPeriod=setDestPeriod;window.setDestPurpose=setDestPurpose;window.setDestView=setDestView;window.setDestFilter=setDestFilter;window.setDestCustom=setDestCustom;window.kimonFromTrip=kimonFromTrip;window.setLuckProfile=setLuckProfile;window.setLuckPeriod=setLuckPeriod;window.setLuckView=setLuckView;window.setLuckAction=setLuckAction;window.showLuckDetail=showLuckDetail;window.closeLuckDetail=closeLuckDetail;window.toggleGroupMember=toggleGroupMember;window.setGroupDest=setGroupDest;window.setGroupPeriod=setGroupPeriod;window.setGroupView=setGroupView;window.setDestBase=setDestBase;window.setGroupBase=setGroupBase;window.setGroupMemberMode=setGroupMemberMode;window.setMemberBase=setMemberBase;window.setDestTrip=setDestTrip;window.setDestNights=setDestNights;window.setDestNightsMax=setDestNightsMax;window.showRoundDetail=showRoundDetail;window.closeRoundDetail=closeRoundDetail;window.showGroupDetail=showGroupDetail;window.closeGroupDetail=closeGroupDetail;window.setGroupTrip=setGroupTrip;window.setGroupNights=setGroupNights;window.setGroupNightsMax=setGroupNightsMax;window.showGroupRoundDetail=showGroupRoundDetail;window.closeGroupRoundDetail=closeGroupRoundDetail;
+window.addPresetPlace=addPresetPlace;window.setAishoA=setAishoA;window.setAishoB=setAishoB;window.setAishoRel=setAishoRel;window.setTripMode=setTripMode;window.setDestSearch=setDestSearch;window.setDestPeriod=setDestPeriod;window.setDestPurpose=setDestPurpose;window.setDestView=setDestView;window.setDestFilter=setDestFilter;window.setDestCustom=setDestCustom;window.kimonFromTrip=kimonFromTrip;window.setLuckProfile=setLuckProfile;window.setLuckPeriod=setLuckPeriod;window.setLuckView=setLuckView;window.setLuckAction=setLuckAction;window.showLuckDetail=showLuckDetail;window.closeLuckDetail=closeLuckDetail;window.toggleGroupMember=toggleGroupMember;window.setGroupDest=setGroupDest;window.setGroupPeriod=setGroupPeriod;window.setGroupView=setGroupView;window.setDestBase=setDestBase;window.setGroupBase=setGroupBase;window.setGroupMemberMode=setGroupMemberMode;window.setMemberBase=setMemberBase;window.setDestTrip=setDestTrip;window.setDestNights=setDestNights;window.setDestNightsMax=setDestNightsMax;window.showRoundDetail=showRoundDetail;window.closeRoundDetail=closeRoundDetail;window.showGroupDetail=showGroupDetail;window.closeGroupDetail=closeGroupDetail;window.setGroupTrip=setGroupTrip;window.setGroupNights=setGroupNights;window.setGroupNightsMax=setGroupNightsMax;window.showGroupRoundDetail=showGroupRoundDetail;window.closeGroupRoundDetail=closeGroupRoundDetail;
 
 /* ============ 初期化 ============ */
 document.addEventListener('touchstart',function(){},{passive:true}); /* iOS Safariで:activeを確実に発火させるため */
