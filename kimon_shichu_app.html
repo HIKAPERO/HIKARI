@@ -4021,15 +4021,22 @@ function shopRankRows(drawYmd,mode,sale){
   var dirMemo={};
   return shops.map(function(s){
     var dir=bearDir(calcBearing(base[0],base[1],s.lat,s.lng));
+    var hw=hoursToWi(s.open,s.close);
     var best=null,worst=null;
     dls.forEach(function(o){
       var mk=ymd(o.d)+'|'+dir,de=dirMemo[mk];
       if(!de){try{de=layeredDirEval(o.d,dir,'money','day');}catch(e){de={score:0};}dirMemo[mk]=de;}
-      var mix=de.score+o.dl.score*0.6;
-      if(!best||mix>best.mix)best={mix:mix,ymd:ymd(o.d)};
-      if(!worst||mix<worst.mix)worst={mix:mix,ymd:ymd(o.d)};
+      var bh=null,wh=null;
+      try{bh=bestDepartHour(o.d,dir,'money',hw.from,hw.to);}catch(e){}
+      try{wh=worstDepartHour(o.d,dir,'money',hw.from,hw.to);}catch(e){}
+      var dayBase=de.score+o.dl.score*0.6;
+      var hi=dayBase+(bh?bh.score*0.35:0);
+      var lo=dayBase+(wh?wh.score*0.35:0);
+      if(!best||hi>best.mix)best={mix:hi,ymd:ymd(o.d),wi:bh?bh.wi:null};
+      if(!worst||lo<worst.mix)worst={mix:lo,ymd:ymd(o.d)};
     });
-    return {id:s.id,name:s.name,dir:dir,best:best.mix,bestTxt:best.ymd.slice(5).replace('-','/'),worstTxt:worst.ymd.slice(5).replace('-','/'),swing:best.mix-worst.mix};
+    var hTxt=best.wi!=null?('・'+(best.wi*2-1)+'時台'):'';
+    return {id:s.id,name:s.name,dir:dir,best:best.mix,bestTxt:best.ymd.slice(5).replace('-','/')+hTxt,worstTxt:worst.ymd.slice(5).replace('-','/'),swing:best.mix-worst.mix};
   }).sort(function(a,b){return mode==='swing'?(b.swing-a.swing):(b.best-a.best);});
 }
 function pickRankShop(id){APP.plannerPlace=id;runPlanner();}
@@ -4207,7 +4214,7 @@ function plannerCard(){
         +_rk.slice(0,5).map(function(r,i){
           return '<div class="shr-row'+(APP.plannerPlace===r.id?' on':'')+'" onclick="pickRankShop(\''+r.id+'\')"><span class="shr-rank">'+(i+1)+'</span><span class="shr-name">'+esc(r.name)+'</span><span class="shr-meta">'+r.dir+'・ベスト'+r.bestTxt+'</span><span class="shr-score">'+(mode==='swing'?('幅'+Math.round(r.swing)):(Math.round(r.best)+'点'))+'</span></div>';
         }).join('')
-      +'</div><div style="font-size:10px;color:var(--text3);margin-top:3px">あなたの拠点からの方位×期間内の日運で算出。タップで選択してプラン作成</div></div>';
+      +'</div><div style="font-size:10px;color:var(--text3);margin-top:3px">拠点からの方位×期間内の日運×営業時間内の時盤で算出。タップで選択してプラン作成</div></div>';
     }
   }
   if(mode==='swing')h+='<div class="rp-hint" style="margin:8px 0"><span class="msr">lightbulb</span> 振り幅法：<b>運気の底</b>（凶方位×凶日×凶時間帯）で購入し、発表の7〜10日前に<b>吉方位で金運をチャージ</b>して発表を待つ。上がり幅を最大化する裏技です。</div>';
