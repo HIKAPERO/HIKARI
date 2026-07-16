@@ -297,6 +297,19 @@
   .kk-body{font-size:12px;color:var(--text2);line-height:1.85;padding:8px 2px 2px;border-top:0.5px dashed var(--line);margin-top:8px}
   .kk-tech{font-size:10.5px;color:var(--text3);margin-top:6px;line-height:1.7}
   .kk-dir-line{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;color:var(--gold);font-weight:700;margin-top:5px}
+  .kk-pers{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700;margin-top:6px;padding:6px 9px;border-radius:9px;background:var(--surface2)}
+  .kk-pers .msr{font-size:14px}
+  .kk-pers.g{color:var(--green-d)}
+  .kk-pers.b{color:var(--red-d)}
+  .kk-pers.n{color:var(--text2);font-weight:600}
+  .shr-list{display:flex;flex-direction:column;gap:5px}
+  .shr-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border:0.5px solid var(--line);border-radius:11px;background:var(--surface);cursor:pointer;font-size:12px}
+  .shr-row.on{border-color:var(--gold);background:var(--surface2)}
+  .shr-rank{flex:0 0 auto;width:20px;height:20px;border-radius:50%;background:var(--surface2);color:var(--text2);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center}
+  .shr-row:nth-child(1) .shr-rank{background:linear-gradient(135deg,var(--gold),#e2c07e);color:#241c0d}
+  .shr-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700;color:var(--text)}
+  .shr-meta{flex:0 0 auto;font-size:10.5px;color:var(--text3)}
+  .shr-score{flex:0 0 auto;font-size:11.5px;font-weight:800;color:var(--gold)}
   .mb-badge{font-size:10px;font-weight:800;padding:2px 9px;border-radius:9px;border:1px solid var(--line2);color:var(--text3)}
   .mb-badge.g{color:var(--gold);border-color:var(--gold)}
   .mb-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
@@ -304,6 +317,10 @@
   .mb-chip.b{color:var(--red-d);border-color:var(--red)}
   .mbc-t{font-size:12.5px;color:var(--text);flex:0 0 auto}
   .kkn-rd{display:block;font-size:10.5px;color:var(--text3);line-height:1.65;margin:2px 0 5px;font-weight:400}
+  .nh-timerow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:0.5px dashed var(--line);font-size:12px;color:var(--text2)}
+  .nh-timerow .msr{font-size:15px;color:var(--red-d)}
+  .nh-timerow b{font-size:13px;color:var(--text)}
+  .nh-timesub{font-size:10.5px;color:var(--text3);flex-basis:100%;margin-left:21px}
   .hf-sec{margin:18px 0 26px}
   .hf-card{position:relative;border:1px solid var(--gold);border-radius:16px;padding:14px 38px 13px 16px;cursor:pointer;
     background:linear-gradient(135deg,var(--surface) 0%,var(--surface2) 60%,var(--surface) 100%);
@@ -313,7 +330,13 @@
   .hf-card.bad::before{background:radial-gradient(120% 90% at 100% 0%,var(--red) 0%,transparent 55%)}
   .hf-cap{font-size:10.5px;font-weight:700;color:var(--text3);letter-spacing:.04em}
   .hf-when{margin-left:8px;color:var(--gold);font-weight:800}
-  .hf-title{font-size:19px;font-weight:800;color:var(--text);margin:5px 0 4px;letter-spacing:.02em}
+  .hf-row{display:flex;align-items:baseline;gap:7px;margin:9px 0 0;padding-right:18px}
+  .hf-dir2{flex:0 0 auto;min-width:2.4em;font-size:12.5px;font-weight:800;color:var(--gold);white-space:nowrap}
+  .hf-name{flex:0 0 auto;font-size:15px;font-weight:800;color:var(--text);letter-spacing:.02em}
+  .hf-tag{flex:1;min-width:0;font-size:11px;color:var(--text2);line-height:1.6}
+  .hf-card+.hf-card{margin-top:8px}
+  .hf-hint{font-size:10.5px;color:var(--text3);margin-top:7px;text-align:center}
+  #boardViewerSec{scroll-margin-top:60px}
   .hf-desc{font-size:11.5px;color:var(--text2);line-height:1.75}
   .hf-chev{position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:20px}
   .hf-banner{display:flex;align-items:center;gap:8px;margin-top:8px;border:0.5px solid var(--line2);border-radius:13px;padding:10px 12px;cursor:pointer;
@@ -494,7 +517,7 @@
   .yh-basis{font-size:11px;color:var(--text2);margin-top:8px;padding-top:8px;border-top:0.5px solid var(--green-line);line-height:1.6}
   .reading-tabs{display:flex;gap:4px;flex-wrap:wrap;margin:16px 0 12px}
   .rtab{font-size:12px;padding:4px 12px;border:0.5px solid var(--line2);border-radius:20px;background:transparent;color:var(--text2);cursor:pointer;font-family:inherit}
-  .rtab.active{background:var(--blue-bg);color:var(--blue);border-color:transparent;font-weight:600}
+  .rtab.active{background:linear-gradient(135deg,var(--gold),#e2c07e);color:#241c0d;border-color:transparent;font-weight:800;box-shadow:0 1px 6px rgba(205,169,79,.28)}
   .reading-card{background:var(--surface2);border:0.5px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 1px 2px rgba(43,38,32,.04),0 4px 10px rgba(43,38,32,.05)}
   .mbti-prompt{cursor:pointer;border:1.5px dashed var(--gold-dim);background:rgba(205,169,79,.08);-webkit-tap-highlight-color:rgba(0,0,0,.04)}
   .mbti-prompt:active{background:rgba(205,169,79,.14)}
@@ -657,7 +680,7 @@
   .btn-primary{background:var(--gold);color:#fff;border-color:transparent;font-weight:600}
   .btn-primary:active{background:var(--gold-dim)}
   input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold-dim)}
-  .tab.active,.rtab.active{background:rgba(205,169,79,.16);color:var(--gold-soft)}
+  .tab.active{background:rgba(205,169,79,.16);color:var(--gold-soft)}
   .bottom-nav{background:rgba(244,238,225,.94);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-top:1px solid var(--line)}
   .nav-item.active{color:var(--gold-soft)}
   .yf-hit,.bg-daikichi{background:var(--green);color:#fff}
@@ -815,7 +838,7 @@
   .triad-item.tg-red{background:var(--red-bg);border-color:var(--red-line)} .triad-item.tg-red .tr-val{color:var(--red-d)}
   .aisho-rel{display:flex;gap:4px;margin-bottom:12px}
   .aisho-rel .art{flex:1;font-size:12px;padding:8px 4px;border:0.5px solid var(--line2);border-radius:9px;background:transparent;color:var(--text2);cursor:pointer;font-family:inherit}
-  .aisho-rel .art.active{background:rgba(205,169,79,.16);color:var(--gold-soft);border-color:transparent;font-weight:600}
+  .aisho-rel .art.active{background:linear-gradient(135deg,var(--gold),#e2c07e);color:#241c0d;border-color:transparent;font-weight:800;box-shadow:0 1px 6px rgba(205,169,79,.28)}
   .gx-head{display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin:2px 0 8px;font-weight:600}
   .gx-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
   .gx-side{flex:1;height:14px;background:var(--surface2);border-radius:4px;position:relative;display:flex;align-items:center;overflow:hidden}
@@ -855,7 +878,8 @@
   .scan-d{color:var(--gold-soft);font-weight:600;cursor:pointer;white-space:nowrap;font-size:13px}
   .seg{display:flex;gap:4px}
   .seg-b{flex:1;font-size:12px;padding:8px 8px;border:0.5px solid var(--line2);border-radius:9px;background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;white-space:nowrap}
-  .seg-b.on{background:rgba(205,169,79,.16);color:var(--gold-soft);border-color:transparent;font-weight:600}
+  .seg-b.on{background:linear-gradient(135deg,var(--gold),#e2c07e);color:#241c0d;border-color:transparent;font-weight:800;box-shadow:0 1px 6px rgba(205,169,79,.28)}
+  .seg-b.on .msr{color:#241c0d}
   .seg-mode{margin-bottom:12px;display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
   .seg-sm .seg-b{font-size:11.5px;padding:8px 8px}
   .seg-wrap{flex-wrap:wrap}.seg-wrap .seg-b{flex:0 1 auto}
@@ -1898,7 +1922,7 @@ var Store={
 };
 
 var APP={chartData:null,ritsuunMode:'round',theme:'hikari-dark',built:{home:false,meishiki:false,unsei:false,kimon:false,trip:false,aisho:false},
-  kimonTab:'shi',kimonDateStr:'',kimonTimeStr:'',cmpOrigin:'gps',gpsLL:null,gpsState:'idle',baseId:'home',destId:'',tripOut:'',tripRet:'',tripTab:'ri',tripMode:'check',destSearchId:'',destBase:'home',destTrip:'one',destNights:1,destNightsMax:1,destPeriod:'1m',destPurpose:'all',destView:'list',destFilter:'all',destStart:'',destEnd:'',_destCache:null,luckProfile:'money',luckPeriod:'1m',luckView:'cal',luckAction:'宝くじ・くじ運',groupMembers:[],groupDest:'',groupBase:'home',groupMemberMode:'same',groupMemberBase:{},groupTrip:'one',groupNights:1,groupNightsMax:1,groupPeriod:'1m',groupView:'list',aishoA:'',aishoB:'',aishoRel:'renai',homeCoords:'',readingTab:'seikaku',openMonth:-1,diaryMonth:0,diaryPick:null,googleKey:'',_geo:{results:{},timers:{}},scrollPos:{},
+  kimonTab:'shi',kimonDateStr:'',kimonTimeStr:'',cmpOrigin:'gps',gpsLL:null,gpsState:'idle',plannerSaleFrom:'',plannerSaleTo:'',baseId:'home',destId:'',tripOut:'',tripRet:'',tripTab:'ri',tripMode:'check',destSearchId:'',destBase:'home',destTrip:'one',destNights:1,destNightsMax:1,destPeriod:'1m',destPurpose:'all',destView:'list',destFilter:'all',destStart:'',destEnd:'',_destCache:null,luckProfile:'money',luckPeriod:'1m',luckView:'cal',luckAction:'宝くじ・くじ運',groupMembers:[],groupDest:'',groupBase:'home',groupMemberMode:'same',groupMemberBase:{},groupTrip:'one',groupNights:1,groupNightsMax:1,groupPeriod:'1m',groupView:'list',aishoA:'',aishoB:'',aishoRel:'renai',homeCoords:'',readingTab:'seikaku',openMonth:-1,diaryMonth:0,diaryPick:null,googleKey:'',_geo:{results:{},timers:{}},scrollPos:{},
   formNoTime:false,heading:0,sensorOn:false,
   viewMode:'list',pendingDelete:null,editingMemo:null,editingProfile:null,
   notif:{
@@ -3146,7 +3170,7 @@ function boardReadingHtml(b,dlabel){
   G.g.sort(function(a,b2){return b2.adj-a.adj;});
   G.y.sort(function(a,b2){return b2.adj-a.adj;});
   G.r.sort(function(a,b2){return a.adj-b2.adj;});
-  var h='<div class="sec-label"><span class="si msr">explore</span>方位別・鑑定結果一覧<span style="font-weight:400;font-size:10px;color:var(--text3)">（奇門遁甲・'+dlabel+'）</span></div>';
+  var h='<div class="sec-label"><span class="si msr">explore</span>方位別・鑑定結果一覧<span style="font-weight:400;font-size:10px;color:var(--text3)">（奇門遁甲・'+dlabel+'）</span></div><div class="kd-note" style="margin-top:-2px">格局は天気のように<b>誰にとっても共通</b>、用神はあなたの<b>体質</b>。同じ盤でも、用神・忌神の方位補正で吉凶の効き方が人によって変わります。</div>';
   function grpHtml(icon,cls,title,arr){
     if(!arr.length)return '';
     var s='<div class="drg"><div class="drg-h '+cls+'"><span class="drg-dot '+cls+'"></span>'+title+'</div>';
@@ -3204,7 +3228,20 @@ function kakukyokuHtml(b,dlabel){
   if(b.kakukyoku.length)html+=b.kakukyoku.map(function(r){
     var cls=r.type==='good'?'kk-good':'kk-bad',ss='';for(var i=0;i<5;i++)ss+=i<r.stars?'★':'☆';
     var g=KK_GUIDE[r.name];
-    return '<details class="kk-item '+cls+'"><summary class="kk-sum"><div class="kk-header"><span class="kk-name">'+'<span class="drg-dot '+(r.type==='good'?'g':'r')+'"></span>'+r.name+(g?'<span class="kk-yomi">（'+g.yomi+'）</span>':'')+'</span><span class="kk-stars">'+ss+'</span></div><div class="kk-trans">'+(g?(r.type==='good'?'期待効果：':'警戒：')+g.tag:r.trans)+'</div>'+(r.dirs?'<div class="kk-dir-line"><span class="msr" style="font-size:13px">explore</span>発動方位：<b>'+r.dirs.join('・')+'</b></div>':'')+'</summary><div class="kk-body">'+(r.dirs?'この格局は<b>'+r.dirs.join('・')+'</b>の方位へ移動・行動したときに効果を発揮します。<br>':'')+(g?g.body:'')+(r.desc?'<div class="kk-tech">盤上の根拠：'+r.desc+'</div>':'')+'</div></details>';
+    var pers='';
+    if(r.dirs&&r.dirs.length){
+      var yoHit=[],kiHit=[];
+      r.dirs.forEach(function(dn){
+        var c=b.cells.filter(function(x){return x.dir===dn;})[0];
+        if(c&&c.yojinDir)yoHit.push(dn);
+        if(c&&c.kishinDir)kiHit.push(dn);
+      });
+      if(r.type==='good'&&yoHit.length)pers='<div class="kk-pers g"><span class="msr">verified</span>'+yoHit.join('・')+'はあなたの用神方位と一致——恩恵が特に大きい配置です</div>';
+      else if(r.type!=='good'&&kiHit.length)pers='<div class="kk-pers b"><span class="msr">error</span>'+kiHit.join('・')+'はあなたの忌神方位と重複——影響が重く出やすいので特に注意</div>';
+      else if(r.type==='good'&&kiHit.length)pers='<div class="kk-pers n"><span class="msr">info</span>'+kiHit.join('・')+'は忌神方位のため、恩恵はやや控えめに見積もって</div>';
+      else if(r.type!=='good'&&yoHit.length)pers='<div class="kk-pers n"><span class="msr">info</span>'+yoHit.join('・')+'は用神方位のため、最悪の事態は免れやすい配置です</div>';
+    }
+    return '<details class="kk-item '+cls+'"><summary class="kk-sum"><div class="kk-header"><span class="kk-name">'+'<span class="drg-dot '+(r.type==='good'?'g':'r')+'"></span>'+r.name+(g?'<span class="kk-yomi">（'+g.yomi+'）</span>':'')+'</span><span class="kk-stars">'+ss+'</span></div><div class="kk-trans">'+(g?(r.type==='good'?'期待効果：':'警戒：')+g.tag:r.trans)+'</div>'+(r.dirs?'<div class="kk-dir-line"><span class="msr" style="font-size:13px">explore</span>発動方位：<b>'+r.dirs.join('・')+'</b></div>':'')+pers+'</summary><div class="kk-body">'+(r.dirs?'この格局は<b>'+r.dirs.join('・')+'</b>の方位へ移動・行動したときに効果を発揮します。<br>':'')+(g?g.body:'')+(r.desc?'<div class="kk-tech">盤上の根拠：'+r.desc+'</div>':'')+'</div></details>';
   }).join('');
   else html+='<div class="kk-none">特定の格局なし（安定した通常盤）</div>';
   return html;
@@ -3227,7 +3264,7 @@ function checkBoardViewerHtml(){
   try{b=buildBoard(bd,tab);}catch(e){return '';}
   var _dirs=null;try{_dirs=extractDirections(b,cd.yojin);}catch(e){}
   var dlabel=boardDLabel(bd,tab);
-  var h='<div class="sec-label" style="margin-top:16px"><span class="si msr">grid_on</span>盤ビューア<span style="font-weight:400;font-size:10px;color:var(--text3)">（奇門遁甲）</span></div>';
+  var h='<div class="sec-label" id="boardViewerSec" style="margin-top:16px"><span class="si msr">grid_on</span>盤ビューア<span style="font-weight:400;font-size:10px;color:var(--text3)">（奇門遁甲）</span></div>';
   h+='<div class="seg seg-sm" style="margin-bottom:10px">'+[['shi','時盤'],['ri','日盤'],['yue','月盤'],['nian','年盤']].map(function(t){var dis=cd.noTime&&t[0]==='shi';return '<button class="seg-b'+(tab===t[0]?' on':'')+'"'+(dis?' disabled style="opacity:.4"':' onclick="cmpSwitchTab(\''+t[0]+'\')"')+'>'+t[1]+'</button>';}).join('')+'</div>';
   h+='<div class="kimon-date"><span class="kd-ico msr">calendar_today</span><button type="button" class="kd-input tw-field" onclick="openDateWheel(\''+ymd(bd)+'\',setKimonDate,{title:\'盤の日付を選択\'})"><span class="tw-val">'+kimonDateLabel(bd,tab)+'</span></button>'+(tab==='shi'?'<button type="button" class="kd-input tw-field" onclick="openTimeWheel(\''+hm(bd)+'\',setKimonTime,{title:\'時盤の時刻を選択\'})"><span class="msr tw-fic">schedule</span><span class="tw-val">'+hm(bd)+'</span></button>':'')+'<button type="button" class="kd-now" onclick="kimonToday()">今日</button></div>';
   if(tab==='yue'||tab==='nian')h+='<div class="kd-note">月盤・年盤は節気（約15日ごと）で切り替わるため、選択した日を<b>基準日</b>として表示しています。</div>';
@@ -3923,21 +3960,25 @@ function worstDepartHour(d,dir,purpose,wiFrom,wiTo){
   }
   _depCache[k]=worst;return worst;
 }
-function buildPlan(drawYmd,placeId,mode){
+function buildPlan(drawYmd,placeId,mode,sale){
   var draw=new Date(drawYmd+'T12:00');if(isNaN(draw))return{err:'抽選日を選択してください'};
   var today=new Date();today.setHours(12,0,0,0);
   var buyEnd=addDays(draw,-1);
   if(buyEnd<today)return{err:'抽選日は明日以降の日付を選んでください'};
+  var start=today;
+  if(sale&&sale.from){var _sf=new Date(sale.from+'T12:00');if(!isNaN(_sf)&&_sf>start)start=_sf;}
+  if(sale&&sale.to){var _st=new Date(sale.to+'T12:00');if(!isNaN(_st)&&_st<buyEnd)buyEnd=_st;}
+  if(buyEnd<start)return{err:'発売期間内に購入できる日がありません。発売期間と抽選日を確認してください'};
   var _shop=Shops.get(placeId);
   var _hb=homeBaseInfo();
   var baseLL=_hb.ll,destLL=_shop?[_shop.lat,_shop.lng]:tripLatLng(placeId);
   if(!baseLL||!destLL)return{err:'出発地または売り場の座標が取得できません（命式の編集画面で「自宅・拠点・出発地」を登録できます）'};
   var brg=calcBearing(baseLL[0],baseLL[1],destLL[0],destLL[1]),dir=bearDir(brg),dist=calcDist(baseLL[0],baseLL[1],destLL[0],destLL[1]);
-  var span=Math.min(60,Math.round((buyEnd-today)/86400000)+1);
+  var span=Math.min(60,Math.round((buyEnd-start)/86400000)+1);
   var days=[];
-  for(var i=0;i<span;i++){var d=addDays(today,i);var de=layeredDirEval(d,dir,'money','day');var dl=luckScore(dayBoard(d),'money');days.push({d:d,de:de,dl:dl,mix:de.score+dl.score*0.6});}
+  for(var i=0;i<span;i++){var d=addDays(start,i);var de=layeredDirEval(d,dir,'money','day');var dl=luckScore(dayBoard(d),'money');days.push({d:d,de:de,dl:dl,mix:de.score+dl.score*0.6});}
   var _hw=_shop?hoursToWi(_shop.open,_shop.close):{from:5,to:9};
-  var plan={mode:mode,drawYmd:drawYmd,placeId:placeId,placeName:_shop?_shop.name:tripPointName(placeId),dir:dir,dist:dist,brg:brg,destLL:destLL,homeLL:baseLL,hoursTxt:_shop?(_shop.open+'〜'+_shop.close):'10:00〜18:00',hw:_hw,baseLabel:_hb.label,baseSrc:_hb.src};
+  var plan={mode:mode,drawYmd:drawYmd,placeId:placeId,placeName:_shop?_shop.name:tripPointName(placeId),dir:dir,dist:dist,brg:brg,destLL:destLL,homeLL:baseLL,hoursTxt:_shop?(_shop.open+'〜'+_shop.close):'10:00〜18:00',hw:_hw,baseLabel:_hb.label,baseSrc:_hb.src,saleFrom:(sale&&sale.from)||null,saleTo:(sale&&sale.to)||null};
   if(mode==='swing'){
     var sik=days.slice().sort(function(a,b){return a.mix-b.mix;})[0];
     plan.sikomi={ymd:ymd(sik.d),mix:sik.mix,dirStars:sik.de.isBad?0:sik.de.stars,dirBad:sik.de.isBad,dlStars:sik.dl.stars,w:worstDepartHour(sik.d,dir,'money',_hw.from,_hw.to)};
@@ -3960,8 +4001,39 @@ function setPlannerPlace(v){APP.plannerPlace=v;APP.plannerResult=null;renderTrip
 window.setPlannerPlace=setPlannerPlace;
 function setPlannerMode(m){APP.plannerMode=m;APP.plannerResult=null;renderTrip();}
 window.setPlannerMode=setPlannerMode;
-function runPlanner(){APP.plannerResult=buildPlan(APP.plannerDraw,APP.plannerPlace||'home',APP.plannerMode||'swing');renderTrip();}
+function runPlanner(){APP.plannerResult=buildPlan(APP.plannerDraw,APP.plannerPlace||'home',APP.plannerMode||'swing',{from:APP.plannerSaleFrom||null,to:APP.plannerSaleTo||null});renderTrip();}
 window.runPlanner=runPlanner;
+function setPlannerSaleFrom(v){APP.plannerSaleFrom=v;renderTrip();}
+function setPlannerSaleTo(v){APP.plannerSaleTo=v;renderTrip();}
+function clearPlannerSale(){APP.plannerSaleFrom='';APP.plannerSaleTo='';renderTrip();}
+window.setPlannerSaleFrom=setPlannerSaleFrom;window.setPlannerSaleTo=setPlannerSaleTo;window.clearPlannerSale=clearPlannerSale;
+function shopRankRows(drawYmd,mode,sale){
+  var shops=Shops.all();if(shops.length<2)return [];
+  var draw=new Date(drawYmd+'T12:00');if(isNaN(draw))return [];
+  var today=new Date();today.setHours(12,0,0,0);
+  var end=addDays(draw,-1),start=today;
+  if(sale&&sale.from){var sf=new Date(sale.from+'T12:00');if(!isNaN(sf)&&sf>start)start=sf;}
+  if(sale&&sale.to){var st=new Date(sale.to+'T12:00');if(!isNaN(st)&&st<end)end=st;}
+  if(end<start)return [];
+  var span=Math.min(45,Math.round((end-start)/86400000)+1);
+  var base=homeBaseInfo().ll;
+  var dls=[];for(var i=0;i<span;i++){var d=addDays(start,i);dls.push({d:d,dl:luckScore(dayBoard(d),'money')});}
+  var dirMemo={};
+  return shops.map(function(s){
+    var dir=bearDir(calcBearing(base[0],base[1],s.lat,s.lng));
+    var best=null,worst=null;
+    dls.forEach(function(o){
+      var mk=ymd(o.d)+'|'+dir,de=dirMemo[mk];
+      if(!de){try{de=layeredDirEval(o.d,dir,'money','day');}catch(e){de={score:0};}dirMemo[mk]=de;}
+      var mix=de.score+o.dl.score*0.6;
+      if(!best||mix>best.mix)best={mix:mix,ymd:ymd(o.d)};
+      if(!worst||mix<worst.mix)worst={mix:mix,ymd:ymd(o.d)};
+    });
+    return {id:s.id,name:s.name,dir:dir,best:best.mix,bestTxt:best.ymd.slice(5).replace('-','/'),worstTxt:worst.ymd.slice(5).replace('-','/'),swing:best.mix-worst.mix};
+  }).sort(function(a,b){return mode==='swing'?(b.swing-a.swing):(b.best-a.best);});
+}
+function pickRankShop(id){APP.plannerPlace=id;runPlanner();}
+window.pickRankShop=pickRankShop;
 function savePlan(){if(APP.plannerResult&&!APP.plannerResult.err){savePlanData(APP.plannerResult);renderTrip();}}
 window.savePlan=savePlan;
 function plStep(icon,cls,title,ymdStr,body){
@@ -4118,11 +4190,26 @@ function plannerCard(){
   var h='<div class="sec-label"><span class="si msr">confirmation_number</span>宝くじプランナー</div>';
   h+='<div class="ds-card">';
   h+='<div class="ds-field"><span class="ds-flabel">抽選日</span><button type="button" class="tw-field" onclick="openDateWheel(\''+draw+'\',setPlannerDraw,{title:\'抽選日を選択\',minY:2020,maxY:2059})"><span class="msr tw-fic">event</span><span class="tw-val">'+fmtYmdBtn(draw)+'</span></button></div>';
+  h+='<div class="ds-field"><span class="ds-flabel">発売期間（任意）</span><div style="display:flex;gap:8px;align-items:center">'
+    +'<button type="button" class="tw-field" style="flex:1;min-width:0" onclick="openDateWheel(\''+(APP.plannerSaleFrom||ymd(new Date()))+'\',setPlannerSaleFrom,{title:\'発売開始日を選択\',minY:2020,maxY:2059})"><span class="msr tw-fic">event</span><span class="tw-val" style="font-size:12px">'+(APP.plannerSaleFrom?fmtYmdBtn(APP.plannerSaleFrom):'開始：未設定')+'</span></button>'
+    +'<button type="button" class="tw-field" style="flex:1;min-width:0" onclick="openDateWheel(\''+(APP.plannerSaleTo||draw)+'\',setPlannerSaleTo,{title:\'発売終了日を選択\',minY:2020,maxY:2059})"><span class="msr tw-fic">event_busy</span><span class="tw-val" style="font-size:12px">'+(APP.plannerSaleTo?fmtYmdBtn(APP.plannerSaleTo):'終了：未設定')+'</span></button>'
+    +((APP.plannerSaleFrom||APP.plannerSaleTo)?'<button type="button" class="kd-now" onclick="clearPlannerSale()">解除</button>':'')
+    +'</div><div style="font-size:10px;color:var(--text3);margin-top:3px">仕込み日・購入日をこの期間内から選びます（未設定＝今日〜抽選日前日）</div></div>';
   var _shs=Shops.all();
   if(_shs.length){if(!APP.plannerPlace||!Shops.get(APP.plannerPlace))APP.plannerPlace=_shs[0].id;
     h+='<div class="ds-field"><span class="ds-flabel">売り場</span><select onchange="setPlannerPlace(this.value)">'+shopOptions(APP.plannerPlace)+'</select></div>';
   }else{h+='<div class="rp-hint" style="margin:6px 0">売り場が未登録です。設定→宝くじ売り場 で追加してください。</div>';}
   h+='<div class="ds-field"><span class="ds-flabel">作戦</span><div class="seg seg-sm"><button class="seg-b'+(mode==='ortho'?' on':'')+'" onclick="setPlannerMode(\'ortho\')">王道（吉日に買う）</button><button class="seg-b'+(mode==='swing'?' on':'')+'" onclick="setPlannerMode(\'swing\')">振り幅（底で買う）</button></div></div>';
+  if(_shs.length>=2&&draw){
+    var _rk=null;try{_rk=shopRankRows(draw,mode,{from:APP.plannerSaleFrom||null,to:APP.plannerSaleTo||null});}catch(e){}
+    if(_rk&&_rk.length){
+      h+='<div class="ds-field"><span class="ds-flabel">売り場ランキング'+(mode==='swing'?'（振り幅が大きい順）':'（ベスト日の運が良い順）')+'</span><div class="shr-list">'
+        +_rk.slice(0,5).map(function(r,i){
+          return '<div class="shr-row'+(APP.plannerPlace===r.id?' on':'')+'" onclick="pickRankShop(\''+r.id+'\')"><span class="shr-rank">'+(i+1)+'</span><span class="shr-name">'+esc(r.name)+'</span><span class="shr-meta">'+r.dir+'・ベスト'+r.bestTxt+'</span><span class="shr-score">'+(mode==='swing'?('幅'+Math.round(r.swing)):(Math.round(r.best)+'点'))+'</span></div>';
+        }).join('')
+      +'</div><div style="font-size:10px;color:var(--text3);margin-top:3px">あなたの拠点からの方位×期間内の日運で算出。タップで選択してプラン作成</div></div>';
+    }
+  }
   if(mode==='swing')h+='<div class="rp-hint" style="margin:8px 0"><span class="msr">lightbulb</span> 振り幅法：<b>運気の底</b>（凶方位×凶日×凶時間帯）で購入し、発表の7〜10日前に<b>吉方位で金運をチャージ</b>して発表を待つ。上がり幅を最大化する裏技です。</div>';
   h+='<button class="dsh-calbtn" style="margin-top:6px" onclick="runPlanner()"><span class="msr">auto_awesome</span> プランを作る</button>';
   h+='</div>';
@@ -4133,6 +4220,7 @@ function plannerCard(){
       h+='<div class="pl-plan">';
       h+='<div class="pl-head">'+(r.mode==='swing'?'振り幅プラン':'王道プラン')+'：'+esc(r.placeName)+'（自宅から<b>'+r.dir+'</b>・約'+Math.round(r.dist)+'km）</div>';
       h+='<div class="pl-desc" style="margin:-4px 0 6px">起点：'+esc(r.baseLabel)+(r.baseSrc==='default'?'<span style="color:var(--red-d)"> ← 命式の編集で「自宅・拠点・出発地」を登録してください</span>':(r.baseSrc==='legacy'?'<br><span style="font-size:10.5px;color:var(--text3)">※旧バージョンの自宅設定を流用中です。命式の編集で拠点を登録すると、この命式専用の起点に切り替わります。</span>':''))+'</div>';
+      if(r.saleFrom||r.saleTo)h+='<div class="pl-desc" style="margin:-4px 0 6px">発売期間：'+(r.saleFrom?r.saleFrom.slice(5).replace('-','/'):'今日')+'〜'+(r.saleTo?r.saleTo.slice(5).replace('-','/'):'抽選前日')+' の範囲で選定</div>';
       var _md=new Date((r.mode==='swing'?r.sikomi.ymd:r.buy.ymd)+'T12:00');
       h+=dirCompassSvg(dayBoard(_md),{brg:r.brg,destLabel:'売り場',size:210});
       h+='<div class="cmp-lg" style="margin-bottom:8px">'+(r.mode==='swing'?'仕込み日':'購入日')+'の方位マップ（●＝売り場の方角）</div>';
@@ -5651,47 +5739,6 @@ function nhHeroAnim(score,starsN){
   if(score>=90){var sh=hero.querySelector('.wa-shoot');setTimeout(function(){sh.classList.remove('go');void sh.offsetWidth;sh.classList.add('go');},700);}
 }
 /* ===== ホーム:現在の運気の流れ(今月・今年の格局) ===== */
-function flowFortuneData(){
-  var now=new Date();now.setHours(12,0,0,0);
-  function pick(tab){
-    var b;try{b=boardCached(now,tab);}catch(e){try{b=buildBoard(now,tab);}catch(e2){return null;}}
-    var kk=(b.kakukyoku||[]);
-    if(!kk.length)return {none:true};
-    var k=kk[0],g=KK_GUIDE[k.name]||{};
-    return {name:k.name,good:k.type==='good',tag:g.tag||k.trans||'',more:kk.length-1};
-  }
-  var m=pick('yue')||{none:true},yr=pick('nian')||{none:true};
-  return {
-    monthlyFortune:{month:(now.getMonth()+1)+'月',
-      title:m.none?'安定運':m.name,good:m.none?null:m.good,
-      description:m.none?'大きな格局のない、落ち着いた流れの1か月。方位の使い分けがそのまま結果につながります。':((m.good?'追い風：':'向き合うテーマ：')+m.tag+'。'+(m.more>0?'ほか'+m.more+'件の格局が発動中。':'タップで発動方位と活かし方を確認できます。'))},
-    yearlyFortune:{year:effYear(now)+'年',
-      title:yr.none?'安定運':yr.name,good:yr.none?null:yr.good,
-      subTitle:yr.none?'落ち着いた流れの一年':yr.tag}
-  };
-}
-function openFlowDetail(tab){
-  APP.kimonTab=tab;APP.kimonDateStr='';APP.kimonTimeStr='';APP.tripMode='check';
-  go('trip');
-}
-window.openFlowDetail=openFlowDetail;
-function homeFlowHtml(){
-  var d;try{d=flowFortuneData();}catch(e){return '';}
-  var mf=d.monthlyFortune,yf=d.yearlyFortune;
-  var h='<div class="hf-sec"><div class="sec-label"><span class="si msr">waves</span>現在の運気の流れ</div>';
-  h+='<div class="hf-card'+(mf.good===false?' bad':'')+'" onclick="openFlowDetail(\'yue\')">'
-    +'<div class="hf-cap">今月の運気テーマ<span class="hf-when">'+mf.month+'</span></div>'
-    +'<div class="hf-title">'+(mf.good!=null?'<span class="drg-dot '+(mf.good?'g':'r')+'"></span>':'')+esc(mf.title)+'</div>'
-    +'<div class="hf-desc">'+esc(mf.description)+'</div>'
-    +'<span class="hf-chev msr">chevron_right</span></div>';
-  h+='<div class="hf-banner'+(yf.good===false?' bad':'')+'" onclick="openFlowDetail(\'nian\')">'
-    +'<span class="hf-b-when">'+yf.year+'</span>'
-    +(yf.good!=null?'<span class="drg-dot '+(yf.good?'g':'r')+'"></span>':'')
-    +'<b>'+esc(yf.title)+'</b><span class="hf-b-sub">'+esc(yf.subTitle)+'</span>'
-    +'<span class="hf-chev msr" style="position:static;margin-left:auto">chevron_right</span></div>';
-  h+='</div>';
-  return h;
-}
 renderHome=function(){
   var el=document.getElementById('screen-home');
   var _gh=document.querySelector('.header');if(_gh){var _na=document.querySelector('.nav-item.active');_gh.style.display=(_na&&_na.dataset.screen==='home')?'none':'';}
@@ -5702,7 +5749,7 @@ renderHome=function(){
   var _age=cd.now.getFullYear()-cd.birth.getFullYear();var _md=(cd.now.getMonth()-cd.birth.getMonth());if(_md<0||(_md===0&&cd.now.getDate()<cd.birth.getDate()))_age--;
   var keys=(_age>=38)?['money','kankei','love','work','health','study']:['money','love','kankei','work','health','study'];
   var score=diaryScore(dayGZi(cd.birth),cd.now);
-  var overall=score>=86?5:score>=78?4:score>=65?3:score>=58?2:1;
+  var overall=scoreStars(score);
   var TONE={5:['絶好調の日','大きく動いて吉。追い風を存分に活かして。'],4:['運気上昇の日','新しい挑戦が吉。積極的な行動が幸運を引き寄せます。'],3:['まずまずの日','穏やかで安定した一日。整えると次に活きます。'],2:['スロー運転の日','欲張らず一つずつ。小さく整えると◎。'],1:['休息・守りの日','無理に動かず、休養・計画・整理に向く日です。']};
   var tone=TONE[overall];
   var CATMETA={money:['c-money','payments','金運'],love:['c-love','favorite','恋愛運'],work:['c-work','work','仕事運'],health:['c-health','eco','健康運'],study:['c-study','school','勉強運'],kankei:['c-kankei','handshake','対人運']};
@@ -5720,8 +5767,8 @@ renderHome=function(){
   html+=onboardBanner();
 
   html+='<div class="nh-cats">'+keys.map(function(k){var m=CATMETA[k],st=prof[k],sv=catScore(cd,k);return '<div class="nh-cat '+m[0]+'" onclick="openCat(\''+k+'\',event)"><div class="nh-cat-ic"><span class="msr">'+m[1]+'</span></div><div class="nh-cat-name">'+m[2]+'</div><div class="nh-cat-stars">'+nhStarRow(st.stars)+'<span class="nh-cat-score">'+sv+'</span></div></div>';}).join('')+'</div>';
-  html+='<div class="nh-panel"><div class="nh-ptitle"><span class="msr">explore</span> 今日の最強方位</div><div class="nh-dirwrap"><div class="nh-compass">'+nhCompass(cd)+'</div><div class="nh-dirinfo"><div class="nh-dirbig"><b>'+(best?best.dir:'—')+'</b><span>が吉</span></div><div class="nh-dirdesc">'+(best?'運気を後押ししてくれる方位です。':'本日は際立った吉方位はありません。')+'</div><div class="nh-dirtag gold"><span class="msr">wb_sunny</span> 金運アップ方位</div><div class="nh-dirval">'+(cd.wealthDirs[0]||'—')+'<span class="s">（'+cd.wealthEl+'の気）</span></div><div class="nh-dirtag red"><span class="msr">warning</span> 避けたい方位</div><div class="nh-dirval">'+(worst?worst.dir:'—')+'<span class="s">運気ダウン</span></div></div></div></div>';
-  html+='<div class="nh-panel nh-ng"><div class="nh-ptitle"><span class="msr">warning</span> 今日のNG方位・注意時間帯</div><div class="nh-ngrow"><div class="nh-nglab"><span class="msr">explore</span> 避けたい方位</div><div class="nh-ngval">'+(worst?worst.dir:'—')+'</div><div class="nh-ngsub">この方位は運気ダウン</div></div><div class="nh-ngrow"><div class="nh-nglab"><span class="msr">schedule</span> 注意時間帯</div><div class="nh-ngval" id="home-ng-time"><span style="font-size:12px;color:var(--text3)">計算中…</span></div><div class="nh-ngsub">重要な決断・契約は控えめに</div></div></div>';
+  html+='<div class="nh-panel"><div class="nh-ptitle"><span class="msr">explore</span> 今日の最強方位</div><div class="nh-dirwrap"><div class="nh-compass">'+nhCompass(cd)+'</div><div class="nh-dirinfo"><div class="nh-dirbig"><b>'+(best?best.dir:'—')+'</b><span>が吉</span></div><div class="nh-dirdesc">'+(best?'運気を後押ししてくれる方位です。':'本日は際立った吉方位はありません。')+'</div><div class="nh-dirtag gold"><span class="msr">wb_sunny</span> 金運アップ方位</div><div class="nh-dirval">'+(cd.wealthDirs[0]||'—')+'<span class="s">（'+cd.wealthEl+'の気）</span></div><div class="nh-dirtag red"><span class="msr">warning</span> 避けたい方位</div><div class="nh-dirval">'+(worst?worst.dir:'—')+'<span class="s">運気ダウン</span></div></div></div><div class="nh-timerow"><span class="msr">schedule</span>注意時間帯：<b id="home-ng-time"><span style="font-size:12px;color:var(--text3)">計算中…</span></b><span class="nh-timesub">重要な決断・契約は控えめに</span></div></div>';
+  html+=homeKimonReason(cd);
   html+='<div class="nh-section"><span class="msr">card_giftcard</span> 今日のラッキーアイテム</div><div class="nh-panel"><div class="nh-lucky">'
     +'<div class="nh-luck"><div class="nh-luck-h">ラッキーカラー</div><div class="nh-luck-sw" style="background:'+lk.colorHex+'28;border-color:'+lk.colorHex+'88">'+coloredGem(lk.colorHex)+'</div><div class="nh-luck-v">'+lk.colorName+'</div></div>'
     +'<div class="nh-luck"><div class="nh-luck-h">ラッキーアイテム</div><div class="nh-luck-sw">'+lk.itemEmoji+'</div><div class="nh-luck-v">'+lk.item+'</div></div>'
@@ -5734,10 +5781,19 @@ renderHome=function(){
   acts=acts.filter(function(x,i,a){return a.indexOf(x)===i;}).slice(0,4);
   var ACTIC={'買い物・お金の見直し':'shopping_bag','大事な連絡・商談':'handshake','人に会う・誘う':'group','軽い運動・休養':'directions_run','勉強・自己投資':'menu_book','人に連絡・お礼':'handshake','SNS・情報発信':'chat_bubble','無理せず穏やかに過ごす':'self_improvement','身の回りの整理整頓':'cleaning_services','早めの休養':'bedtime'};
   html+='<div class="nh-section"><span class="msr">rocket_launch</span> 今日の開運アクション</div><div class="nh-panel"><div class="nh-acts">'+acts.map(function(a){return '<span class="nh-act"><span class="msr">'+(ACTIC[a]||'check_circle')+'</span> '+a+'</span>';}).join('')+'</div></div>';
-  html+='<div class="nh-section"><span class="msr">search</span> 今日の奇門遁甲</div>'+homeKimonReason(cd);
-  var adv=overall>=4?'午前から積極的に動いて吉。小さな一歩が大きな幸運につながります。':overall<=2?'午前は控えめに、午後から徐々に。守りを固める一日に。':'焦らず一定のペースで。整えることが次の運を呼びます。';
-  html+='<div class="nh-advice" id="nhAdvice"><div class="ndsky"></div>'+ND_MOON+'<div class="nh-advice-ic msr">edit_note</div><div class="nh-advice-cap">今日の一言アドバイス</div><div class="nh-advice-txt">'+adv+'</div></div>';
-  html+=homeFlowHtml();
+  // ---- 今日のまとめ(ホーム総括: ★帯×方位×トップ運×注意) ----
+  var adv='';
+  try{
+    var _cs=nhCatStars(cd);
+    var _cl={money:'金運',love:'恋愛運',work:'仕事運',health:'健康運',study:'勉強運',kankei:'対人運'};
+    var _tk=null;Object.keys(_cs).forEach(function(k){if(_tk==null||_cs[k]>_cs[_tk])_tk=k;});
+    adv+='今日は「'+tone[0]+'」。';
+    if(best)adv+='追い風は'+best.dir+'方面';
+    if(_tk&&_cs[_tk]>=3)adv+=(best?'、':'')+'いちばん伸びるのは'+_cl[_tk];
+    if(best||( _tk&&_cs[_tk]>=3))adv+='。';
+    adv+=(worst?worst.dir+'方面にだけ気をつければ、':'')+(overall>=4?'今日は攻めてOKです。':overall<=2?'今日は守りと種まきに徹するのが正解です。':'あとは通常運転で大丈夫です。');
+  }catch(e){adv=(best?best.dir+'方面が今日の追い風。':'')+'焦らず、今日できることを一つずつ。';}
+  html+='<div class="nh-advice" id="nhAdvice" style="margin-top:14px"><div class="ndsky"></div>'+ND_MOON+'<div class="nh-advice-ic msr">edit_note</div><div class="nh-advice-cap">今日のまとめ</div><div class="nh-advice-txt">'+adv+'</div></div>';
   el.innerHTML=html;
   nhHeroAnim(score,overall);
   populateProfileSelect();
